@@ -1,0 +1,109 @@
+# Appunti di [Mobile Programming - 2026/27](https://intranet.di.unisa.it/~robdep/MP/)
+
+**Avanzamento:** slide 130
+
+> I nomi dei progetti rispecchiano l’argomento che si vuole testare in ciascun progetto.
+
+---
+
+## Lezione del 6 ottobre 2026
+
+Di seguito una breve spiegazione dei vari progetti. I progetti visti in classe sono presenti sul [sito del corso](https://intranet.di.unisa.it/~robdep/MP/).
+
+### Insets
+
+In questo progetto testiamo gli *insets* su un telefono Android.
+
+### Density
+
+In questo progetto testiamo la densità dei pixel di uno schermo.
+
+### Layouts
+
+Vediamo un’app con un menu a tendina che permette di scegliere diversi tipi di *layouts* e mostra alcune caratteristiche, come *padding* e *margin*.
+
+- **Linear Layout:** ci concentriamo su una tastiera e sullo spazio assegnato in base alle dimensioni dello schermo; assegniamo inoltre un peso ai pulsanti.
+- **Linear Layout (no weight):** non assegniamo un peso ai pulsanti.
+- **Linear Layout (with frames):** inseriamo alcuni `FrameLayout` tra i pulsanti. `match_parent` fa sì che l’elemento occupi tutto lo spazio disponibile nel contenitore.
+- **Linear Layout (wrap):** lo spazio occupato termina prima dello spazio disponibile, lasciando inutilizzata una parte del display.
+- **Grid Layout e Table Layout:** con `Grid Layout` specifichiamo righe e colonne. Con `Table Layout` non è necessario specificare sempre larghezza e altezza.
+- **Relative Layout:** `centerInParent` centra il testo nel contenitore; con `layout_centerHorizontal="true"` lo allineiamo orizzontalmente. Bisogna prestare attenzione allo spazio disponibile quando si crea una *view*.
+- **Layout Widget:** introduciamo checkbox, radio button e altri elementi. Vediamo anche `EditText`, in cui l’utente può scrivere il testo che desidera.
+
+### Widget
+
+Infine, nell’emulatore *Tablet* vediamo contemporaneamente sullo schermo disponibile diversi tipi di widget: *Form Widget*, *Media Widgets* e *Input Text Widgets*. Ogni tipo di widget presenta diverse varianti.
+
+---
+
+## Lezione del 7 ottobre 2026
+
+Visione di un nuovo progetto. Abbiamo visto una vera e propria app cioè *app "Calcolatrice"*.
+
+Ecco i passi per fare questa tipo di app:
+
+1. In "activity\_main.xml" a riga 2 mettiamo il RelativeLayout.
+
+   ```xml
+   <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   .
+   .
+   .
+   >
+   ```
+
+2. Al posto di TextView mettiamo LinearLayout lo centriamo e poi mettimo  a layout\_height il wrap\_content . All'interno di questo Layout  inseriamo un altro LinearLayout ed all'interno di quest'ultimo mettiamo quanti TextView ( -cambiamo il colore al backgroud -gli diamo un id coerente con cio ceh si deve fare nella view -mettimamo wrap\_content per layout\_width e layout\_height) ci servono per fare app calcolatrice.
+
+   ```xml
+
+   ```
+
+3. Modifichiamo le TextView con le opportune istruzioni che ci aiutano ad avvicinarci alla creazione dell'app.
+4. Ora modifichiamo/aggiungiamo tutti gli elementi opportuni al raggiungimento del nostro risultato
+
+Il risultato finale deve essere uno fra questi 3 esempi o na cosa simile:
+
+| Esempio 1 | Esempio 2 | Esempio 3 |
+|:---:|:---:|:---:|
+| ![Esempio 1](img/esempio1.png) | ![Esempio 2](img/esempio2.png) | ![Esempio 3](img/esempio3.png) |
+
+Replicare questo per fare pratica
+```html
+
+```
+
+
+## Lezione del 13 ottobre 2026
+
+Introduzione al dubug. ci sono diversi vodi per fare debug su android studio:
+- i breackpoint serve per dire arrivato ad una certa istruzione fermati. 
+- un altro modo sono gli errori che ti fornisce android
+- debug classico (il debug che facciamo anche in C)
+
+### ListView
+Widget specifico per le liste. Formati dagli elementi che verranno memorizzati in un array e nelle ListView abbiamo "Adapter". La lista si può "scorrere".
+
+Ogni elemento della lista ha un file xml.
+
+Elenco dei passaggi per individuare/creare una listview
+
+esistono differenti tipi di liste, dalla lista semplice a quello complecssa con 'onItemClick'.
+
+Visione di vari tool per fare debug
+
+Visione del codice delle varie lisView
+
+Spiegazione oggetto "toast" di android. in pratica saebbe tipo una sorta di PopUp dove conpare una specie di avviso
+
+## Lezione del 14 ottobre 2026
+
+CICLO DI VITA DELLE  ATTIVITA'
+
+Capiamo come Android gestice le activity. ci sono vari comandi per un attività. nello schema riportato vengono fatti vedere l'ordine cronologico di avvio delle attività, del durante  ecc. 
+
+esistono attività di varie importanze .
+introduzione al "manifesto"
+introduzione oggetto "configuration" 
+
+BACKSTACK
+legato alle attività ma permette di far fare comportamenti più complesssi
