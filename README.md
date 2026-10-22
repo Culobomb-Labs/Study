@@ -1,2 +1,2 @@
-Reportery dedicata agli appunti o materiale ddi studio
+Reportery dedicata agli appunti o materiale di studio
 
