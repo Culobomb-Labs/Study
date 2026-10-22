@@ -1,1 +1,2 @@
-Cartella principale per i progetti universitari dell'Università di Salerno.
+Reportery dedicata agli appunti o materiale ddi studio
+
