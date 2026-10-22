@@ -1,0 +1,1057 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Quaderno di Android</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: quaderno a quadretti. Indice fisso a sinistra, capitoli a destra; note a margine scritte "a penna", evidenziatore sui concetti chiave. */
+:root{
+  --paper:#f6f8f7;
+  --grid:rgba(40,80,110,.07);
+  --ink:#18202b;
+  --ink-soft:#4a5565;
+  --rule:#d5dcdf;
+  --surface:#ffffff;
+  --green:#2f7d52;
+  --green-tint:#e4f1e9;
+  --pen:#b8322a;
+  --hl:rgba(255,222,40,.55);
+  --code-bg:#eef2f3;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", Verdana, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --f-hand:"Caveat", "Segoe Print", "Comic Sans MS", cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#13171c; --grid:rgba(160,200,230,.05); --ink:#e5e9ee; --ink-soft:#a3adba;
+    --rule:#2d343d; --surface:#1a2027; --green:#6cc993; --green-tint:#1c2e25;
+    --pen:#ff8a7a; --hl:rgba(255,214,0,.26); --code-bg:#1d242c; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#13171c; --grid:rgba(160,200,230,.05); --ink:#e5e9ee; --ink-soft:#a3adba;
+  --rule:#2d343d; --surface:#1a2027; --green:#6cc993; --green-tint:#1c2e25;
+  --pen:#ff8a7a; --hl:rgba(255,214,0,.26); --code-bg:#1d242c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:17px; line-height:1.62;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:0 80px;
+}
+a{color:var(--green)}
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible{outline:2px solid var(--green); outline-offset:2px}
+.wrap{max-width:1140px; margin:0 auto; display:grid; grid-template-columns:230px minmax(0,1fr); gap:56px}
+@media (max-width:900px){ .wrap{grid-template-columns:minmax(0,1fr); gap:0} }
+
+/* ---------- cover ---------- */
+.cover{grid-column:1/-1; padding-block:56px 36px; border-bottom:2px solid var(--ink); display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:end}
+.cover .kicker{font-family:var(--f-mono); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft)}
+.cover h1{font-family:var(--f-display); font-weight:800; font-size:clamp(44px, 8vw, 92px); line-height:.92; letter-spacing:-.03em; margin:10px 0 14px; text-wrap:balance}
+.cover h1 span{color:var(--green)}
+.cover p{margin:0; max-width:56ch; color:var(--ink-soft)}
+.stamp{font-family:var(--f-hand); font-size:26px; color:var(--pen); transform:rotate(-4deg); line-height:1.1; text-align:right; max-width:220px}
+@media (max-width:640px){ .cover{grid-template-columns:1fr} .stamp{text-align:left} }
+
+/* ---------- index ---------- */
+nav.idx{position:sticky; top:env(safe-area-inset-top, 0px); align-self:start; padding-top:28px; z-index:20}
+.idx h2{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px; font-weight:600}
+.idx ol{list-style:none; padding:0; margin:0; display:grid; gap:1px}
+.idx a{display:grid; grid-template-columns:28px 1fr auto 14px; gap:6px; align-items:baseline; text-decoration:none; color:var(--ink); padding:4px 6px; font-size:14.5px; line-height:1.3; border-radius:3px}
+.idx a:hover{background:var(--green-tint)}
+.idx a .n{font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.idx a .ok{color:var(--green); font-size:13px; visibility:hidden}
+.idx a.done .ok{visibility:visible}
+.idx a.done .t{color:var(--ink-soft)}
+.progress{margin:14px 0 6px; font-family:var(--f-mono); font-size:12px; color:var(--ink-soft)}
+.bar{height:6px; background:var(--rule); border-radius:3px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:var(--green); transition:width .3s}
+@media (max-width:900px){
+  nav.idx{position:static; max-height:none; padding-top:20px}
+  .idx details{background:var(--surface); border:1px solid var(--rule); padding:10px 14px; border-radius:4px}
+  .idx summary{cursor:pointer; font-family:var(--f-display); font-weight:700}
+}
+@media (min-width:901px){ .idx details > summary{display:none} .idx details{max-height:calc(100vh - 150px); overflow:auto} }
+
+/* ---------- search ---------- */
+.search{position:relative; margin-bottom:18px}
+.slbl{display:block; font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; font-weight:600}
+.sbox{position:relative}
+.sbox input{width:100%; font-family:var(--f-body); font-size:15px; color:var(--ink); background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; padding:8px 34px 8px 11px; -webkit-appearance:none; appearance:none}
+.sbox input::placeholder{color:var(--ink-soft)}
+.sbox input::-webkit-search-cancel-button{display:none}
+.sbox input:focus{outline:none; box-shadow:0 0 0 3px var(--hl)}
+.skey{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-family:var(--f-mono); font-size:11px; color:var(--ink-soft); border:1px solid var(--rule); border-radius:3px; padding:0 5px; pointer-events:none}
+.sbox input:not(:placeholder-shown) ~ .skey{display:none}
+.sclr{position:absolute; right:4px; top:50%; transform:translateY(-50%); border:0; background:none; color:var(--ink-soft); font-size:20px; line-height:1; padding:4px 8px; cursor:pointer}
+.sres{position:absolute; left:0; top:calc(100% + 6px); width:min(460px, calc(100vw - 32px)); max-height:min(70vh, 560px); overflow:auto; background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; z-index:30; box-shadow:0 12px 32px rgba(10,20,30,.18)}
+.sres .shead{margin:0; padding:8px 12px; font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft); border-bottom:1px solid var(--rule)}
+.sres .sempty{margin:0; padding:14px 12px; font-size:14.5px; color:var(--ink-soft)}
+.sr{display:block; padding:9px 12px; border-bottom:1px solid var(--rule); text-decoration:none; color:var(--ink)}
+.sr:hover, .sr.on{background:var(--green-tint)}
+.sr .sc{display:block; font-family:var(--f-mono); font-size:11px; color:var(--green); letter-spacing:.04em; margin-bottom:2px}
+.sr .st{display:block; font-size:14px; line-height:1.4}
+.sr.sh .st{font-weight:700}
+.idx a .cnt{font-family:var(--f-mono); font-size:11px; color:var(--green); font-variant-numeric:tabular-nums}
+.idx a.miss{opacity:.35}
+mark.shl{background:var(--hl); color:inherit; border-radius:2px; padding:0 1px}
+.flash{animation:flash 1.8s ease-out}
+@keyframes flash{0%{background-color:var(--hl)} 100%{background-color:transparent}}
+@media (prefers-reduced-motion: reduce){ .flash{animation:none; outline:2px solid var(--hl)} }
+
+/* ---------- chapters ---------- */
+main{min-width:0}
+section.ch{padding-block:56px 8px; border-bottom:1px dashed var(--rule)}
+.ch-head{display:grid; grid-template-columns:auto 1fr; gap:4px 16px; align-items:baseline; margin-bottom:18px}
+.ch-num{font-family:var(--f-mono); font-size:14px; color:var(--green); font-weight:600}
+.ch h2{font-family:var(--f-display); font-weight:700; font-size:clamp(28px,4.2vw,40px); line-height:1.05; letter-spacing:-.02em; margin:0; text-wrap:balance}
+.ch-sub{grid-column:2; color:var(--ink-soft); font-size:15.5px}
+.ch h3{font-family:var(--f-display); font-weight:700; font-size:21px; margin:34px 0 8px; letter-spacing:-.01em}
+.ch p, .ch li{max-width:68ch}
+.ch ul{padding-left:1.2em; margin:8px 0}
+.ch li{margin:4px 0}
+.ch li::marker{color:var(--green)}
+mark{background:linear-gradient(transparent 38%, var(--hl) 38%, var(--hl) 92%, transparent 92%); color:inherit; padding:0 2px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--code-bg); padding:1px 5px; border-radius:3px; word-break:break-word}
+pre{font-family:var(--f-mono); font-size:13.5px; line-height:1.55; background:var(--code-bg); padding:14px 16px; overflow-x:auto; border-radius:4px; margin:14px 0; max-width:100%}
+pre code{background:none; padding:0; font-size:inherit; word-break:normal}
+.c{color:var(--ink-soft)}
+
+/* "in una frase" box */
+.def{background:var(--green-tint); padding:14px 18px; margin:16px 0; max-width:68ch; border-radius:2px}
+.def b.lbl{display:block; font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--green); margin-bottom:2px}
+
+/* handwritten margin note */
+.note{font-family:var(--f-hand); font-size:23px; line-height:1.2; color:var(--pen); margin:14px 0; max-width:60ch; padding-left:28px; position:relative}
+.note::before{content:"→"; position:absolute; left:0; top:0}
+
+/* tables */
+.tbl{overflow-x:auto; margin:14px 0; max-width:100%}
+table{border-collapse:collapse; width:100%; font-size:15px; min-width:420px}
+th{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--ink-soft); font-weight:600; border-bottom:2px solid var(--ink); padding:8px 10px}
+td{border-bottom:1px solid var(--rule); padding:8px 10px; vertical-align:top}
+td:first-child{white-space:nowrap}
+
+/* architecture stack */
+.stack{display:grid; gap:4px; margin:18px 0; max-width:560px}
+.stack div{background:var(--surface); border:1px solid var(--rule); padding:9px 14px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:15px}
+.stack div b{font-family:var(--f-display)}
+.stack div span{color:var(--ink-soft); font-size:14px}
+.stack div:last-child{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.stack div:last-child span{color:var(--paper); opacity:.75}
+
+/* lifecycle flow */
+.flow{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:16px 0; font-family:var(--f-mono); font-size:13.5px}
+.flow span{background:var(--surface); border:1px solid var(--rule); padding:5px 9px; border-radius:3px}
+.flow span.run{background:var(--green); color:var(--paper); border-color:var(--green)}
+.flow i{font-style:normal; color:var(--ink-soft)}
+
+/* API timeline */
+.api{display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:10px; margin:16px 0}
+.api div{background:var(--surface); border:1px solid var(--rule); padding:10px 12px; font-size:14.5px; line-height:1.4}
+.api b{display:block; font-family:var(--f-mono); font-size:20px; color:var(--green); font-variant-numeric:tabular-nums}
+.api small{display:block; color:var(--ink-soft); font-size:12.5px; margin-bottom:4px}
+
+/* two columns compare */
+.vs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin:14px 0}
+.vs > div{background:var(--surface); border:1px solid var(--rule); padding:12px 16px; min-width:0}
+.vs h4{font-family:var(--f-display); margin:0 0 4px; font-size:17px}
+.vs ul{margin:4px 0; padding-left:1.1em; font-size:15.5px}
+@media (max-width:560px){ .vs{grid-template-columns:1fr} }
+
+/* quick quiz */
+.quiz{margin:28px 0 8px; max-width:68ch}
+.quiz h4{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 6px; font-weight:600}
+.quiz details{border-top:1px solid var(--rule); padding:8px 0}
+.quiz details:last-child{border-bottom:1px solid var(--rule)}
+.quiz summary{cursor:pointer; font-weight:700; list-style:none; display:grid; grid-template-columns:22px 1fr; gap:4px}
+.quiz summary::-webkit-details-marker{display:none}
+.quiz summary::before{content:"?"; font-family:var(--f-mono); color:var(--green)}
+.quiz details[open] summary::before{content:"✓"}
+.quiz details p{margin:6px 0 2px 26px; color:var(--ink-soft)}
+
+.check{display:inline-flex; gap:8px; align-items:center; margin:22px 0 30px; font-family:var(--f-mono); font-size:13px; cursor:pointer; user-select:none; color:var(--ink-soft)}
+.check input{width:18px; height:18px; accent-color:var(--green)}
+
+/* study section */
+.study{background:var(--ink); color:var(--paper); margin:64px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0; padding:48px max(16px, env(safe-area-inset-left, 0px))}
+.study .ch-num{color:var(--hl)}
+.study h2{color:var(--paper)}
+.study .ch-sub{color:var(--paper); opacity:.7}
+.study h3{color:var(--paper)}
+.study p, .study li{color:var(--paper)}
+.study code{background:rgba(127,127,127,.25); color:var(--paper)}
+.study a{color:var(--paper)}
+.methods{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:26px 32px; margin-top:20px}
+.methods > div{min-width:0}
+.methods h3{margin:0 0 4px; font-size:20px}
+.methods p{margin:0; font-size:16px; opacity:.88}
+@media (max-width:640px){ .methods{grid-template-columns:1fr} }
+.study table{min-width:480px}
+.study th{color:var(--paper); border-color:var(--paper); opacity:.85}
+.study td{border-color:rgba(127,127,127,.35)}
+.study .note{color:var(--hl)}
+:root:not([data-theme="light"]) .study{}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .study{background:var(--surface); border:1px solid var(--rule)} :root:not([data-theme="light"]) .study h2, :root:not([data-theme="light"]) .study h3, :root:not([data-theme="light"]) .study p, :root:not([data-theme="light"]) .study li, :root:not([data-theme="light"]) .study th, :root:not([data-theme="light"]) .study a, :root:not([data-theme="light"]) .study code, :root:not([data-theme="light"]) .study .ch-sub{color:var(--ink)} :root:not([data-theme="light"]) .study th{border-color:var(--ink)} }
+:root[data-theme="dark"] .study{background:var(--surface); border:1px solid var(--rule)}
+:root[data-theme="dark"] .study h2, :root[data-theme="dark"] .study h3, :root[data-theme="dark"] .study p, :root[data-theme="dark"] .study li, :root[data-theme="dark"] .study th, :root[data-theme="dark"] .study a, :root[data-theme="dark"] .study code, :root[data-theme="dark"] .study .ch-sub{color:var(--ink)}
+:root[data-theme="dark"] .study th{border-color:var(--ink)}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; scroll-behavior:auto!important} }
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div>
+      <div class="kicker">Mobile Programming · Prof. De Prisco · UniSa 2025</div>
+      <h1>Quaderno di <span>Android</span></h1>
+      <p>Gli appunti di tutte le slide del corso, riscritti in parole semplici. Ogni capitolo ha le domande lampo per ripassare e una casella per segnarlo come fatto.</p>
+    </div>
+    <div class="stamp">Esame = scritto + laboratorio. Lo scritto si passa capendo, non a memoria!</div>
+  </header>
+
+  <nav class="idx" aria-label="Indice">
+    <div class="search" role="search">
+      <label for="q" class="slbl">Cerca negli appunti</label>
+      <div class="sbox">
+        <input id="q" type="search" placeholder="es. onPause, permessi, dp…" autocomplete="off" spellcheck="false" aria-controls="sres">
+        <button type="button" id="qclr" class="sclr" aria-label="Cancella ricerca" hidden>×</button>
+        <kbd class="skey" aria-hidden="true">/</kbd>
+      </div>
+      <div id="sres" class="sres" hidden></div>
+    </div>
+    <details open>
+      <summary>Indice dei capitoli</summary>
+      <h2>Indice</h2>
+      <ol id="toc"></ol>
+      <div class="progress"><span id="pc">0</span> capitoli ripassati su <span id="pt">0</span></div>
+      <div class="bar"><i id="pb"></i></div>
+    </details>
+  </nav>
+
+  <main>
+
+<!-- 00 -->
+<section class="ch" id="corso" data-t="Il corso in breve">
+  <div class="ch-head"><span class="ch-num">00</span><h2>Il corso in breve</h2><span class="ch-sub">Come funziona l'esame e cosa si studia</span></div>
+  <ul>
+    <li><b>Obiettivo:</b> imparare a scrivere app per Android con <b>Android Studio</b>. Nelle slide il codice è in <b>Java</b>, ma le app si possono scrivere anche in <b>Kotlin</b>.</li>
+    <li><b>Esame:</b> prova <mark>scritta</mark> e poi prova di <mark>laboratorio</mark>. Al laboratorio va solo chi passa lo scritto. L'orale è a discrezione del docente.</li>
+    <li><b>Contest:</b> chi frequenta può sviluppare un'app (gruppi di max 2 persone), da consegnare una settimana prima. L'app del contest <b>sostituisce il laboratorio</b>, non lo scritto.</li>
+    <li><b>Materiale:</b> sito del corso (codice delle app ed esempi d'esame), piattaforma S3 (esami e risultati), developer.android.com, libro Big Nerd Ranch.</li>
+  </ul>
+  <div class="note">Le app d'esempio sono numerate (01-CiaoMondo … 47-PlayMusicService). Sono la parte più utile per il laboratorio.</div>
+</section>
+
+<!-- 01 -->
+<section class="ch" id="piattaforma" data-t="La piattaforma Android">
+  <div class="ch-head"><span class="ch-num">01</span><h2>La piattaforma Android</h2><span class="ch-sub">Com'è fatto il sistema, a strati</span></div>
+  <p>Android è un sistema software completo per telefoni e tablet: sistema operativo, librerie, un framework per le app e le app di base. Per sviluppare si usa l'<b>SDK</b> (librerie, strumenti, documentazione).</p>
+  <h3>L'architettura a strati</h3>
+  <p>Leggila dal basso verso l'alto: ogni strato usa quello sotto.</p>
+  <div class="stack">
+    <div><b>Applicazioni</b><span>Home, Contatti, Telefono, Browser… e le nostre</span></div>
+    <div><b>Application framework (Java API)</b><span>View System, Content Providers, Package Manager, Activity Manager</span></div>
+    <div><b>Librerie native + Android Runtime</b><span>WebKit, libc, OpenGL ES · ART</span></div>
+    <div><b>HAL</b><span>interfacce standard per audio, Bluetooth, fotocamera, sensori</span></div>
+    <div><b>Kernel Linux</b><span>file system, memoria, processi, rete, driver, batteria</span></div>
+  </div>
+  <ul>
+    <li><b>Kernel Linux:</b> i servizi base di un sistema operativo, più cose specifiche di Android (gestione batteria, <i>low memory killer</i>, comunicazione tra processi).</li>
+    <li><b>HAL</b> (Hardware Abstraction Layer): nasconde le differenze tra un hardware e l'altro. Il livello sopra chiede "la fotocamera" senza sapere quale modello è.</li>
+    <li><b>Application framework:</b> le funzioni del sistema esposte come API. <i>Activity Manager</i> gestisce il ciclo di vita delle app, <i>Package Manager</i> le installa, <i>Content Providers</i> danno accesso ai dati di altre app (es. la rubrica).</li>
+  </ul>
+  <h3>Dal codice all'app: file .dex e ART</h3>
+  <p>Il codice Java/Kotlin viene compilato in bytecode Java. Lo strumento <b>DX</b> trasforma tutto in un unico file <code>classes.dex</code> (<i>Dalvik EXecutable</i>), che viene installato sul dispositivo ed eseguito da una macchina virtuale.</p>
+  <div class="vs">
+    <div><h4>Dalvik (API &lt; 21)</h4><ul><li>Compila <b>durante</b> l'esecuzione (Just-In-Time)</li><li>Garbage collection che a volte blocca l'app</li><li>Più memoria e più batteria</li></ul></div>
+    <div><h4>ART (API ≥ 21, Android 5.0)</h4><ul><li>Compila <b>prima</b>, di solito all'installazione (Ahead-Of-Time)</li><li>Garbage collection più efficiente</li><li>Meno memoria e meno batteria</li></ul></div>
+  </div>
+  <div class="def"><b class="lbl">In una frase</b>Una VM apposita serve perché un telefono ha CPU più lenta, meno RAM e batteria limitata rispetto a un PC. Un'app che va bene su ART va bene anche su Dalvik, ma non il contrario.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Qual è la differenza principale tra Dalvik e ART?</summary><p>Dalvik compila mentre l'app gira (JIT), ART compila prima, di solito quando l'app si installa (AOT). ART consuma meno memoria e batteria.</p></details>
+    <details><summary>A cosa serve l'HAL?</summary><p>Offre interfacce standard verso l'hardware (audio, fotocamera, sensori…), così i livelli superiori non dipendono dal modello del dispositivo.</p></details>
+    <details><summary>Cosa contiene classes.dex?</summary><p>Tutto il bytecode dell'app convertito nel formato Dalvik, più i dati necessari. È ciò che la VM esegue.</p></details>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="ch" id="versioni" data-t="Versioni e livelli API">
+  <div class="ch-head"><span class="ch-num">02</span><h2>Versioni e livelli API</h2><span class="ch-sub">I numeri che tornano in tutto il corso</span></div>
+  <p>Ogni versione di Android ha un nome di dolce (in ordine alfabetico) e un <b>livello API</b>. Nel corso molte regole cambiano "da API X in poi". Questa è la mappa da tenere a mente:</p>
+  <div class="api">
+    <div><b>21</b><small>Android 5.0 Lollipop</small>ART sostituisce Dalvik. Notifiche heads-up.</div>
+    <div><b>23</b><small>Android 6.0 Marshmallow</small>Permessi pericolosi chiesti <b>a runtime</b>.</div>
+    <div><b>26</b><small>Android 8.0 Oreo</small>Canali di notifica obbligatori. Pochi broadcast di sistema nel manifesto.</div>
+    <div><b>28</b><small>Android 9 Pie</small>Connessioni <code>http</code> in chiaro bloccate di default.</div>
+    <div><b>29</b><small>Android 10</small>Storage "sandboxed": nasce MediaStore. Gli alarm non riportano l'app in primo piano.</div>
+    <div><b>30</b><small>Android 11</small>Permesso "solo questa volta". <code>&lt;queries&gt;</code> per i Content Provider.</div>
+    <div><b>31</b><small>Android 12</small>Alarm esatti richiedono un permesso. Alarm imprecisi entro un'ora.</div>
+    <div><b>33</b><small>Android 13</small>Permesso <code>POST_NOTIFICATIONS</code>. <code>READ_MEDIA_*</code>.</div>
+    <div><b>35</b><small>Android 15</small>App edge-to-edge (a tutto schermo) con gli insets.</div>
+  </div>
+  <div class="note">Questa tabella da sola risponde a un sacco di domande dello scritto.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Da quale API i permessi pericolosi si chiedono mentre l'app gira?</summary><p>Da API 23 (Android 6.0). Prima si accettavano tutti all'installazione.</p></details>
+    <details><summary>Da quale API ogni notifica deve avere un canale?</summary><p>Da API 26 (Android 8.0). Senza canale la notifica non compare.</p></details>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="ch" id="strumenti" data-t="Android Studio e strumenti">
+  <div class="ch-head"><span class="ch-num">03</span><h2>Android Studio e strumenti</h2><span class="ch-sub">Progetto, emulatore, adb, debug</span></div>
+  <h3>Com'è fatto un progetto</h3>
+  <p>Si parte da <b>File → New → New Project → Empty Views Activity</b>. Dentro trovi:</p>
+  <ul>
+    <li><b>Manifesto</b> (<code>AndroidManifest.xml</code>): la carta d'identità dell'app. Permessi, activity, icona, servizi, receiver.</li>
+    <li><b>java/</b>: il codice sorgente.</li>
+    <li><b>res/</b>: le risorse. <code>layout</code> (le schermate in XML), <code>values</code> (stringhe, colori), <code>drawable</code> e <code>mipmap</code> (immagini e icone), <code>menu</code>.</li>
+    <li><b>Gradle</b>: il sistema di build. Contiene le dipendenze dalle librerie (<code>libs.versions.toml</code>) e come compilare.</li>
+  </ul>
+  <h3>Activity o AppCompatActivity?</h3>
+  <p><code>Activity</code> è la classe base con il ciclo di vita standard. <code>AppCompatActivity</code> (da AndroidX) la estende e aggiunge <mark>retrocompatibilità</mark>: Toolbar, Material Design e temi chiari/scuri funzionano anche su Android vecchi. Nel dubbio si usa AppCompatActivity.</p>
+  <h3>Edge-to-edge e insets (API 35)</h3>
+  <p>Le app occupano tutto lo schermo. Gli <b>insets</b> sono le zone coperte da status bar, barra di navigazione, tastiera. Con <code>setPadding</code> si sposta il contenuto per non finirci sotto.</p>
+  <h3>Emulatore o telefono vero?</h3>
+  <div class="vs">
+    <div><h4>Telefono reale</h4><ul><li>Veloce, esecuzione reale</li><li>Facile ruotare, toccare</li><li>Serve la modalità sviluppatore: tocca 7 volte <i>Versione build</i>, poi attiva <i>Debug USB</i></li></ul></div>
+    <div><h4>Emulatore (AVD)</h4><ul><li>Lento, è un simulatore e può avere bug</li><li>Facile simulare situazioni: batteria scarica, SMS in arrivo</li><li>Due emulatori comunicano con i "numeri" 5554 e 5556 (servono due AVD diversi)</li></ul></div>
+  </div>
+  <h3>adb, Android Debug Bridge</h3>
+  <p>Strumento a riga di comando nella cartella <code>platform-tools</code> dell'SDK.</p>
+<pre><code>adb devices                      <span class="c"># elenca dispositivi ed emulatori</span>
+adb shell pm list packages       <span class="c"># nomi dei package installati</span>
+adb shell pm path &lt;package&gt;      <span class="c"># dove sta l'apk</span>
+adb pull &lt;percorso/app.apk&gt;      <span class="c"># copia l'apk sul PC</span></code></pre>
+  <h3>Debug</h3>
+  <ul>
+    <li><b>Debugger:</b> <i>Run → Debug</i>. Metti i <mark>breakpoint</mark> cliccando accanto al numero di riga; l'app si ferma lì e puoi guardare variabili, stack delle chiamate, watch, ed eseguire passo-passo (entra nella funzione, esci, continua).</li>
+    <li><b>Log:</b> <code>Log.d(TAG, "messaggio")</code>. La lettera indica il livello: <code>d</code> debug, <code>e</code> errore, <code>i</code> info, <code>w</code> warning, <code>v</code> verbose.</li>
+    <li><b>Logcat:</b> la finestra dove leggi i log. Se l'app crasha mostra lo <i>stack trace</i> con la riga che ha causato l'errore.</li>
+    <li><b>Profiler:</b> uso di memoria, CPU, rete e GPU. Serve per trovare i memory leak.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa si dichiara nel manifesto?</summary><p>Informazioni generali sull'app: permessi, activity, icona, e anche service, receiver e provider.</p></details>
+    <details><summary>Come attivi la modalità sviluppatore?</summary><p>Info dispositivo → tocca 7 volte "Versione build", poi in Opzioni sviluppatore attivi Debug USB.</p></details>
+    <details><summary>Quali sono i livelli di Log?</summary><p>d (debug), e (errore), i (info), w (warning), v (verbose).</p></details>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="ch" id="layout" data-t="Layout e misure">
+  <div class="ch-head"><span class="ch-num">04</span><h2>Layout e misure</h2><span class="ch-sub">Come si disegna una schermata</span></div>
+  <p>Il <b>layout</b> definisce l'aspetto dell'interfaccia. Si può scrivere in due modi, anche insieme:</p>
+  <div class="vs">
+    <div><h4>In XML</h4><ul><li>Facile da scrivere</li><li>Separa la grafica dal codice</li><li>Però è statico</li></ul></div>
+    <div><h4>Programmatico (nel codice)</h4><ul><li>Dinamico, si adatta a runtime</li><li>Però devi gestire tutto nel codice</li></ul></div>
+  </div>
+  <h3>Le regole base dell'XML</h3>
+  <ul>
+    <li>Ogni file ha <b>un solo elemento radice</b> (es. un <code>LinearLayout</code>) che contiene gli altri.</li>
+    <li><code>@+id/testo</code> <mark>crea</mark> un nuovo ID. <code>@id/testo</code> (senza +) si <mark>riferisce</mark> a un ID che esiste già. Senza <code>@</code> il valore è letterale.</li>
+    <li>Gli attributi <code>layout_qualcosa</code> sono parametri per il contenitore padre. <code>layout_width</code> e <code>layout_height</code> sono obbligatori per tutti.</li>
+    <li><code>match_parent</code> = grande come il padre. <code>wrap_content</code> = grande quanto serve al contenuto.</li>
+    <li><b>Padding</b> = spazio dentro il bordo. <b>Margin</b> = spazio fuori dal bordo.</li>
+  </ul>
+<pre><code>&lt;LinearLayout android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent"&gt;
+  &lt;TextView android:id="@+id/text"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:text="Ciao" /&gt;
+  &lt;Button android:id="@+id/button"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:text="Premi" /&gt;
+&lt;/LinearLayout&gt;</code></pre>
+  <h3>px, dp, sp</h3>
+  <ul>
+    <li><b>px</b>: pixel reali dello schermo. Da evitare, perché su uno schermo più denso la stessa grafica appare più piccola.</li>
+    <li><b>dp</b> (density-independent pixel): 1 dp = 1 px su uno schermo da <mark>160 dpi</mark>. Si usa per le dimensioni.</li>
+    <li><b>sp</b> (scale-independent pixel): come dp, ma segue anche la dimensione del font scelta dall'utente. Si usa per <mark>i testi</mark>.</li>
+  </ul>
+  <div class="def"><b class="lbl">Formula</b><code>px = dp × (dpi / 160)</code>. Esempio: 160 dp sono 160 px a densità 1, 320 px a densità 2, 400 px a densità 2,5.</div>
+  <p>Le immagini vanno fornite in più versioni (36, 48, 72, 96 px per densità low, medium, high, extra high). Le icone stanno nella cartella <code>mipmap</code>.</p>
+  <h3>I contenitori (ViewGroup)</h3>
+  <div class="tbl"><table>
+    <tr><th>Layout</th><th>Come dispone gli elementi</th></tr>
+    <tr><td>FrameLayout</td><td>Uno sopra l'altro (es. testo sopra un'immagine)</td></tr>
+    <tr><td>LinearLayout</td><td>In fila, verticale o orizzontale. <code>layout_weight</code> decide quanto spazio prende ognuno</td></tr>
+    <tr><td>RelativeLayout</td><td>Rispetto al padre o ad altri elementi (<code>layout_below</code>, <code>layout_centerVertical</code>…)</td></tr>
+    <tr><td>ConstraintLayout</td><td>Con "vincoli" tra elementi. Evita layout annidati troppo profondi (lenti da disegnare). È quello dell'editor grafico</td></tr>
+    <tr><td>TableLayout</td><td>Righe (<code>TableRow</code>) e colonne</td></tr>
+    <tr><td>GridLayout</td><td>Griglia con <code>columnCount</code> e <code>rowCount</code></td></tr>
+    <tr><td>ListView / GridView</td><td>Liste scorrevoli riempite da un Adapter</td></tr>
+  </table></div>
+  <div class="note">Trucco: per dividere lo spazio in parti uguali in un LinearLayout metti width (o height) = "0dp" e layout_weight = "1" a tutti i figli.</div>
+  <p><b>Widget</b> comuni: TextView, Button, EditText, ImageView, CheckBox, RadioButton, Switch. I widget hanno i <b>listener</b>: metodi che "ascoltano" un evento, come <code>onClick</code> per un pulsante.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Differenza tra @+id/nome e @id/nome?</summary><p>Con il + crei un nuovo identificatore, senza + ti riferisci a uno già esistente.</p></details>
+    <details><summary>Quando usi sp invece di dp?</summary><p>Per le dimensioni dei testi, così rispettano la preferenza dell'utente sulla grandezza del font.</p></details>
+    <details><summary>Quanti px sono 100 dp su uno schermo a 320 dpi?</summary><p>100 × 320/160 = 200 px.</p></details>
+    <details><summary>Perché ConstraintLayout invece di tanti layout annidati?</summary><p>Una gerarchia profonda richiede più tempo per essere disegnata. Con i vincoli resta piatta.</p></details>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="ch" id="listview" data-t="ListView e Adapter">
+  <div class="ch-head"><span class="ch-num">05</span><h2>ListView e Adapter</h2><span class="ch-sub">Mostrare liste lunghe</span></div>
+  <p>Una ListView mostra solo gli elementi che entrano nello schermo; gli altri si vedono scorrendo. L'<mark>Adapter</mark> è il "ponte" che prende i dati da un array e crea le righe man mano che l'utente scorre.</p>
+  <h3>I 4 passi</h3>
+<pre><code>String[] nomi = {"Maria", "Luca", "Anna", ...};                    <span class="c">// 1. i dati</span>
+ArrayAdapter&lt;String&gt; ad = new ArrayAdapter&lt;&gt;(this,
+        R.layout.list_element, R.id.textViewList, nomi);            <span class="c">// 2. l'adapter</span>
+listView = findViewById(R.id.mylistview);                          <span class="c">// 3. il widget</span>
+listView.setAdapter(ad);                                           <span class="c">// 4. collegali</span>
+
+listView.setOnItemClickListener((parent, view, position, id) -&gt; {
+    String s = listView.getItemAtPosition(position).toString();   <span class="c">// click su una riga</span>
+});</code></pre>
+  <ul>
+    <li><b>Lista semplice:</b> ogni riga è una stringa.</li>
+    <li><b>Lista personalizzata:</b> ogni riga ha il suo layout (nome, foto, telefono…). Serve un <b>CustomAdapter</b>.</li>
+    <li><b>Click multiplo:</b> per cliccare i singoli pezzi di una riga servono listener separati. Problema: non sai più su quale riga sei. Soluzione: <code>setTag(posizione)</code> sulla view e <code>getTag()</code> nel listener.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>A cosa serve l'Adapter?</summary><p>Fornisce alla ListView gli elementi da mostrare in base allo scorrimento, prendendoli dai dati (es. un array).</p></details>
+    <details><summary>Con il click multiplo come sai la posizione della riga?</summary><p>Salvi la posizione con setTag() e la rileggi con getTag() dentro il listener.</p></details>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="ch" id="ciclo" data-t="Ciclo di vita">
+  <div class="ch-head"><span class="ch-num">06</span><h2>Ciclo di vita dell'Activity</h2><span class="ch-sub">Il capitolo più importante</span></div>
+  <p>Un'<b>Activity</b> è una schermata dell'app. Android chiama dei metodi in un ordine preciso mentre l'activity nasce, viene usata e muore:</p>
+  <div class="flow"><span>onCreate</span><i>→</i><span>onStart</span><i>→</i><span>onResume</span><i>→</i><span class="run">in esecuzione</span><i>→</i><span>onPause</span><i>→</i><span>onStop</span><i>→</i><span>onDestroy</span></div>
+  <div class="tbl"><table>
+    <tr><th>Cosa succede</th><th>Metodi chiamati</th></tr>
+    <tr><td>Premi Home</td><td><code>onPause → onStop</code></td></tr>
+    <tr><td>Torni all'app</td><td><code>onRestart → onStart → onResume</code></td></tr>
+    <tr><td>Ruoti lo schermo</td><td><code>onPause → onStop → onDestroy</code>, poi <code>onCreate → onStart → onResume</code></td></tr>
+  </table></div>
+  <div class="def"><b class="lbl">Il punto chiave</b>Quando ruoti il telefono l'activity viene <b>distrutta e ricreata</b>, quindi le variabili si perdono. È l'errore della Calcolatrice e del Quiz (nel Quiz si può barare ruotando).</div>
+  <h3>Come salvare lo stato</h3>
+<pre><code>@Override
+public void onSaveInstanceState(Bundle out) {
+    out.putInt("CONTATORE", counter);          <span class="c">// salva</span>
+    super.onSaveInstanceState(out);
+}
+
+@Override
+protected void onCreate(Bundle saved) {
+    super.onCreate(saved);
+    if (saved != null) counter = saved.getInt("CONTATORE");   <span class="c">// recupera</span>
+}</code></pre>
+  <ul>
+    <li><b>onSaveInstanceState + Bundle:</b> il metodo classico, coppie chiave-valore.</li>
+    <li><b>ViewModel:</b> oggetti che sopravvivono alla distruzione e restano disponibili nella nuova activity.</li>
+    <li><b>configChanges nel manifesto</b> (es. <code>android:configChanges="orientation"</code>): l'activity non viene distrutta e viene chiamato <code>onConfigurationChanged()</code>. Google lo <mark>sconsiglia</mark>, va usato solo se le altre strade non bastano.</li>
+  </ul>
+  <p>Oltre all'orientamento, sono cambi di configurazione anche: dimensione schermo, direzione del testo, tastiera, modalità (auto, TV, orologio…).</p>
+  <h3>Backstack</h3>
+  <p>Un'app ha di solito più activity, ognuna con un compito (es. nella posta: lista, lettura, scrittura). Quando ne lanci una nuova, quella corrente va nel <b>backstack</b> (una pila). Il tasto <b>Back</b> toglie quella in cima e torna alla precedente, fino all'Home. Un <b>task</b> è l'insieme di activity con cui l'utente sta interagendo. La activity principale ha nel manifesto l'intent-filter <code>MAIN</code> + <code>LAUNCHER</code>.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quali metodi vengono chiamati quando premi Home?</summary><p>onPause() e onStop().</p></details>
+    <details><summary>Perché ruotando lo schermo si perdono i dati?</summary><p>Perché l'activity viene distrutta (onDestroy) e ricreata da zero (onCreate). Bisogna salvare lo stato in onSaveInstanceState o usare un ViewModel.</p></details>
+    <details><summary>Cosa fa il tasto Back?</summary><p>Toglie l'activity in cima al backstack e mostra quella precedente.</p></details>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="ch" id="intent" data-t="Intent">
+  <div class="ch-head"><span class="ch-num">07</span><h2>Intent</h2><span class="ch-sub">Il "messaggio" per chiedere di fare qualcosa</span></div>
+  <div class="def"><b class="lbl">In una frase</b>Un Intent descrive un'operazione da fare. Serve per lanciare un'activity (<code>startActivity</code>), mandare un broadcast (<code>sendBroadcast</code>) o parlare con un servizio (<code>startService</code>, <code>bindService</code>).</div>
+  <h3>Le parti di un Intent</h3>
+  <div class="tbl"><table>
+    <tr><th>Parte</th><th>Cos'è</th><th>Esempio</th></tr>
+    <tr><td>Action</td><td>L'azione da fare</td><td><code>ACTION_VIEW</code>, <code>ACTION_DIAL</code>, <code>ACTION_PICK</code></td></tr>
+    <tr><td>Data</td><td>I dati, come URI</td><td><code>tel:+39…</code>, <code>geo:…</code>, <code>content://contacts/people/1</code></td></tr>
+    <tr><td>Category</td><td>Info in più sull'azione</td><td><code>CATEGORY_BROWSABLE</code></td></tr>
+    <tr><td>Type</td><td>Tipo MIME dei dati (di solito dedotto)</td><td><code>image/png</code></td></tr>
+    <tr><td>Component</td><td>L'activity precisa da lanciare</td><td><code>new Intent(this, Seconda.class)</code></td></tr>
+    <tr><td>Extras</td><td>Dati aggiuntivi chiave-valore</td><td><code>putExtra("CONTATORE", c)</code></td></tr>
+    <tr><td>Flags</td><td>Come trattare l'intent</td><td><code>FLAG_ACTIVITY_NO_HISTORY</code></td></tr>
+  </table></div>
+  <div class="vs">
+    <div><h4>Esplicito</h4><ul><li>Specifichi il Component</li><li>"Apri proprio questa activity"</li></ul></div>
+    <div><h4>Implicito</h4><ul><li>Niente Component</li><li>Android sceglie un'activity adatta in base ad action, type, URI e category, guardando gli intent-filter nei manifesti</li></ul></div>
+  </div>
+  <h3>Chiedere un risultato</h3>
+<pre><code>Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+startActivityForResult(i, REQUEST_CODE);       <span class="c">// "scegli un contatto e dimmi quale"</span>
+
+@Override
+protected void onActivityResult(int req, int res, Intent data) {
+    if (req == REQUEST_CODE &amp;&amp; res == Activity.RESULT_OK) { /* usa data */ }
+}</code></pre>
+  <p>L'app VisualizzaMappa fa proprio così: prende un indirizzo dalla rubrica (serve il permesso) e lo apre in Google Maps, usando activity di altre app.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Differenza tra intent esplicito e implicito?</summary><p>Esplicito: indichi l'activity precisa. Implicito: indichi cosa vuoi fare e Android trova chi può farlo.</p></details>
+    <details><summary>A cosa serve REQUEST_CODE?</summary><p>A riconoscere, in onActivityResult, a quale richiesta corrisponde il risultato.</p></details>
+    <details><summary>Come passi un numero a un'altra activity?</summary><p>intent.putExtra("CHIAVE", valore) prima di lanciarla; dall'altra parte lo leggi dagli extras dell'intent.</p></details>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="ch" id="permessi" data-t="Permessi">
+  <div class="ch-head"><span class="ch-num">08</span><h2>Permessi</h2><span class="ch-sub">Chiedere il consenso all'utente</span></div>
+  <p>I permessi proteggono i dati dell'utente (contatti), i servizi che costano (SMS, chiamate, Internet) e le risorse di sistema (fotocamera, GPS). Sono stringhe tipo <code>android.permission.CAMERA</code> e vanno <mark>sempre dichiarati nel manifesto</mark>:</p>
+<pre><code>&lt;uses-permission android:name="android.permission.CAMERA" /&gt;</code></pre>
+  <div class="vs">
+    <div><h4>Normali</h4><ul><li>Concessi in automatico</li><li>Es. INTERNET, VIBRATE, BLUETOOTH, WAKE_LOCK, SET_ALARM</li></ul></div>
+    <div><h4>Pericolosi</h4><ul><li>L'utente deve approvarli</li><li>Es. CAMERA, READ_CONTACTS, ACCESS_FINE_LOCATION, SEND_SMS, RECORD_AUDIO</li></ul></div>
+  </div>
+  <ul>
+    <li><b>API &lt; 23:</b> si accettano all'installazione.</li>
+    <li><b>API ≥ 23:</b> si chiedono <b>mentre l'app gira</b>. Alla seconda richiesta l'utente può rendere la risposta definitiva.</li>
+    <li><b>API ≥ 30:</b> si può dare il permesso "solo questa volta".</li>
+    <li>I pericolosi sono divisi in <b>gruppi</b> (CONTACTS, LOCATION, SMS…). Se hai già un permesso di un gruppo, gli altri dello stesso gruppo vengono concessi senza chiedere.</li>
+  </ul>
+  <div class="note">L'utente può togliere un permesso dalle Impostazioni quando vuole. Quindi nel codice controlla SEMPRE prima di usarlo.</div>
+  <h3>Lo schema da ricordare</h3>
+<pre><code>if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA)
+        == PackageManager.PERMISSION_GRANTED) {
+    usaLaFotocamera();                         <span class="c">// 1. ce l'ho: procedo</span>
+} else if (shouldShowRequestPermissionRationale(...)) {
+    spiegaPerche();                            <span class="c">// 2. spiego all'utente a cosa serve</span>
+} else {
+    requestPermissionLauncher.launch(Manifest.permission.CAMERA);   <span class="c">// 3. lo chiedo</span>
+}</code></pre>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Basta dichiarare un permesso pericoloso nel manifesto?</summary><p>No. Da API 23 va anche chiesto a runtime, e bisogna controllare con checkSelfPermission prima di usarlo.</p></details>
+    <details><summary>INTERNET è normale o pericoloso?</summary><p>Normale: va nel manifesto ma viene concesso senza chiedere.</p></details>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="ch" id="thread" data-t="Thread e AsyncTask">
+  <div class="ch-head"><span class="ch-num">09</span><h2>Thread e AsyncTask</h2><span class="ch-sub">Fare lavori lunghi senza bloccare l'app</span></div>
+  <p>Un <b>thread</b> è un flusso di esecuzione parallelo dentro un processo. Ogni thread ha il suo program counter e il suo stack, ma condivide con gli altri la memoria (heap).</p>
+  <ul>
+    <li>Si crea un oggetto <code>Thread</code> con dentro un <code>Runnable</code> (che ha il metodo <code>run()</code>) e si chiama <code>start()</code>, che a sua volta esegue <code>run()</code>.</li>
+    <li>Altri metodi: <code>sleep(ms)</code>, <code>wait()</code>, <code>notify()</code>.</li>
+  </ul>
+  <div class="def"><b class="lbl">Regola d'oro</b>Solo il <b>main thread</b> (UI thread) può toccare l'interfaccia. Un thread in background che vuole aggiornare la UI deve usare <code>runOnUiThread(Runnable)</code> oppure <code>view.post(Runnable)</code>. È la differenza tra le app ThreadNo e ThreadSi.</div>
+  <h3>AsyncTask</h3>
+  <p>Classe che semplifica il dialogo tra thread in background e main thread. È generica: <code>AsyncTask&lt;Params, Progress, Result&gt;</code> (tipo dell'input, tipo dell'avanzamento, tipo del risultato).</p>
+  <div class="tbl"><table>
+    <tr><th>Metodo</th><th>Dove gira</th><th>Quando</th></tr>
+    <tr><td>onPreExecute()</td><td>main</td><td>Prima di iniziare (setup)</td></tr>
+    <tr><td>doInBackground(Params…)</td><td>background</td><td>Il lavoro vero. Restituisce un Result. Può chiamare publishProgress()</td></tr>
+    <tr><td>onProgressUpdate(Progress…)</td><td>main</td><td>Dopo ogni publishProgress (es. aggiorna la barra)</td></tr>
+    <tr><td>onPostExecute(Result)</td><td>main</td><td>Alla fine, riceve il risultato</td></tr>
+  </table></div>
+  <div class="note">AsyncTask oggi è deprecato da Google (da API 30), ma è nelle slide: per l'esame va saputo.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Un thread in background può cambiare il testo di una TextView?</summary><p>Non direttamente. Deve passare dal main thread con runOnUiThread() o view.post().</p></details>
+    <details><summary>Quale metodo dell'AsyncTask gira in background?</summary><p>Solo doInBackground(). Gli altri tre girano nel main thread.</p></details>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="ch" id="frammenti" data-t="Frammenti">
+  <div class="ch-head"><span class="ch-num">10</span><h2>Frammenti (Fragments)</h2><span class="ch-sub">Pezzi di interfaccia riutilizzabili</span></div>
+  <p>Un frammento è una <b>porzione di interfaccia</b>, una specie di sotto-activity. Vive sempre dentro un'activity e il suo ciclo di vita è legato a quello dell'activity (se l'activity va in pausa, ci vanno anche i frammenti).</p>
+  <div class="def"><b class="lbl">Perché esistono</b>Per adattarsi allo schermo. Esempio: app di notizie con un frammento <i>lista titoli</i> e un frammento <i>articolo</i>. Su tablet o in orizzontale li vedi affiancati; su telefono in verticale ne vedi uno alla volta.</div>
+  <h3>Metodi da implementare</h3>
+  <ul>
+    <li><code>onCreate()</code>: inizializzazione, ma <b>non</b> il layout.</li>
+    <li><code>onCreateView()</code>: crea il layout con <code>inflater.inflate(...)</code> e restituisce la View. È l'equivalente di <code>setContentView</code>.</li>
+    <li><code>onPause()</code>: primo metodo chiamato quando il frammento se ne va. Qui salvi le modifiche.</li>
+  </ul>
+  <h3>Inserirli</h3>
+  <p><b>Statico:</b> con il tag <code>&lt;fragment&gt;</code> nel layout XML. <b>Dinamico:</b> a runtime, con una transazione:</p>
+<pre><code>FragmentTransaction ft = getFragmentManager().beginTransaction();
+ft.add(R.id.fragment_container, new ExampleFragment());   <span class="c">// anche remove, replace</span>
+ft.addToBackStack(null);                                  <span class="c">// facoltativo, vedi sotto</span>
+ft.commit();</code></pre>
+  <ul>
+    <li>Il backstack gestisce da solo <b>solo le activity</b>. Se non chiami <code>addToBackStack()</code>, premendo Back si "saltano" i cambi fatti con i frammenti.</li>
+    <li><b>Comunicazione:</b> i frammenti <mark>non parlano direttamente tra loro</mark> (si perde riusabilità). Il frammento A definisce un'interfaccia; l'activity la implementa e passa il dato al frammento B (in orizzontale) o apre una nuova activity (in verticale).</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>In quale metodo del frammento si crea il layout?</summary><p>onCreateView(), facendo l'inflate di un file di layout e restituendo la View.</p></details>
+    <details><summary>Come comunicano due frammenti?</summary><p>Passando per l'activity che li ospita, tramite un'interfaccia di callback che l'activity implementa.</p></details>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="ch" id="rete" data-t="Networking">
+  <div class="ch-head"><span class="ch-num">11</span><h2>Networking</h2><span class="ch-sub">Parlare con un server</span></div>
+  <ul>
+    <li><b>InetAddress</b>: gestisce gli indirizzi IP. <code>InetAddress.getByName("www.server.com")</code>.</li>
+    <li><b>Socket</b>: il canale con il server. <code>new Socket(indirizzo, porta)</code>. Per scrivere usi un <code>PrintWriter</code> sull'output stream, per leggere un <code>BufferedReader</code> sull'input stream (<code>readLine()</code>).</li>
+    <li><b>HttpURLConnection</b>: per le pagine web. <code>openConnection()</code>, poi <code>getInputStream()</code> e leggi come prima.</li>
+    <li><b>JSoup</b>: libreria esterna per leggere l'HTML e estrarne pezzi (<code>Jsoup.connect(url).get()</code>, <code>getElementById</code>, <code>select</code>). Il .jar va nella cartella <code>libs</code> e si aggiunge la dipendenza in <code>build.gradle</code>.</li>
+  </ul>
+  <div class="note">Dall'emulatore, il "localhost" del tuo PC è l'indirizzo 10.0.2.2</div>
+  <ul>
+    <li>Da <b>API 28</b> le connessioni <code>http</code> in chiaro sono bloccate ("Cleartext not permitted"): usa <code>https</code> o abilitale nella configurazione di sicurezza.</li>
+    <li>Le operazioni di rete sono lunghe: si fanno in un thread separato (vedi capitolo 09). Serve il permesso <code>INTERNET</code>.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Che indirizzo usa l'emulatore per raggiungere il PC?</summary><p>10.0.2.2</p></details>
+    <details><summary>Cosa significa l'errore "Cleartext not permitted"?</summary><p>Che da API 28 le connessioni http non cifrate sono disabilitate di default.</p></details>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="ch" id="storage" data-t="Salvare i dati">
+  <div class="ch-head"><span class="ch-num">12</span><h2>Salvare i dati</h2><span class="ch-sub">File, preferenze, database SQL</span></div>
+  <h3>Dove stanno i dati</h3>
+  <ul>
+    <li><b>Spazio privato:</b> ogni app ha la sua cartella, accessibile <b>solo</b> a lei. Se disinstalli l'app viene cancellata.</li>
+    <li><b>Spazio pubblico:</b> file condivisi con altre app (foto, musica, documenti).</li>
+    <li>Attenzione: <mark>"External" non vuol dire SD card</mark>. Vuol dire fuori dallo spazio privato; può stare nella memoria interna (<code>/storage/emulated/0/</code>) o sulla SD (<code>/storage/XXXX-XXXX/</code>).</li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th>Metodo (Context)</th><th>Percorso</th></tr>
+    <tr><td>getFilesDir()</td><td><code>/data/user/0/&lt;package&gt;/files/</code></td></tr>
+    <tr><td>getCacheDir()</td><td><code>/data/user/0/&lt;package&gt;/cache/</code></td></tr>
+    <tr><td>getDatabasePath(n)</td><td><code>/data/user/0/&lt;package&gt;/databases/n</code></td></tr>
+    <tr><td>getExternalFilesDir()</td><td><code>/storage/emulated/0/Android/data/&lt;package&gt;/files/</code></td></tr>
+  </table></div>
+  <p>Lo <code>0</code> nel percorso è l'ID dell'utente principale.</p>
+  <h3>Storage e permessi nel tempo</h3>
+  <ul>
+    <li><b>API ≤ 28:</b> <code>READ_</code>/<code>WRITE_EXTERNAL_STORAGE</code> danno accesso a tutto.</li>
+    <li><b>API 29+:</b> le app sono "sandboxed" anche fuori. Per i media condivisi si usa <b>MediaStore</b> (un Content Provider con un database SQL di indici), per gli altri file <b>SAF</b>.</li>
+    <li><b>API 30+:</b> WRITE ignorato; <code>MANAGE_EXTERNAL_STORAGE</code> per file manager e backup (va giustificato su Google Play).</li>
+    <li><b>API 33+:</b> <code>READ_MEDIA_IMAGES</code>, <code>_VIDEO</code>, <code>_AUDIO</code>.</li>
+  </ul>
+  <h3>SharedPreferences</h3>
+  <p>Piccoli dati in coppie <b>chiave-valore</b> (es. impostazioni). Per leggere usi <code>get</code>; per scrivere serve un <code>Editor</code>:</p>
+<pre><code>SharedPreferences p = getSharedPreferences("file", MODE_PRIVATE);
+boolean v = p.getBoolean("KEY", false);       <span class="c">// leggi</span>
+SharedPreferences.Editor e = p.edit();
+e.putBoolean("KEY", true);
+e.commit();                                   <span class="c">// senza commit non salva!</span></code></pre>
+  <h3>File</h3>
+<pre><code>FileOutputStream fos = openFileOutput("hello_file", Context.MODE_PRIVATE);
+fos.write("hello world!".getBytes());
+fos.close();                                  <span class="c">// per leggere: openFileInput, read, close</span></code></pre>
+  <p>Modi: <code>MODE_PRIVATE</code>, <code>MODE_APPEND</code>. Un file statico si mette in <code>res/raw</code> e si legge con <code>openRawResource(R.raw.nome)</code>. Per i file temporanei c'è la cache (max consigliato 1 MB; Android la svuota se serve spazio).</p>
+  <h3>Mini ripasso SQL</h3>
+  <div class="tbl"><table>
+    <tr><th>Comando</th><th>Fa</th></tr>
+    <tr><td>CREATE / ALTER / DROP</td><td>Crea / modifica / cancella una tabella</td></tr>
+    <tr><td>SELECT</td><td>Legge righe: <code>SELECT NAME FROM CUSTOMERS WHERE SALARY &gt; 5000 ORDER BY NAME</code></td></tr>
+    <tr><td>INSERT</td><td>Aggiunge una riga</td></tr>
+    <tr><td>UPDATE</td><td>Modifica righe (<code>WHERE</code> sceglie quali; senza WHERE le cambia tutte!)</td></tr>
+    <tr><td>DELETE</td><td>Cancella righe</td></tr>
+  </table></div>
+  <p>La <b>chiave primaria</b> è la colonna che identifica in modo unico ogni riga.</p>
+  <h3>SQLite in Android</h3>
+  <ul>
+    <li>Crei una sottoclasse di <code>SQLiteOpenHelper</code> e nel suo <code>onCreate()</code> esegui la <code>CREATE TABLE</code> con <code>db.execSQL()</code>. Va riscritto anche <code>onUpgrade()</code>.</li>
+    <li><code>db = helper.getWritableDatabase()</code> ti dà il database.</li>
+    <li>Per inserire metti i valori in un <code>ContentValues</code> e chiami <code>db.insert(tabella, null, valori)</code>. Ci sono anche <code>db.update()</code> e <code>db.delete()</code>.</li>
+    <li><code>db.query(...)</code> restituisce un <b>Cursor</b>: lo scorri con <code>moveToFirst()</code> e <code>moveToNext()</code>, e leggi con <code>getInt()</code>/<code>getString()</code> + <code>getColumnIndex()</code>.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>"External storage" vuol dire SD card?</summary><p>No: vuol dire fuori dallo spazio privato dell'app. Può essere memoria interna o SD.</p></details>
+    <details><summary>Come salvi un booleano nelle SharedPreferences?</summary><p>Prendi l'Editor con edit(), usi putBoolean(chiave, valore) e poi commit().</p></details>
+    <details><summary>Cosa restituisce db.query()?</summary><p>Un Cursor, che si scorre con moveToFirst/moveToNext per leggere i record.</p></details>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="ch" id="grafica" data-t="Grafica e custom view">
+  <div class="ch-head"><span class="ch-num">13</span><h2>Grafica e custom view</h2><span class="ch-sub">Disegnare, animare, creare widget propri</span></div>
+  <ul>
+    <li>Si disegna in una <b>View</b> (grafica semplice, statica) o in un <b>Canvas</b> (grafica complessa, aggiornata spesso).</li>
+    <li><b>Drawable</b> = qualcosa che si può disegnare: <code>ShapeDrawable</code> (forma), <code>BitmapDrawable</code> (immagine), <code>ColorDrawable</code> (colore). Si mette nella view da XML o con <code>setImageDrawable()</code>.</li>
+    <li><b>Animazioni</b> definite in XML: rotazione, traslazione, ridimensionamento, trasparenza. La classe <code>Animation</code> le legge e le applica a un'ImageView.</li>
+  </ul>
+  <h3>Come Android disegna le view: 3 fasi</h3>
+  <p>Le view formano un albero. Per disegnarlo, Android lo visita tre volte dall'alto in basso:</p>
+  <div class="flow"><span>1 · Measure</span><i>→</i><span>2 · Layout</span><i>→</i><span>3 · Draw</span></div>
+  <ul>
+    <li><b>onMeasure:</b> il padre chiede ai figli quanto vorrebbero essere grandi (<code>LayoutParams</code>: un numero, MATCH_PARENT o WRAP_CONTENT) e comunica i vincoli con <b>MeasureSpec</b>. Alla fine ogni view deve aver fissato <code>setMeasuredDimension()</code>.</li>
+    <li><b>onLayout:</b> il padre decide posizione e dimensione reali di ogni figlio.</li>
+    <li><b>onDraw(Canvas):</b> ogni view si disegna, usando un oggetto <code>Paint</code> e i metodi del Canvas.</li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th>MeasureSpec</th><th>Significa</th></tr>
+    <tr><td>UNSPECIFIED</td><td>"Quanto spazio vorresti?"</td></tr>
+    <tr><td>EXACTLY</td><td>"Sarai grande esattamente così"</td></tr>
+    <tr><td>AT_MOST</td><td>"Al massimo così"</td></tr>
+  </table></div>
+  <div class="def"><b class="lbl">Da non confondere</b><code>invalidate()</code> ridisegna solo quella view (richiama onDraw). <code>requestLayout()</code> rifà tutto il processo (measure, layout, draw) sull'albero.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quali sono le tre fasi del disegno?</summary><p>Misura (onMeasure), posizionamento (onLayout), disegno (onDraw).</p></details>
+    <details><summary>invalidate() o requestLayout() se cambia solo il colore?</summary><p>invalidate(): basta ridisegnare, la dimensione non cambia.</p></details>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="ch" id="touch" data-t="Multitouch e gesti">
+  <div class="ch-head"><span class="ch-num">14</span><h2>Multitouch e gesti</h2><span class="ch-sub">Dita sullo schermo</span></div>
+  <p>Un tocco è un <b>MotionEvent</b>. Ogni dito è un <b>pointer</b>, con un <mark>ID che resta uguale</mark> finché il dito è giù. L'<b>indice</b> invece può cambiare da un evento all'altro: non confonderli.</p>
+  <div class="tbl"><table>
+    <tr><th>Action</th><th>Quando</th></tr>
+    <tr><td>ACTION_DOWN</td><td>Il primo dito tocca</td></tr>
+    <tr><td>ACTION_POINTER_DOWN</td><td>Un altro dito tocca (non il primo)</td></tr>
+    <tr><td>ACTION_MOVE</td><td>Un dito si muove</td></tr>
+    <tr><td>ACTION_POINTER_UP</td><td>Si alza un dito, ma ne restano altri</td></tr>
+    <tr><td>ACTION_UP</td><td>Si alza l'ultimo dito</td></tr>
+  </table></div>
+  <p>Metodi utili: <code>getActionMasked()</code>, <code>getPointerCount()</code>, <code>getActionIndex()</code>, <code>getPointerId(i)</code>, <code>getX(i)</code>, <code>getY(i)</code>, <code>findPointerIndex(id)</code>.</p>
+  <ul>
+    <li>La view riceve l'evento in <code>onTouchEvent()</code>; un listener esterno con <code>setOnTouchListener()</code> riceve <code>onTouch()</code> <b>prima</b> della view.</li>
+    <li>Entrambi restituiscono un booleano: <code>true</code> = evento consumato. Se restituisci <code>false</code> non riceverai i MOVE e UP successivi di quel gesto.</li>
+    <li><b>GestureDetector</b> riconosce gesti già pronti: tocco singolo, doppio tocco, fling (scorrimento veloce).</li>
+    <li><b>ViewFlipper</b> (sottoclasse di ViewAnimator) mostra una view alla volta con animazione: <code>showNext()</code>, <code>showPrevious()</code>.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Secondo dito che tocca: che action?</summary><p>ACTION_POINTER_DOWN.</p></details>
+    <details><summary>Cosa succede se onTouch restituisce false su ACTION_DOWN?</summary><p>Dici che non ti interessa: non riceverai più gli eventi successivi di quel gesto.</p></details>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="ch" id="media" data-t="MediaPlayer e audio focus">
+  <div class="ch-head"><span class="ch-num">15</span><h2>MediaPlayer e audio focus</h2><span class="ch-sub">Suonare audio e video</span></div>
+<pre><code>MediaPlayer mp = MediaPlayer.create(context, R.raw.brano);  <span class="c">// create() fa già prepare()</span>
+mp.start();   mp.pause();   mp.stop();
+mp.release(); mp = null;                                     <span class="c">// libera la risorsa!</span></code></pre>
+  <ul>
+    <li>Da URL: <code>new MediaPlayer()</code>, <code>setDataSource(url)</code>, <code>prepare()</code>, <code>start()</code>. Per URL esterni meglio <code>prepareAsync()</code> e far partire in <code>onPrepared()</code>, perché il caricamento può essere lungo.</li>
+    <li><b>AudioManager</b> controlla sorgenti e volume.</li>
+  </ul>
+  <h3>Audio focus</h3>
+  <p>L'uscita audio è una sola. Per non sovrapporsi (es. musica che copre il suono di un messaggio) un'app <b>chiede il focus</b> prima di suonare, con un <code>AudioFocusRequest</code> (tipo di audio + listener).</p>
+  <div class="vs">
+    <div><h4>Richieste</h4><ul><li><code>GAIN</code>: normale</li><li><code>GAIN_TRANSIENT</code>: uso breve</li><li><code>…_MAY_DUCK</code>: gli altri continuano a volume basso</li><li><code>…_EXCLUSIVE</code>: silenzio per gli altri</li></ul></div>
+    <div><h4>Cosa fare quando cambia</h4><ul><li><code>LOSS</code>: fermati</li><li><code>LOSS_TRANSIENT</code>: pausa</li><li><code>LOSS_TRANSIENT_CAN_DUCK</code>: abbassa il volume</li><li><code>GAIN</code>: riprendi</li></ul></div>
+  </div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Serve chiamare prepare() dopo MediaPlayer.create()?</summary><p>No, create() lo fa già.</p></details>
+    <details><summary>Cosa fa un'app quando riceve AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK?</summary><p>Abbassa il volume e continua.</p></details>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="ch" id="sensori" data-t="Sensori">
+  <div class="ch-head"><span class="ch-num">16</span><h2>Sensori</h2><span class="ch-sub">Movimento, ambiente, posizione</span></div>
+  <p>Tre famiglie: di <b>movimento</b> (accelerometro, giroscopio), di <b>ambiente</b> (temperatura, pressione, umidità, luce), di <b>posizione</b> (magnetometro). Danno dati grezzi. Alcuni sono hardware, altri software (calcolati da altri sensori).</p>
+  <p>Gli assi x, y, z sono <b>fissi rispetto al dispositivo</b>: se lo ruoti, cambiano i valori letti. L'accelerometro misura in m/s² e include la gravità.</p>
+<pre><code>public class SensorActivity extends Activity implements SensorEventListener {
+  onCreate:   sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+              luce = sm.getDefaultSensor(Sensor.TYPE_LIGHT);   <span class="c">// null se non c'è</span>
+  onResume:   sm.registerListener(this, luce, SensorManager.SENSOR_DELAY_NORMAL);
+  onPause:    sm.unregisterListener(this);
+  onSensorChanged(SensorEvent e):  float lux = e.values[0];
+  onAccuracyChanged(...)
+}</code></pre>
+  <div class="note">Registra in onResume e togli in onPause, altrimenti il sensore resta acceso e consuma batteria.</div>
+  <p>Velocità di lettura: <code>NORMAL</code> (0,2 s), <code>UI</code> (0,06 s), <code>GAME</code> (0,02 s), <code>FASTEST</code> (0 s).</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Come sai se il telefono ha un certo sensore?</summary><p>getDefaultSensor(tipo) restituisce null se non c'è.</p></details>
+    <details><summary>Perché unregisterListener in onPause?</summary><p>Per non consumare batteria quando l'activity non è visibile.</p></details>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="ch" id="notifiche" data-t="Notifiche">
+  <div class="ch-head"><span class="ch-num">17</span><h2>Notifiche</h2><span class="ch-sub">Avvisare l'utente fuori dall'app</span></div>
+  <ul>
+    <li><b>Toast:</b> messaggio breve che scompare da solo.</li>
+    <li><b>Dialog:</b> finestra che chiede un'interazione.</li>
+    <li><b>Notifiche:</b> icona nella barra di stato, pallino sull'icona dell'app, testo nel cassetto delle notifiche. Restano finché l'utente le cancella o l'app le revoca.</li>
+  </ul>
+  <ul>
+    <li><b>API 21:</b> notifiche <i>heads-up</i> (a comparsa) per quelle urgenti.</li>
+    <li><b>API 26:</b> <mark>canali</mark>. Ogni notifica deve stare in un canale, altrimenti non compare. L'utente può disattivare singoli canali.</li>
+    <li><b>API 33:</b> permesso <code>POST_NOTIFICATIONS</code>, nel manifesto e a runtime.</li>
+  </ul>
+<pre><code>NotificationChannel ch = new NotificationChannel(id, nome, importanza);
+notificationManager.createNotificationChannel(ch);
+
+NotificationCompat.Builder nb = new NotificationCompat.Builder(this, id)
+    .setSmallIcon(R.drawable.ancora)
+    .setContentIntent(pendingIntent);          <span class="c">// cosa si apre al tocco</span>
+notificationManager.notify(notification_id, nb.build());</code></pre>
+  <div class="note">Da API 26 l'icona deve avere sfondo trasparente e un solo colore, se no esce un quadrato bianco.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché una notifica potrebbe non comparire su Android 8+?</summary><p>Perché non è assegnata a un canale.</p></details>
+    <details><summary>Cosa serve in più su Android 13?</summary><p>Il permesso POST_NOTIFICATIONS, chiesto anche a runtime.</p></details>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="ch" id="alarms" data-t="Alarms">
+  <div class="ch-head"><span class="ch-num">18</span><h2>Alarms</h2><span class="ch-sub">Eseguire codice a un'ora precisa</span></div>
+  <p>Un alarm lancia un intent in un momento stabilito, <b>anche se l'app è chiusa</b> o il telefono dorme. Resta attivo finché non viene cancellato o il telefono si spegne. Si usa l'<code>AlarmManager</code>.</p>
+  <div class="vs">
+    <div><h4>Imprecisi (inexact)</h4><ul><li>Il sistema può spostarli per risparmiare batteria</li><li>Da API 31 partono entro un'ora</li><li><code>set()</code>, <code>setInexactRepeating()</code>, <code>setAndAllowWhileIdle()</code></li></ul></div>
+    <div><h4>Precisi (exact)</h4><ul><li>All'ora esatta</li><li>Da API 31 serve <code>SCHEDULE_EXACT_ALARM</code> o <code>USE_EXACT_ALARM</code></li><li><code>setExact()</code>, <code>setExactAndAllowWhileIdle()</code>, <code>setAlarmClock()</code> (sempre garantito)</li></ul></div>
+  </div>
+  <ul>
+    <li><b>Doze mode:</b> telefono non in carica, schermo spento, fermo, niente in esecuzione. Gli alarm vengono ritardati e la rete in background è bloccata.</li>
+    <li><b>App standby:</b> per le app non usate da tempo. Attività in background sospese, alarm ritardati.</li>
+    <li>Da <b>API 29</b> un alarm non può riportare l'app in primo piano da solo: si mostra una <b>notifica</b> e sarà l'utente a toccarla.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quale metodo garantisce sempre l'orario?</summary><p>setAlarmClock().</p></details>
+    <details><summary>Cos'è la Doze mode?</summary><p>Uno stato di risparmio batteria (schermo spento, non in carica, fermo) in cui alarm e rete in background vengono ritardati.</p></details>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="ch" id="broadcast" data-t="Broadcast">
+  <div class="ch-head"><span class="ch-num">19</span><h2>Broadcast</h2><span class="ch-sub">Messaggi per tutti</span></div>
+  <p>Le 4 componenti fondamentali di Android sono <b>Activity, Broadcast, Content Provider, Service</b>. Le ultime tre servono in casi particolari.</p>
+  <div class="def"><b class="lbl">In una frase</b>Un broadcast è un messaggio globale (un Intent) che chiunque sia interessato può ricevere. Chi lo manda usa <code>sendBroadcast()</code>, chi lo riceve è un <b>BroadcastReceiver</b> con il metodo <code>onReceive()</code>.</div>
+  <ul>
+    <li><b>Di sistema:</b> eventi globali come <code>BOOT_COMPLETED</code>, <code>AIRPLANE_MODE</code>, <code>BATTERY_LOW</code>, <code>TIME_TICK</code> (ogni minuto), <code>SMS_RECEIVED</code>.</li>
+    <li><b>Custom:</b> definiti dalle app. Impliciti (un'azione, es. <code>"it.unisa.…BROADCAST_PERSONALIZZATO"</code>) o espliciti (con il component, li riceve solo quel receiver).</li>
+  </ul>
+  <div class="vs">
+    <div><h4>Statico (nel manifesto)</h4><ul><li><code>&lt;receiver&gt;</code> con <code>&lt;intent-filter&gt;</code></li><li><code>android:exported</code> obbligatorio</li><li>Da API 26 solo per i custom e pochi di sistema (BOOT_COMPLETED, POWER_CONNECTED…)</li></ul></div>
+    <div><h4>Dinamico (nel codice)</h4><ul><li><code>registerReceiver(receiver, filtro)</code></li><li>Va tolto con <code>unregisterReceiver()</code></li><li>Coppie coerenti: onCreate/onDestroy oppure onResume/onPause</li></ul></div>
+  </div>
+  <ul>
+    <li><code>sendBroadcast(intent, permesso)</code>: arriva solo a chi ha quel permesso.</li>
+    <li>I broadcast <b>locali</b> (<code>LocalBroadcastManager</code>) sono obsoleti; oggi si usano ViewModel, LiveData, WorkManager.</li>
+    <li>Non togliere il receiver in onSaveInstanceState: con il tasto Back non viene chiamato.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Differenza tra receiver statico e dinamico?</summary><p>Statico: dichiarato nel manifesto, registrato all'installazione/boot. Dinamico: registrato nel codice con registerReceiver().</p></details>
+    <details><summary>Quale metodo implementa un BroadcastReceiver?</summary><p>onReceive(Context, Intent).</p></details>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="ch" id="provider" data-t="Content Provider">
+  <div class="ch-head"><span class="ch-num">20</span><h2>Content Provider</h2><span class="ch-sub">Condividere dati tra app</span></div>
+  <p>Un Content Provider <b>espone i dati di un database ad altre app</b>. Esempi già pronti: rubrica, registro chiamate, cronologia del browser, file multimediali. Ci si accede con un <code>ContentResolver</code>, con comandi simili a SQL (query, insert, update, delete) più le notifiche sui cambiamenti.</p>
+  <div class="def"><b class="lbl">L'URI</b><code>content://authority/path/id</code><br>authority = quale provider · path = quale tabella · id = quale record (chiave primaria). Senza id indichi tutta la tabella.</div>
+  <p>Esempio: <code>content://com.android.contacts/contacts/</code> è tutta la tabella dei contatti.</p>
+  <h3>Crearne uno</h3>
+  <ul>
+    <li>Una classe che estende <code>ContentProvider</code> e implementa <code>query(uri, projection, selection, args, sortOrder)</code>, che restituisce un Cursor.</li>
+    <li>L'authority si dichiara nel manifesto con <code>&lt;provider android:authorities="…" android:exported="true"/&gt;</code>.</li>
+    <li>Da <b>API 30</b> l'app client deve dichiarare nel suo manifesto i provider che usa, dentro <code>&lt;queries&gt;</code>.</li>
+    <li>Per leggere la rubrica serve <code>READ_CONTACTS</code>.</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa indicano authority e path in un URI?</summary><p>Authority il provider, path la tabella.</p></details>
+    <details><summary>Cosa cambia per il client da API 30?</summary><p>Deve dichiarare nel manifesto, in &lt;queries&gt;, i Content Provider a cui vuole accedere.</p></details>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="ch" id="service" data-t="Service">
+  <div class="ch-head"><span class="ch-num">21</span><h2>Service</h2><span class="ch-sub">Lavoro in background senza interfaccia</span></div>
+  <p>Un Service fa operazioni lunghe <b>senza interfaccia</b>: scaricare un file, sincronizzare con un server, suonare musica. Può continuare a girare a lungo, ma il sistema può fermarlo se servono risorse.</p>
+  <div class="note">Trabocchetto classico: di default un Service gira nel main thread dell'app, non in un thread separato!</div>
+  <div class="vs">
+    <div><h4>Unbound (avviato)</h4><ul><li><code>startService()</code> / <code>stopService()</code></li><li>Vive da solo, anche se chi l'ha lanciato termina</li><li>Callback: <code>onStartCommand()</code></li></ul></div>
+    <div><h4>Bound (agganciato)</h4><ul><li><code>bindService()</code></li><li>Le componenti diventano "client" e ci comunicano</li><li>Vive finché c'è almeno un client agganciato</li><li>Callback: <code>onBind()</code></li></ul></div>
+  </div>
+  <p>Uno stesso service può funzionare in entrambi i modi. Va dichiarato nel manifesto con <code>&lt;service android:name=".MyService"/&gt;</code>.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quando muore un service bound?</summary><p>Quando non ci sono più client agganciati.</p></details>
+    <details><summary>Un service gira in un thread separato?</summary><p>No, per default gira nel main thread, a meno che non lo specifichi tu.</p></details>
+  </div>
+</section>
+
+<!-- STUDY -->
+<section class="ch study" id="studiare" data-t="Come studiare bene">
+  <div class="ch-head"><span class="ch-num">→</span><h2>Come impararlo bene bene</h2><span class="ch-sub">Metodi e aiuti, pensati per questo corso</span></div>
+
+  <div class="methods">
+    <div><h3>1. Richiamo attivo</h3><p>Non rileggere: chiudi gli appunti e prova a rispondere. Usa le domande lampo in fondo a ogni capitolo; apri la risposta solo dopo aver risposto ad alta voce o su carta. Rileggere dà l'illusione di sapere, ricordare costruisce davvero la memoria.</p></div>
+    <div><h3>2. Ripetizione dilazionata</h3><p>Ripassa lo stesso argomento a distanza crescente: dopo 1, 3, 7 e 14 giorni. L'app gratuita <a href="https://apps.ankiweb.net/" target="_blank" rel="noopener">Anki</a> lo fa da sola: crea una carta per ogni domanda lampo e per ogni livello API.</p></div>
+    <div><h3>3. Scrivi codice, sempre</h3><p>Il laboratorio si supera solo programmando. Riscrivi le app d'esempio del corso <b>senza guardare</b> il codice originale, poi confronta. Inizia da CiaoMondo, Calcolatrice, ListaSemplice, ActivityLifeCycle.</p></div>
+    <div><h3>4. Rompi le app di proposito</h3><p>Ruota lo schermo, nega un permesso, togli Internet, premi Back e Home a metà operazione. Guarda nel Logcat cosa succede. È il modo più veloce per capire ciclo di vita, permessi e thread.</p></div>
+    <div><h3>5. Tecnica di Feynman</h3><p>Spiega un concetto (es. "perché ruotando si perdono i dati") a un amico o a un foglio bianco, con parole semplici. Dove ti blocchi, lì c'è il buco da ristudiare.</p></div>
+    <div><h3>6. Disegna le mappe</h3><p>A memoria, su un foglio: l'architettura a strati, la catena del ciclo di vita, la tabella dei livelli API. Se riesci a ridisegnarle senza errori, quei capitoli li sai.</p></div>
+    <div><h3>7. Studia in coppia</h3><p>Il contest si fa in due, e funziona anche per studiare: interrogatevi a vicenda con le domande lampo e fate a turno a scrivere il codice mentre l'altro controlla.</p></div>
+    <div><h3>8. Simula l'esame</h3><p>Sul sito del corso ci sono esempi d'esame. Falli a tempo, senza appunti, come se fosse il giorno vero. Poi correggi e torna sui capitoli dove hai sbagliato.</p></div>
+  </div>
+
+  <h3>Gli esercizi proposti nelle slide</h3>
+  <p>Sono il miglior allenamento per il laboratorio, perché li ha scelti il docente:</p>
+  <ul>
+    <li>Rendere la <b>Calcolatrice</b> più realistica e correggere l'errore della rotazione.</li>
+    <li>Correggere il <b>Quiz</b> (rotazione per barare, errori e omissioni volute).</li>
+    <li><b>FrammentiCartelle</b> con layout costruito dinamicamente, oltre le 12 cartelle.</li>
+    <li><b>Multitouch</b>: non uscire dallo schermo; cerchi che cambiano colore quando si toccano.</li>
+    <li><b>GestureFlip</b>: aggiungere il fling per il decremento.</li>
+    <li><b>MusicPlayer</b>: più brani e lista con una ListView.</li>
+    <li><b>CustomContentProvider</b>: accesso selettivo in base al voto.</li>
+  </ul>
+
+  <h3>Un piano di due settimane</h3>
+  <div class="tbl"><table>
+    <tr><th>Giorni</th><th>Cosa</th></tr>
+    <tr><td>1–2</td><td>Cap. 00–03: piattaforma, versioni, strumenti. Installa Android Studio e fai girare CiaoMondo</td></tr>
+    <tr><td>3–4</td><td>Cap. 04–05: layout e liste. Rifai Layouts, Widgets, Calcolatrice, ListaCustom</td></tr>
+    <tr><td>5–6</td><td>Cap. 06–08: ciclo di vita, intent, permessi. Correggi Calcolatrice e Quiz</td></tr>
+    <tr><td>7–8</td><td>Cap. 09–12: thread, frammenti, rete, storage</td></tr>
+    <tr><td>9–10</td><td>Cap. 13–18: grafica, touch, media, sensori, notifiche, alarm</td></tr>
+    <tr><td>11</td><td>Cap. 19–21: broadcast, content provider, service</td></tr>
+    <tr><td>12–14</td><td>Simulazioni d'esame a tempo + ripasso con Anki dei capitoli deboli</td></tr>
+  </table></div>
+
+  <h3>Risorse</h3>
+  <ul>
+    <li><a href="https://developer.android.com/guide" target="_blank" rel="noopener">developer.android.com/guide</a>: la documentazione ufficiale, citata nelle slide. Cerca lì ogni classe che non ti è chiara.</li>
+    <li><b>Android Programming: The Big Nerd Ranch Guide</b>: il libro consigliato dal docente (in inglese; la 5ª edizione usa Kotlin).</li>
+    <li>Le <b>app d'esempio</b> e gli <b>esempi d'esame</b> sul sito del corso.</li>
+    <li>Un'IA come tutor: incolla un capitolo e chiedi "fammi 10 domande d'esame su questo, una alla volta, e correggimi". Usala per farti interrogare, non per farti fare gli esercizi.</li>
+  </ul>
+  <div class="note">Mezz'ora al giorno tutti i giorni batte cinque ore la sera prima.</div>
+</section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var KEY = 'quaderno-android-done';
+  var done = {};
+  try { done = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { done = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e) {} }
+
+  var toc = document.getElementById('toc');
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('section.ch:not(.study)'));
+  var links = {}, cntEls = {};
+
+  chapters.forEach(function(sec){
+    var id = sec.id, n = sec.querySelector('.ch-num').textContent, t = sec.getAttribute('data-t');
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.innerHTML = '<span class="n">' + n + '</span><span class="t"></span><span class="cnt"></span><span class="ok" aria-hidden="true">✓</span>';
+    a.querySelector('.t').textContent = t;
+    li.appendChild(a); toc.appendChild(li); links[id] = a; cntEls[id] = a.querySelector('.cnt');
+
+    var lab = document.createElement('label');
+    lab.className = 'check';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.id = 'done-' + id; cb.checked = !!done[id];
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode('Capitolo ripassato'));
+    sec.appendChild(lab);
+    cb.addEventListener('change', function(){ done[id] = cb.checked; save(); update(); });
+  });
+
+  var li = document.createElement('li');
+  li.innerHTML = '<a href="#studiare"><span class="n">→</span><span class="t">Come studiare bene</span><span class="cnt"></span><span class="ok"></span></a>';
+  toc.appendChild(li); cntEls.studiare = li.querySelector('.cnt');
+
+  function update(){
+    var c = 0;
+    chapters.forEach(function(s){ var on = !!done[s.id]; if (on) c++; links[s.id].classList.toggle('done', on); });
+    document.getElementById('pc').textContent = c;
+    document.getElementById('pt').textContent = chapters.length;
+    document.getElementById('pb').style.width = (c / chapters.length * 100) + '%';
+  }
+  update();
+
+  if (window.matchMedia('(max-width:900px)').matches) {
+    var d = document.querySelector('.idx details'); if (d) d.open = false;
+    toc.addEventListener('click', function(e){ if (e.target.closest('a') && d) d.open = false; });
+  }
+
+  /* ---- ricerca su indice e contenuti ---- */
+  var qIn = document.getElementById('q'), res = document.getElementById('sres'), qClr = document.getElementById('qclr');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fold(s){ var o = ''; for (var i = 0; i < s.length; i++){ var f = s[i].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); o += f.length === 1 ? f : (f[0] || ' '); } return o; }
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function markArr(f, terms){ var m = new Array(f.length).fill(false), any = false; terms.forEach(function(tm){ var k = 0; while ((k = f.indexOf(tm, k)) !== -1){ any = true; for (var j = k; j < k + tm.length; j++) m[j] = true; k += tm.length; } }); return any ? m : null; }
+
+  var SEL = 'h2,h3,h4,summary,p,li,td,pre,.def,.note,.api > div,.stack > div,.flow';
+  var items = [];
+  Array.prototype.forEach.call(document.querySelectorAll('section.ch'), function(sec){
+    var num = sec.querySelector('.ch-num').textContent, title = sec.getAttribute('data-t');
+    Array.prototype.forEach.call(sec.querySelectorAll(SEL), function(el){
+      if (el.closest('.check')) return;
+      var text = el.textContent.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      items.push({ el: el, sec: sec, num: num, title: title, text: text, f: fold(text), head: el.matches('h2,h3,h4,summary') });
+    });
+  });
+
+  var cur = [], sel = -1, terms = [], placed = [];
+  function snip(it){
+    var t = it.text, f = it.f, p = Math.max(0, f.indexOf(terms[0]));
+    var a = Math.max(0, p - 45), b = Math.min(t.length, p + terms[0].length + 80);
+    var s = t.slice(a, b), m = markArr(f.slice(a, b), terms) || [], out = '', on = false;
+    for (var i = 0; i < s.length; i++){ if (m[i] && !on){ out += '<mark>'; on = true; } if (!m[i] && on){ out += '</mark>'; on = false; } out += esc(s[i]); }
+    if (on) out += '</mark>';
+    return (a > 0 ? '…' : '') + out + (b < t.length ? '…' : '');
+  }
+  function clearMarks(){ placed.forEach(function(mk){ var p = mk.parentNode; if (!p) return; p.replaceChild(document.createTextNode(mk.textContent), mk); p.normalize(); }); placed = []; }
+  function markIn(el){
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = w.nextNode())) nodes.push(n);
+    nodes.forEach(function(node){
+      var s = node.data, m = markArr(fold(s), terms); if (!m) return;
+      var frag = document.createDocumentFragment(), i = 0;
+      while (i < s.length){ var j = i; while (j < s.length && m[j] === m[i]) j++; var part = s.slice(i, j);
+        if (m[i]){ var mk = document.createElement('mark'); mk.className = 'shl'; mk.textContent = part; frag.appendChild(mk); placed.push(mk); }
+        else frag.appendChild(document.createTextNode(part));
+        i = j; }
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  function setCounts(counts){
+    Object.keys(cntEls).forEach(function(id){ var c = counts ? (counts[id] || 0) : 0; cntEls[id].textContent = c ? c : ''; cntEls[id].parentNode.classList.toggle('miss', !!counts && !c); });
+  }
+  function run(){
+    var raw = qIn.value.trim();
+    qClr.hidden = !raw;
+    clearMarks();
+    terms = fold(raw).split(/\s+/).filter(function(t){ return t; });
+    if (raw.length < 2){ res.hidden = true; res.innerHTML = ''; cur = []; setCounts(null); return; }
+    cur = items.filter(function(it){ return terms.every(function(t){ return it.f.indexOf(t) !== -1; }); });
+    var counts = {}; cur.forEach(function(it){ counts[it.sec.id] = (counts[it.sec.id] || 0) + 1; });
+    setCounts(counts);
+    var nch = Object.keys(counts).length;
+    if (!cur.length){ res.innerHTML = '<p class="sempty">Nessun risultato per “' + esc(raw) + '”. Prova con una parola più corta.</p>'; res.hidden = false; return; }
+    var html = '<p class="shead">' + cur.length + ' risultat' + (cur.length === 1 ? 'o' : 'i') + ' in ' + nch + ' capitol' + (nch === 1 ? 'o' : 'i') + ' · ↑↓ per scegliere, Invio per aprire</p>';
+    cur.slice(0, 60).forEach(function(it, i){
+      html += '<a href="#' + it.sec.id + '" data-i="' + i + '" class="sr' + (it.head ? ' sh' : '') + '"><span class="sc">' + esc(it.num + ' · ' + it.title) + '</span><span class="st">' + snip(it) + '</span></a>';
+    });
+    if (cur.length > 60) html += '<p class="shead">…e altri ' + (cur.length - 60) + '. Aggiungi una parola per restringere.</p>';
+    res.innerHTML = html; res.hidden = false; sel = -1;
+  }
+  function go(i){
+    var it = cur[i]; if (!it) return;
+    var det = it.el.closest('details'); if (det && !det.open) det.open = true;
+    res.hidden = true;
+    clearMarks(); markIn(it.el);
+    it.el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    it.el.classList.remove('flash'); void it.el.offsetWidth; it.el.classList.add('flash');
+  }
+  function hi(){ var ls = res.querySelectorAll('a.sr'); Array.prototype.forEach.call(ls, function(l, i){ l.classList.toggle('on', i === sel); }); if (ls[sel]) ls[sel].scrollIntoView({ block: 'nearest' }); }
+  qIn.addEventListener('input', run);
+  qIn.addEventListener('keydown', function(e){
+    var n = res.querySelectorAll('a.sr').length;
+    if (e.key === 'ArrowDown'){ e.preventDefault(); if (n){ sel = Math.min(n - 1, sel + 1); hi(); } }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); if (n){ sel = Math.max(0, sel - 1); hi(); } }
+    else if (e.key === 'Enter'){ e.preventDefault(); go(sel >= 0 ? sel : 0); }
+    else if (e.key === 'Escape'){ qIn.value = ''; run(); qIn.blur(); }
+  });
+  qIn.addEventListener('focus', function(){ if (qIn.value.trim().length >= 2 && res.innerHTML) res.hidden = false; });
+  res.addEventListener('click', function(e){ var a = e.target.closest('a.sr'); if (!a) return; e.preventDefault(); go(+a.getAttribute('data-i')); });
+  qClr.addEventListener('click', function(){ qIn.value = ''; run(); qIn.focus(); });
+  document.addEventListener('click', function(e){ if (!e.target.closest('.search')) res.hidden = true; });
+  document.addEventListener('keydown', function(e){ var ae = document.activeElement; if (e.key === '/' && ae !== qIn && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName))){ e.preventDefault(); qIn.focus(); } });
+})();
+</script>
+
+</body></html>
