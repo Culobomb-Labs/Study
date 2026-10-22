@@ -1,0 +1,1587 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Quaderno di Programmazione Distribuita</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Caveat:wght@600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: quaderno a quadretti in inchiostro blu petrolio. Indice fisso a sinistra; il codice Java è sempre spiegato riga per riga in due colonne. */
+:root{
+  --paper:#f5f7f8;
+  --grid:rgba(30,90,120,.07);
+  --ink:#16202a;
+  --ink-soft:#4b5866;
+  --rule:#d3dbe0;
+  --surface:#ffffff;
+  --acc:#1d6a86;
+  --acc-tint:#e2eff4;
+  --pen:#b8322a;
+  --hl:rgba(255,222,40,.55);
+  --code-bg:#edf1f4;
+  --ok:#2f7d52;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", Verdana, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --f-hand:"Caveat", "Segoe Print", "Comic Sans MS", cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12171c; --grid:rgba(150,200,230,.05); --ink:#e4e9ee; --ink-soft:#a2aebb;
+    --rule:#2c343d; --surface:#192028; --acc:#6cc3e0; --acc-tint:#172c36;
+    --pen:#ff8a7a; --hl:rgba(255,214,0,.26); --code-bg:#1c242d; --ok:#6cc993; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12171c; --grid:rgba(150,200,230,.05); --ink:#e4e9ee; --ink-soft:#a2aebb;
+  --rule:#2c343d; --surface:#192028; --acc:#6cc3e0; --acc-tint:#172c36;
+  --pen:#ff8a7a; --hl:rgba(255,214,0,.26); --code-bg:#1c242d; --ok:#6cc993; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:var(--ink); font-family:var(--f-body); font-size:17px; line-height:1.62;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:0 80px;
+}
+a{color:var(--acc)}
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+.wrap{max-width:1160px; margin:0 auto; display:grid; grid-template-columns:240px minmax(0,1fr); gap:56px}
+@media (max-width:900px){ .wrap{grid-template-columns:minmax(0,1fr); gap:0} }
+
+.cover{grid-column:1/-1; padding-block:56px 36px; border-bottom:2px solid var(--ink); display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:end}
+.cover .kicker{font-family:var(--f-mono); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft)}
+.cover h1{font-family:var(--f-display); font-weight:800; font-size:clamp(40px, 7.4vw, 86px); line-height:.94; letter-spacing:-.03em; margin:10px 0 14px; text-wrap:balance}
+.cover h1 span{color:var(--acc)}
+.cover p{margin:0; max-width:58ch; color:var(--ink-soft)}
+.stamp{font-family:var(--f-hand); font-size:26px; color:var(--pen); transform:rotate(-4deg); line-height:1.1; text-align:right; max-width:230px}
+@media (max-width:640px){ .cover{grid-template-columns:1fr} .stamp{text-align:left} }
+
+nav.idx{position:sticky; top:env(safe-area-inset-top, 0px); align-self:start; padding-top:28px; z-index:20}
+.idx h2{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px; font-weight:600}
+.idx .part{font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--acc); margin:12px 6px 2px; list-style:none}
+.idx ol{list-style:none; padding:0; margin:0; display:grid; gap:1px}
+.idx a{display:grid; grid-template-columns:28px 1fr auto 14px; gap:6px; align-items:baseline; text-decoration:none; color:var(--ink); padding:4px 6px; font-size:14.5px; line-height:1.3; border-radius:3px}
+.idx a:hover{background:var(--acc-tint)}
+.idx a .n{font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft)}
+.idx a .ok{color:var(--ok); font-size:13px; visibility:hidden}
+.idx a.done .ok{visibility:visible}
+.idx a.done .t{color:var(--ink-soft)}
+.progress{margin:14px 0 6px; font-family:var(--f-mono); font-size:12px; color:var(--ink-soft)}
+.bar{height:6px; background:var(--rule); border-radius:3px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:var(--ok); transition:width .3s}
+@media (max-width:900px){
+  nav.idx{position:static; max-height:none; padding-top:20px}
+  .idx details{background:var(--surface); border:1px solid var(--rule); padding:10px 14px; border-radius:4px}
+  .idx summary{cursor:pointer; font-family:var(--f-display); font-weight:700}
+}
+@media (min-width:901px){ .idx details > summary{display:none} .idx details{max-height:calc(100vh - 150px); overflow:auto} }
+
+/* ---------- search ---------- */
+.search{position:relative; margin-bottom:18px}
+.slbl{display:block; font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; font-weight:600}
+.sbox{position:relative}
+.sbox input{width:100%; font-family:var(--f-body); font-size:15px; color:var(--ink); background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; padding:8px 34px 8px 11px; -webkit-appearance:none; appearance:none}
+.sbox input::placeholder{color:var(--ink-soft)}
+.sbox input::-webkit-search-cancel-button{display:none}
+.sbox input:focus{outline:none; box-shadow:0 0 0 3px var(--hl)}
+.skey{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-family:var(--f-mono); font-size:11px; color:var(--ink-soft); border:1px solid var(--rule); border-radius:3px; padding:0 5px; pointer-events:none}
+.sbox input:not(:placeholder-shown) ~ .skey{display:none}
+.sclr{position:absolute; right:4px; top:50%; transform:translateY(-50%); border:0; background:none; color:var(--ink-soft); font-size:20px; line-height:1; padding:4px 8px; cursor:pointer}
+.sres{position:absolute; left:0; top:calc(100% + 6px); width:min(460px, calc(100vw - 32px)); max-height:min(70vh, 560px); overflow:auto; background:var(--surface); border:1.5px solid var(--ink); border-radius:4px; z-index:30; box-shadow:0 12px 32px rgba(10,20,30,.18)}
+.sres .shead{margin:0; padding:8px 12px; font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft); border-bottom:1px solid var(--rule)}
+.sres .sempty{margin:0; padding:14px 12px; font-size:14.5px; color:var(--ink-soft)}
+.sr{display:block; padding:9px 12px; border-bottom:1px solid var(--rule); text-decoration:none; color:var(--ink)}
+.sr:hover, .sr.on{background:var(--acc-tint)}
+.sr .sc{display:block; font-family:var(--f-mono); font-size:11px; color:var(--acc); letter-spacing:.04em; margin-bottom:2px}
+.sr .st{display:block; font-size:14px; line-height:1.4}
+.sr.sh .st{font-weight:700}
+.idx a .cnt{font-family:var(--f-mono); font-size:11px; color:var(--acc); font-variant-numeric:tabular-nums}
+.idx a.miss{opacity:.35}
+mark.shl{background:var(--hl); color:inherit; border-radius:2px; padding:0 1px}
+.flash{animation:flash 1.8s ease-out}
+@keyframes flash{0%{background-color:var(--hl)} 100%{background-color:transparent}}
+@media (prefers-reduced-motion: reduce){ .flash{animation:none; outline:2px solid var(--hl)} }
+
+main{min-width:0}
+.partbreak{margin-top:64px; padding-top:14px; border-top:2px solid var(--ink); font-family:var(--f-mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--acc)}
+section.ch{padding-block:48px 8px; border-bottom:1px dashed var(--rule)}
+.ch-head{display:grid; grid-template-columns:auto 1fr; gap:4px 16px; align-items:baseline; margin-bottom:18px}
+.ch-num{font-family:var(--f-mono); font-size:14px; color:var(--acc); font-weight:600}
+.ch h2{font-family:var(--f-display); font-weight:700; font-size:clamp(28px,4.2vw,40px); line-height:1.05; letter-spacing:-.02em; margin:0; text-wrap:balance}
+.ch-sub{grid-column:2; color:var(--ink-soft); font-size:15.5px}
+.ch h3{font-family:var(--f-display); font-weight:700; font-size:21px; margin:34px 0 8px; letter-spacing:-.01em}
+.ch p, .ch li{max-width:68ch}
+.ch ul, .ch ol{padding-left:1.25em; margin:8px 0}
+.ch li{margin:4px 0}
+.ch li::marker{color:var(--acc)}
+mark{background:linear-gradient(transparent 38%, var(--hl) 38%, var(--hl) 92%, transparent 92%); color:inherit; padding:0 2px}
+code{font-family:var(--f-mono); font-size:.86em; background:var(--code-bg); padding:1px 5px; border-radius:3px; word-break:break-word}
+pre{font-family:var(--f-mono); font-size:13.5px; line-height:1.55; background:var(--code-bg); padding:14px 16px; overflow-x:auto; border-radius:4px; margin:14px 0; max-width:100%}
+pre code{background:none; padding:0; font-size:inherit; word-break:normal}
+.c{color:var(--ink-soft)}
+
+/* code explained line by line */
+.lines{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); margin:16px 0; border:1px solid var(--rule); border-radius:4px; overflow:hidden; background:var(--surface)}
+.lines > div{padding:5px 12px; border-bottom:1px solid var(--rule); min-width:0}
+.lines > div:nth-last-child(-n+2){border-bottom:0}
+.lines .k{font-family:var(--f-mono); font-size:13px; background:var(--code-bg); white-space:pre; overflow-x:auto}
+.lines .e{font-size:14.5px; line-height:1.45; color:var(--ink-soft)}
+.lines .e b{color:var(--ink)}
+@media (max-width:640px){
+  .lines{grid-template-columns:minmax(0,1fr)}
+  .lines > div{border-bottom:0}
+  .lines .e{border-bottom:1px solid var(--rule); padding-bottom:9px}
+}
+
+.def{background:var(--acc-tint); padding:14px 18px; margin:16px 0; max-width:68ch; border-radius:2px}
+.def b.lbl{display:block; font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--acc); margin-bottom:2px}
+.note{font-family:var(--f-hand); font-size:23px; line-height:1.2; color:var(--pen); margin:14px 0; max-width:60ch; padding-left:28px; position:relative}
+.note::before{content:"→"; position:absolute; left:0; top:0}
+
+.tbl{overflow-x:auto; margin:14px 0; max-width:100%}
+table{border-collapse:collapse; width:100%; font-size:15px; min-width:440px}
+th{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--ink-soft); font-weight:600; border-bottom:2px solid var(--ink); padding:8px 10px}
+td{border-bottom:1px solid var(--rule); padding:8px 10px; vertical-align:top}
+td.num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+
+.vs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin:14px 0}
+.vs > div{background:var(--surface); border:1px solid var(--rule); padding:12px 16px; min-width:0}
+.vs h4{font-family:var(--f-display); margin:0 0 4px; font-size:17px}
+.vs ul{margin:4px 0; padding-left:1.1em; font-size:15.5px}
+.vs p{margin:4px 0; font-size:15.5px}
+@media (max-width:560px){ .vs{grid-template-columns:1fr} }
+
+.levels{display:grid; gap:8px; margin:16px 0}
+.levels > div{display:grid; grid-template-columns:150px 1fr; gap:12px; background:var(--surface); border:1px solid var(--rule); padding:10px 14px; align-items:baseline}
+.levels b{font-family:var(--f-display)}
+.levels span{font-size:15.5px}
+.levels small{display:block; font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--acc)}
+@media (max-width:560px){ .levels > div{grid-template-columns:1fr; gap:2px} }
+
+.flow{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:16px 0; font-family:var(--f-mono); font-size:13.5px}
+.flow span{background:var(--surface); border:1px solid var(--rule); padding:5px 9px; border-radius:3px}
+.flow span.hot{background:var(--acc); color:var(--paper); border-color:var(--acc)}
+.flow i{font-style:normal; color:var(--ink-soft)}
+
+/* interactive widgets */
+.lab{background:var(--surface); border:1px solid var(--ink); padding:18px 20px; margin:20px 0; max-width:720px}
+.lab h4{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--acc); margin:0 0 10px; font-weight:600}
+.lab label{display:grid; grid-template-columns:150px 1fr 60px; gap:10px; align-items:center; font-size:15px; margin:6px 0}
+.lab input[type=range]{width:100%; accent-color:var(--acc)}
+.lab output{font-family:var(--f-mono); font-variant-numeric:tabular-nums; text-align:right}
+.lab .big{font-family:var(--f-display); font-weight:800; font-size:44px; line-height:1; color:var(--acc)}
+.lab .res{display:flex; flex-wrap:wrap; gap:8px 28px; align-items:baseline; margin-top:12px}
+.lab .res small{display:block; color:var(--ink-soft); font-size:13px}
+.lab .tbar{height:22px; display:flex; margin-top:12px; border:1px solid var(--rule); max-width:100%}
+.lab .tbar span{display:block; height:100%}
+.lab .tbar .s{background:var(--pen)}
+.lab .tbar .p{background:var(--acc)}
+.legend{font-size:13px; color:var(--ink-soft); margin-top:6px; display:flex; gap:16px; flex-wrap:wrap}
+.legend i{display:inline-block; width:10px; height:10px; margin-right:5px; vertical-align:middle}
+@media (max-width:560px){ .lab label{grid-template-columns:1fr 60px} .lab label span{grid-column:1/-1} }
+
+.race{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin:12px 0}
+.race > div{border:1px solid var(--rule); padding:10px; text-align:center; background:var(--paper)}
+.race small{display:block; font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft)}
+.race b{font-family:var(--f-mono); font-size:28px; font-variant-numeric:tabular-nums}
+.race .mem b{color:var(--acc)}
+.steplog{font-family:var(--f-mono); font-size:13.5px; min-height:3em; margin:8px 0}
+.btns{display:flex; gap:8px; flex-wrap:wrap}
+.btn{font:inherit; font-family:var(--f-mono); font-size:13px; padding:7px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; border-radius:3px}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.4; cursor:default}
+
+.quiz{margin:28px 0 8px; max-width:68ch}
+.quiz h4{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 6px; font-weight:600}
+.quiz details{border-top:1px solid var(--rule); padding:8px 0}
+.quiz details:last-child{border-bottom:1px solid var(--rule)}
+.quiz summary{cursor:pointer; font-weight:700; list-style:none; display:grid; grid-template-columns:22px 1fr; gap:4px}
+.quiz summary::-webkit-details-marker{display:none}
+.quiz summary::before{content:"?"; font-family:var(--f-mono); color:var(--acc)}
+.quiz details[open] summary::before{content:"✓"}
+.quiz details p{margin:6px 0 2px 26px; color:var(--ink-soft)}
+.check{display:inline-flex; gap:8px; align-items:center; margin:22px 0 30px; font-family:var(--f-mono); font-size:13px; cursor:pointer; user-select:none; color:var(--ink-soft)}
+.check input{width:18px; height:18px; accent-color:var(--ok)}
+
+.study{background:var(--ink); color:var(--paper); margin:64px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0; padding:48px max(16px, env(safe-area-inset-left, 0px)); border-bottom:0}
+.study .ch-num{color:var(--hl)}
+.study h2, .study h3, .study p, .study li, .study a, .study th{color:var(--paper)}
+.study .ch-sub{color:var(--paper); opacity:.7}
+.study code{background:rgba(127,127,127,.25); color:var(--paper)}
+.methods{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:26px 32px; margin-top:20px}
+.methods > div{min-width:0}
+.methods h3{margin:0 0 4px; font-size:20px}
+.methods p{margin:0; font-size:16px; opacity:.88}
+@media (max-width:640px){ .methods{grid-template-columns:1fr} }
+.study th{border-color:var(--paper); opacity:.85}
+.study td{border-color:rgba(127,127,127,.35)}
+.study .note{color:var(--hl)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .study{background:var(--surface); border:1px solid var(--rule)}
+  :root:not([data-theme="light"]) .study h2, :root:not([data-theme="light"]) .study h3, :root:not([data-theme="light"]) .study p, :root:not([data-theme="light"]) .study li, :root:not([data-theme="light"]) .study a, :root:not([data-theme="light"]) .study th, :root:not([data-theme="light"]) .study code, :root:not([data-theme="light"]) .study .ch-sub{color:var(--ink)}
+  :root:not([data-theme="light"]) .study th{border-color:var(--ink)}
+}
+:root[data-theme="dark"] .study{background:var(--surface); border:1px solid var(--rule)}
+:root[data-theme="dark"] .study h2, :root[data-theme="dark"] .study h3, :root[data-theme="dark"] .study p, :root[data-theme="dark"] .study li, :root[data-theme="dark"] .study a, :root[data-theme="dark"] .study th, :root[data-theme="dark"] .study code, :root[data-theme="dark"] .study .ch-sub{color:var(--ink)}
+:root[data-theme="dark"] .study th{border-color:var(--ink)}
+
+
+/* ---------- figures ---------- */
+.fig{margin:20px 0; max-width:720px}
+.fig.small{max-width:440px}
+.fig .zoom{display:block; width:100%; padding:10px; margin:0; background:#ffffff; border:1px solid var(--rule); border-radius:4px; cursor:zoom-in}
+.fig .zoom:hover{border-color:var(--acc)}
+.fig img{display:block; width:100%; height:auto; max-width:100%}
+.fig figcaption{font-size:14px; line-height:1.45; color:var(--ink-soft); margin-top:8px; max-width:68ch}
+.fig figcaption span{font-family:var(--f-mono); font-size:11.5px; color:var(--acc); white-space:nowrap}
+.figrow{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; align-items:start; margin:20px 0; max-width:900px}
+.figrow.three{grid-template-columns:repeat(3, minmax(0,1fr))}
+.figrow .fig{margin:0; max-width:none}
+@media (max-width:640px){ .figrow, .figrow.three{grid-template-columns:minmax(0,1fr)} }
+.lb[hidden]{display:none}
+.lb{position:fixed; inset:0; z-index:100; background:rgba(8,12,16,.86); display:grid; grid-template-rows:1fr auto; gap:10px;
+  padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+.lb .lbimg{min-height:0; display:flex; align-items:center; justify-content:center; overflow:auto}
+.lb img{max-width:100%; max-height:100%; background:#ffffff; padding:12px; border-radius:4px; cursor:zoom-out}
+.lb p{margin:0; color:#e8edf1; text-align:center; font-size:15px}
+.lb button{position:absolute; top:max(12px, env(safe-area-inset-top, 0px)); right:max(12px, env(safe-area-inset-right, 0px)); font-family:var(--f-mono); font-size:13px; background:#ffffff; color:#16202a; border:0; border-radius:3px; padding:7px 12px; cursor:pointer}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important; scroll-behavior:auto!important} }
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div>
+      <div class="kicker">Programmazione Distribuita · Prof.ssa Malandrino · UniSa · Teoria 1–7 + JMS</div>
+      <h1>Sistemi distribuiti, <span>thread</span> &amp; Java EE</h1>
+      <p>Appunti semplici di otto lezioni: sistemi distribuiti, middleware, thread in Java, socket, Java EE e messaging con JMS. Con le figure delle slide: cliccale per ingrandirle. Il codice è spiegato riga per riga, pensato per chi con Java non è ancora a suo agio.</p>
+    </div>
+    <div class="stamp">Se il Java ti spaventa, parti dal capitolo 00. Sono 10 minuti.</div>
+  </header>
+
+  <nav class="idx" aria-label="Indice">
+    <div class="search" role="search">
+      <label for="q" class="slbl">Cerca negli appunti</label>
+      <div class="sbox">
+        <input id="q" type="search" placeholder="es. deadlock, volatile, Amdahl…" autocomplete="off" spellcheck="false" aria-controls="sres">
+        <button type="button" id="qclr" class="sclr" aria-label="Cancella ricerca" hidden>×</button>
+        <kbd class="skey" aria-hidden="true">/</kbd>
+      </div>
+      <div id="sres" class="sres" hidden></div>
+    </div>
+    <details open>
+      <summary>Indice dei capitoli</summary>
+      <h2>Indice</h2>
+      <ol id="toc"></ol>
+      <div class="progress"><span id="pc">0</span> capitoli ripassati su <span id="pt">0</span></div>
+      <div class="bar"><i id="pb"></i></div>
+    </details>
+  </nav>
+
+  <main>
+
+<!-- ================= 00 JAVA ================= -->
+<section class="ch" id="java" data-t="Il Java minimo" data-part="Prima di iniziare">
+  <div class="ch-head"><span class="ch-num">00</span><h2>Il Java minimo per capire le slide</h2><span class="ch-sub">Solo le parole che servono, niente di più</span></div>
+  <p>Nelle slide il codice usa sempre le stesse poche parole. Imparate queste, il resto si legge.</p>
+  <div class="tbl"><table>
+    <tr><th>Parola</th><th>Cosa vuol dire, in parole semplici</th></tr>
+    <tr><td><code>class Counter { … }</code></td><td>Una <b>classe</b> è uno stampo. Descrive com'è fatto un tipo di oggetto: i suoi dati e le sue azioni.</td></tr>
+    <tr><td><code>new Counter()</code></td><td>Crea un <b>oggetto</b> vero a partire dallo stampo. Puoi crearne quanti vuoi.</td></tr>
+    <tr><td><code>private int c = 0;</code></td><td>Un <b>campo</b>: un dato dentro l'oggetto. <code>int</code> = numero intero. <code>private</code> = visibile solo dentro la classe.</td></tr>
+    <tr><td><code>public void increment() { … }</code></td><td>Un <b>metodo</b>: un'azione che l'oggetto sa fare. <code>void</code> = non restituisce niente. <code>public</code> = chiunque può chiamarlo.</td></tr>
+    <tr><td><code>public int value() { return c; }</code></td><td>Un metodo che <b>restituisce</b> un valore (qui un <code>int</code>).</td></tr>
+    <tr><td><code>Counter(…) { … }</code></td><td>Il <b>costruttore</b>: ha lo stesso nome della classe, viene eseguito quando fai <code>new</code>.</td></tr>
+    <tr><td><code>static</code></td><td>Appartiene alla <b>classe</b>, non al singolo oggetto. Ce n'è una copia sola, condivisa da tutti.</td></tr>
+    <tr><td><code>final</code></td><td>Non si può più cambiare dopo averlo assegnato.</td></tr>
+    <tr><td><code>this</code></td><td>"Questo oggetto qui", quello su cui stai lavorando.</td></tr>
+    <tr><td><code>extends Thread</code></td><td><b>Ereditarietà</b>: la mia classe è un tipo speciale di <code>Thread</code> e ne prende tutto. In Java puoi estendere <b>una sola</b> classe.</td></tr>
+    <tr><td><code>implements Runnable</code></td><td>Un'<b>interfaccia</b> è una promessa: "la mia classe ha il metodo <code>run()</code>". Puoi implementarne quante vuoi.</td></tr>
+    <tr><td><code>try { … } catch (Eccezione e) { … }</code></td><td>"Prova a fare questo; se va storto in quel modo, fai quest'altro." Un'<b>eccezione</b> è un errore che salta fuori a runtime.</td></tr>
+    <tr><td><code>throws InterruptedException</code></td><td>"Questo metodo può lanciare questo errore, se ne occupa chi lo chiama."</td></tr>
+    <tr><td><code>System.out.println("ciao")</code></td><td>Stampa a schermo. <code>format("%s:%s%n", a, b)</code> stampa con un modello: ogni <code>%s</code> viene sostituito da un valore, <code>%n</code> va a capo.</td></tr>
+    <tr><td><code>c++</code> / <code>c--</code></td><td>Aumenta / diminuisci <code>c</code> di 1.</td></tr>
+    <tr><td><code>for (int i = 0; i &lt; n; i++)</code></td><td>Ripeti con <code>i</code> che va da 0 a n−1.</td></tr>
+    <tr><td><code>int[] data = new int[10];</code></td><td>Un <b>array</b>: una fila di 10 interi, da <code>data[0]</code> a <code>data[9]</code>.</td></tr>
+  <tr><td><code>import java.net.*;</code></td><td>"Uso le classi di questo <b>package</b>" (una cartella di classi già pronte). L'asterisco vuol dire "tutte".</td></tr>
+    <tr><td><code>(String) in.readObject()</code></td><td>Un <b>cast</b>: "fidati, questo oggetto è una String". Serve quando un metodo restituisce un generico <code>Object</code>.</td></tr>
+    <tr><td><code>HashMap&lt;String, Record&gt;</code></td><td>Una rubrica chiave → valore. <code>put(k, v)</code> salva, <code>get(k)</code> ritrova. Le parentesi angolari dicono i tipi di chiave e valore.</td></tr>
+    <tr><td><code>implements Serializable</code></td><td>Gli oggetti di questa classe si possono trasformare in byte e spedire in rete o salvare.</td></tr>
+    <tr><td><code>@Stateless</code>, <code>@Resource</code>…</td><td>Un'<b>annotazione</b>: un'etichetta sul codice che dà informazioni a chi lo esegue (es. il container Java EE). Non è codice che "fa" qualcosa da solo.</td></tr>
+    <tr><td><code>try (X x = …) { … }</code></td><td><b>Try-with-resources</b>: usa la risorsa e la <b>chiude da solo</b> alla fine, anche se c'è un errore.</td></tr>
+    <tr><td><code>finally { … }</code></td><td>Codice eseguito <b>sempre</b> dopo try/catch, errore o no. Di solito serve a chiudere le risorse.</td></tr>
+  </table></div>
+  <h3>La "classe anonima": la cosa più strana che vedrai</h3>
+  <p>Nelle slide trovi spesso questo:</p>
+  <div class="lines">
+    <div class="k">new Thread(new Runnable() {</div><div class="e">Crea un thread, e <b>al volo</b> gli passo un oggetto Runnable senza dargli un nome di classe.</div>
+    <div class="k">    public void run() {</div><div class="e">Questo è il lavoro che il thread farà.</div>
+    <div class="k">        alphonse.bow(gaston);</div><div class="e">Il lavoro vero e proprio.</div>
+    <div class="k">    }</div><div class="e"></div>
+    <div class="k">}).start();</div><div class="e">Chiudo l'oggetto, chiudo la chiamata a Thread e <b>faccio partire</b> il thread.</div>
+  </div>
+  <div class="def"><b class="lbl">Traduzione</b>"Crea un nuovo thread che esegue <code>alphonse.bow(gaston)</code> e avvialo subito." Tutto qui. È solo una scorciatoia per non scrivere una classe separata.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Differenza tra classe e oggetto?</summary><p>La classe è lo stampo, l'oggetto è la cosa concreta creata con new a partire dallo stampo.</p></details>
+    <details><summary>Cosa significa static?</summary><p>Che il campo o metodo appartiene alla classe, con una sola copia condivisa da tutti gli oggetti.</p></details>
+    <details><summary>Perché a volte si preferisce implements a extends?</summary><p>Perché in Java si può estendere una sola classe, mentre si possono implementare più interfacce.</p></details>
+  </div>
+</section>
+
+<div class="partbreak">Parte 1 · Sistemi distribuiti e middleware</div>
+
+<!-- ================= 01 ================= -->
+<section class="ch" id="sd" data-t="Cos'è un sistema distribuito" data-part="Sistemi distribuiti">
+  <div class="ch-head"><span class="ch-num">01</span><h2>Cos'è un sistema distribuito</h2><span class="ch-sub">Teoria 2 · definizione, motivazioni, parole chiave</span></div>
+  <p>Oggi la rete collega persone (oltre 6 miliardi di utenti Internet nel 2026) ma anche oggetti: <b>Internet of Things</b> (oggetti che comunicano dati su se stessi), dispositivi indossabili (contapassi, battito, sonno), smart home e assistenti vocali, fino all'<b>Internet of Bodies</b> (dispositivi ingeriti, impiantati o collegati al corpo, monitorabili da remoto).</p>
+  <div class="def"><b class="lbl">Definizione</b>Un <b>sistema distribuito</b> è un insieme di macchine <b>autonome e indipendenti</b>, collegate da una <b>rete</b>, che coordinano il loro lavoro attraverso uno strato di software chiamato <b>middleware</b>.</div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Un sistema distribuito: nodi autonomi collegati in rete, coordinati dal middleware"><img src="img/sd-nodi.png" alt="Un sistema distribuito: nodi autonomi collegati in rete, coordinati dal middleware" width="690" height="350" loading="lazy" decoding="async"></button><figcaption>Un sistema distribuito: nodi autonomi collegati in rete, coordinati dal middleware <span>· Teoria 2</span></figcaption></figure>
+  <p>Il <b>middleware</b> sta in mezzo tra le applicazioni e il sistema operativo/rete. Offre comunicazione, localizzazione, coordinamento e sicurezza; nasconde le differenze tra le piattaforme; fa sembrare il sistema una cosa unica.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I servizi del middleware: comunicazione, localizzazione, coordinamento, sicurezza, gestione dei guasti"><img src="img/sd-middleware.png" alt="I servizi del middleware: comunicazione, localizzazione, coordinamento, sicurezza, gestione dei guasti" width="667" height="295" loading="lazy" decoding="async"></button><figcaption>I servizi del middleware: comunicazione, localizzazione, coordinamento, sicurezza, gestione dei guasti <span>· Teoria 2</span></figcaption></figure>
+  <h3>Perché distribuire?</h3>
+  <div class="vs">
+    <div><h4>Motivi economici</h4><ul><li><b>Costo/prestazioni:</b> tante macchine economiche possono convenire più di una sola potentissima</li><li><b>Crescita graduale:</b> aggiungi risorse quando serve</li><li><b>Condivisione</b> di dati, servizi, dispositivi</li></ul></div>
+    <div><h4>Motivi tecnologici</h4><ul><li><b>Scalabilità:</b> il carico si divide tra più nodi</li><li><b>Prestazioni:</b> lavori in parallelo</li><li><b>Disponibilità:</b> se un nodo si rompe, gli altri continuano</li><li><b>Distribuzione geografica:</b> dati vicino agli utenti</li></ul></div>
+  </div>
+  <p><b>Legge di Moore:</b> il numero di transistor nei processori raddoppia circa ogni 2 anni. L'hardware migliora, ma crescono anche le richieste. La vera sfida oggi non è avere buone macchine, ma <mark>farle lavorare bene insieme</mark>.</p>
+  <div class="vs">
+    <div><h4>Scalabilità verticale</h4><p>Potenzi <b>la singola macchina</b> (più CPU, più RAM). Tipica dei sistemi centralizzati. Ha limiti tecnici ed economici.</p></div>
+    <div><h4>Scalabilità orizzontale</h4><p>Aggiungi <b>altre macchine</b> e dividi il carico. Tipica dei sistemi distribuiti.</p></div>
+  </div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Scalabilità: distribuire calcolo, comunicazione e memorizzazione su più macchine"><img src="img/sd-scalabilita.jpg" alt="Scalabilità: distribuire calcolo, comunicazione e memorizzazione su più macchine" width="703" height="299" loading="lazy" decoding="async"></button><figcaption>Scalabilità: distribuire calcolo, comunicazione e memorizzazione su più macchine <span>· Teoria 2</span></figcaption></figure>
+  <h3>Le 8 parole chiave</h3>
+  <div class="tbl"><table>
+    <tr><th>Parola</th><th>Significa</th></tr>
+    <tr><td>Remoto</td><td>I componenti possono stare su macchine diverse.</td></tr>
+    <tr><td>Concorrenza</td><td>Più istruzioni girano davvero insieme, su macchine diverse. Non ci sono lock e semafori condivisi come su un multicore.</td></tr>
+    <tr><td>Assenza di stato globale</td><td>Nessuno vede tutto il sistema: memorie separate, messaggi con ritardi variabili, nessun orologio globale perfetto.</td></tr>
+    <tr><td>Malfunzionamenti parziali</td><td>Un pezzo può rompersi da solo, e il resto deve continuare.</td></tr>
+    <tr><td>Eterogeneità</td><td>Hardware, sistemi operativi, reti, protocolli, linguaggi diversi.</td></tr>
+    <tr><td>Autonomia</td><td>Non c'è un unico punto di controllo; ogni nodo ha le sue regole.</td></tr>
+    <tr><td>Evoluzione</td><td>Il sistema cambia nel tempo (ambiente, tecnologie) e deve adattarsi senza costi eccessivi.</td></tr>
+    <tr><td>Mobilità</td><td>Nodi e risorse (es. dati) si possono spostare per migliorare le prestazioni.</td></tr>
+  </table></div>
+  <div class="note">Trucco per ricordarle: "Remoto, Concorrente, Senza stato, Si rompe a pezzi, Eterogeneo, Autonomo, Evolve, Si muove".</div>
+  <h3>Il modello di riferimento RM-ODP</h3>
+  <p>Per parlarsi tra produttori, progettisti e sviluppatori serve un <b>modello comune</b>: indipendente dalla tecnologia ma abbastanza dettagliato. Lo standard è <b>RM-ODP</b> (Reference Model of Open Distributed Processing), dell'ISO/IEC. Si basa sul modello <b>ISO/OSI</b> e si innesta sul 7° livello (application), concentrandosi sulla <i>comunicazione</i> e su concetti di alto livello come portabilità e trasparenza.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa fa il middleware?</summary><p>Sta tra applicazioni e sistema operativo/rete: offre comunicazione, localizzazione, coordinamento e sicurezza, nasconde le differenze e dà una visione unificata.</p></details>
+    <details><summary>Scalabilità verticale o orizzontale per un sistema distribuito?</summary><p>Orizzontale: si aggiungono macchine e si divide il carico.</p></details>
+    <details><summary>Perché in un sistema distribuito non c'è uno stato globale?</summary><p>Memorie separate, messaggi con ritardi variabili, nessun orologio globale perfettamente sincronizzato.</p></details>
+  </div>
+</section>
+
+<!-- ================= 02 ================= -->
+<section class="ch" id="requisiti" data-t="Requisiti non funzionali" data-part="Sistemi distribuiti">
+  <div class="ch-head"><span class="ch-num">02</span><h2>Requisiti non funzionali</h2><span class="ch-sub">La qualità del sistema, non le sue funzioni</span></div>
+  <div class="def"><b class="lbl">In una frase</b>Un requisito <b>funzionale</b> dice <i>cosa</i> fa il sistema (es. "trasferisce soldi"). Un requisito <b>non funzionale</b> dice <i>quanto bene</i> lo fa (veloce, sicuro, sempre disponibile…).</div>
+  <div class="tbl"><table>
+    <tr><th>Requisito</th><th>In parole semplici</th></tr>
+    <tr><td>Aperto</td><td>Si collega facilmente ad altri sistemi. Tre ingredienti: <b>interoperabilità</b> (standard aperti, componenti di produttori diversi si parlano), <b>portabilità</b> (sposti l'app su un'altra piattaforma senza riscriverla), <b>estendibilità</b> (aggiungi pezzi senza stravolgere quelli esistenti).</td></tr>
+    <tr><td>Integrato</td><td>Tanti nodi separati, ma per l'utente sembra <b>un sistema solo</b>. Le differenze le nasconde il middleware.</td></tr>
+    <tr><td>Flessibile</td><td>Evolve integrando sistemi vecchi (<i>legacy</i>) e si riconfigura mentre gira.</td></tr>
+    <tr><td>Modulare</td><td>Ogni componente è autonomo ma collegato al resto.</td></tr>
+    <tr><td>Federazione</td><td>Sistemi diversi (per amministrazione e architettura) si uniscono per offrire servizi insieme.</td></tr>
+    <tr><td>Gestibile</td><td>Si può controllare e configurare: servizi, qualità del servizio, politiche di accesso.</td></tr>
+    <tr><td>QoS</td><td>Garantisce tempi, disponibilità e affidabilità anche se qualcosa si rompe. La <mark>tolleranza ai guasti</mark> è la richiesta principale: un sistema centralizzato se si rompe si ferma tutto, uno distribuito può usare componenti alternativi.</td></tr>
+    <tr><td>Scalabile</td><td>Regge picchi di carico e aumenta il throughput aggiungendo risorse, <b>senza cambiare architettura</b>.</td></tr>
+    <tr><td>Sicuro</td><td>Niente accessi non autorizzati. Più difficile perché tutto è remoto e mobile.</td></tr>
+    <tr><td>Trasparente</td><td>Nasconde i dettagli del sistema sottostante (vedi capitolo 03).</td></tr>
+  </table></div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quali sono i tre ingredienti di un sistema aperto?</summary><p>Interoperabilità, portabilità, estendibilità.</p></details>
+    <details><summary>Perché un sistema distribuito tollera meglio i guasti di uno centralizzato?</summary><p>Perché può usare dinamicamente componenti alternativi al posto di quelli guasti, mentre in uno centralizzato un guasto può bloccare tutto.</p></details>
+  </div>
+</section>
+
+<!-- ================= 03 ================= -->
+<section class="ch" id="trasparenza" data-t="La trasparenza" data-part="Sistemi distribuiti">
+  <div class="ch-head"><span class="ch-num">03</span><h2>La trasparenza</h2><span class="ch-sub">Far sembrare tutto una cosa sola</span></div>
+  <p>Trasparente qui vuol dire "<b>invisibile</b>": l'utente (o il programmatore) non vede la complessità che c'è sotto. Vantaggi: più produttività e più riuso del codice. Ci sono 8 tipi di trasparenza su <b>3 livelli</b>, e ogni livello si appoggia su quello sotto.</p>
+  <div class="levels">
+    <div><b><small>Livello 3</small>Efficienza</b><span>Scalabilità · Prestazioni · Malfunzionamenti</span></div>
+    <div><b><small>Livello 2</small>Funzionalità</b><span>Migrazione · Replica · Persistenza · Transazioni</span></div>
+    <div><b><small>Livello 1</small>Base</b><span>Accesso · Locazione</span></div>
+  </div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Le trasparenze e come dipendono l’una dall’altra: in basso accesso e locazione, in alto efficienza"><img src="img/sd-trasparenza.png" alt="Le trasparenze e come dipendono l’una dall’altra: in basso accesso e locazione, in alto efficienza" width="1200" height="407" loading="lazy" decoding="async"></button><figcaption>Le trasparenze e come dipendono l’una dall’altra: in basso accesso e locazione, in alto efficienza <span>· Teoria 2</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Tipo</th><th>Cosa nasconde</th><th>Si basa su</th></tr>
+    <tr><td><b>Accesso</b></td><td>Se una risorsa è locale o remota: la usi con la <b>stessa interfaccia</b>. Nasconde anche le differenze nella rappresentazione dei dati.</td><td>(base)</td></tr>
+    <tr><td><b>Locazione</b></td><td><b>Dove</b> si trova fisicamente la risorsa. La trovi per nome (sistema di naming), non per posizione.</td><td>(base)</td></tr>
+    <tr><td><b>Migrazione</b></td><td>Che un oggetto è stato <b>spostato</b> su un altro nodo (per bilanciare il carico o per guasti).</td><td>accesso + locazione</td></tr>
+    <tr><td><b>Replica</b></td><td>Che esistono <b>più copie</b> di un oggetto, tenute coerenti dal sistema. Es. le CDN come Akamai.</td><td>accesso + locazione</td></tr>
+    <tr><td><b>Persistenza</b></td><td>Che l'oggetto viene salvato su disco e "spento"/"riacceso" quando serve, anche su un altro nodo.</td><td>locazione</td></tr>
+    <tr><td><b>Transazioni</b></td><td>La gestione degli accessi concorrenti: le risorse restano coerenti anche con guasti.</td><td>—</td></tr>
+    <tr><td><b>Scalabilità</b></td><td>Che il sistema regge più carico <b>senza cambiare architettura</b>.</td><td>migrazione + replica</td></tr>
+    <tr><td><b>Prestazioni</b></td><td>Come si ottengono le alte prestazioni (bilanciamento, latenza, ottimizzazione).</td><td>migrazione, replica, persistenza</td></tr>
+    <tr><td><b>Malfunzionamenti</b></td><td>Che qualcosa si è rotto: il resto continua a servire, magari in modo parziale.</td><td>replica + transazioni (rollback)</td></tr>
+  </table></div>
+  <div class="note">Accesso e locazione sono date "di default": senza di loro non c'è sistema distribuito.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quali trasparenze sono di livello base?</summary><p>Accesso e locazione.</p></details>
+    <details><summary>Su cosa si basa la trasparenza ai malfunzionamenti?</summary><p>Sulla replica (nessun componente è insostituibile) e sulle transazioni (rollback delle operazioni incomplete, rieseguite su una replica).</p></details>
+    <details><summary>Differenza tra trasparenza di accesso e di locazione?</summary><p>Accesso: usi la risorsa nello stesso modo che sia locale o remota. Locazione: non sai e non ti serve sapere dove si trova.</p></details>
+  </div>
+</section>
+
+<!-- ================= 04 ================= -->
+<section class="ch" id="middleware" data-t="Middleware a oggetti" data-part="Sistemi distribuiti">
+  <div class="ch-head"><span class="ch-num">04</span><h2>Middleware a oggetti distribuiti</h2><span class="ch-sub">Teoria 3 · da RPC a CORBA, .NET ed Enterprise Java</span></div>
+  <p>Gli <b>oggetti distribuiti</b> uniscono due mondi: i sistemi distribuiti (tante macchine, un sistema) e la programmazione a oggetti (codice riutilizzabile). Il collante è il <b>middleware</b>.</p>
+  <p><b>Perché serve?</b> Potresti programmare tutto a mano con la rete, ma sarebbe <b>complesso</b> (risolvere l'interoperabilità tra ogni coppia di macchine, trasformare i dati in byte da spedire) e <b>costoso</b> (serve un esperto per ogni piattaforma). Il middleware fa questo lavoro sporco.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il middleware come strato tra le applicazioni e i diversi sistemi operativi e hardware"><img src="img/mw-strati.png" alt="Il middleware come strato tra le applicazioni e i diversi sistemi operativi e hardware" width="885" height="727" loading="lazy" decoding="async"></button><figcaption>Il middleware come strato tra le applicazioni e i diversi sistemi operativi e hardware <span>· Teoria 3</span></figcaption></figure>
+  <h3>Tre tipi di middleware</h3>
+  <div class="tbl"><table>
+    <tr><th>Tipo</th><th>Cosa fa</th></tr>
+    <tr><td>Di infrastruttura</td><td>Comunicazione tra sistemi operativi diversi e concorrenza, in modo portabile. Esempio: la <b>Java Virtual Machine</b>.</td></tr>
+    <tr><td>Di distribuzione</td><td>Automatizza la comunicazione: <mark>marshalling</mark> dei parametri, multiplexing di un canale per più chiamate, semantica delle invocazioni (unicast, multicast, attivazione on-demand), gestione guasti.</td></tr>
+    <tr><td>Per servizi comuni</td><td>Servizi pronti come persistenza, transazioni, sicurezza.</td></tr>
+  </table></div>
+  <div class="def"><b class="lbl">Marshalling</b>Trasformare i dati del programma (numeri, stringhe, oggetti) in una sequenza di byte da spedire in rete, e ricostruirli dall'altra parte. Serve perché macchine diverse rappresentano i dati in modo diverso (es. <i>big-endian</i> vs <i>little-endian</i> per gli interi, ASCII vs EBCDIC per le stringhe).</div>
+  <h3>Il progenitore: RPC (Remote Procedure Call, 1984)</h3>
+  <p>Idea: chiamare una procedura su un'altra macchina <b>come se fosse locale</b>. Nato in C.</p>
+  <ul>
+    <li>Primo a fare il <b>marshalling automatico</b>.</li>
+    <li>Usa <b>client stub</b> e <b>server stub</b>: "controfigure" che impacchettano e spacchettano i dati. Sono generati in automatico da un linguaggio apposito, l'<b>IDL</b> (Interface Definition Language).</li>
+    <li>Chiamata <b>sincrona</b>: il client resta bloccato finché il server non risponde.</li>
+  </ul>
+  <div class="flow"><span>Client</span><i>→</i><span class="hot">client stub</span><i>→ rete →</i><span class="hot">server stub</span><i>→</i><span>Server</span></div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il meccanismo RPC: client stub e server stub fanno marshalling e unmarshalling"><img src="img/mw-rpc.png" alt="Il meccanismo RPC: client stub e server stub fanno marshalling e unmarshalling" width="866" height="577" loading="lazy" decoding="async"></button><figcaption>Il meccanismo RPC: client stub e server stub fanno marshalling e unmarshalling <span>· Teoria 3</span></figcaption></figure>
+  <div class="vs">
+    <div><h4>Invocazione sincrona</h4><p>Chi chiama <b>aspetta</b> la risposta. Semplice e familiare, come una normale chiamata di funzione.</p></div>
+    <div><h4>Invocazione asincrona</h4><p>Chi chiama <b>continua</b> a lavorare. Si possono usare code di messaggi; client e server non devono essere attivi nello stesso momento.</p></div>
+  </div>
+  <p><b>Limiti di RPC:</b> è procedurale (non a oggetti), gestisce solo tipi di dato semplici (problemi con struct e puntatori), non gestisce bene le eccezioni, difficile invocare più programmi in modo concorrente.</p>
+  <h3>Da RPC agli oggetti distribuiti (anni '90)</h3>
+  <p>Si estende RPC per chiamare <b>metodi di oggetti remoti</b>. Non è banale: bisogna aggiungere almeno <b>polimorfismo, ereditarietà e gestione delle eccezioni</b>. È lo stesso salto che c'è stato tra C/Pascal (procedurali) e Java/C++ (a oggetti), ma in versione distribuita.</p>
+  <h3>Tre esempi</h3>
+  <div class="tbl"><table>
+    <tr><th>Middleware</th><th>Caratteristiche</th></tr>
+    <tr><td><b>CORBA</b> (1991)</td><td>Standard <b>multilinguaggio</b> (C, C++, Java, Cobol, Ada…). Interfacce in IDL. L'<b>ORB</b> (Object Request Broker) offre trasparenze e servizi. Complesso, con problemi di interoperabilità tra fornitori.</td></tr>
+    <tr><td><b>.NET</b> (Microsoft)</td><td>Basato sul <b>CLR</b>, macchina virtuale per C#, VB, F#. <b>.NET Remoting</b> fa la comunicazione (eredita da DCOM e COM+), il CLR l'infrastruttura, altre librerie i servizi.</td></tr>
+    <tr><td><b>Enterprise Java</b></td><td>Separa presentazione e logica di business. <b>Modello a componenti</b>, con Java RMI per la comunicazione.</td></tr>
+  </table></div>
+  <p>Una <b>componente</b> è un blocco di software riutilizzabile che si combina <b>in forma binaria</b> (già compilata), non modificando il codice sorgente.</p>
+  <h3>Middleware esplicito o implicito</h3>
+  <div class="vs">
+    <div><h4>Esplicito (RMI, CORBA, DCOM)</h4><p>Nel codice <b>chiami tu</b> le API del middleware per sicurezza, transazioni, salvataggio. La logica di business si perde in mezzo. Se cambi middleware, cambi API e riscrivi.</p></div>
+    <div><h4>Implicito / dichiarativo</h4><p>Scrivi <b>solo la logica di business</b>. In un file XML (<i>deployment descriptor</i>) dichiari "vorrei sicurezza, persistenza e transazioni". Il <b>container</b> (application server) intercetta le chiamate e fornisce i servizi.</p></div>
+  </div>
+  <div class="figrow"><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Middleware esplicito: l’oggetto chiama da solo le API di transazioni, sicurezza e database"><img src="img/mw-esplicito.png" alt="Middleware esplicito: l’oggetto chiama da solo le API di transazioni, sicurezza e database" width="1164" height="574" loading="lazy" decoding="async"></button><figcaption>Middleware esplicito: l’oggetto chiama da solo le API di transazioni, sicurezza e database <span>· Teoria 3</span></figcaption></figure><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Middleware implicito: un request interceptor chiama i servizi al posto dell’oggetto"><img src="img/mw-implicito.png" alt="Middleware implicito: un request interceptor chiama i servizi al posto dell’oggetto" width="1200" height="657" loading="lazy" decoding="async"></button><figcaption>Middleware implicito: un request interceptor chiama i servizi al posto dell’oggetto <span>· Teoria 3</span></figcaption></figure></div>
+  <p>Esempio del bonifico <code>transfer(acct1, acct2, amount)</code>: in versione esplicita su 6 righe solo una ("sottrai da uno, aggiungi all'altro") è logica vera; le altre 5 sono chiamate al middleware. In versione implicita resta solo quella riga.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cos'è il marshalling e perché serve?</summary><p>È la conversione dei dati in byte per spedirli in rete e la ricostruzione dall'altra parte. Serve perché macchine diverse rappresentano i dati in modo diverso.</p></details>
+    <details><summary>A cosa servono stub e IDL in RPC?</summary><p>Gli stub (client e server) fanno marshalling e rendono la chiamata sincrona; sono generati automaticamente partendo dalla descrizione delle interfacce scritta in IDL.</p></details>
+    <details><summary>Cosa bisogna aggiungere a RPC per avere oggetti distribuiti?</summary><p>Almeno polimorfismo, ereditarietà e gestione delle eccezioni.</p></details>
+    <details><summary>Middleware implicito: dove si dichiarano i servizi?</summary><p>In un file di metadati XML (deployment descriptor), non nel codice. Il container li fornisce intercettando le richieste.</p></details>
+  </div>
+</section>
+
+<div class="partbreak">Parte 2 · Thread in Java</div>
+
+<!-- ================= 05 ================= -->
+<section class="ch" id="perche" data-t="Perché la concorrenza" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">05</span><h2>Perché la programmazione concorrente</h2><span class="ch-sub">Teoria 4 · la fine del "pranzo gratis"</span></div>
+  <ul>
+    <li>Per anni i programmi diventavano più veloci <b>da soli</b>: bastava una CPU con clock più alto. Era il "<i>free performance lunch</i>".</li>
+    <li>Ma i transistor non si possono rimpicciolire all'infinito: troppo piccoli, gli elettroni li attraversano anche da spenti (<b>effetto tunnel</b>), e il calore diventa un problema (<b>thermal noise</b>, <i>hot-spot</i>). Non puoi avere insieme tanti transistor, facili da raffreddare e veloci.</li>
+    <li>Soluzione dei produttori: <b>più core</b> invece di un core più veloce.</li>
+  </ul>
+  <div class="figrow"><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: 50 anni di microprocessori: i transistor crescono, la frequenza si ferma, aumentano i core"><img src="img/th-trend.png" alt="50 anni di microprocessori: i transistor crescono, la frequenza si ferma, aumentano i core" width="1133" height="717" loading="lazy" decoding="async"></button><figcaption>50 anni di microprocessori: i transistor crescono, la frequenza si ferma, aumentano i core <span>· Teoria 4</span></figcaption></figure><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Più core con le loro cache che condividono la stessa memoria"><img src="img/th-multicore.png" alt="Più core con le loro cache che condividono la stessa memoria" width="848" height="582" loading="lazy" decoding="async"></button><figcaption>Più core con le loro cache che condividono la stessa memoria <span>· Teoria 4</span></figcaption></figure></div>
+  <div class="def"><b class="lbl">"Free lunch is over"</b>Più core non rendono il programma più veloce in automatico. Il software deve essere scritto per <b>lavorare in parallelo</b>. Per questo serve la programmazione concorrente.</div>
+  <h3>Tre tipi di concorrenza</h3>
+  <ol>
+    <li>Su <b>calcolatori diversi</b> (programmazione distribuita).</li>
+    <li>Più <b>processi</b> sulla stessa macchina (multitasking; un processo padre crea figli con <code>fork()</code>).</li>
+    <li>Più <b>thread</b> dentro lo stesso processo.</li>
+  </ol>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Multitasking: lo scheduler del sistema operativo alterna i task sulla CPU"><img src="img/th-multitasking.png" alt="Multitasking: lo scheduler del sistema operativo alterna i task sulla CPU" width="664" height="556" loading="lazy" decoding="async"></button><figcaption>Multitasking: lo scheduler del sistema operativo alterna i task sulla CPU <span>· Teoria 4</span></figcaption></figure>
+  <div class="vs">
+    <div><h4>Processo</h4><ul><li>Ha la sua <b>memoria privata</b></li><li>Comunica con gli altri tramite IPC: pipe, socket</li><li>"Pesante"</li></ul></div>
+    <div><h4>Thread</h4><ul><li>Vive <b>dentro</b> un processo</li><li><b>Condivide</b> memoria e file aperti con gli altri thread</li><li>"Leggero" (<i>lightweight process</i>)</li></ul></div>
+  </div>
+  <div class="figrow"><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Processo a un thread e processo multithread: codice, dati e file condivisi, registri e stack per thread"><img src="img/th-processi.png" alt="Processo a un thread e processo multithread: codice, dati e file condivisi, registri e stack per thread" width="704" height="406" loading="lazy" decoding="async"></button><figcaption>Processo a un thread e processo multithread: codice, dati e file condivisi, registri e stack per thread <span>· Teoria 4</span></figcaption></figure><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Più thread che accedono agli stessi oggetti in memoria"><img src="img/th-memoria.png" alt="Più thread che accedono agli stessi oggetti in memoria" width="1200" height="722" loading="lazy" decoding="async"></button><figcaption>Più thread che accedono agli stessi oggetti in memoria <span>· Teoria 4</span></figcaption></figure></div>
+  <p>Condividere la memoria è <b>comodo e veloce</b>, ma è anche la <mark>fonte di tutti i problemi</mark> che vedremo. Ogni programma Java ha almeno un thread, il <b>main thread</b>, che può crearne altri. In Java i thread sono <b>oggetti</b> della classe <code>Thread</code>.</p>
+  <p><b>Esempi di app multithread:</b> un browser (scarica immagini, mostra la pagina, ascolta il tasto stop), un'app di streaming audio (legge dalla rete, decomprime, riproduce, aggiorna il display), un server con un <i>pool</i> di thread già pronti.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa significa "free lunch is over"?</summary><p>Che il software non diventa più veloce da solo con l'hardware nuovo: ora l'hardware aggiunge core, e serve software capace di usarli in parallelo.</p></details>
+    <details><summary>Differenza chiave tra processo e thread?</summary><p>I processi hanno memoria privata; i thread dello stesso processo condividono la memoria.</p></details>
+  </div>
+</section>
+
+<!-- ================= 06 ================= -->
+<section class="ch" id="creare" data-t="Creare e avviare thread" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">06</span><h2>Creare e avviare un thread</h2><span class="ch-sub">Due modi, una regola: start(), non run()</span></div>
+  <h3>Modo 1: estendere Thread</h3>
+  <div class="lines">
+    <div class="k">public class HelloThread extends Thread {</div><div class="e">La mia classe <b>è un</b> Thread.</div>
+    <div class="k">  public void run() {</div><div class="e">Riscrivo <code>run()</code>: è il lavoro del thread.</div>
+    <div class="k">    System.out.println("Hello!");</div><div class="e">Il lavoro: stampare.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">  public static void main(String args[]) {</div><div class="e">Il punto di partenza del programma.</div>
+    <div class="k">    (new HelloThread()).start();</div><div class="e">Creo l'oggetto e lo <b>avvio</b> con <code>start()</code>.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <h3>Modo 2: implementare Runnable</h3>
+  <div class="lines">
+    <div class="k">public class HelloRunnable implements Runnable {</div><div class="e">Prometto di avere un metodo <code>run()</code>.</div>
+    <div class="k">  public void run() {</div><div class="e">Il lavoro da fare.</div>
+    <div class="k">    System.out.println("Hello!");</div><div class="e"></div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">  public static void main(String args[]) {</div><div class="e"></div>
+    <div class="k">    (new Thread(new HelloRunnable())).start();</div><div class="e">Passo il mio oggetto al costruttore di <code>Thread</code> e avvio.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <div class="vs">
+    <div><h4>extends Thread</h4><p>Più semplice, ma <b>limitante</b>: la classe non può estendere nient'altro.</p></div>
+    <div><h4>implements Runnable</h4><p>Più <b>generale</b>: la classe può estendere un'altra classe. È il modo preferito.</p></div>
+  </div>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Thread implementa Runnable: puoi estendere Thread oppure implementare Runnable"><img src="img/th-uml.png" alt="Thread implementa Runnable: puoi estendere Thread oppure implementare Runnable" width="392" height="422" loading="lazy" decoding="async"></button><figcaption>Thread implementa Runnable: puoi estendere Thread oppure implementare Runnable <span>· Teoria 4</span></figcaption></figure>
+  <div class="note">start() crea un nuovo thread che poi esegue run(). Se chiami run() direttamente, il codice gira nel thread corrente e non ottieni nessun parallelismo.</div>
+  <h3>Il ciclo di vita di un thread</h3>
+  <div class="flow"><span>New</span><i>→ start() →</i><span class="hot">Runnable</span><i>(Ready ⇄ Running)</i><i>→</i><span>Terminated</span></div>
+  <ul>
+    <li><b>New:</b> creato con <code>new</code>, non ancora avviato.</li>
+    <li><b>Runnable:</b> pronto o in esecuzione. È lo scheduler a decidere chi va sulla CPU (Ready ⇄ Running).</li>
+    <li><b>Timed Waiting:</b> aspetta per un tempo preciso (<code>sleep(ms)</code>, <code>join(ms)</code>, <code>wait(ms)</code>).</li>
+    <li><b>Waiting:</b> aspetta senza limite (<code>join()</code>, <code>wait()</code>), finché un altro non lo sveglia (<code>notify()</code>).</li>
+    <li><b>Blocked:</b> aspetta un <b>lock</b> per entrare in un blocco <code>synchronized</code>.</li>
+    <li><b>Terminated:</b> <code>run()</code> è finito.</li>
+  </ul>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il ciclo di vita completo di un thread (clicca per ingrandire)"><img src="img/th-ciclo.png" alt="Il ciclo di vita completo di un thread (clicca per ingrandire)" width="954" height="744" loading="lazy" decoding="async"></button><figcaption>Il ciclo di vita completo di un thread (clicca per ingrandire) <span>· Teoria 4</span></figcaption></figure>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché si preferisce Runnable?</summary><p>Perché Java permette di estendere una sola classe: con Runnable la tua classe resta libera di estenderne un'altra.</p></details>
+    <details><summary>Cosa succede se chiami run() invece di start()?</summary><p>Il codice viene eseguito nel thread corrente, come un normale metodo: nessun nuovo thread.</p></details>
+    <details><summary>In che stato è un thread che aspetta un lock?</summary><p>Blocked.</p></details>
+  </div>
+</section>
+
+<!-- ================= 07 ================= -->
+<section class="ch" id="metodi" data-t="sleep, interrupt, join" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">07</span><h2>sleep, interrupt, join</h2><span class="ch-sub">Fermarsi, farsi interrompere, aspettare gli altri</span></div>
+  <div class="tbl"><table>
+    <tr><th>Metodo</th><th>Cosa fa</th></tr>
+    <tr><td><code>Thread.sleep(4000)</code></td><td>Mette in pausa il thread corrente per 4000 ms = 4 secondi.</td></tr>
+    <tr><td><code>t.interrupt()</code></td><td>Manda a <code>t</code> un segnale: "smetti quello che fai e fai altro". Cosa fare lo decide il programmatore.</td></tr>
+    <tr><td><code>t.join()</code></td><td>Il thread corrente <b>aspetta</b> che <code>t</code> finisca. <code>t.join(1000)</code> aspetta al massimo 1 secondo.</td></tr>
+    <tr><td><code>t.isAlive()</code></td><td>Vero se <code>t</code> è ancora in esecuzione.</td></tr>
+  </table></div>
+  <p>Se un thread viene interrotto mentre dorme (<code>sleep</code>) o aspetta (<code>join</code>), salta fuori una <code>InterruptedException</code>. Si gestisce così:</p>
+  <div class="lines">
+    <div class="k">for (int i = 0; i &lt; info.length; i++) {</div><div class="e">Per ogni messaggio…</div>
+    <div class="k">  try {</div><div class="e">Provo a…</div>
+    <div class="k">    Thread.sleep(4000);</div><div class="e">…dormire 4 secondi.</div>
+    <div class="k">  } catch (InterruptedException e) {</div><div class="e">Se mi interrompono mentre dormo…</div>
+    <div class="k">    return;</div><div class="e">…esco. (Scelta del programmatore.)</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">  System.out.println(info[i]);</div><div class="e">Se non mi hanno interrotto, stampo.</div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <h3>L'esempio SimpleThreads</h3>
+  <p>Il main thread avvia un thread <b>MessageLoop</b> che stampa 4 frasi, una ogni 4 secondi. Il main aspetta con pazienza; se la pazienza finisce, lo interrompe.</p>
+  <div class="lines">
+    <div class="k">Thread t = new Thread(new MessageLoop());</div><div class="e">Creo il thread lavoratore.</div>
+    <div class="k">t.start();</div><div class="e">Lo avvio.</div>
+    <div class="k">while (t.isAlive()) {</div><div class="e">Finché lavora ancora…</div>
+    <div class="k">  t.join(1000);</div><div class="e">…lo aspetto <b>al massimo 1 secondo</b>, poi ricontrollo.</div>
+    <div class="k">  if (tempoPassato &gt; patience</div><div class="e">Se ho aspettato troppo…</div>
+    <div class="k">      &amp;&amp; t.isAlive()) {</div><div class="e">…e lui non ha ancora finito…</div>
+    <div class="k">    t.interrupt();</div><div class="e">…lo interrompo (lui stamperà "I wasn't done!")…</div>
+    <div class="k">    t.join();</div><div class="e">…e aspetto che si chiuda davvero.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e">Alla fine stampo "Finally!".</div>
+  </div>
+  <p>Dettagli utili: <code>patience</code> di default è 1 ora (<code>1000*60*60</code> ms) oppure i secondi passati come argomento; <code>Thread.currentThread().getName()</code> dà il nome del thread che sta eseguendo, così nell'output vedi chi stampa cosa.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa fa t.join()?</summary><p>Mette in pausa il thread corrente finché t non termina.</p></details>
+    <details><summary>Quando viene lanciata InterruptedException?</summary><p>Quando un thread viene interrotto mentre è in sleep() o in join() (o in wait()).</p></details>
+    <details><summary>Perché nel ciclo si usa join(1000) e non join()?</summary><p>Per riprendere il controllo ogni secondo e verificare se la pazienza è finita; con join() senza limite il main aspetterebbe per sempre.</p></details>
+  </div>
+</section>
+
+<!-- ================= 08 ================= -->
+<section class="ch" id="errori" data-t="Interferenza e memoria" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">08</span><h2>I due errori: interferenza e inconsistenza</h2><span class="ch-sub">Cosa va storto quando si condivide la memoria</span></div>
+  <p>I thread comunicano condividendo campi e oggetti. È efficiente, ma porta due tipi di errore. Per evitarli serve la <b>sincronizzazione</b>, che però crea a sua volta problemi di <b>contesa</b> (deadlock, livelock).</p>
+  <h3>Errore 1: interferenza</h3>
+  <p><code>c++</code> sembra una sola operazione, ma la CPU la fa in <mark>3 passi</mark>:</p>
+  <ol><li>leggi <code>c</code> dalla memoria in un registro;</li><li>aumenta il registro;</li><li>riscrivi il registro in <code>c</code>.</li></ol>
+  <p>Se due thread si mescolano (<i>interleaving</i>) a metà, un incremento si perde. Provalo:</p>
+  <div class="lab" id="racelab">
+    <h4>Simulatore · due thread fanno c++</h4>
+    <div class="race">
+      <div><small>Registro thread 1</small><b id="r1">–</b></div>
+      <div class="mem"><small>Memoria: c</small><b id="rc">0</b></div>
+      <div><small>Registro thread 2</small><b id="r2">–</b></div>
+    </div>
+    <div class="steplog" id="rlog">Partiamo con c = 0. Due thread fanno c++. Ci aspettiamo 2.</div>
+    <div class="btns">
+      <button class="btn" id="rnext" type="button">Passo successivo</button>
+      <button class="btn ghost" id="rmode" type="button">Ordine: mescolato</button>
+      <button class="btn ghost" id="rreset" type="button">Ricomincia</button>
+    </div>
+  </div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Interleaving: con c = 0, due incrementi mescolati lasciano c = 1"><img src="img/th-interleaving.png" alt="Interleaving: con c = 0, due incrementi mescolati lasciano c = 1" width="707" height="774" loading="lazy" decoding="async"></button><figcaption>Interleaving: con c = 0, due incrementi mescolati lasciano c = 1 <span>· Teoria 4</span></figcaption></figure>
+  <div class="def"><b class="lbl">Race condition</b>Quando il risultato dipende dall'<b>ordine</b> in cui i thread vengono eseguiti. Questi bug sono rari, difficili da riprodurre, e il debugger stesso può cambiare l'ordine e farli sparire: per questo si chiamano <b>Heisenbug</b> (da Heisenberg: misurare cambia il sistema).</div>
+  <h3>Errore 2: inconsistenza della memoria</h3>
+  <p>Thread diversi possono avere <b>visioni diverse</b> dello stesso dato, per colpa di cache e ottimizzazioni. Il thread A fa <code>counter++</code>, subito dopo B stampa <code>counter</code>… e può stampare ancora 0.</p>
+  <div class="def"><b class="lbl">Happens-before</b>È la <b>garanzia</b> che ciò che un thread ha scritto sia visibile a un altro. Senza questa relazione, nessuna promessa.</div>
+  <p>Come si crea una relazione happens-before:</p>
+  <ul>
+    <li><code>Thread.start()</code>: tutto quello fatto prima di avviare il thread è visibile al nuovo thread.</li>
+    <li><code>Thread.join()</code>: quando A finisce e la <code>join()</code> di B ritorna, tutto quello che ha fatto A è visibile a B.</li>
+    <li><b>Sincronizzazione</b> (<code>synchronized</code>, capitolo 10).</li>
+    <li><code>volatile</code>: la variabile viene sempre letta e scritta in memoria, <b>senza cache</b>. Ogni scrittura è visibile alle letture successive di qualsiasi thread.</li>
+  </ul>
+  <h3>L'esempio VolatileTest</h3>
+  <div class="lines">
+    <div class="k">volatile boolean running = true;</div><div class="e">Una bandierina condivisa. Nota <code>volatile</code>.</div>
+    <div class="k">// Thread 1</div><div class="e"></div>
+    <div class="k">while (running) counter++;</div><div class="e">Conta finché la bandierina è alzata.</div>
+    <div class="k">// Thread 2</div><div class="e"></div>
+    <div class="k">Thread.sleep(100);</div><div class="e">Aspetta un attimo che il thread 1 parta.</div>
+    <div class="k">running = false;</div><div class="e">Abbassa la bandierina: il thread 1 dovrebbe fermarsi.</div>
+  </div>
+  <p><b>Senza volatile</b> il thread 1 può tenere <code>running = true</code> nella sua cache e non vedere mai il cambio: <mark>non termina mai</mark>. Con <code>volatile</code> è obbligato a rileggere il valore vero ogni volta.</p>
+  <p>Stesso problema nell'esempio <code>Foo</code>: un thread mette <code>bar = 1</code>, il main aspetta 1 secondo e stampa <code>bar</code>. Può stampare <b>0 oppure 1</b>: aspettare con <code>sleep</code> non crea happens-before.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché c++ non è sicuro con più thread?</summary><p>Perché sono 3 passi (leggi, incrementa, scrivi) e due thread possono mescolarli, perdendo un incremento.</p></details>
+    <details><summary>Cos'è un Heisenbug?</summary><p>Un bug dovuto a race condition, transitorio e difficile da riprodurre; osservarlo (es. col debugger) può farlo sparire.</p></details>
+    <details><summary>Cita due modi per ottenere happens-before.</summary><p>Ad esempio: Thread.start(), Thread.join(), synchronized, variabile volatile.</p></details>
+    <details><summary>sleep() garantisce che vedrò il valore aggiornato?</summary><p>No. Aspettare non crea happens-before: nell'esempio Foo si può stampare 0 o 1.</p></details>
+  </div>
+</section>
+
+<!-- ================= 09 ================= -->
+<section class="ch" id="amdahl" data-t="Legge di Amdahl" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">09</span><h2>La legge di Amdahl</h2><span class="ch-sub">Teoria 5 · quanto si guadagna davvero con più core</span></div>
+  <p><b>Esempio della casa:</b> 5 amici dipingono 5 stanze uguali: finiscono in 1/5 del tempo (speedup 5). Ma se una stanza è grande il doppio, è quella a decidere il tempo totale.</p>
+  <p>Ogni programma ha una parte <b>parallelizzabile</b> (frazione <code>p</code>) e una parte <b>sequenziale</b> (<code>1 − p</code>) che non si può dividere.</p>
+  <div class="def"><b class="lbl">Formula</b>Tempo con n core: <code>Tn = T1 · ( (1 − p) + p/n )</code><br>Speedup: <code>S(n) = T1 / Tn = 1 / ( (1 − p) + p/n )</code></div>
+  <h3>Esempio delle slide</h3>
+  <p>100 secondi su un core, di cui 20 s sequenziali e 80 s parallelizzabili (p = 0,8). Con 4 core: 20 + 80/4 = <b>40 s</b>, speedup 100/40 = <b>2,5</b>. Con la formula: 1 / (0,2 + 0,8/4) = 1 / 0,4 = 2,5.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Amdahl: con 4 core la parte parallela passa da 80 s a 20 s, i 20 s sequenziali restano"><img src="img/th-amdahl.png" alt="Amdahl: con 4 core la parte parallela passa da 80 s a 20 s, i 20 s sequenziali restano" width="1124" height="532" loading="lazy" decoding="async"></button><figcaption>Amdahl: con 4 core la parte parallela passa da 80 s a 20 s, i 20 s sequenziali restano <span>· Teoria 5</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Core</th><th>Sequenziale</th><th>Parallelo</th><th>Totale</th><th>Risparmiato</th></tr>
+    <tr><td class="num">1</td><td class="num">20 s</td><td class="num">80 s</td><td class="num">100 s</td><td class="num">—</td></tr>
+    <tr><td class="num">2</td><td class="num">20 s</td><td class="num">40 s</td><td class="num">60 s</td><td class="num">40 s</td></tr>
+    <tr><td class="num">4</td><td class="num">20 s</td><td class="num">20 s</td><td class="num">40 s</td><td class="num">20 s</td></tr>
+    <tr><td class="num">8</td><td class="num">20 s</td><td class="num">10 s</td><td class="num">30 s</td><td class="num">10 s</td></tr>
+    <tr><td class="num">16</td><td class="num">20 s</td><td class="num">5 s</td><td class="num">25 s</td><td class="num">5 s</td></tr>
+  </table></div>
+  <div class="note">I 20 secondi sequenziali non spariscono mai. Il tempo si avvicina a 20 s ma non scende sotto.</div>
+  <div class="lab" id="amdlab">
+    <h4>Calcolatrice di Amdahl · gioca con i numeri</h4>
+    <label for="ap"><span>Parte parallela p</span><input type="range" id="ap" min="0" max="100" step="5" value="80"><output id="apo">80%</output></label>
+    <label for="an"><span>Numero di core n</span><input type="range" id="an" min="1" max="64" step="1" value="4"><output id="ano">4</output></label>
+    <div class="res">
+      <div><small>Speedup S(n)</small><span class="big" id="as">2,50×</span></div>
+      <div><small>Tempo (su 100 s)</small><span class="big" id="at">40 s</span></div>
+      <div><small>Massimo teorico (core infiniti)</small><span class="big" id="am">5,00×</span></div>
+    </div>
+    <div class="tbar" aria-hidden="true"><span class="s" id="tbs"></span><span class="p" id="tbp"></span></div>
+    <div class="legend"><span><i style="background:var(--pen)"></i>sequenziale</span><span><i style="background:var(--acc)"></i>parallela</span></div>
+  </div>
+  <p><b>Morale:</b> per velocizzare un programma non basta comprare più processori. Conviene molto di più <mark>ridurre la parte sequenziale</mark>. Il massimo speedup possibile è <code>1 / (1 − p)</code>.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>p = 0,5, n = 2. Quanto vale lo speedup?</summary><p>1 / (0,5 + 0,5/2) = 1 / 0,75 ≈ 1,33.</p></details>
+    <details><summary>Con p = 0,9 e core infiniti, qual è lo speedup massimo?</summary><p>1 / (1 − 0,9) = 10.</p></details>
+    <details><summary>Cosa limita lo speedup secondo Amdahl?</summary><p>La parte sequenziale del programma.</p></details>
+  </div>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="ch" id="sync" data-t="Sincronizzazione" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">10</span><h2>Gli strumenti di sincronizzazione</h2><span class="ch-sub">synchronized, lock intrinseci, variabili atomiche</span></div>
+  <h3>Metodi synchronized</h3>
+  <p>Basta aggiungere la parola <code>synchronized</code>. Risolve gli errori di concorrenza, al prezzo di un po' di efficienza.</p>
+<pre><code>public class SynchronizedCounter {
+    private int c = 0;
+    public synchronized void increment() { c++; }
+    public synchronized void decrement() { c--; }
+    public synchronized int value()      { return c; }
+}</code></pre>
+  <ul>
+    <li>Due chiamate a metodi synchronized <b>sullo stesso oggetto</b> non si mescolano mai: mentre uno è dentro, gli altri aspettano.</li>
+    <li>All'uscita si crea una relazione <b>happens-before</b>: le modifiche sono visibili a tutti.</li>
+    <li>I <b>costruttori non possono</b> essere synchronized (durante la costruzione l'oggetto lo vede solo chi lo crea).</li>
+  </ul>
+  <h3>Il lock intrinseco (monitor)</h3>
+  <p>Immagina che <mark>ogni oggetto abbia una chiave</mark>. Per entrare in un metodo synchronized il thread deve prendere la chiave di quell'oggetto, e la restituisce all'uscita (anche se c'è un'eccezione). Chi arriva senza chiave aspetta (stato <b>Blocked</b>). Il lock garantisce sia accesso esclusivo sia visibilità.</p>
+  <h3>Blocchi synchronized</h3>
+  <p>Si può proteggere solo un pezzo di metodo, dicendo di quale oggetto usare la chiave:</p>
+  <div class="lines">
+    <div class="k">public void addName(String name) {</div><div class="e"></div>
+    <div class="k">  synchronized (this) {</div><div class="e">Prendo la chiave di <b>questo</b> oggetto.</div>
+    <div class="k">    lastName = name;</div><div class="e">Modifiche protette…</div>
+    <div class="k">    nameCount++;</div><div class="e">…uno alla volta.</div>
+    <div class="k">  }</div><div class="e">Restituisco la chiave.</div>
+    <div class="k">  nameList.add(name);</div><div class="e">Questa parte può andare in parallelo.</div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <h3>Sincronizzazione a grana fine (MsLunch)</h3>
+  <p>Due contatori <code>c1</code> e <code>c2</code> indipendenti. Se usassi metodi synchronized, <code>inc1()</code> e <code>inc2()</code> si bloccherebbero a vicenda (stesso oggetto, stessa chiave), anche se toccano dati diversi. Soluzione: <b>due chiavi separate</b>.</p>
+<pre><code>private Object lock1 = new Object();
+private Object lock2 = new Object();
+public void inc1() { synchronized (lock1) { c1++; } }   <span class="c">// usa la chiave 1</span>
+public void inc2() { synchronized (lock2) { c2++; } }   <span class="c">// usa la chiave 2: non si disturbano</span></code></pre>
+  <p>Meno parti bloccate = meno parte sequenziale = meglio, per Amdahl.</p>
+  <h3>Azioni atomiche</h3>
+  <p>Un'azione <b>atomica</b> avviene tutta o per niente, non si interrompe a metà. Il package <code>java.util.concurrent.atomic</code> offre classi come <code>AtomicInteger</code>:</p>
+<pre><code>private AtomicInteger c = new AtomicInteger(0);
+public void increment() { c.incrementAndGet(); }   <span class="c">// atomico, senza synchronized</span>
+public void decrement() { c.decrementAndGet(); }
+public int value()      { return c.get(); }</code></pre>
+  <div class="note">Attenzione: è atomica la singola operazione, non una sequenza!</div>
+<pre><code>if (contatore.get() &lt; 10) {         <span class="c">// controllo…</span>
+    contatore.incrementAndGet();    <span class="c">// …e qui un altro thread può essersi infilato in mezzo</span>
+}</code></pre>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Due metodi synchronized diversi dello stesso oggetto possono girare insieme?</summary><p>No: usano lo stesso lock (quello dell'oggetto), quindi uno aspetta l'altro.</p></details>
+    <details><summary>Perché in MsLunch si usano lock1 e lock2?</summary><p>Perché c1 e c2 sono indipendenti: con due lock separati inc1 e inc2 possono andare in parallelo.</p></details>
+    <details><summary>Un costruttore può essere synchronized?</summary><p>No.</p></details>
+    <details><summary>Usare AtomicInteger rende sicuro un "if (get() &lt; 10) increment()"?</summary><p>No: ogni singola chiamata è atomica, ma tra il controllo e l'incremento un altro thread può modificare il valore.</p></details>
+  </div>
+</section>
+
+<!-- ================= 11 ================= -->
+<section class="ch" id="deadlock" data-t="Deadlock, livelock, starvation" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">11</span><h2>Deadlock, livelock, starvation</h2><span class="ch-sub">Quando la sincronizzazione si ritorce contro</span></div>
+  <div class="def"><b class="lbl">Deadlock</b>Due thread bloccati per sempre, <b>ognuno in attesa dell'altro</b>. Il thread 1 tiene X e vuole Y; il thread 2 tiene Y e vuole X. Nessuno può andare avanti.</div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Deadlock: ogni thread tiene un lock e aspetta quello dell’altro"><img src="img/th-deadlock.png" alt="Deadlock: ogni thread tiene un lock e aspetta quello dell’altro" width="1125" height="495" loading="lazy" decoding="async"></button><figcaption>Deadlock: ogni thread tiene un lock e aspetta quello dell’altro <span>· Teoria 5</span></figcaption></figure>
+  <h3>Alphonse e Gaston</h3>
+  <p>Due amici molto cortesi. Regola: quando ti inchini (<code>bow</code>) resti inchinato finché l'altro non ricambia (<code>bowBack</code>). Entrambi i metodi sono <code>synchronized</code>.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Alphonse e Gaston, il fumetto di inizio Novecento: “Dopo di lei!”"><img src="img/th-alphonse.jpg" alt="Alphonse e Gaston, il fumetto di inizio Novecento: “Dopo di lei!”" width="622" height="438" loading="lazy" decoding="async"></button><figcaption>Alphonse e Gaston, il fumetto di inizio Novecento: “Dopo di lei!” <span>· Teoria 5</span></figcaption></figure>
+  <div class="lines">
+    <div class="k">public synchronized void bow(Friend bower) {</div><div class="e">Per inchinarmi prendo la <b>mia</b> chiave.</div>
+    <div class="k">  print(bower + " has bowed to me!");</div><div class="e"></div>
+    <div class="k">  bower.bowBack(this);</div><div class="e">Chiedo all'altro di ricambiare: serve la <b>sua</b> chiave.</div>
+    <div class="k">}</div><div class="e"></div>
+    <div class="k">public synchronized void bowBack(Friend b) {</div><div class="e">Ricambiare richiede la chiave di chi ricambia.</div>
+    <div class="k">  print(b + " has bowed back to me!");</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <p>Due thread partono insieme: uno fa <code>alphonse.bow(gaston)</code>, l'altro <code>gaston.bow(alphonse)</code>.</p>
+  <ol>
+    <li>Thread 1 prende la chiave di <b>Alphonse</b>.</li>
+    <li>Thread 2 prende la chiave di <b>Gaston</b>.</li>
+    <li>Thread 1 chiama <code>gaston.bowBack</code>: serve la chiave di Gaston, che ha il thread 2. Aspetta.</li>
+    <li>Thread 2 chiama <code>alphonse.bowBack</code>: serve la chiave di Alphonse, che ha il thread 1. Aspetta.</li>
+  </ol>
+  <p>Output: "Alphonse: Gaston has bowed to me!" e "Gaston: Alphonse has bowed to me!". Poi <b>nessuno ricambia mai</b>.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Alphonse e Gaston nel tempo: ognuno tiene il proprio lock e aspetta quello dell’altro"><img src="img/th-deadlock-tempo.png" alt="Alphonse e Gaston nel tempo: ognuno tiene il proprio lock e aspetta quello dell’altro" width="1200" height="607" loading="lazy" decoding="async"></button><figcaption>Alphonse e Gaston nel tempo: ognuno tiene il proprio lock e aspetta quello dell’altro <span>· Teoria 5</span></figcaption></figure>
+  <div class="note">Riscrivere i metodi con synchronized(this) attorno a tutto il corpo NON risolve: è lo stesso identico lock.</div>
+  <p><b>Come se ne esce?</b> La slide lo lascia come domanda. Le idee classiche: prendere i lock sempre <b>nello stesso ordine</b> (es. prima quello col nome alfabeticamente minore), oppure non chiamare il metodo dell'altro <b>mentre</b> si tiene la propria chiave.</p>
+  <h3>Gli altri due problemi</h3>
+  <div class="tbl"><table>
+    <tr><th>Problema</th><th>Cosa succede</th><th>Esempio del corridoio</th></tr>
+    <tr><td><b>Deadlock</b></td><td>I thread sono <b>fermi</b>, in attesa.</td><td>Due persone "belligeranti": ognuna aspetta che l'altra si sposti.</td></tr>
+    <tr><td><b>Livelock</b></td><td>I thread sono <b>attivi</b>, cambiano stato, ma si ostacolano e non progrediscono.</td><td>Due persone "garbate": si spostano di lato entrambe, ancora e ancora.</td></tr>
+    <tr><td><b>Starvation</b></td><td>Un thread non riesce mai a prendere la risorsa perché gli altri arrivano sempre prima. Il programma va avanti, lui no.</td><td>Uno che non riesce mai a passare perché c'è sempre qualcun altro.</td></tr>
+  </table></div>
+  <div class="figrow three"><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Starvation: un thread resta in attesa mentre gli altri lavorano"><img src="img/th-starvation.jpg" alt="Starvation: un thread resta in attesa mentre gli altri lavorano" width="788" height="497" loading="lazy" decoding="async"></button><figcaption>Starvation: un thread resta in attesa mentre gli altri lavorano <span>· Teoria 5</span></figcaption></figure><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Deadlock: i thread sono bloccati in attesa"><img src="img/th-deadlock-foto.jpg" alt="Deadlock: i thread sono bloccati in attesa" width="836" height="532" loading="lazy" decoding="async"></button><figcaption>Deadlock: i thread sono bloccati in attesa <span>· Teoria 5</span></figcaption></figure><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Livelock: i thread sono attivi ma si ostacolano continuamente"><img src="img/th-livelock.jpg" alt="Livelock: i thread sono attivi ma si ostacolano continuamente" width="1096" height="523" loading="lazy" decoding="async"></button><figcaption>Livelock: i thread sono attivi ma si ostacolano continuamente <span>· Teoria 5</span></figcaption></figure></div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Differenza tra deadlock e livelock?</summary><p>Nel deadlock i thread sono fermi in attesa; nel livelock sono attivi ma le loro azioni si ostacolano a vicenda senza progresso.</p></details>
+    <details><summary>Perché Alphonse e Gaston vanno in deadlock?</summary><p>Ognuno tiene il proprio lock (in bow) e aspetta quello dell'altro (in bowBack).</p></details>
+    <details><summary>Cos'è la starvation?</summary><p>Un thread non riesce mai ad avanzare perché altri ottengono sempre la risorsa prima di lui.</p></details>
+  </div>
+</section>
+
+<!-- ================= 12 ================= -->
+<section class="ch" id="sale" data-t="Le sale d'attesa" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">12</span><h2>Le sale d'attesa</h2><span class="ch-sub">Teoria 6 · capire synchronized con un esperimento</span></div>
+  <p>La classe <code>Example</code> ha due metodi, <code>firstWaitingRoom</code> e <code>secondWaitingRoom</code>: entrambi stampano "entering", dormono qualche secondo e stampano "exiting". Due thread (<code>one</code> e <code>two</code>), che condividono <b>lo stesso oggetto</b> <code>ob</code>, scelgono a caso una sala:</p>
+  <div class="lines">
+    <div class="k">double y = Math.random();</div><div class="e">Un numero casuale tra 0 (incluso) e 1 (escluso).</div>
+    <div class="k">int x = (int) (y * 2);</div><div class="e">Moltiplico per 2 e tolgo i decimali: x vale <b>0 o 1</b>.</div>
+    <div class="k">if (x == 0) object.firstWaitingRoom(delay, name);</div><div class="e">0 → prima sala.</div>
+    <div class="k">else object.secondWaitingRoom(delay, name);</div><div class="e">1 → seconda sala.</div>
+  </div>
+  <p>Guardando l'output capisci se i due thread stanno "dentro" insieme o uno alla volta (<b>mutua esclusione</b>).</p>
+  <div class="tbl"><table>
+    <tr><th>Caso</th><th>Stessa sala</th><th>Sale diverse</th></tr>
+    <tr><td>Entrambi i metodi <code>synchronized</code></td><td>Uno alla volta</td><td><mark>Uno alla volta</mark>: stesso oggetto = stessa chiave</td></tr>
+    <tr><td>Solo il primo <code>synchronized</code></td><td>Prima sala: uno alla volta. Seconda: insieme</td><td>Insieme: chi è nella seconda non chiede la chiave</td></tr>
+    <tr><td>Nessuno <code>synchronized</code></td><td>Insieme</td><td>Insieme</td></tr>
+  </table></div>
+  <div class="note">La chiave è dell'oggetto, non del metodo. Questa è la frase da ricordare.</div>
+  <p>Le slide propongono anche di provare i metodi <code>static</code>: un metodo <code>static synchronized</code> usa la chiave della <b>classe</b> (<code>Example.class</code>), diversa da quella dell'oggetto. Quindi un metodo statico sincronizzato e uno di istanza sincronizzato <b>non</b> si escludono tra loro.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Entrambi synchronized, sale diverse, stesso oggetto: possono entrare insieme?</summary><p>No. Il lock è dell'oggetto, quindi anche metodi diversi si escludono.</p></details>
+    <details><summary>Quale lock usa un metodo static synchronized?</summary><p>Quello della classe (es. Example.class), non quello del singolo oggetto.</p></details>
+  </div>
+</section>
+
+<!-- ================= 13 ================= -->
+<section class="ch" id="efficienza" data-t="L'efficienza dei thread" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">13</span><h2>L'efficienza dei thread</h2><span class="ch-sub">Dividere un lavoro grande tra più thread</span></div>
+  <p>Compito: riempire un array di <b>10 milioni</b> di interi, ripetendo ogni assegnazione 10.000 volte (per rendere il lavoro pesante).</p>
+  <h3>Versione con un thread (ArrayInit)</h3>
+<pre><code>begin = System.currentTimeMillis();          <span class="c">// faccio partire il cronometro</span>
+for (int i = 0; i &lt; SIZE; i++)               <span class="c">// per ogni posizione…</span>
+    for (j = 0; j &lt; 10000; j++)              <span class="c">// …10000 volte…</span>
+        data[i] = i;                         <span class="c">// …assegno</span>
+end = System.currentTimeMillis();            <span class="c">// fermo il cronometro</span></code></pre>
+  <h3>Versione concorrente (EffInit)</h3>
+  <p><b>Idea:</b> taglio l'array in <code>numThread</code> blocchi, ognuno grande <code>SIZE / numThread</code>, e ogni thread riempie il suo. Provo con 1, 2, … fino a 8 thread e misuro i tempi.</p>
+  <div class="lines">
+    <div class="k">start = 0;</div><div class="e">Il primo blocco parte da 0.</div>
+    <div class="k">for (j = 0; j &lt; numThread; j++) {</div><div class="e">Per ogni thread…</div>
+    <div class="k">  threads[j] = new EffInit(start, SIZE/numThread);</div><div class="e">…lo creo dicendogli <b>da dove</b> partire e <b>quanti</b> elementi fare…</div>
+    <div class="k">  threads[j].start();</div><div class="e">…lo avvio…</div>
+    <div class="k">  start += SIZE / numThread;</div><div class="e">…e sposto l'inizio al blocco successivo.</div>
+    <div class="k">}</div><div class="e"></div>
+    <div class="k">for (j = 0; j &lt; numThread; j++)</div><div class="e">Poi il main…</div>
+    <div class="k">  threads[j].join();</div><div class="e">…aspetta che <b>tutti</b> finiscano.</div>
+    <div class="k">end = System.currentTimeMillis();</div><div class="e">Solo ora fermo il cronometro.</div>
+  </div>
+  <p>Ogni thread nel suo <code>run()</code> fa: <code>data[this.start + i] = i</code> per gli <code>i</code> del suo blocco, ripetuto 10.000 volte.</p>
+  <div class="note">Nessun synchronized: ogni thread scrive in una zona diversa dell'array, quindi non c'è niente da proteggere.</div>
+  <p><b>Risultato:</b> il tempo scende, ma <b>non in modo lineare</b> col numero di core, per via dell'overhead (creare e coordinare i thread). E dipende da tanti fattori: se il lavoro è legato all'I/O o alla CPU, quanti core reali hai, buffer… "<i>your mileage may vary</i>".</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché si fa join() su tutti i thread prima di fermare il cronometro?</summary><p>Per misurare il tempo fino a quando tutto il lavoro è finito, non solo finché i thread sono stati avviati.</p></details>
+    <details><summary>Perché in EffInit non serve synchronized?</summary><p>Perché i thread scrivono in blocchi diversi dell'array: non c'è dato condiviso in scrittura.</p></details>
+    <details><summary>Perché 8 thread non danno speedup 8?</summary><p>Per l'overhead di creazione e coordinamento, e per i limiti dell'hardware (core reali, memoria, I/O); vedi anche Amdahl.</p></details>
+  </div>
+</section>
+
+<!-- ================= 14 ================= -->
+<section class="ch" id="singleton" data-t="Singleton e double-checked locking" data-part="Thread">
+  <div class="ch-head"><span class="ch-num">14</span><h2>Singleton e double-checked locking</h2><span class="ch-sub">Quattro tentativi, e perché i primi falliscono</span></div>
+  <div class="def"><b class="lbl">Singleton</b>Design pattern: di una classe deve esistere <b>un solo oggetto</b> (es. gestore stampante, file, risorse). <b>Lazy allocation:</b> l'oggetto si crea solo la prima volta che serve.</div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il Singleton in UML: un campo statico instance, costruttore privato, getInstance()"><img src="img/th-singleton.png" alt="Il Singleton in UML: un campo statico instance, costruttore privato, getInstance()" width="498" height="509" loading="lazy" decoding="async"></button><figcaption>Il Singleton in UML: un campo statico instance, costruttore privato, getInstance() <span>· Teoria 6</span></figcaption></figure>
+  <h3>Versione 1: base (non thread-safe)</h3>
+  <div class="lines">
+    <div class="k">private static Singleton instance;</div><div class="e">L'unica istanza, condivisa (static). All'inizio è <code>null</code>.</div>
+    <div class="k">private Singleton() { }</div><div class="e">Costruttore <b>privato</b>: nessuno da fuori può fare <code>new</code>.</div>
+    <div class="k">public static Singleton getInstance() {</div><div class="e">L'unico modo per avere l'oggetto.</div>
+    <div class="k">  if (instance == null)</div><div class="e">Se non esiste ancora…</div>
+    <div class="k">    instance = new Singleton();</div><div class="e">…lo creo.</div>
+    <div class="k">  return instance;</div><div class="e">Restituisco sempre lo stesso.</div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <p><b>Problema:</b> due thread trovano entrambi <code>null</code> e creano <mark>due singleton</mark>.</p>
+  <h3>Versione 2: metodo synchronized</h3>
+<pre><code>public static synchronized Singleton getInstance() { … }</code></pre>
+  <p><b>Funziona</b>: un'istanza sola (il lock è su <code>Singleton.class</code>). Però è <b>lento</b>: il lock serve solo la prima volta, ma viene preso a <b>ogni</b> chiamata, anche quando l'oggetto esiste già. Con tante chiamate da tanti thread, si fa la fila per niente.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Versione 2: il lock su Singleton.class dà un’unica istanza, ma ogni chiamata prende il lock"><img src="img/th-singleton-sync.png" alt="Versione 2: il lock su Singleton.class dà un’unica istanza, ma ogni chiamata prende il lock" width="1102" height="541" loading="lazy" decoding="async"></button><figcaption>Versione 2: il lock su Singleton.class dà un’unica istanza, ma ogni chiamata prende il lock <span>· Teoria 6</span></figcaption></figure>
+  <h3>Versione 3: synchronized solo sulla creazione</h3>
+<pre><code>if (instance == null) {
+    synchronized (Singleton.class) {
+        instance = new Singleton();
+    }
+}</code></pre>
+  <p><b>Non funziona.</b> Thread 1 e 2 trovano entrambi <code>null</code> ed entrano nell'<code>if</code>. Thread 1 prende il lock e crea A. Poi thread 2 prende il lock e crea B, <b>senza ricontrollare</b>. Risultato: A ≠ B.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Versione 3: il controllo è fuori dal lock, e nascono due oggetti A e B"><img src="img/th-singleton-due.png" alt="Versione 3: il controllo è fuori dal lock, e nascono due oggetti A e B" width="1088" height="584" loading="lazy" decoding="async"></button><figcaption>Versione 3: il controllo è fuori dal lock, e nascono due oggetti A e B <span>· Teoria 6</span></figcaption></figure>
+  <h3>Versione 4: double-checked locking</h3>
+  <div class="lines">
+    <div class="k">if (instance == null) {</div><div class="e">1° controllo, veloce e senza lock.</div>
+    <div class="k">  synchronized (Singleton.class) {</div><div class="e">Entro nella sezione critica.</div>
+    <div class="k">    if (instance == null)</div><div class="e">2° controllo: qualcuno l'ha creato mentre aspettavo?</div>
+    <div class="k">      instance = new Singleton();</div><div class="e">Se no, lo creo.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+    <div class="k">return instance;</div><div class="e"></div>
+  </div>
+  <p><b>Sorpresa: non è garantito che funzioni</b>, anche se è stato pubblicato e usato tantissimo. Sembra che il costruttore finisca prima dell'assegnazione a <code>instance</code>, ma il compilatore/la CPU possono <b>riordinare</b>: <code>instance</code> può puntare a un oggetto <b>non ancora inizializzato</b>. Un altro thread fa il primo controllo, lo trova già diverso da null, salta il lock e usa un oggetto a metà.</p>
+  <h3>Le soluzioni corrette</h3>
+  <ul>
+    <li>Dichiarare <code>private static <mark>volatile</mark> Singleton instance;</code> (funziona da Java 5 in poi).</li>
+    <li>Oppure l'idioma <b>Initialization-on-demand holder</b>:</li>
+  </ul>
+<pre><code>public class Something {
+    private Something() {}
+    private static class LazyHolder {                       <span class="c">// classe interna statica</span>
+        private static final Something INSTANCE = new Something();
+    }
+    public static Something getInstance() {
+        return LazyHolder.INSTANCE;                         <span class="c">// la JVM carica LazyHolder solo qui</span>
+    }
+}</code></pre>
+  <p>La JVM inizializza <code>LazyHolder</code> solo alla prima <code>getInstance()</code> (quindi è lazy), e un inizializzatore statico viene eseguito <b>una sola volta</b>, con happens-before garantito. Niente lock da scrivere.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché la versione 2 è corretta ma poco efficiente?</summary><p>Perché prende il lock a ogni chiamata, anche quando l'istanza esiste già e basterebbe restituirla.</p></details>
+    <details><summary>Perché la versione 3 crea due oggetti?</summary><p>Perché il controllo "instance == null" è fuori dal lock: due thread passano il controllo e poi creano un oggetto ciascuno, uno dopo l'altro.</p></details>
+    <details><summary>Cosa può andare storto nel double-checked locking?</summary><p>Per il riordino delle istruzioni, instance può essere assegnato prima che il costruttore abbia finito: un altro thread lo trova non null e usa un oggetto non inizializzato.</p></details>
+    <details><summary>Due modi corretti per un singleton lazy thread-safe?</summary><p>Rendere instance volatile (da Java 5) oppure l'idioma Initialization-on-demand holder.</p></details>
+  </div>
+</section>
+
+<div class="partbreak">Parte 3 · Socket</div>
+
+<!-- ================= 15 ================= -->
+<section class="ch" id="socket" data-t="Socket TCP e stream" data-part="Socket">
+  <div class="ch-head"><span class="ch-num">15</span><h2>Socket TCP e stream</h2><span class="ch-sub">Teoria 7 · il canale più semplice tra due programmi</span></div>
+  <h3>Ripasso: le porte</h3>
+  <p>Su un computer girano tante applicazioni. Quando arrivano dati dalla rete, TCP e UDP usano il <b>numero di porta</b> per capire a quale processo consegnarli. Ogni socket è legato a una porta.</p>
+  <div class="def"><b class="lbl">Socket</b>Un "identificativo univoco che rappresenta un canale di comunicazione attraverso cui l'informazione è trasmessa" (RFC 147). Per il programmatore è un <b>estremo</b> (endpoint) del canale, identificato da <b>indirizzo IP + porta</b>.</div>
+  <ul>
+    <li>È <b>indipendente dal linguaggio</b>: client e server devono solo mettersi d'accordo su <b>protocollo</b> (TCP o UDP) e <b>porta</b>.</li>
+    <li>In Java le classi stanno nel package <code>java.net</code>.</li>
+    <li>Un socket TCP trasmette <b>flussi</b> di dati, in entrambe le direzioni (bidirezionale).</li>
+    <li>Il modello è <b>client-server</b>, asimmetrico: il server <b>aspetta</b> connessioni, il client <b>prova a connettersi</b>.</li>
+  </ul>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Client e server: three-way handshake, socket di benvenuto e socket di connessione"><img src="img/sock-handshake.png" alt="Client e server: three-way handshake, socket di benvenuto e socket di connessione" width="450" height="223" loading="lazy" decoding="async"></button><figcaption>Client e server: three-way handshake, socket di benvenuto e socket di connessione <span>· Teoria 7</span></figcaption></figure>
+  <h3>Due classi, due ruoli</h3>
+  <div class="vs">
+    <div><h4>ServerSocket</h4><p>Il socket di <b>ascolto</b> (o di connessione). Sta sul server e accetta le richieste in arrivo.</p></div>
+    <div><h4>Socket</h4><p>Il socket dei <b>dati</b>. Ce n'è uno per ogni conversazione, sia sul client sia sul server.</p></div>
+  </div>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Il ServerSocket crea un Socket per ogni connessione accettata"><img src="img/sock-crea.png" alt="Il ServerSocket crea un Socket per ogni connessione accettata" width="318" height="252" loading="lazy" decoding="async"></button><figcaption>Il ServerSocket crea un Socket per ogni connessione accettata <span>· Teoria 7</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Metodo</th><th>Cosa fa</th></tr>
+    <tr><td><code>new ServerSocket(9000)</code></td><td>Crea un socket di ascolto sulla porta 9000.</td></tr>
+    <tr><td><code>accept()</code></td><td><b>Aspetta</b> una connessione e la accetta. È <mark>bloccante</mark>: il programma resta fermo qui finché un client non si collega. Restituisce un nuovo <code>Socket</code> per i dati.</td></tr>
+    <tr><td><code>close()</code></td><td>Chiude il socket.</td></tr>
+    <tr><td><code>setSoTimeout(ms)</code></td><td>Mette un limite di tempo ad <code>accept()</code>: se scade senza connessioni, lancia un'eccezione (<code>InterruptedIOException</code>).</td></tr>
+  </table></div>
+  <h3>La conversazione, passo per passo</h3>
+  <div class="flow"><span>1 · server crea sd1 e ascolta</span><i>→</i><span>2 · client chiede la connessione</span><i>→</i><span class="hot">3 · accept() crea sd2</span><i>→</i><span>4 · scambio dati su sd2</span><i>→</i><span>5 · si chiude sd2</span></div>
+  <ol>
+    <li>Il server crea il socket di ascolto <b>sd1</b> e lo lega a una porta.</li>
+    <li>Il client avvia la connessione verso quella porta.</li>
+    <li>Il server accetta e crea un <b>nuovo</b> socket per i dati, <b>sd2</b>.</li>
+    <li>Client e server si scambiano richiesta e risposta attraverso sd2.</li>
+    <li>Alla fine sd2 viene chiuso. <mark>sd1 resta aperto</mark>, pronto per il prossimo client.</li>
+  </ol>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Un socket di connessione e un socket di dati per ogni client"><img src="img/sock-dati.png" alt="Un socket di connessione e un socket di dati per ogni client" width="1136" height="454" loading="lazy" decoding="async"></button><figcaption>Un socket di connessione e un socket di dati per ogni client <span>· Teoria 7</span></figcaption></figure>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il server ascolta su una porta e apre un canale dedicato per ogni client"><img src="img/sock-porte.png" alt="Il server ascolta su una porta e apre un canale dedicato per ogni client" width="1200" height="600" loading="lazy" decoding="async"></button><figcaption>Il server ascolta su una porta e apre un canale dedicato per ogni client <span>· Teoria 7</span></figcaption></figure>
+  <h3>Gli stream</h3>
+  <p>Ogni programma fa: "prendi dati, fanne qualcosa, salva il risultato". Uno <b>stream</b> è una <b>sequenza ordinata di byte</b> che porta i dati da un posto all'altro. File e socket si usano tutti come stream.</p>
+  <div class="vs">
+    <div><h4>InputStream (leggere)</h4><p><code>read()</code>, <code>read(byte[])</code>, <code>available()</code>, <code>skip(n)</code>, <code>mark</code>/<code>reset</code>, <code>close()</code></p></div>
+    <div><h4>OutputStream (scrivere)</h4><p><code>write(int)</code>, <code>write(byte[])</code>, <code>flush()</code> (spedisci subito), <code>close()</code></p></div>
+  </div>
+  <p>Gli stream vanno <b>in coppia</b> "come i carabinieri della barzelletta": uno sa leggere e l'altro sa scrivere. Per quasi ogni InputStream c'è il suo OutputStream: <code>FileInputStream</code> ⇄ <code>FileOutputStream</code>, <code>DataInputStream</code> ⇄ <code>DataOutputStream</code> (eccezione: <code>SequenceInputStream</code>).</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: La famiglia degli InputStream"><img src="img/sock-stream.png" alt="La famiglia degli InputStream" width="1119" height="683" loading="lazy" decoding="async"></button><figcaption>La famiglia degli InputStream <span>· Teoria 7</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Metodo utile</th><th>Cosa fa</th></tr>
+    <tr><td><code>socket.getInputStream()</code></td><td>Lo stream per leggere ciò che arriva dal socket. C'è anche <code>getOutputStream()</code>.</td></tr>
+    <tr><td><code>ObjectInputStream.readObject()</code></td><td>Legge un <b>oggetto intero</b> dallo stream. È bloccante e restituisce un <code>Object</code>: serve il <b>cast</b>, es. <code>(String) in.readObject()</code>.</td></tr>
+    <tr><td><code>ObjectOutputStream.writeObject(o)</code></td><td>Spedisce un oggetto intero.</td></tr>
+  </table></div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Su cosa devono accordarsi client e server per usare i socket?</summary><p>Solo sul protocollo (TCP o UDP) e sul numero di porta. Il linguaggio può essere diverso.</p></details>
+    <details><summary>Differenza tra ServerSocket e Socket?</summary><p>ServerSocket ascolta e accetta le connessioni; Socket serve per scambiare i dati di una singola conversazione.</p></details>
+    <details><summary>Cosa restituisce accept() e perché è bloccante?</summary><p>Restituisce un nuovo Socket per i dati con quel client. È bloccante perché resta in attesa finché un client non si connette.</p></details>
+    <details><summary>Perché serve il cast dopo readObject()?</summary><p>Perché readObject() restituisce un Object generico: bisogna dire a Java che tipo è davvero, es. (String).</p></details>
+  </div>
+</section>
+
+<!-- ================= 16 ================= -->
+<section class="ch" id="socket-esempi" data-t="Esempi: Hello e Registro" data-part="Socket">
+  <div class="ch-head"><span class="ch-num">16</span><h2>Due esempi: Hello World e il Registro</h2><span class="ch-sub">Il codice delle slide, spiegato riga per riga</span></div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Hello World: le classi Client e Server usano Socket e ServerSocket"><img src="img/sock-classi.png" alt="Hello World: le classi Client e Server usano Socket e ServerSocket" width="1200" height="540" loading="lazy" decoding="async"></button><figcaption>Hello World: le classi Client e Server usano Socket e ServerSocket <span>· Teoria 7</span></figcaption></figure>
+  <h3>Il client</h3>
+  <div class="lines">
+    <div class="k">Socket socket = new Socket("localhost", 9000);</div><div class="e">Mi collego al server su questo computer (<code>localhost</code>), porta 9000.</div>
+    <div class="k">ObjectOutputStream out =</div><div class="e">Prendo lo stream per <b>scrivere</b> oggetti…</div>
+    <div class="k">  new ObjectOutputStream(socket.getOutputStream());</div><div class="e"></div>
+    <div class="k">ObjectInputStream in =</div><div class="e">…e quello per <b>leggere</b> oggetti.</div>
+    <div class="k">  new ObjectInputStream(socket.getInputStream());</div><div class="e"></div>
+    <div class="k">out.writeObject("Delfina");</div><div class="e">Spedisco la stringa "Delfina".</div>
+    <div class="k">System.out.println(in.readObject());</div><div class="e">Aspetto la risposta e la stampo.</div>
+    <div class="k">socket.close();</div><div class="e">Chiudo.</div>
+  </div>
+  <h3>Il server</h3>
+  <div class="lines">
+    <div class="k">ServerSocket serverSocket = new ServerSocket(9000);</div><div class="e">Apro il socket di <b>ascolto</b> sulla porta 9000.</div>
+    <div class="k">Socket socket = serverSocket.accept();</div><div class="e">Mi fermo qui finché arriva un client. Poi ho il socket dei dati.</div>
+    <div class="k">ObjectOutputStream oS = new ObjectOutputStream(…);</div><div class="e">Prendo gli stream di uscita…</div>
+    <div class="k">ObjectInputStream iS = new ObjectInputStream(…);</div><div class="e">…e di entrata.</div>
+    <div class="k">String nome = (String) iS.readObject();</div><div class="e">Leggo il nome mandato dal client (con il cast a String).</div>
+    <div class="k">oS.writeObject("Hello" + nome);</div><div class="e">Rispondo "Hello" + nome.</div>
+    <div class="k">socket.close();</div><div class="e">Chiudo il socket dei dati.</div>
+  </div>
+  <p>Tutto è dentro un <code>try</code>: <code>EOFException</code> segnala problemi con la connessione (lo stream è finito all'improvviso), <code>Throwable</code> cattura qualsiasi altro errore. Gli errori vengono scritti con un <code>Logger</code>.</p>
+  <div class="note">Nota l'ordine: in entrambi i programmi si crea prima l'ObjectOutputStream e poi l'ObjectInputStream. Il costruttore di ObjectInputStream aspetta un'intestazione dall'altra parte: se entrambi creassero prima l'input, si aspetterebbero a vicenda.</div>
+  <h3>Il Registro di nomi</h3>
+  <p>Il server conserva coppie <b>nome → indirizzo</b>. Il client può <b>inserire</b> un record oppure <b>cercarlo</b> per nome.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il Registro: ShellClient, RegistroServer e RecordRegistro"><img src="img/sock-registro.png" alt="Il Registro: ShellClient, RegistroServer e RecordRegistro" width="1200" height="800" loading="lazy" decoding="async"></button><figcaption>Il Registro: ShellClient, RegistroServer e RecordRegistro <span>· Teoria 7</span></figcaption></figure>
+  <div class="lines">
+    <div class="k">public class RecordRegistro implements Serializable {</div><div class="e"><code>Serializable</code>: gli oggetti di questa classe si possono trasformare in byte e spedire su uno stream.</div>
+    <div class="k">  private static final long serialVersionUID = …;</div><div class="e">Il "numero di versione" della classe: client e server devono avere la stessa.</div>
+    <div class="k">  private String nome, indirizzo;</div><div class="e">I due dati del record, con costruttore e metodi getter.</div>
+  </div>
+  <p><b>RegistroServer</b> (porta 7000):</p>
+  <div class="lines">
+    <div class="k">HashMap&lt;String, RecordRegistro&gt; hash = new HashMap&lt;&gt;();</div><div class="e">Una "rubrica": dato il nome, trovo il record.</div>
+    <div class="k">ServerSocket serverSocket = new ServerSocket(7000);</div><div class="e">Ascolto sulla porta 7000.</div>
+    <div class="k">while (true) {</div><div class="e">Servo un client dopo l'altro, per sempre.</div>
+    <div class="k">  socket = serverSocket.accept();</div><div class="e">Aspetto un client.</div>
+    <div class="k">  record = (RecordRegistro) inStream.readObject();</div><div class="e">Leggo il record che mi manda.</div>
+    <div class="k">  if (record.getIndirizzo() != null)</div><div class="e">C'è l'indirizzo? Allora è un <b>inserimento</b>…</div>
+    <div class="k">    hash.put(record.getNome(), record);</div><div class="e">…lo salvo.</div>
+    <div class="k">  else {</div><div class="e">Indirizzo vuoto? Allora è una <b>ricerca</b>…</div>
+    <div class="k">    res = hash.get(record.getNome());</div><div class="e">…cerco per nome…</div>
+    <div class="k">    outStream.writeObject(res);</div><div class="e">…e rispondo (con <code>null</code> se non c'è).</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">  socket.close();</div><div class="e">Chiudo questa conversazione.</div>
+    <div class="k">}</div><div class="e">Il blocco <code>finally</code> prova comunque a chiudere il socket alla fine.</div>
+  </div>
+  <p><b>ShellClient</b>: legge comandi dalla tastiera finché non scrivi <code>quit</code>. Con <code>inserisci</code> chiede nome e indirizzo, crea il record e lo spedisce. Con <code>cerca</code> spedisce un record con indirizzo <code>null</code> e stampa l'indirizzo ricevuto oppure "Record assente". Per ogni comando apre una connessione nuova. Un comando sconosciuto risponde "Cosa?".</p>
+  <div class="note">Collegamento con i thread: questo server serve un client alla volta. Per servirne molti insieme, si potrebbe far gestire ogni socket di dati a un thread diverso.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Come capisce il RegistroServer se è un inserimento o una ricerca?</summary><p>Guarda l'indirizzo del record ricevuto: se è presente inserisce, se è null cerca per nome e risponde.</p></details>
+    <details><summary>Perché RecordRegistro implementa Serializable?</summary><p>Per poter essere trasformato in byte e spedito con writeObject attraverso il socket.</p></details>
+    <details><summary>A cosa serve serialVersionUID?</summary><p>Identifica la versione della classe serializzata, così chi riceve può verificare di avere una classe compatibile.</p></details>
+    <details><summary>Cosa segnala EOFException?</summary><p>Che lo stream è terminato in modo inatteso: un problema con la connessione.</p></details>
+  </div>
+</section>
+
+<div class="partbreak">Parte 4 · Java EE</div>
+
+<!-- ================= 17 ================= -->
+<section class="ch" id="javaee" data-t="Java EE: architettura e container" data-part="Java EE">
+  <div class="ch-head"><span class="ch-num">17</span><h2>Java EE: architettura e container</h2><span class="ch-sub">Lezione 1 · applicazioni per le aziende senza riscrivere tutto</span></div>
+  <h3>Enterprise computing</h3>
+  <p>È l'uso integrato dell'informatica per gestire le attività di un'intera azienda. È nato perché le aziende sono cresciute: più sedi e dipendenti, contabilità e magazzino da automatizzare, reparti che devono condividere dati, nuove tecnologie (database, reti, client-server) e concorrenza globale.</p>
+  <p>Un'applicazione enterprise deve essere: <b>distribuita</b>, <b>transazionale</b> (dati sempre coerenti), <b>sicura e disponibile</b>, <b>scalabile e portabile</b>. Obiettivo: più efficienza con costi di sviluppo contenuti.</p>
+  <div class="def"><b class="lbl">L'idea di Java EE</b>Per una lista non scrivi la tua struttura dati: usi <code>ArrayList</code> o <code>HashMap</code>. Allo stesso modo, per un'applicazione web sicura e transazionale non scrivi tutto da zero: usi servizi già pronti come <b>JTA</b> (transazioni), <b>JMS</b> (messaggi), <b>JPA</b> (persistenza). Tu scrivi la <b>logica aziendale</b>, la piattaforma fornisce l'<b>infrastruttura</b>.</div>
+  <p>Java EE è un <b>insieme di specifiche</b>: un'estensione di Java SE per applicazioni distribuite, robuste e sempre disponibili.</p>
+  <h3>Multilayer e multitier</h3>
+  <p>La logica è divisa in <b>componenti</b> su più livelli (layer), che girano su macchine diverse (tier). Il classico è a <b>3 tier</b>: client, server Java EE, database/sistemi legacy.</p>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Architettura multitier: client tier, web tier, business tier, database"><img src="img/jee-tier.jpg" alt="Architettura multitier: client tier, web tier, business tier, database" width="472" height="505" loading="lazy" decoding="async"></button><figcaption>Architettura multitier: client tier, web tier, business tier, database <span>· Introduzione a Java EE</span></figcaption></figure>
+  <h3>I container</h3>
+  <p>L'infrastruttura è divisa in <b>container</b>: "contenitori" in cui girano i componenti. Ogni container ha un ruolo, supporta certe API e offre servizi: sicurezza, accesso ai database, transazioni, naming, injection delle risorse. Nascondono i dettagli tecnici e migliorano la portabilità.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I container standard di Java EE e i protocolli tra loro (HTTP, RMI/IIOP)"><img src="img/jee-container.png" alt="I container standard di Java EE e i protocolli tra loro (HTTP, RMI/IIOP)" width="494" height="425" loading="lazy" decoding="async"></button><figcaption>I container standard di Java EE e i protocolli tra loro (HTTP, RMI/IIOP) <span>· Introduzione a Java EE</span></figcaption></figure>
+  <p>Le frecce sono i <b>protocolli</b> per passare da un container all'altro. Esempio: il Web container esegue servlet che chiamano gli EJB attraverso <b>RMI-IIOP</b>.</p>
+  <h3>RMI-IIOP</h3>
+  <div class="flow"><span>Codice client</span><i>→</i><span class="hot">Stub</span><i>→</i><span>ORB client</span><i>— IIOP in rete —</i><span>ORB server</span><i>→</i><span>Oggetto remoto</span></div>
+  <ul>
+    <li><b>RMI</b> (Remote Method Invocation): il client chiama un metodo attraverso un'interfaccia Java, anche se l'oggetto sta su un server.</li>
+    <li><b>IIOP</b> (Internet Inter-ORB Protocol): il protocollo di CORBA che collega gli ORB in rete.</li>
+    <li><b>Vantaggio:</b> interoperabilità. Anche client CORBA scritti in altri linguaggi possono usare oggetti Java.</li>
+    <li>Lo <b>stub</b> è la "controfigura" locale dell'oggetto remoto (lo hai già visto in RPC, capitolo 04).</li>
+  </ul>
+  <div class="lines">
+    <div class="k">public interface Ordini extends Remote {</div><div class="e">1. Il <b>contratto</b>: un'interfaccia remota.</div>
+    <div class="k">  String creaOrdine(String prodotto)</div><div class="e">Il metodo che il client potrà chiamare…</div>
+    <div class="k">    throws RemoteException;</div><div class="e">…che può fallire per problemi di rete.</div>
+    <div class="k">}</div><div class="e"></div>
+    <div class="k">String esito = ordini.creaOrdine("Notebook");</div><div class="e">2. Il client chiama <b>come se fosse locale</b>. 3. Lo stub inoltra via ORB e IIOP, il server esegue. 4. Torna "Ordine creato per Notebook".</div>
+  </div>
+  <h3>I 4 container</h3>
+  <div class="tbl"><table>
+    <tr><th>Container</th><th>Cosa fa</th></tr>
+    <tr><td>Applet container</td><td>Nel browser, esegue le applet in una <b>sandbox</b> (niente accesso a file e processi del computer).</td></tr>
+    <tr><td>Application Client Container (ACC)</td><td>Librerie che danno i servizi Java EE (sicurezza, naming) a una normale applicazione con <code>main()</code>. Parla con l'EJB container via RMI-IIOP e con il Web container via HTTP.</td></tr>
+    <tr><td>Web container</td><td>Esegue servlet, JSP, filtri, listener, pagine JSF, web service. Gestisce il ciclo di vita delle servlet.</td></tr>
+    <tr><td>EJB container</td><td>Gestisce gli <b>Enterprise Java Beans</b> (la logica di business): ciclo di vita, transazioni, sicurezza, concorrenza, naming, chiamate asincrone.</td></tr>
+  </table></div>
+  <h3>I tipi di componenti</h3>
+  <div class="tbl"><table>
+    <tr><th>Tipo</th><th>Esempi e caratteristiche</th></tr>
+    <tr><td>Client</td><td><b>Web client</b> (thin client): pagine nel browser, niente query al database né logica complessa; può contenere applet. <b>Application client</b>: programma sul PC con interfaccia ricca (Swing, AWT), accede direttamente al livello di business.</td></tr>
+    <tr><td>Web</td><td>Rispondono a richieste HTTP: <b>Servlet</b> (classi che costruiscono risposte), <b>JSP</b> (documenti di testo che diventano servlet), <b>JSF</b> (costruite su servlet e JSP).</td></tr>
+    <tr><td>Business</td><td><b>EJB</b>: componenti gestiti dal container per la logica transazionale. Accessibili in locale o da remoto (RMI, oppure HTTP per SOAP e REST).</td></tr>
+  </table></div>
+  <h3>I servizi del container</h3>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I container con le API e i servizi che offrono"><img src="img/jee-servizi.png" alt="I container con le API e i servizi che offrono" width="970" height="541" loading="lazy" decoding="async"></button><figcaption>I container con le API e i servizi che offrono <span>· Introduzione a Java EE</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Sigla</th><th>Servizio</th></tr>
+    <tr><td>JTA</td><td>Java Transaction API: gestione delle transazioni.</td></tr>
+    <tr><td>JPA</td><td>Java Persistence API: salvare oggetti nel database (ORM), con il linguaggio di query JPQL.</td></tr>
+    <tr><td>JMS</td><td>Java Message Service: comunicazione asincrona, point-to-point e publish-subscribe (capitoli 20–21).</td></tr>
+    <tr><td>JAAS</td><td>Autenticazione e autorizzazione.</td></tr>
+    <tr><td>JAX-WS / JAX-RS</td><td>Web service SOAP e RESTful.</td></tr>
+    <tr><td>DI</td><td>Dependency injection: il container "inietta" le risorse nei componenti.</td></tr>
+    <tr><td>JNDI</td><td>Un'unica interfaccia per trovare servizi e risorse del server per nome.</td></tr>
+  </table></div>
+  <p>Prima di girare, un componente viene <b>assemblato in un modulo</b> e <b>deployato</b> nel suo container. Nel pacchetto si indicano le impostazioni del container: sicurezza, transazioni, lookup JNDI, connettività remota.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa scrive lo sviluppatore e cosa fornisce Java EE?</summary><p>Lo sviluppatore scrive la logica aziendale; la piattaforma fornisce i servizi infrastrutturali (transazioni, messaggi, persistenza, sicurezza…).</p></details>
+    <details><summary>Quali sono i 4 container?</summary><p>Applet container, Application Client Container, Web container, EJB container.</p></details>
+    <details><summary>Cos'è RMI-IIOP?</summary><p>L'unione di RMI (chiamare metodi di oggetti remoti con interfacce Java) e IIOP (il protocollo di CORBA tra ORB). Dà interoperabilità anche con client CORBA in altri linguaggi.</p></details>
+    <details><summary>Cosa fanno JTA, JPA e JMS?</summary><p>Transazioni, persistenza degli oggetti nel database, scambio di messaggi asincroni.</p></details>
+  </div>
+</section>
+
+<!-- ================= 18 ================= -->
+<section class="ch" id="packaging" data-t="Packaging e annotazioni" data-part="Java EE">
+  <div class="ch-head"><span class="ch-num">18</span><h2>Packaging, annotazioni e deployment descriptor</h2><span class="ch-sub">Come si impacchetta un componente e come gli si chiedono i servizi</span></div>
+  <h3>I moduli</h3>
+  <p>Prima del deploy, i componenti vanno messi in un archivio. Java SE ha il <b>.jar</b> (un file zip con classi, risorse, librerie, descrittori). Java EE definisce dei moduli basati sul jar:</p>
+  <div class="tbl"><table>
+    <tr><th>Modulo</th><th>Estensione</th><th>Contiene</th><th>Deployment descriptor</th></tr>
+    <tr><td>Application client</td><td>.jar</td><td>Classi Java e risorse del client. Ha <code>META-INF/MANIFEST.MF</code></td><td><code>META-INF/application-client.xml</code></td></tr>
+    <tr><td>EJB</td><td>.jar</td><td>Session bean e message-driven bean</td><td><code>META-INF/ejb-jar.xml</code></td></tr>
+    <tr><td>Web application</td><td><b>.war</b></td><td>Servlet, JSP, JSF, HTML, CSS, JS. Classi in <code>WEB-INF/classes</code>, jar in <code>WEB-INF/lib</code></td><td><code>WEB-INF/web.xml</code></td></tr>
+    <tr><td>Enterprise</td><td><b>.ear</b></td><td>Moduli EJB + moduli web + librerie: deploy coerente in un solo passo</td><td><code>META-INF/application.xml</code></td></tr>
+  </table></div>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: I moduli: war, jar e il loro posto nei container"><img src="img/jee-packaging.png" alt="I moduli: war, jar e il loro posto nei container" width="472" height="489" loading="lazy" decoding="async"></button><figcaption>I moduli: war, jar e il loro posto nei container <span>· Introduzione a Java EE</span></figcaption></figure>
+  <h3>Imperativo e dichiarativo</h3>
+  <p>Nelle slide: la programmazione <b>imperativa</b> specifica l'algoritmo per raggiungere un obiettivo ("what has to be done"); quella <b>dichiarativa</b> specifica "how it has to be done". In Java EE la parte dichiarativa si fa con i <b>metadati</b>: annotazioni e/o deployment descriptor.</p>
+  <div class="note">Attenzione: in molti libri trovi la formulazione opposta (imperativo = dici COME farlo passo per passo, dichiarativo = dici COSA vuoi). All'esame usa la definizione della docente, ma sappi che esiste anche l'altra.</div>
+  <p>I metadati si attaccano a classi, interfacce, costruttori, metodi, campi, parametri. Le <b>annotazioni</b> si scrivono con <code>@Nome</code> e trasformano un semplice oggetto Java (<b>POJO</b>, Plain Old Java Object) in un componente.</p>
+  <h3>Un EJB con annotazioni</h3>
+  <div class="lines">
+    <div class="k">@Stateless</div><div class="e">Bean <b>senza stato</b> da mantenere tra una chiamata e l'altra.</div>
+    <div class="k">@Remote(ItemRemote.class)</div><div class="e">Questa è la sua interfaccia <b>remota</b>…</div>
+    <div class="k">@Local(ItemLocal.class)</div><div class="e">…e questa quella <b>locale</b>.</div>
+    <div class="k">@LocalBean</div><div class="e">Usabile anche in locale senza interfaccia.</div>
+    <div class="k">public class ItemEJB implements ItemLocal, ItemRemote {</div><div class="e">Una normale classe Java.</div>
+    <div class="k">  @PersistenceContext(unitName = "chapter01PU")</div><div class="e">Il container mi <b>inietta</b> il contesto di persistenza…</div>
+    <div class="k">  private EntityManager em;</div><div class="e">…cioè l'oggetto per parlare col database.</div>
+    <div class="k">  public Book findBookById(Long id) {</div><div class="e">La logica di business:</div>
+    <div class="k">    return em.find(Book.class, id);</div><div class="e">trova il libro con quell'id.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <p>Lo stesso si può dire in XML, nel file <code>ejb-jar.xml</code>:</p>
+<pre><code>&lt;session&gt;
+  &lt;ejb-name&gt;ItemEJB&lt;/ejb-name&gt;                      <span class="c">&lt;!-- nome del bean --&gt;</span>
+  &lt;remote&gt;org.agoncal.book.javaee7.ItemRemote&lt;/remote&gt; <span class="c">&lt;!-- interfaccia remota --&gt;</span>
+  &lt;local&gt;org.agoncal.book.javaee7.ItemLocal&lt;/local&gt;    <span class="c">&lt;!-- interfaccia locale --&gt;</span>
+  &lt;local-bean/&gt;
+  &lt;ejb-class&gt;org.agoncal.book.javaee7.ItemEJB&lt;/ejb-class&gt;
+  &lt;session-type&gt;Stateless&lt;/session-type&gt;           <span class="c">&lt;!-- tipo del bean --&gt;</span>
+  &lt;transaction-type&gt;Container&lt;/transaction-type&gt;
+&lt;/session&gt;</code></pre>
+  <p>I deployment descriptor vanno nel pacchetto, in <code>META-INF</code> o <code>WEB-INF</code> a seconda del componente.</p>
+  <div class="vs">
+    <div><h4>Annotazioni</h4><ul><li>Meno file e meno testo</li><li>Ma stanno <b>dentro il codice</b></li><li>Oggi è il metodo <b>preferito</b></li></ul></div>
+    <div><h4>Deployment descriptor (XML)</h4><ul><li>Si cambiano <b>senza toccare né ricompilare</b> il codice</li><li>Quasi sempre opzionali</li><li>Se ci sono entrambi, <mark>vince l'XML</mark></li></ul></div>
+  </div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I deployment descriptor di Java EE e dove si trovano"><img src="img/jee-dd.png" alt="I deployment descriptor di Java EE e dove si trovano" width="710" height="428" loading="lazy" decoding="async"></button><figcaption>I deployment descriptor di Java EE e dove si trovano <span>· Introduzione a Java EE</span></figcaption></figure>
+  <div class="note">Collegamento: è il "middleware implicito" del capitolo 04. Dichiari i servizi che vuoi, il container li fornisce.</div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Che estensione ha un modulo web? E uno enterprise?</summary><p>.war per la web application, .ear per il modulo enterprise.</p></details>
+    <details><summary>Dove sta il deployment descriptor di un modulo web?</summary><p>In WEB-INF/web.xml.</p></details>
+    <details><summary>Annotazione e XML dicono cose diverse: chi vince?</summary><p>Il deployment descriptor XML ha la precedenza.</p></details>
+    <details><summary>Vantaggio dei deployment descriptor?</summary><p>Si possono modificare senza cambiare il codice sorgente e senza ricompilare.</p></details>
+    <details><summary>Cosa significa @Stateless?</summary><p>Che il bean non mantiene uno stato tra una chiamata e l'altra.</p></details>
+  </div>
+</section>
+
+<!-- ================= 19 ================= -->
+<section class="ch" id="standard" data-t="Standard, JCP e storia" data-part="Java EE">
+  <div class="ch-head"><span class="ch-num">19</span><h2>Standard, JCP e storia</h2><span class="ch-sub">Chi decide come è fatto Java EE</span></div>
+  <ul>
+    <li>Java EE è una "<b>specifica ombrello</b>" che raccoglie tante specifiche, sviluppate con il <b>Java Community Process</b> (JCP).</li>
+    <li>Oggi l'evoluzione continua come <b>Jakarta EE</b>, sotto la <b>Eclipse Foundation</b>, con il <b>Jakarta EE Specification Process</b> (JESP).</li>
+    <li>Il principio resta: <mark>API comuni, implementazioni diverse</mark>.</li>
+  </ul>
+  <h3>Niente vendor lock-in</h3>
+  <p>Esistono molti server compatibili: commerciali (WebLogic, WebSphere…) e open source (GlassFish, JBoss/WildFly…). Un'applicazione che usa le API standard può passare, per esempio, da GlassFish a WildFly mantenendo gran parte del codice. Possono servire modifiche alla configurazione e nuovi test.</p>
+  <h3>Il Java Community Process</h3>
+  <p>Creato da Sun nel <b>1998</b>. Quando serve una novità, si apre una <b>JSR</b> (Java Specification Request) con un gruppo di esperti (aziende, università, singoli). Una JSR produce tre cose: la <b>specifica</b>, una <b>Reference Implementation</b> e un kit di test di compatibilità (<b>TCK</b>). Approva l'<b>Executive Committee</b> (EC).</p>
+  <div class="flow"><span>Initiation</span><i>→</i><span>Early Draft</span><i>→</i><span>Public Draft</span><i>→</i><span class="hot">Final Release</span><i>→</i><span>Maintenance</span></div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Le fasi del Java Community Process"><img src="img/jee-jcp.png" alt="Le fasi del Java Community Process" width="1009" height="238" loading="lazy" decoding="async"></button><figcaption>Le fasi del Java Community Process <span>· Introduzione a Java EE</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Fase</th><th>Cosa succede</th></tr>
+    <tr><td>Initiation</td><td>Un membro propone la JSR. Per 2 settimane pubblico ed esperti commentano, poi vota l'EC.</td></tr>
+    <tr><td>Early Draft</td><td>In 2–3 mesi il capo progetto forma il gruppo di esperti che scrive una prima bozza, poi rivista da altri.</td></tr>
+    <tr><td>Public Draft / Final Release</td><td>In 1–3 mesi si completa la specifica, nuovo voto EC. Poi bozza finale, prototipo e TCK. Se l'EC approva, diventa standard e il gruppo si scioglie.</td></tr>
+    <tr><td>Maintenance</td><td>Aggiornamenti minori, discussi per un mese e votati dall'EC.</td></tr>
+  </table></div>
+  <h3>Un po' di storia</h3>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: L’evoluzione di Java EE, da J2EE 1.2 (1999) a Java EE 7 (2013)"><img src="img/jee-storia.png" alt="L’evoluzione di Java EE, da J2EE 1.2 (1999) a Java EE 7 (2013)" width="762" height="406" loading="lazy" decoding="async"></button><figcaption>L’evoluzione di Java EE, da J2EE 1.2 (1999) a Java EE 7 (2013) <span>· Introduzione a Java EE</span></figcaption></figure>
+  <ul>
+    <li><b>Java EE 8</b> (2017): Servlet 4.0 con HTTP/2, JSON migliorato con nuova API di binding, client REST reattivo, eventi CDI asincroni, nuova Security API, Server-Sent Events, supporto alle novità di Java SE 8.</li>
+    <li>Secondo le slide (aggiornate a ottobre 2026), l'ultima versione rilasciata è <b>Jakarta EE 11</b>, del 26 giugno 2025; Jakarta EE 12 è in sviluppo.</li>
+  </ul>
+  <h3>L'esempio del corso: CD-BookStore</h3>
+  <p>Un sito di e-commerce dove il cliente sfoglia un catalogo di libri e CD, usa un carrello, e ottiene un ordine dopo il controllo del pagamento. Il sistema è collegato a una banca per validare le carte di credito.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I casi d’uso del CD-BookStore"><img src="img/jee-bookstore.png" alt="I casi d’uso del CD-BookStore" width="691" height="518" loading="lazy" decoding="async"></button><figcaption>I casi d’uso del CD-BookStore <span>· Introduzione a Java EE</span></figcaption></figure>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Cosa produce una JSR?</summary><p>La specifica, una Reference Implementation e un Technology/Compatibility Test Kit.</p></details>
+    <details><summary>Chi porta avanti oggi Java EE e con che nome?</summary><p>La Eclipse Foundation, con il nome Jakarta EE e il processo JESP.</p></details>
+    <details><summary>Cosa vuol dire "no vendor lock-in"?</summary><p>Che non sei legato a un solo fornitore: grazie agli standard puoi spostare l'applicazione su un altro server compatibile con poche modifiche.</p></details>
+  </div>
+</section>
+
+<div class="partbreak">Parte 5 · Messaging (JMS)</div>
+
+<!-- ================= 20 ================= -->
+<section class="ch" id="messaging" data-t="Messaging: concetti" data-part="JMS">
+  <div class="ch-head"><span class="ch-num">20</span><h2>Messaging: i concetti</h2><span class="ch-sub">Lezione 5 · comunicare senza aspettarsi a vicenda</span></div>
+  <div class="def"><b class="lbl">MOM</b>Un <b>Message-Oriented Middleware</b> è un software (il <b>provider</b>) che permette di scambiare messaggi <b>asincroni</b> tra sistemi diversi. Funziona come un <b>buffer</b>: qualcuno ci mette messaggi, qualcun altro li prende.</div>
+  <ul>
+    <li>È <b>loosely coupled</b> (debolmente accoppiato): chi produce non sa chi consumerà il messaggio.</li>
+    <li>Produttore e consumatore <mark>non devono essere attivi nello stesso momento</mark>.</li>
+  </ul>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Producer, destination nel message provider, consumer"><img src="img/jms-base.png" alt="Producer, destination nel message provider, consumer" width="357" height="103" loading="lazy" decoding="async"></button><figcaption>Producer, destination nel message provider, consumer <span>· Messaging (1)</span></figcaption></figure>
+  <div class="tbl"><table>
+    <tr><th>Termine</th><th>Significa</th></tr>
+    <tr><td>Provider (broker)</td><td>Il software che memorizza e consegna i messaggi.</td></tr>
+    <tr><td>Producer</td><td>Chi manda il messaggio.</td></tr>
+    <tr><td>Destination</td><td>Il "posto" dove il messaggio resta in attesa: una <b>coda</b> o un <b>topic</b>.</td></tr>
+    <tr><td>Consumer</td><td>Chi riceve il messaggio.</td></tr>
+    <tr><td>Client</td><td>Nome generico per chi produce o consuma (producer, sender, publisher, consumer, receiver, subscriber).</td></tr>
+    <tr><td>Messages</td><td>Gli oggetti che i client si scambiano.</td></tr>
+    <tr><td>Administered objects</td><td>Connection factory e destination, configurati dall'amministratore e trovati con JNDI o injection.</td></tr>
+  </table></div>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: L’architettura: producer e consumer cercano gli administered objects nella directory JNDI"><img src="img/jms-arch.png" alt="L’architettura: producer e consumer cercano gli administered objects nella directory JNDI" width="333" height="142" loading="lazy" decoding="async"></button><figcaption>L’architettura: producer e consumer cercano gli administered objects nella directory JNDI <span>· Messaging (1)</span></figcaption></figure>
+  <p>In Java EE l'API per tutto questo è <b>JMS</b> (Java Message Service): interfacce e classi per connettersi a un provider, creare, inviare e ricevere messaggi. JMS sta ai provider di messaggi come <b>JDBC</b> sta ai database: un'API, tanti prodotti (OpenMQ, MQSeries, SonicMQ…).</p>
+  <h3>I due modelli</h3>
+  <div class="vs">
+    <div><h4>Point-to-point (P2P) · coda</h4><ul><li>Uno-a-<b>uno</b>: ogni messaggio ha <b>un solo</b> destinatario</li><li>Più consumer possono leggere la stessa coda, ma chi prende un messaggio lo toglie agli altri</li><li><b>Pull</b>: è il ricevente che va a prendere i messaggi</li><li><b>Nessuna dipendenza temporale</b>: il messaggio aspetta in coda finché non viene consumato o scade</li><li>Il ricevente conferma con un <b>acknowledge</b>, poi il provider lo cancella</li><li>L'ordine di consegna non è garantito (contano anche priorità e selettori)</li></ul></div>
+    <div><h4>Publish-subscribe · topic</h4><ul><li>Uno-a-<b>molti</b>: un messaggio va a tutti gli iscritti (subscriber)</li><li>I subscriber si iscrivono e disiscrivono dinamicamente</li><li><b>Push</b>: i messaggi arrivano da soli, in broadcast</li><li><b>C'è dipendenza temporale</b>: non ricevi i messaggi pubblicati prima della tua iscrizione, né quelli persi mentre eri inattivo</li><li>Utile per avvisi da mandare a molti</li></ul></div>
+  </div>
+  <div class="figrow"><figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Point-to-point: ogni messaggio della coda va a un solo receiver"><img src="img/jms-p2p.png" alt="Point-to-point: ogni messaggio della coda va a un solo receiver" width="790" height="138" loading="lazy" decoding="async"></button><figcaption>Point-to-point: ogni messaggio della coda va a un solo receiver <span>· Messaging (1)</span></figcaption></figure><figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Publish-subscribe: il messaggio pubblicato sul topic arriva a ogni subscriber"><img src="img/jms-pubsub.png" alt="Publish-subscribe: il messaggio pubblicato sul topic arriva a ogni subscriber" width="357" height="89" loading="lazy" decoding="async"></button><figcaption>Publish-subscribe: il messaggio pubblicato sul topic arriva a ogni subscriber <span>· Messaging (1)</span></figcaption></figure></div>
+  <h3>Administered objects</h3>
+  <p>Si configurano dall'amministratore, non nel codice, e si creano una volta sola (come le datasource JDBC). Il provider li mette nello spazio dei nomi JNDI.</p>
+  <ul>
+    <li><b>Connection factory:</b> serve ai client per creare una connessione.</li>
+    <li><b>Destination:</b> il punto che riceve, conserva e distribuisce i messaggi. È una <code>Queue</code> (P2P) o un <code>Topic</code> (pub-sub).</li>
+  </ul>
+  <h3>Message-Driven Beans (MDB)</h3>
+  <ul>
+    <li>Sono <b>consumer asincroni</b> che girano in un EJB container.</li>
+    <li>Il container pensa a transazioni, sicurezza, concorrenza, acknowledge; l'MDB pensa solo a consumare il messaggio.</li>
+    <li>Sono <b>stateless</b>: il container può tenerne tante istanze in parallelo per messaggi di produttori diversi.</li>
+    <li>Differenza con un session bean stateless: l'MDB reagisce ai <b>messaggi</b> che arrivano; il session bean risponde alle <b>chiamate</b> dei client attraverso un'interfaccia (local, remote o no-interface).</li>
+  </ul>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Perché il messaging è "loosely coupled"?</summary><p>Perché il produttore non sa chi consumerà il messaggio, e i due non devono essere attivi contemporaneamente.</p></details>
+    <details><summary>Coda o topic: quale garantisce un solo destinatario?</summary><p>La coda (point-to-point).</p></details>
+    <details><summary>Nel pub-sub ricevo i messaggi pubblicati prima della mia iscrizione?</summary><p>No: c'è dipendenza temporale tra publisher e subscriber.</p></details>
+    <details><summary>Pull o push?</summary><p>P2P è pull (il consumer preleva), pub-sub è push (i messaggi vengono mandati automaticamente).</p></details>
+    <details><summary>Quali sono i due administered objects?</summary><p>Connection factory e destination (coda o topic).</p></details>
+  </div>
+</section>
+
+<!-- ================= 21 ================= -->
+<section class="ch" id="jms-api" data-t="JMS: producer e consumer" data-part="JMS">
+  <div class="ch-head"><span class="ch-num">21</span><h2>JMS: producer e consumer</h2><span class="ch-sub">L'API e il codice delle slide</span></div>
+  <h3>I pezzi dell'API</h3>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi"><img src="img/jms-factory.png" alt="Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi" width="224" height="202" loading="lazy" decoding="async"></button><figcaption>Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi <span>· Messaging (1)</span></figcaption></figure>
+  <ul>
+    <li><b>ConnectionFactory:</b> crea la connessione con il provider (di solito una connessione TCP). È un administered object: la ottieni con un lookup JNDI o con l'injection.</li>
+    <li><b>Destination:</b> nasconde l'indirizzo vero. Anche questa via JNDI. <code>Queue</code> per P2P, <code>Topic</code> per pub-sub.</li>
+    <li><b>Message</b>, fatto di tre parti:
+      <ul>
+        <li><b>Header</b> (obbligatorio): ID unico, destinazione, priorità, expiration (quanto può restare in coda), timestamp, tipo, persistente o no.</li>
+        <li><b>Properties</b> (opzionali): coppie nome/valore, usate dai <b>message selector</b> per ricevere solo certi messaggi.</li>
+        <li><b>Body</b> (opzionale): il contenuto vero. Tipi: Stream, Map, Text, Object, Bytes.</li>
+      </ul>
+    </li>
+  </ul>
+  <div class="tbl"><table>
+    <tr><th>API semplificata</th><th>Ruolo</th></tr>
+    <tr><td><code>JMSContext</code></td><td>Una connessione attiva al provider + una sessione, in un solo oggetto (single-threaded).</td></tr>
+    <tr><td><code>JMSProducer</code></td><td>Creato dal contesto, <b>invia</b> messaggi a una coda o a un topic.</td></tr>
+    <tr><td><code>JMSConsumer</code></td><td>Creato dal contesto, <b>riceve</b> messaggi.</td></tr>
+  </table></div>
+  <h3>Producer 1: fuori da un container</h3>
+  <p>Quattro passi: prendi factory e coda con JNDI → crea un JMSContext → crea un producer → <code>send()</code>.</p>
+  <div class="lines">
+    <div class="k">Context jndiContext = new InitialContext();</div><div class="e">Mi collego all'elenco dei nomi (JNDI).</div>
+    <div class="k">ConnectionFactory cf = (ConnectionFactory)</div><div class="e">Cerco per nome la connection factory…</div>
+    <div class="k">  jndiContext.lookup("jms/javaee7/ConnectionFactory");</div><div class="e"></div>
+    <div class="k">Destination queue = (Destination)</div><div class="e">…e la coda.</div>
+    <div class="k">  jndiContext.lookup("jms/javaee7/Queue");</div><div class="e"></div>
+    <div class="k">try (JMSContext context = cf.createContext()) {</div><div class="e">Creo il contesto (connessione + sessione). Il <code>try(…)</code> lo chiude da solo alla fine.</div>
+    <div class="k">  context.createProducer().send(queue,</div><div class="e">Creo un producer e spedisco…</div>
+    <div class="k">    "Text message sent at " + new Date());</div><div class="e">…un messaggio di testo con la data.</div>
+    <div class="k">}</div><div class="e">Se il nome JNDI non esiste: <code>NamingException</code>.</div>
+  </div>
+  <h3>Producer 2: dentro un container (EJB)</h3>
+  <div class="lines">
+    <div class="k">@Stateless</div><div class="e">Un EJB senza stato.</div>
+    <div class="k">public class ProducerEJB {</div><div class="e"></div>
+    <div class="k">  @Resource(lookup = "jms/javaee7/ConnectionFactory")</div><div class="e">Il container fa il lookup <b>per me</b> e…</div>
+    <div class="k">  private ConnectionFactory connectionFactory;</div><div class="e">…mette qui la factory.</div>
+    <div class="k">  @Resource(lookup = "jms/javaee7/Queue")</div><div class="e">Stessa cosa per la coda.</div>
+    <div class="k">  private Queue queue;</div><div class="e"></div>
+    <div class="k">  public void sendMessage() { … send(queue, …) }</div><div class="e">L'invio diventa un metodo di business.</div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <h3>Producer 3: con CDI</h3>
+  <div class="lines">
+    <div class="k">@Inject</div><div class="e">Il container <b>inietta</b> direttamente…</div>
+    <div class="k">@JMSConnectionFactory("jms/javaee7/ConnectionFactory")</div><div class="e">…un contesto creato da questa factory…</div>
+    <div class="k">private JMSContext context;</div><div class="e">…e ne gestisce tutto il ciclo di vita (non devo chiuderlo io).</div>
+    <div class="k">@Resource(lookup = "jms/javaee7/Queue") private Queue queue;</div><div class="e">La coda, sempre da JNDI.</div>
+    <div class="k">context.createProducer().send(queue, "…");</div><div class="e">Il metodo di business: una riga.</div>
+  </div>
+  <div class="note">Dalla versione 1 alla 3 il codice si accorcia: il container fa sempre più lavoro al posto tuo.</div>
+  <h3>Consumer sincrono e asincrono</h3>
+  <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Consumer sincrono (collects) e asincrono (registers, notifies)"><img src="img/jms-consumer.png" alt="Consumer sincrono (collects) e asincrono (registers, notifies)" width="274" height="132" loading="lazy" decoding="async"></button><figcaption>Consumer sincrono (collects) e asincrono (registers, notifies) <span>· Messaging (1)</span></figcaption></figure>
+  <div class="vs">
+    <div><h4>Sincrono</h4><p>Il consumer <b>va a prendere</b> il messaggio chiamando <code>receive()</code>. Il metodo <b>blocca</b> finché arriva un messaggio (a meno di un timeout).</p></div>
+    <div><h4>Asincrono</h4><p>Il consumer implementa <code>MessageListener</code> e si registra. Quando arriva un messaggio, viene chiamato da solo il suo metodo <code>onMessage()</code>.</p></div>
+  </div>
+  <div class="lines">
+    <div class="k">try (JMSContext context = cf.createContext()) {</div><div class="e">Consumer <b>sincrono</b>: stesso lookup di prima, poi…</div>
+    <div class="k">  while (true) {</div><div class="e">…un ciclo che non finisce mai (le slide lo segnalano: "busy waiting!")…</div>
+    <div class="k">    String message = context.createConsumer(queue)</div><div class="e">…in cui ogni volta provo a ricevere…</div>
+    <div class="k">        .receiveBody(String.class);</div><div class="e">…il corpo del messaggio come stringa. Qui il thread resta fermo finché non arriva qualcosa.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <div class="lines">
+    <div class="k">public class Listener implements MessageListener {</div><div class="e">Consumer <b>asincrono</b>: prometto di avere <code>onMessage</code>.</div>
+    <div class="k">  … context.createConsumer(queue)</div><div class="e">Creo il consumer sulla coda…</div>
+    <div class="k">      .setMessageListener(new Listener());</div><div class="e">…e registro un oggetto Listener come "ascoltatore".</div>
+    <div class="k">  public void onMessage(Message message) {</div><div class="e">La <b>callback</b>: viene chiamata quando arriva un messaggio.</div>
+    <div class="k">    System.out.println("Async Message received: "</div><div class="e">Stampo…</div>
+    <div class="k">      + message.getBody(String.class));</div><div class="e">…il corpo del messaggio.</div>
+    <div class="k">  }</div><div class="e"></div>
+    <div class="k">}</div><div class="e"></div>
+  </div>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quali sono le tre parti di un messaggio JMS?</summary><p>Header (obbligatorio), properties e body (opzionali).</p></details>
+    <details><summary>A cosa servono le properties?</summary><p>A filtrare i messaggi con i message selector: il client riceve solo quelli che rispettano un criterio.</p></details>
+    <details><summary>Cosa fa @Resource nel ProducerEJB?</summary><p>Chiede al container di fare il lookup JNDI della risorsa e di iniettarla nel campo.</p></details>
+    <details><summary>Differenza tra consumer sincrono e asincrono?</summary><p>Il sincrono chiama receive() e resta bloccato fino all'arrivo del messaggio; l'asincrono implementa MessageListener e viene richiamato con onMessage() quando il messaggio arriva.</p></details>
+    <details><summary>Perché si usa try (JMSContext context = …)?</summary><p>È un try-with-resources: chiude automaticamente il contesto alla fine, anche in caso di errore.</p></details>
+  </div>
+</section>
+
+
+  <!-- ================= STUDY ================= -->
+<section class="ch study" id="studiare" data-t="Come studiare bene">
+  <div class="ch-head"><span class="ch-num">→</span><h2>Come impararlo bene bene</h2><span class="ch-sub">Metodi e aiuti, pensati per queste lezioni e per chi parte debole in Java</span></div>
+  <div class="methods">
+    <div><h3>1. Prima il Java, poco ma bene</h3><p>Rileggi il capitolo 00 finché sai spiegare classe, oggetto, static, extends, implements e try/catch senza guardare. Bastano queste parole per leggere tutti gli esempi del corso.</p></div>
+    <div><h3>2. Esegui il codice, non solo leggerlo</h3><p>Copia gli esempi (HelloThread, SimpleThreads, Counter, Alphonse e Gaston) in un ambiente online come <a href="https://www.jdoodle.com/online-java-compiler" target="_blank" rel="noopener">JDoodle</a> o <a href="https://www.onlinegdb.com/online_java_compiler" target="_blank" rel="noopener">OnlineGDB</a>: niente da installare. Lanciali più volte e guarda come cambia l'output.</p></div>
+    <div><h3>3. Rompi e ripara</h3><p>Togli <code>synchronized</code> dal contatore e fai fare 100.000 incrementi a due thread: vedrai numeri sbagliati. Togli <code>volatile</code> da VolatileTest. Fai andare in deadlock Alphonse e Gaston, poi sbloccali. Un bug visto con i tuoi occhi non si dimentica.</p></div>
+    <div><h3>4. Simula a mano su carta</h3><p>Disegna due colonne (thread 1, thread 2) e scrivi riga per riga chi fa cosa, come nel simulatore del capitolo 08. Fallo per c++, per il deadlock e per il singleton versione 3. È esattamente il tipo di ragionamento richiesto all'esame.</p></div>
+    <div><h3>5. Richiamo attivo</h3><p>Chiudi gli appunti e rispondi alle domande lampo ad alta voce, poi apri la risposta. Ricordare costruisce la memoria; rileggere dà solo l'illusione di sapere.</p></div>
+    <div><h3>6. Ripetizione dilazionata</h3><p>Ripassa dopo 1, 3, 7 e 14 giorni. Con <a href="https://apps.ankiweb.net/" target="_blank" rel="noopener">Anki</a> (gratis) crea carte per: 8 parole chiave, 3 livelli di trasparenza, tipi di middleware, stati del thread, modi per ottenere happens-before, deadlock/livelock/starvation.</p></div>
+    <div><h3>7. Tecnica di Feynman</h3><p>Spiega a qualcuno (o a un foglio) "perché il double-checked locking non funziona" con parole da bar. Dove ti inceppi, lì c'è il buco.</p></div>
+    <div><h3>8. Fai i conti di Amdahl</h3><p>Inventa 5 esercizi (p e n diversi) e risolvili a mano, poi controlla con la calcolatrice del capitolo 09. Le formule si ricordano usandole.</p></div>
+  <div><h3>9. Fai parlare due programmi</h3><p>Copia Client e Server del capitolo 16 sul tuo PC (con JDK installato), avvia prima il server e poi il client in due terminali. Poi prova a farli partire al contrario e leggi l'errore. Vedere una connessione funzionare vale più di dieci letture.</p></div>
+    <div><h3>10. Disegna le sigle</h3><p>Java EE è pieno di sigle (JTA, JPA, JMS, JNDI, EJB, MDB, war, ear…). Fai una tabella a due colonne "sigla → a cosa serve" e ripassala con Anki. Per JMS disegna a memoria coda e topic con producer e consumer.</p></div>
+  </div>
+
+  <h3>Mappa per collegare tutto</h3>
+  <p>Disegnala a memoria, è il filo del corso: <b>sistema distribuito</b> → serve <b>middleware</b> → che dà <b>trasparenza</b> → dentro ogni nodo c'è <b>concorrenza</b> → i thread condividono memoria → <b>interferenza e inconsistenza</b> → si risolvono con <b>synchronized / volatile / atomic</b> → che però causano <b>deadlock, livelock, starvation</b> e rallentano la parte sequenziale (<b>Amdahl</b>) → caso di studio: il <b>Singleton</b>.</p>
+  <p>Seconda metà: tra i nodi la comunicazione più semplice è il <b>socket</b> (sincrono, client e server attivi insieme) → RPC/RMI la nascondono dietro uno <b>stub</b> → <b>Java EE</b> mette i componenti in <b>container</b> che offrono i servizi (middleware implicito, annotazioni) → con <b>JMS</b> la comunicazione diventa <b>asincrona</b> e disaccoppiata (code e topic).</p>
+
+  <h3>Un piano di 14 giorni</h3>
+  <div class="tbl"><table>
+    <tr><th>Giorno</th><th>Cosa</th></tr>
+    <tr><td class="num">1</td><td>Cap. 00: Java minimo. Prova a scrivere e lanciare HelloThread online</td></tr>
+    <tr><td class="num">2</td><td>Cap. 01–02: sistemi distribuiti, parole chiave, requisiti</td></tr>
+    <tr><td class="num">3</td><td>Cap. 03–04: trasparenza e middleware. Disegna i 3 livelli a memoria</td></tr>
+    <tr><td class="num">4</td><td>Cap. 05–07: thread, creazione, sleep/join/interrupt. Esegui SimpleThreads</td></tr>
+    <tr><td class="num">5</td><td>Cap. 08: interferenza e happens-before. Rompi il contatore</td></tr>
+    <tr><td class="num">6</td><td>Cap. 09–10: Amdahl (esercizi) e sincronizzazione</td></tr>
+    <tr><td class="num">7</td><td>Cap. 11–12: deadlock e sale d'attesa. Prova tutte le combinazioni</td></tr>
+    <tr><td class="num">8</td><td>Cap. 13–14: efficienza e Singleton. Simula a mano le 4 versioni</td></tr>
+  <tr><td class="num">9</td><td>Cap. 15–16: socket e stream. Esegui Hello World client/server</td></tr>
+    <tr><td class="num">10</td><td>Cap. 17: Java EE, container e componenti. Ridisegna la figura dei container</td></tr>
+    <tr><td class="num">11</td><td>Cap. 18–19: packaging, annotazioni, JCP</td></tr>
+    <tr><td class="num">12</td><td>Cap. 20–21: messaging e JMS. Confronta coda e topic a voce</td></tr>
+    <tr><td class="num">13</td><td>Ripasso con le domande lampo di tutti i capitoli + Anki</td></tr>
+    <tr><td class="num">14</td><td>Simulazione d'esame: rispondi per iscritto, a tempo, senza appunti</td></tr>
+  </table></div>
+
+  <h3>Risorse</h3>
+  <ul>
+    <li><a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/" target="_blank" rel="noopener">Oracle Java Tutorial: Concurrency</a>. Molti esempi delle slide (HelloThread, SleepMessages, SimpleThreads, Counter, MsLunch, Alphonse e Gaston) vengono da qui, con spiegazioni in inglese semplice.</li>
+    <li><a href="https://docs.oracle.com/javase/tutorial/java/javaOO/" target="_blank" rel="noopener">Oracle Java Tutorial: Classes and Objects</a>, per rinforzare le basi di Java.</li>
+  <li><a href="https://docs.oracle.com/javase/tutorial/networking/sockets/" target="_blank" rel="noopener">Oracle Java Tutorial: All About Sockets</a>, con un esempio client/server simile a quello del corso.</li>
+    <li><a href="https://jakarta.ee/learn/" target="_blank" rel="noopener">Jakarta EE: Learn</a>, il punto di partenza ufficiale per Java EE / Jakarta EE e JMS (Jakarta Messaging).</li>
+    <li>Un'IA come tutor: incolla un capitolo e chiedi "fammi 10 domande d'esame, una alla volta, e correggimi" oppure "spiegami questo codice riga per riga". Usala per farti interrogare, non per farti fare gli esercizi.</li>
+  </ul>
+  <div class="note">Mezz'ora al giorno tutti i giorni batte cinque ore la sera prima.</div>
+</section>
+
+  </main>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Figura ingrandita"><div class="lbimg"><img id="lbimg" alt=""></div><p id="lbcap"></p><button type="button" id="lbclose">Chiudi ✕</button></div>
+  <script>
+(function(){
+  /* ---- indice + progressi ---- */
+  var KEY = 'quaderno-distribuita-done';
+  var done = {};
+  try { done = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { done = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e) {} }
+  var toc = document.getElementById('toc');
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('section.ch:not(.study)'));
+  var links = {}, cntEls = {}, lastPart = null;
+  chapters.forEach(function(sec){
+    var part = sec.getAttribute('data-part');
+    if (part !== lastPart) { var pl = document.createElement('li'); pl.className = 'part'; pl.textContent = part; toc.appendChild(pl); lastPart = part; }
+    var id = sec.id, n = sec.querySelector('.ch-num').textContent, t = sec.getAttribute('data-t');
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.href = '#' + id;
+    a.innerHTML = '<span class="n">' + n + '</span><span class="t"></span><span class="cnt"></span><span class="ok" aria-hidden="true">✓</span>';
+    a.querySelector('.t').textContent = t;
+    li.appendChild(a); toc.appendChild(li); links[id] = a; cntEls[id] = a.querySelector('.cnt');
+    var lab = document.createElement('label'); lab.className = 'check';
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'done-' + id; cb.checked = !!done[id];
+    lab.appendChild(cb); lab.appendChild(document.createTextNode('Capitolo ripassato'));
+    sec.appendChild(lab);
+    cb.addEventListener('change', function(){ done[id] = cb.checked; save(); update(); });
+  });
+  var sl = document.createElement('li');
+  sl.innerHTML = '<a href="#studiare"><span class="n">→</span><span class="t">Come studiare bene</span><span class="cnt"></span><span class="ok"></span></a>';
+  toc.appendChild(sl); cntEls.studiare = sl.querySelector('.cnt');
+  function update(){
+    var c = 0;
+    chapters.forEach(function(s){ var on = !!done[s.id]; if (on) c++; links[s.id].classList.toggle('done', on); });
+    document.getElementById('pc').textContent = c;
+    document.getElementById('pt').textContent = chapters.length;
+    document.getElementById('pb').style.width = (c / chapters.length * 100) + '%';
+  }
+  update();
+  if (window.matchMedia('(max-width:900px)').matches) {
+    var d = document.querySelector('.idx details'); if (d) d.open = false;
+    toc.addEventListener('click', function(e){ if (e.target.closest('a') && d) d.open = false; });
+  }
+
+  /* ---- Amdahl ---- */
+  var ap = document.getElementById('ap'), an = document.getElementById('an');
+  function fmt(x, dec){ return x.toFixed(dec).replace('.', ','); }
+  function amd(){
+    var p = ap.value / 100, n = +an.value;
+    var tn = (1 - p) + p / n, s = 1 / tn;
+    document.getElementById('apo').textContent = ap.value + '%';
+    document.getElementById('ano').textContent = n;
+    document.getElementById('as').textContent = fmt(s, 2) + '×';
+    document.getElementById('at').textContent = fmt(tn * 100, tn * 100 < 10 ? 1 : 0) + ' s';
+    document.getElementById('am').textContent = p >= 1 ? '∞' : fmt(1 / (1 - p), 2) + '×';
+    document.getElementById('tbs').style.width = ((1 - p) * 100) + '%';
+    document.getElementById('tbp').style.width = (p / n * 100) + '%';
+  }
+  ap.addEventListener('input', amd); an.addEventListener('input', amd); amd();
+
+  /* ---- simulatore race condition ---- */
+  var mixed = [
+    [1, 'load',  'Thread 1 legge c (0) nel suo registro.'],
+    [2, 'load',  'Thread 2 legge c (ancora 0!) nel suo registro.'],
+    [1, 'inc',   'Thread 1 incrementa il suo registro: 1.'],
+    [2, 'inc',   'Thread 2 incrementa il suo registro: 1.'],
+    [1, 'store', 'Thread 1 scrive 1 in c.'],
+    [2, 'store', 'Thread 2 scrive 1 in c. Un incremento è andato perso: c = 1 invece di 2.']
+  ];
+  var serial = [
+    [1, 'load',  'Thread 1 legge c (0).'],
+    [1, 'inc',   'Thread 1 incrementa: 1.'],
+    [1, 'store', 'Thread 1 scrive 1 in c.'],
+    [2, 'load',  'Thread 2 legge c (1).'],
+    [2, 'inc',   'Thread 2 incrementa: 2.'],
+    [2, 'store', 'Thread 2 scrive 2 in c. Corretto: è quello che fa synchronized, un thread alla volta.']
+  ];
+  var seq = mixed, step = 0, reg = {1:null, 2:null}, c = 0;
+  var r1 = document.getElementById('r1'), r2 = document.getElementById('r2'), rc = document.getElementById('rc'),
+      log = document.getElementById('rlog'), next = document.getElementById('rnext'), mode = document.getElementById('rmode');
+  function draw(){ r1.textContent = reg[1] === null ? '–' : reg[1]; r2.textContent = reg[2] === null ? '–' : reg[2]; rc.textContent = c; next.disabled = step >= seq.length; }
+  function reset(){ step = 0; reg = {1:null, 2:null}; c = 0; log.textContent = 'Partiamo con c = 0. Due thread fanno c++. Ci aspettiamo 2.'; draw(); }
+  next.addEventListener('click', function(){
+    if (step >= seq.length) return;
+    var s = seq[step++], t = s[0];
+    if (s[1] === 'load') reg[t] = c; else if (s[1] === 'inc') reg[t]++; else c = reg[t];
+    log.textContent = 'Passo ' + step + '/6 · ' + s[2]; draw();
+  });
+  mode.addEventListener('click', function(){
+    seq = seq === mixed ? serial : mixed;
+    mode.textContent = seq === mixed ? 'Ordine: mescolato' : 'Ordine: uno alla volta';
+    reset();
+  });
+  document.getElementById('rreset').addEventListener('click', reset);
+  draw();
+
+  /* ---- ricerca su indice e contenuti ---- */
+  var qIn = document.getElementById('q'), res = document.getElementById('sres'), qClr = document.getElementById('qclr');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fold(s){ var o = ''; for (var i = 0; i < s.length; i++){ var f = s[i].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); o += f.length === 1 ? f : (f[0] || ' '); } return o; }
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function markArr(f, terms){ var m = new Array(f.length).fill(false), any = false; terms.forEach(function(tm){ var k = 0; while ((k = f.indexOf(tm, k)) !== -1){ any = true; for (var j = k; j < k + tm.length; j++) m[j] = true; k += tm.length; } }); return any ? m : null; }
+
+  var SEL = 'h2,h3,h4,summary,p,li,td,pre,.def,.note,.levels > div,.lines > div,.flow,figcaption';
+  var items = [];
+  Array.prototype.forEach.call(document.querySelectorAll('section.ch'), function(sec){
+    var num = sec.querySelector('.ch-num').textContent, title = sec.getAttribute('data-t');
+    Array.prototype.forEach.call(sec.querySelectorAll(SEL), function(el){
+      if (el.closest('.check') || el.closest('.lab')) return;
+      var text = el.textContent.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      items.push({ el: el, sec: sec, num: num, title: title, text: text, f: fold(text), head: el.matches('h2,h3,h4,summary') });
+    });
+  });
+
+  var cur = [], sel = -1, terms = [], placed = [];
+  function snip(it){
+    var t = it.text, f = it.f, p = Math.max(0, f.indexOf(terms[0]));
+    var a = Math.max(0, p - 45), b = Math.min(t.length, p + terms[0].length + 80);
+    var s = t.slice(a, b), m = markArr(f.slice(a, b), terms) || [], out = '', on = false;
+    for (var i = 0; i < s.length; i++){ if (m[i] && !on){ out += '<mark>'; on = true; } if (!m[i] && on){ out += '</mark>'; on = false; } out += esc(s[i]); }
+    if (on) out += '</mark>';
+    return (a > 0 ? '…' : '') + out + (b < t.length ? '…' : '');
+  }
+  function clearMarks(){ placed.forEach(function(mk){ var p = mk.parentNode; if (!p) return; p.replaceChild(document.createTextNode(mk.textContent), mk); p.normalize(); }); placed = []; }
+  function markIn(el){
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = w.nextNode())) nodes.push(n);
+    nodes.forEach(function(node){
+      var s = node.data, m = markArr(fold(s), terms); if (!m) return;
+      var frag = document.createDocumentFragment(), i = 0;
+      while (i < s.length){ var j = i; while (j < s.length && m[j] === m[i]) j++; var part = s.slice(i, j);
+        if (m[i]){ var mk = document.createElement('mark'); mk.className = 'shl'; mk.textContent = part; frag.appendChild(mk); placed.push(mk); }
+        else frag.appendChild(document.createTextNode(part));
+        i = j; }
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  function setCounts(counts){
+    Object.keys(cntEls).forEach(function(id){ var c = counts ? (counts[id] || 0) : 0; cntEls[id].textContent = c ? c : ''; cntEls[id].parentNode.classList.toggle('miss', !!counts && !c); });
+  }
+  function run(){
+    var raw = qIn.value.trim();
+    qClr.hidden = !raw;
+    clearMarks();
+    terms = fold(raw).split(/\s+/).filter(function(t){ return t; });
+    if (raw.length < 2){ res.hidden = true; res.innerHTML = ''; cur = []; setCounts(null); return; }
+    cur = items.filter(function(it){ return terms.every(function(t){ return it.f.indexOf(t) !== -1; }); });
+    var counts = {}; cur.forEach(function(it){ counts[it.sec.id] = (counts[it.sec.id] || 0) + 1; });
+    setCounts(counts);
+    var nch = Object.keys(counts).length;
+    if (!cur.length){ res.innerHTML = '<p class="sempty">Nessun risultato per “' + esc(raw) + '”. Prova con una parola più corta.</p>'; res.hidden = false; return; }
+    var html = '<p class="shead">' + cur.length + ' risultat' + (cur.length === 1 ? 'o' : 'i') + ' in ' + nch + ' capitol' + (nch === 1 ? 'o' : 'i') + ' · ↑↓ per scegliere, Invio per aprire</p>';
+    cur.slice(0, 60).forEach(function(it, i){
+      html += '<a href="#' + it.sec.id + '" data-i="' + i + '" class="sr' + (it.head ? ' sh' : '') + '"><span class="sc">' + esc(it.num + ' · ' + it.title) + '</span><span class="st">' + snip(it) + '</span></a>';
+    });
+    if (cur.length > 60) html += '<p class="shead">…e altri ' + (cur.length - 60) + '. Aggiungi una parola per restringere.</p>';
+    res.innerHTML = html; res.hidden = false; sel = -1;
+  }
+  function go(i){
+    var it = cur[i]; if (!it) return;
+    var det = it.el.closest('details'); if (det && !det.open) det.open = true;
+    res.hidden = true;
+    clearMarks(); markIn(it.el);
+    it.el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    it.el.classList.remove('flash'); void it.el.offsetWidth; it.el.classList.add('flash');
+  }
+  function hi(){ var ls = res.querySelectorAll('a.sr'); Array.prototype.forEach.call(ls, function(l, i){ l.classList.toggle('on', i === sel); }); if (ls[sel]) ls[sel].scrollIntoView({ block: 'nearest' }); }
+  qIn.addEventListener('input', run);
+  qIn.addEventListener('keydown', function(e){
+    var n = res.querySelectorAll('a.sr').length;
+    if (e.key === 'ArrowDown'){ e.preventDefault(); if (n){ sel = Math.min(n - 1, sel + 1); hi(); } }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); if (n){ sel = Math.max(0, sel - 1); hi(); } }
+    else if (e.key === 'Enter'){ e.preventDefault(); go(sel >= 0 ? sel : 0); }
+    else if (e.key === 'Escape'){ qIn.value = ''; run(); qIn.blur(); }
+  });
+  qIn.addEventListener('focus', function(){ if (qIn.value.trim().length >= 2 && res.innerHTML) res.hidden = false; });
+  res.addEventListener('click', function(e){ var a = e.target.closest('a.sr'); if (!a) return; e.preventDefault(); go(+a.getAttribute('data-i')); });
+  qClr.addEventListener('click', function(){ qIn.value = ''; run(); qIn.focus(); });
+  document.addEventListener('click', function(e){ if (!e.target.closest('.search')) res.hidden = true; });
+  document.addEventListener('keydown', function(e){ var ae = document.activeElement; if (e.key === '/' && ae !== qIn && !(ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName))){ e.preventDefault(); qIn.focus(); } });
+  /* ---- figure ingrandibili ---- */
+  var lb = document.getElementById('lb'), lbimg = document.getElementById('lbimg'), lbcap = document.getElementById('lbcap'), lastZoom = null;
+  function closeLb(){ lb.hidden = true; lbimg.removeAttribute('src'); if (lastZoom) lastZoom.focus(); }
+  document.addEventListener('click', function(e){
+    var z = e.target.closest('.zoom'); if (!z) return;
+    var im = z.querySelector('img'); lastZoom = z;
+    lbimg.src = im.getAttribute('src'); lbimg.alt = im.alt;
+    var fc = z.parentNode.querySelector('figcaption'); lbcap.textContent = fc ? fc.textContent : '';
+    lb.hidden = false; document.getElementById('lbclose').focus();
+  });
+  lb.addEventListener('click', function(e){ if (e.target === lb || e.target === lbimg || e.target.id === 'lbclose' || e.target.classList.contains('lbimg')) closeLb(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+})();
+</script>
+
+</body></html>
