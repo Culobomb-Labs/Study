@@ -95,6 +95,22 @@
 .ua-foot span{display:inline-flex;gap:6px;align-items:center}
 @media (max-width:640px){.ua-foot{display:none}.ua-pal{padding-top:max(12px,env(safe-area-inset-top,0px))}.ua-panel{max-height:85vh}}
 
+/* ---------- sposta progressi ---------- */
+.ua-sync-panel{width:min(440px,100%)}
+.ua-sync-body{padding:22px 22px 18px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.ua-sync-t{margin:0;font:700 20px/1.2 var(--ua-font);letter-spacing:-.01em}
+.ua-sync-p,.ua-sync-note{margin:0;color:var(--ua-muted);font-size:14.5px}
+.ua-sync-p b,.ua-sync-note b{color:var(--ua-ink)}
+.ua-sync-note{font-size:13px}
+.ua-qr{align-self:center;width:min(240px,70vw);aspect-ratio:1;max-width:100%;display:grid;place-items:center;border-radius:10px;background:#fff;padding:8px;border:1px solid var(--ua-line)}
+.ua-qr svg{width:100%;height:100%;display:block}
+.ua-qr-wait{font:500 12px/1.4 var(--ua-mono);color:#5d636b;text-align:center;padding:0 12px}
+.ua-sync-row{display:flex;gap:8px}
+.ua-sync-link{flex:1;min-width:0;height:34px;border:1px solid var(--ua-line);border-radius:8px;background:var(--ua-soft);color:var(--ua-muted);padding:0 10px;font:400 12.5px/1 var(--ua-mono)}
+.ua-sync-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.ua-btn-solid{background:var(--ua-ink);color:var(--ua-bg);border-color:var(--ua-ink)}
+.ua-btn-solid:hover{background:var(--ua-ink);opacity:.88}
+
 @keyframes ua-fade{from{opacity:0}}
 @keyframes ua-pop{from{opacity:0;transform:translateY(-6px) scale(.985)}}
 @keyframes ua-rise{from{opacity:0;transform:translateY(10px)}}

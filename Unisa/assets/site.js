@@ -28,6 +28,7 @@
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
+    sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
 
@@ -66,6 +67,7 @@
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
       <div class="ua-actions">
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
+        <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
         <button class="ua-btn ua-theme" type="button"></button>
       </div></div>`;
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
@@ -236,6 +238,111 @@
     location.href = it.href;
   }
 
+  /* ---------------- sposta i progressi tra dispositivi ----------------
+     Le spunte (piano di studio, capitoli fatti) stanno nel browser. Qui le impacchettiamo
+     in un link /QR: aprendolo sull'altro dispositivo vengono copiate lì. */
+  const SKIP_KEYS = [THEME_KEY];
+  const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
+
+  function collectProgress() {
+    const data = {};
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (SKIP_KEYS.includes(k)) continue;
+        let v = localStorage.getItem(k);
+        try { // togliamo le caselle non spuntate: il link resta corto
+          const o = JSON.parse(v);
+          if (o && typeof o === "object" && !Array.isArray(o)) { for (const x in o) if (o[x] === false) delete o[x]; v = JSON.stringify(o); }
+        } catch (e) {}
+        data[k] = v;
+      }
+    } catch (e) {}
+    return data;
+  }
+  const countChecks = data => Object.values(data).reduce((n, v) => {
+    try { const o = JSON.parse(v); if (o && typeof o === "object") return n + Object.values(o).filter(x => x === true).length; } catch (e) {}
+    return n;
+  }, 0);
+
+  let sync;
+  function buildSyncDialog() {
+    sync = el("div", { class: "ua-pal ua-sync", role: "dialog", "aria-modal": "true", "aria-labelledby": "ua-sync-t", hidden: "" });
+    sync.innerHTML = `<div class="ua-veil"></div><div class="ua-panel ua-sync-panel"><div class="ua-sync-body"></div></div>`;
+    document.body.append(sync);
+    sync.querySelector(".ua-veil").addEventListener("click", closeSync);
+    sync.addEventListener("keydown", e => { if (e.key === "Escape") { e.preventDefault(); closeSync(); } });
+  }
+  function showSync(html) {
+    lastFocus = document.activeElement;
+    sync.querySelector(".ua-sync-body").innerHTML = html;
+    sync.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    const f = sync.querySelector("[data-focus]") || sync.querySelector("button");
+    if (f) f.focus();
+    sync.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeSync));
+  }
+  function closeSync() {
+    sync.hidden = true;
+    document.documentElement.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function loadQrLib() {
+    if (window.qrcode) return Promise.resolve(window.qrcode);
+    return new Promise((ok, ko) => {
+      const s = el("script", { src: "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" });
+      s.onload = () => ok(window.qrcode); s.onerror = ko; document.head.append(s);
+    });
+  }
+
+  function openExport() {
+    const data = collectProgress();
+    const n = countChecks(data);
+    const link = new URL(ROOT + "index.html", location.href).href + "#sync=" + b64(JSON.stringify(data));
+    showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Sposta i progressi</h2>
+      <p class="ua-sync-p">${n ? `Su questo dispositivo hai <b>${n}</b> ${n === 1 ? "spunta" : "spunte"} (piano di studio e capitoli fatti).` : "Su questo dispositivo non hai ancora spunte da spostare."}
+      Inquadra il codice con la fotocamera del telefono, oppure copia il link e aprilo sull'altro dispositivo.</p>
+      <div class="ua-qr" aria-label="Codice QR con i tuoi progressi"><span class="ua-qr-wait">Preparo il codice…</span></div>
+      <div class="ua-sync-row">
+        <input class="ua-sync-link" id="ua-sync-link" readonly value="${esc(link)}" aria-label="Link con i progressi">
+        <button type="button" class="ua-btn ua-sync-copy" data-focus>Copia link</button>
+      </div>
+      <p class="ua-sync-note">Sull'altro dispositivo le spunte vengono <b>sostituite</b> con queste. Il link contiene solo le spunte, niente dati personali.</p>
+      <div class="ua-sync-actions"><button type="button" class="ua-btn" data-close>Chiudi</button></div>`);
+    const copy = sync.querySelector(".ua-sync-copy"), inp = sync.querySelector(".ua-sync-link");
+    copy.addEventListener("click", () => {
+      const done = () => { copy.textContent = "Copiato ✓"; setTimeout(() => (copy.textContent = "Copia link"), 1800); };
+      (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(done).catch(() => { inp.select(); try { document.execCommand("copy"); done(); } catch (e) {} });
+    });
+    inp.addEventListener("focus", () => inp.select());
+    loadQrLib().then(qrcode => {
+      const qr = qrcode(0, "L"); qr.addData(link); qr.make();
+      sync.querySelector(".ua-qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+    }).catch(() => { sync.querySelector(".ua-qr").innerHTML = '<span class="ua-qr-wait">QR non disponibile: usa “Copia link”.</span>'; });
+  }
+
+  function checkImport() {
+    const m = location.hash.match(/^#sync=([A-Za-z0-9_-]+)/);
+    if (!m) return;
+    let data;
+    try { data = JSON.parse(unb64(m[1])); } catch (e) { data = null; }
+    history.replaceState(null, "", location.pathname + location.search);
+    if (!data || typeof data !== "object") {
+      showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Link non valido</h2><p class="ua-sync-p">Il link dei progressi è incompleto. Rigeneralo dall'altro dispositivo e riprova.</p><div class="ua-sync-actions"><button type="button" class="ua-btn" data-close data-focus>Chiudi</button></div>`);
+      return;
+    }
+    const n = countChecks(data), here = countChecks(collectProgress());
+    showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Importare i progressi?</h2>
+      <p class="ua-sync-p">Il link contiene <b>${n}</b> ${n === 1 ? "spunta" : "spunte"}. ${here ? `Su questo dispositivo ne hai ${here}: verranno sostituite.` : ""}</p>
+      <div class="ua-sync-actions"><button type="button" class="ua-btn" data-close>Annulla</button><button type="button" class="ua-btn ua-btn-solid ua-do-import" data-focus>Importa</button></div>`);
+    sync.querySelector(".ua-do-import").addEventListener("click", () => {
+      try { for (const k in data) if (!SKIP_KEYS.includes(k) && typeof data[k] === "string") localStorage.setItem(k, data[k]); } catch (e) {}
+      showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Fatto ✓</h2><p class="ua-sync-p">Progressi importati. Apri il piano di studio o i quaderni: trovi le stesse spunte dell'altro dispositivo.</p><div class="ua-sync-actions"><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Ok</button></div>`);
+    });
+  }
+
   /* ---------------- effetti della home ---------------- */
   function homeEffects() {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -262,12 +369,16 @@
   buildBar();
   if (!IS_HOME) buildDock();
   buildPalette();
+  buildSyncDialog();
   applyTheme(getTheme());
   document.addEventListener("click", e => {
-    const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme");
+    const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme, .ua-open-sync");
     if (!b) return;
-    if (b.classList.contains("ua-theme")) cycleTheme(); else openSearch();
+    if (b.classList.contains("ua-theme")) cycleTheme();
+    else if (b.classList.contains("ua-open-sync")) openExport();
+    else openSearch();
   });
+  checkImport();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }
     if (IS_HOME && e.key === "/" && pal.hidden && !/input|textarea|select/i.test((document.activeElement || {}).tagName || "")) { e.preventDefault(); openSearch(); }
