@@ -1,6 +1,7 @@
 /* Elenco dei corsi del sito. È l'unico posto da modificare quando aggiungi materiale.
    - path: percorso del file a partire dalla cartella Unisa (gli spazi vanno bene)
    - color: is | mp | pd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
+   - stato: "aggiornato" (appunti completi e aggiornati) oppure "in-aggiornamento" (appunti ancora in lavorazione)
    Il contenuto tra le due righe CORSI deve restare JSON valido (virgolette doppie, niente virgole finali):
    lo legge anche lo script di pubblicazione per costruire la ricerca. */
 window.CORSI =
@@ -10,6 +11,7 @@ window.CORSI =
     "code": "IS",
     "name": "Ingegneria del Software",
     "meta": "3° anno",
+    "stato": "in-aggiornamento",
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html" },
@@ -19,7 +21,8 @@ window.CORSI =
   {
     "code": "MP",
     "name": "Mobile Programming",
-    "meta": "Android",
+    "meta": "3° anno · Android",
+    "stato": "aggiornato",
     "color": "mp",
     "docs": [
       { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html" }
@@ -28,7 +31,8 @@ window.CORSI =
   {
     "code": "PD",
     "name": "Programmazione Distribuita",
-    "meta": "Sistemi distribuiti",
+    "meta": "3° anno · Sistemi distribuiti",
+    "stato": "in-aggiornamento",
     "color": "pd",
     "docs": [
       { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html" }

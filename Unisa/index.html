@@ -13,16 +13,16 @@
 <style>
 /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
 :root{
-  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --hover:#efefec; --glow:rgba(17,20,24,.05);
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --hover:#efefec; --glow:rgba(17,20,24,.05); --ok:#2b7a4b; --ok-bg:#e4f2e9; --wip:#9a5b0c; --wip-bg:#fbefdc;
   --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
   --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); color-scheme:dark}}
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); --ok:#6fd398; --ok-bg:#16291f; --wip:#f0b45e; --wip-bg:#2e2313; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); color-scheme:dark}
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); --ok:#6fd398; --ok-bg:#16291f; --wip:#f0b45e; --wip-bg:#2e2313; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;transition:background-color .25s,color .25s}
@@ -71,6 +71,23 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 .arrow{grid-row:1 / span 2;grid-column:2;color:var(--muted);transition:transform .2s var(--ua-ease),color .2s}
 .docs a:hover .arrow{transform:translateX(4px);color:var(--c)}
 
+/* stato degli appunti */
+.state{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:4px 10px 4px 8px;border-radius:999px;
+  font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--s);background:var(--s-bg)}
+.state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.state.ok{--s:var(--ok);--s-bg:var(--ok-bg)}
+.state.wip{--s:var(--wip);--s-bg:var(--wip-bg)}
+.state.wip::before{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* in arrivo */
+.soon .code{color:var(--muted)}
+.soon .code::before{background:var(--muted)}
+.soon-box{border:1px dashed var(--line);border-radius:8px;padding:16px 18px;color:var(--muted);font-size:15px;line-height:1.5}
+.soon-box b{color:var(--ink);font-weight:600}
+.soon-box p{margin:0}
+.soon-box p+p{margin-top:8px;font-family:var(--f-mono);font-size:12px}
+
 footer{border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
 footer a{text-underline-offset:3px}
@@ -84,7 +101,7 @@ footer a{text-underline-offset:3px}
   .course:hover .code::before{width:18px}
   .search kbd{display:none}
 }
-@media (prefers-reduced-motion:reduce){body,.arrow,.code::before,.docs::before{transition:none}}
+@media (prefers-reduced-motion:reduce){body,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
 </style>
 </head>
 <body>
@@ -137,6 +154,14 @@ function render() {
     const meta = document.createElement("div"); meta.className = "meta";
     meta.textContent = `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`;
     info.append(h2, meta);
+    if (c.stato) {
+      const st = document.createElement("div");
+      const ok = c.stato === "aggiornato";
+      st.className = "state " + (ok ? "ok" : "wip");
+      st.textContent = ok ? "Appunti aggiornati" : "In aggiornamento";
+      st.title = ok ? "Gli appunti coprono tutte le lezioni fatte finora" : "Gli appunti vengono completati man mano che il corso va avanti";
+      info.append(st);
+    }
     const ul = document.createElement("ul"); ul.className = "docs";
     for (const d of c.docs) {
       const li = document.createElement("li"); const a = document.createElement("a");
@@ -149,6 +174,13 @@ function render() {
     }
     row.append(code, info, ul); list.append(row);
   }
+  const soon = document.createElement("section");
+  soon.className = "course soon"; soon.id = "in-arrivo"; soon.setAttribute("data-ua-rise", "");
+  soon.innerHTML = `<div class="code" aria-hidden="true">+</div>
+    <div><h2>In arrivo</h2><div class="meta">Altri corsi e quaderni</div></div>
+    <div class="soon-box"><p><b>Altri appunti in arrivo.</b> Nuovi corsi e quaderni verranno aggiunti durante il semestre, e quelli in aggiornamento si completano man mano.</p>
+    <p>Il sito si aggiorna da solo: torna a dare un'occhiata.</p></div>`;
+  list.append(soon);
 }
 render();
 const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
