@@ -174,7 +174,7 @@ td:first-child{white-space:nowrap}
 .quiz h4{font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 6px; font-weight:600}
 .quiz details{border-top:1px solid var(--rule); padding:8px 0}
 .quiz details:last-child{border-bottom:1px solid var(--rule)}
-.quiz summary{cursor:pointer; font-weight:700; list-style:none; display:grid; grid-template-columns:22px 1fr; gap:4px}
+.quiz summary{cursor:pointer; font-weight:700; list-style:none; display:grid; grid-template-columns:22px minmax(0,1fr); gap:4px; overflow-wrap:anywhere}
 .quiz summary::-webkit-details-marker{display:none}
 .quiz summary::before{content:"?"; font-family:var(--f-mono); color:var(--green)}
 .quiz details[open] summary::before{content:"✓"}
