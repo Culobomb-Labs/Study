@@ -1,0 +1,217 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Piano Ingegneria del Software</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: colonna unica da "blueprint", un blocco per giorno con checklist, barra di avanzamento in alto */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --fg:#17202e; --muted:#5c6880; --line:#d9dfea;
+  --accent:#2453c9; --accent-soft:#e3eafb; --done:#1f8a5b; --warn:#b5651d; --warn-soft:#fbefe2;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1420; --surface:#171e2d; --fg:#e6eaf3; --muted:#97a3bb; --line:#2a3447;
+  --accent:#7ea2ff; --accent-soft:#1f2b48; --done:#4cc790; --warn:#e8a25e; --warn-soft:#33261a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1420; --surface:#171e2d; --fg:#e6eaf3; --muted:#97a3bb; --line:#2a3447;
+  --accent:#7ea2ff; --accent-soft:#1f2b48; --done:#4cc790; --warn:#e8a25e; --warn-soft:#33261a; color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:32px 32px;background-attachment:fixed}
+.wrap{max-width:760px;margin:0 auto;padding-block:32px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:60ch}
+
+.status{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;
+  grid-template-columns:1fr auto;gap:10px 16px;align-items:center}
+.status .big{font-family:var(--f-display);font-weight:800;font-size:28px;font-variant-numeric:tabular-nums}
+.status .lbl{color:var(--muted);font-size:14px}
+.bar{grid-column:1/-1;height:10px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s}
+.countdown{text-align:right}
+.countdown .big{color:var(--warn)}
+
+.tip{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 14px;border-radius:0 8px 8px 0;font-size:15px}
+.tip b{color:var(--warn)}
+
+.day{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.day.complete .dhead h2{text-decoration:line-through;text-decoration-color:var(--done);text-decoration-thickness:2px}
+.dhead{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.date{font-family:var(--f-mono);font-size:13px;color:var(--muted);text-align:center;line-height:1.2;min-width:44px}
+.date strong{display:block;font-size:22px;color:var(--fg);font-family:var(--f-display)}
+.dhead h2{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0;line-height:1.25;text-wrap:balance}
+.cap{font-family:var(--f-mono);font-size:12px;color:var(--accent);letter-spacing:.04em}
+.pill{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill.ok{background:transparent;color:var(--done);border:1px solid var(--done)}
+.pill.now{background:var(--accent);color:var(--surface)}
+ul{list-style:none;margin:0;padding:6px 0}
+li label{display:flex;gap:12px;align-items:flex-start;padding:8px 16px;cursor:pointer}
+li label:hover{background:var(--accent-soft)}
+input[type=checkbox]{appearance:none;flex:none;width:20px;height:20px;margin-top:2px;border:2px solid var(--muted);border-radius:5px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+input[type=checkbox]::after{content:"";width:10px;height:6px;border-left:2.5px solid var(--surface);border-bottom:2.5px solid var(--surface);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+input[type=checkbox]:checked{background:var(--done);border-color:var(--done)}
+input[type=checkbox]:checked::after{opacity:1}
+input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input:checked + span{color:var(--muted);text-decoration:line-through}
+.exam{background:var(--fg);color:var(--bg);border-radius:10px;padding:18px 16px;display:flex;gap:14px;align-items:center}
+.exam .date{color:var(--bg);opacity:.8}.exam .date strong{color:var(--bg)}
+.exam h2{font-family:var(--f-display);font-weight:800;margin:0;font-size:22px}
+.exam p{margin:0;opacity:.8;font-size:15px}
+footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+button{font:inherit;font-size:14px;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.danger{border-color:var(--warn);color:var(--warn)}
+@media (max-width:480px){.dhead{grid-template-columns:auto 1fr}.dhead .pill{grid-column:2;justify-self:start}}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Ingegneria del Software · prima prova</span>
+    <h1>Piano di studio, cap. 01–09</h1>
+    <p class="sub">Da lunedì 26 ottobre a domenica 1 novembre, con la prova lunedì 2. La prova è quasi tutta a risposta multipla, con un paio di domande aperte. Ogni giorno: leggi, fissa definizioni e differenze, scrivi una risposta aperta breve, chiudi con le domande lampo.</p>
+  </header>
+
+  <section class="status" aria-label="Avanzamento">
+    <div><div class="big" id="pct">0%</div><div class="lbl" id="count">0 di 0 attività fatte</div></div>
+    <div class="countdown"><div class="big" id="days">–</div><div class="lbl">alla prova</div></div>
+    <div class="bar"><i id="barfill"></i></div>
+  </section>
+
+  <p class="tip"><b>Se resti indietro:</b> recupera la sera dopo, ma lascia libera la domenica. Se devi tagliare, la priorità è UML (cap. 04–05) e casi d'uso/sequence (cap. 08–09).</p>
+
+  <p class="tip"><b>Per la risposta multipla:</b> i distrattori giocano sulle coppie simili (verifica/validazione, include/extend, aggregazione/composizione). Leggi tutte le opzioni prima di scegliere ed elimina quelle sicuramente sbagliate. <b>Per le aperte:</b> definizione, poi esempio, poi confronto. Meglio 6 righe precise che una pagina vaga.</p>
+
+  <main id="days-list" style="display:flex;flex-direction:column;gap:14px"></main>
+
+  <div class="exam">
+    <div class="date">lun<strong>2</strong>nov</div>
+    <div><h2>Prima prova</h2><p>Colazione, niente roba nuova. Tu sai già tutto.</p></div>
+  </div>
+
+  <footer>
+    <span>Le spunte restano salvate in questo browser.</span>
+    <span id="reset-zone"><button id="reset" type="button">Azzera le spunte</button></span>
+  </footer>
+</div>
+
+<script>
+const PLAN = [
+  {d:"2026-10-26", wd:"lun", n:26, cap:"Cap. 01", title:"Il ciclo di vita del software", tasks:[
+    "Leggi: cascata, V&V, modello a V, prototipi, incrementale, spirale, XP",
+    "Fissa le distinzioni: ciclo di vita vs sviluppo, verifica vs validazione, α vs β test, mock-up vs breadboard, usa e getta vs evolutivo",
+    "Abbina fase ↔ test nel modello a V; i 4 quadranti della spirale in ordine",
+    "Scrivi a memoria le 12 regole XP",
+    "Risposta aperta scritta (10 min): \"Confronta cascata e spirale\"",
+    "Domande lampo ad alta voce"]},
+  {d:"2026-10-27", wd:"mar", n:27, cap:"Cap. 02–03", title:"Scrum, riunioni e minuta", tasks:[
+    "Leggi: Manifesto Agile, i tre ruoli, le cerimonie, gli artefatti",
+    "Fissa chi fa cosa (PO, Scrum Master, team) e scopo di ogni cerimonia e artefatto",
+    "Calcola capacità e velocity per 2–3 team diversi (focus factor)",
+    "Burndown: cosa vuol dire stare sopra o sotto la linea ideale",
+    "Minuta: sezioni e notazione I[n], R[n], AI[n]",
+    "Risposta aperta scritta: \"Ruoli e cerimonie di Scrum\"",
+    "Domande lampo cap. 02 e 03"]},
+  {d:"2026-10-28", wd:"mer", n:28, cap:"Cap. 04", title:"UML: use case e class diagram", tasks:[
+    "Leggi: i tre modelli del sistema, use case, class diagram, sequence in breve",
+    "Riconosci la notazione: include vs extend, associazione, aggregazione, composizione, ereditarietà, molteplicità",
+    "Use case e class diagram di una biblioteca, su carta (veloce)",
+    "Distingui attore, classe, oggetto; dominio applicativo vs dominio della soluzione",
+    "Domande lampo"]},
+  {d:"2026-10-29", wd:"gio", n:29, cap:"Cap. 05", title:"Statechart, activity e package", tasks:[
+    "Leggi: statechart, activity, package",
+    "Riconosci i simboli: stato iniziale/finale, evento [guardia] / azione, fork/join, branch/merge",
+    "Statechart di un ordine online (veloce)",
+    "Domande lampo"]},
+  {d:"2026-10-30", wd:"ven", n:30, cap:"Cap. 06–07", title:"Requisiti: elicitation e scrittura", tasks:[
+    "Leggi: problem statement, tipi di requisiti, tecniche di elicitation, validazione, RAD",
+    "Leggi: sintassi ISO 29148, parole ambigue, caratteristiche di un requisito, SMART, FURPS+, MoSCoW",
+    "Allenati a classificare: funzionale, non funzionale o vincolo? Quale categoria FURPS+? (usa il \"Prova tu\" del cap. 07)",
+    "Riscrivi 5 requisiti vaghi in forma SMART con priorità MoSCoW",
+    "Risposta aperta scritta: \"Cos'è l'elicitation e quali tecniche conosci\"",
+    "Domande lampo cap. 06 e 07"]},
+  {d:"2026-10-31", wd:"sab", n:31, cap:"Cap. 08–09", title:"Casi d'uso e sequence diagram", tasks:[
+    "Leggi: scenario vs caso d'uso, tipi di scenario, regole di scrittura",
+    "Leggi: elementi del sequence, frame (alt, loop, opt), fork vs stair, boundary/control/entity",
+    "Compila il template del corso per \"Prenota esame\"",
+    "Risposta aperta scritta: \"Differenza tra scenario e caso d'uso, con un esempio\"",
+    "Domande lampo cap. 08 e 09"]},
+  {d:"2026-11-01", wd:"dom", n:1, cap:"Ripasso", title:"Simulazione e ripasso finale", tasks:[
+    "Mattina: simulazione a tempo, quiz a risposta multipla sui cap. 01–09 + 2 domande aperte scritte",
+    "Pomeriggio: ripassa solo gli argomenti delle risposte sbagliate",
+    "Rileggi distinzioni e liste da memoria (XP, ruoli Scrum, FURPS+, MoSCoW)",
+    "Sera: stacca e dormi bene"]}
+];
+const KEY = "piano-ingsw-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { state = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} };
+
+const todayISO = (() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`; })();
+const list = document.getElementById("days-list");
+
+PLAN.forEach((day, di) => {
+  const sec = document.createElement("section");
+  sec.className = "day" + (day.d === todayISO ? " today" : "");
+  sec.innerHTML = `<div class="dhead">
+      <div class="date">${day.wd}<strong>${day.n}</strong>${day.n >= 26 ? "ott" : "nov"}</div>
+      <div><div class="cap">${day.cap}</div><h2>${day.title}</h2></div>
+      <span class="pill"></span></div><ul></ul>`;
+  const ul = sec.querySelector("ul");
+  day.tasks.forEach((t, ti) => {
+    const id = `t-${di}-${ti}`;
+    const li = document.createElement("li");
+    li.innerHTML = `<label for="${id}"><input type="checkbox" id="${id}"><span></span></label>`;
+    li.querySelector("span").textContent = t;
+    const cb = li.querySelector("input");
+    cb.checked = !!state[id];
+    cb.addEventListener("change", () => { state[id] = cb.checked; save(); refresh(); });
+    ul.appendChild(li);
+  });
+  list.appendChild(sec);
+});
+
+function refresh(){
+  let total = 0, done = 0;
+  document.querySelectorAll(".day").forEach((sec, di) => {
+    const boxes = sec.querySelectorAll("input"); const k = [...boxes].filter(b => b.checked).length;
+    total += boxes.length; done += k;
+    const pill = sec.querySelector(".pill"); const complete = k === boxes.length;
+    sec.classList.toggle("complete", complete);
+    pill.className = "pill" + (complete ? " ok" : sec.classList.contains("today") ? " now" : "");
+    pill.textContent = complete ? "fatto" : sec.classList.contains("today") ? `oggi · ${k}/${boxes.length}` : `${k}/${boxes.length}`;
+  });
+  const p = total ? Math.round(done / total * 100) : 0;
+  document.getElementById("pct").textContent = p + "%";
+  document.getElementById("count").textContent = `${done} di ${total} attività fatte`;
+  document.getElementById("barfill").style.width = p + "%";
+}
+(function countdown(){
+  const now = new Date(); const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((new Date(2026, 10, 2) - t0) / 86400000);
+  document.getElementById("days").textContent = diff > 1 ? `${diff} giorni` : diff === 1 ? "domani" : diff === 0 ? "oggi!" : "fatta";
+})();
+refresh();
+
+const zone = document.getElementById("reset-zone");
+function showReset(){
+  zone.innerHTML = `<button id="reset" type="button">Azzera le spunte</button>`;
+  document.getElementById("reset").onclick = () => {
+    zone.innerHTML = `Sicuro? <button id="yes" type="button" class="danger">Sì, azzera</button> <button id="no" type="button">Annulla</button>`;
+    document.getElementById("yes").onclick = () => { state = {}; save(); document.querySelectorAll(".day input").forEach(b => b.checked = false); refresh(); showReset(); };
+    document.getElementById("no").onclick = showReset;
+  };
+}
+showReset();
+</script>
+
+</body></html>
