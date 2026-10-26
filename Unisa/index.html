@@ -5,65 +5,71 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Appunti Unisa</title>
 <meta name="description" content="Quaderni di studio e piani per i corsi di Informatica all'Università di Salerno.">
+<script>try{var t=localStorage.getItem("ua-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 <style>
 /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
 :root{
-  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --hover:#efefec;
-  --c-is:#5b3fa3; --c-mp:#2f7d52; --c-pd:#1d6a86;
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --hover:#efefec; --glow:rgba(17,20,24,.05);
   --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
   --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
-  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024;
-  --c-is:#a58bf0; --c-mp:#5fc48c; --c-pd:#4fb3d6; color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;transition:background-color .25s,color .25s}
 a{color:inherit}
 .wrap{max-width:980px;margin:0 auto;
   padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 
 /* testata */
-.top{border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:14px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
-.top a{text-decoration:none}.top a:hover{color:var(--ink)}
-.hero .wrap{padding-block:56px 36px;display:grid;grid-template-columns:1fr auto;gap:28px 40px;align-items:end}
+.hero .wrap{padding-block:56px 36px;display:grid;grid-template-columns:1fr auto;gap:20px 40px;align-items:end}
+.eyebrow{grid-column:1 / -1;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em}
 h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);line-height:.95;letter-spacing:-.025em;margin:0}
 .lede{grid-column:1;margin:0;max-width:52ch;color:var(--muted);font-size:17px}
-.stats{grid-column:2;grid-row:1 / span 2;display:flex;gap:28px;font-variant-numeric:tabular-nums}
+.stats{grid-column:2;grid-row:2 / span 2;display:flex;gap:28px;font-variant-numeric:tabular-nums}
 .stat b{display:block;font-family:var(--f-display);font-weight:700;font-size:34px;line-height:1}
 .stat span{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 
-/* barra strumenti */
-.tools .wrap{display:flex;gap:12px;align-items:center;padding-block:0 18px}
-.search{flex:1;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:0 14px;height:46px}
-.search:focus-within{border-color:var(--ink)}
-.search svg{flex:none;color:var(--muted)}
-.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);outline:none;height:100%}
-.search kbd{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+/* barra di ricerca: apre la ricerca in tutti gli appunti */
+.tools .wrap{padding-block:0 18px}
+.search{width:100%;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:0 14px;height:48px;
+  font:inherit;color:var(--muted);cursor:text;text-align:left;transition:border-color .15s,box-shadow .2s}
+.search:hover{border-color:var(--muted)}
+.search:focus-visible{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px var(--glow)}
+.search svg{flex:none}
+.search span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search kbd{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
 
 /* registro corsi */
 .list{border-top:2px solid var(--ink);margin-bottom:56px}
-.course{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1.35fr);gap:20px 28px;padding:26px 0;border-bottom:1px solid var(--line)}
+.course{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1.35fr);gap:20px 28px;padding:26px 0;border-bottom:1px solid var(--line);scroll-margin-top:16px}
+.course:target h2{text-decoration:underline;text-decoration-color:var(--c);text-decoration-thickness:3px;text-underline-offset:6px}
 .code{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--c);letter-spacing:.02em;padding-top:2px}
-.code::before{content:"";display:block;width:28px;height:4px;background:var(--c);margin-bottom:10px;border-radius:2px}
+.code::before{content:"";display:block;width:28px;height:4px;background:var(--c);margin-bottom:10px;border-radius:2px;transition:width .35s var(--ua-ease)}
+.course:hover .code::before{width:44px}
 .course h2{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.15;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
 .meta{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
-.docs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.docs{position:relative;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.docs::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),var(--glow),transparent 70%)}
+.docs:hover::before{opacity:1}
+.docs li{position:relative}
 .docs li+li{border-top:1px solid var(--line)}
 .docs a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:13px 16px;text-decoration:none}
-.docs a:hover,.docs a:focus-visible{background:var(--hover);outline:none}
-.docs a:focus-visible{box-shadow:inset 3px 0 0 var(--c)}
+.docs a:focus-visible{outline:none;box-shadow:inset 3px 0 0 var(--c);background:var(--hover)}
 .dname{font-weight:600;min-width:0}
 .dinfo{grid-column:1;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
-.arrow{grid-row:1 / span 2;grid-column:2;color:var(--muted);transition:transform .15s,color .15s}
-.docs a:hover .arrow{transform:translateX(3px);color:var(--c)}
-.empty{padding:40px 0;color:var(--muted);text-align:center}
+.arrow{grid-row:1 / span 2;grid-column:2;color:var(--muted);transition:transform .2s var(--ua-ease),color .2s}
+.docs a:hover .arrow{transform:translateX(4px);color:var(--c)}
 
 footer{border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
@@ -75,32 +81,31 @@ footer a{text-underline-offset:3px}
   .course{grid-template-columns:1fr;gap:12px}
   .code{display:flex;align-items:center;gap:10px;font-size:15px}
   .code::before{margin:0;width:18px}
+  .course:hover .code::before{width:18px}
   .search kbd{display:none}
 }
-@media (prefers-reduced-motion:reduce){.arrow{transition:none}}
+@media (prefers-reduced-motion:reduce){body,.arrow,.code::before,.docs::before{transition:none}}
 </style>
 </head>
 <body>
-  <div class="top"><div class="wrap">
-    <span>Università degli Studi di Salerno · Informatica</span>
-    <a href="https://github.com/Culobomb-Labs/Study">Sorgente su GitHub ↗</a>
-  </div></div>
+  <div id="ua-bar" class="ua-bar"></div>
 
   <header class="hero"><div class="wrap">
-    <h1>Appunti<br>Unisa</h1>
-    <p class="lede">Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si legge dal browser, anche da telefono.</p>
-    <div class="stats" aria-label="Riepilogo">
+    <div class="eyebrow" data-ua-rise>Università degli Studi di Salerno · Informatica</div>
+    <h1 data-ua-rise>Appunti<br>Unisa</h1>
+    <p class="lede" data-ua-rise>Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si legge dal browser, anche da telefono.</p>
+    <div class="stats" aria-label="Riepilogo" data-ua-rise>
       <div class="stat"><b id="n-courses">0</b><span>corsi</span></div>
       <div class="stat"><b id="n-docs">0</b><span>documenti</span></div>
     </div>
   </div></header>
 
-  <div class="tools"><div class="wrap">
-    <label class="search" for="q">
+  <div class="tools"><div class="wrap" data-ua-rise>
+    <button class="search" id="open-search" type="button">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Cerca un corso o un quaderno" autocomplete="off">
+      <span>Cerca in tutti gli appunti: un argomento, una parola, un capitolo</span>
       <kbd>/</kbd>
-    </label>
+    </button>
   </div></div>
 
   <main class="wrap">
@@ -108,41 +113,24 @@ footer a{text-underline-offset:3px}
   </main>
 
   <footer><div class="wrap">
-    <span>Il sito si aggiorna da solo a ogni modifica del repository.</span>
+    <span>Il sito si aggiorna da solo a ogni modifica del repository · <a href="https://github.com/Culobomb-Labs/Study">sorgente su GitHub</a></span>
     <span id="built"></span>
   </div></footer>
 
+<script src="assets/corsi.js"></script>
 <script>
-/* Per aggiungere un corso: crea la cartella dentro Unisa/ e aggiungi una voce qui.
-   I percorsi sono relativi alla cartella Unisa; gli spazi vanno bene. */
-const COURSES = [
-  { code: "IS", name: "Ingegneria del Software", meta: "3° anno", color: "var(--c-is)", docs: [
-    { name: "Quaderno di Ingegneria del Software", kind: "Quaderno", path: "Ingenieria del Software/Quaderno di Ingegneria del Software.html" },
-    { name: "Piano di studio, prima prova", kind: "Piano di studio", path: "Ingenieria del Software/Piano Studio IS.html" }
-  ]},
-  { code: "MP", name: "Mobile Programming", meta: "Android", color: "var(--c-mp)", docs: [
-    { name: "Quaderno di Android", kind: "Quaderno", path: "Mobile Programming/Quaderno di Android.html" }
-  ]},
-  { code: "PD", name: "Programmazione Distribuita", meta: "Sistemi distribuiti", color: "var(--c-pd)", docs: [
-    { name: "Quaderno di Programmazione Distribuita", kind: "Quaderno", path: "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html" }
-  ]}
-];
-
+const COURSES = window.CORSI || [];
 const fmt = iso => new Date(iso).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" });
 const list = document.getElementById("list");
 let updates = {};
 
-function render(q = "") {
-  const needle = q.trim().toLowerCase();
+function render() {
   list.textContent = "";
-  let shown = 0;
   for (const c of COURSES) {
-    const hitCourse = !needle || (c.name + " " + c.code + " " + c.meta).toLowerCase().includes(needle);
-    const docs = c.docs.filter(d => hitCourse || (d.name + " " + d.kind).toLowerCase().includes(needle));
-    if (!docs.length) continue;
-    shown++;
     const row = document.createElement("section");
-    row.className = "course"; row.style.setProperty("--c", c.color);
+    row.className = "course"; row.id = c.code.toLowerCase();
+    row.style.setProperty("--c", `var(--ua-c-${c.color})`);
+    row.setAttribute("data-ua-rise", "");
     const code = document.createElement("div"); code.className = "code"; code.textContent = c.code;
     const info = document.createElement("div");
     const h2 = document.createElement("h2"); h2.textContent = c.name;
@@ -150,34 +138,37 @@ function render(q = "") {
     meta.textContent = `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`;
     info.append(h2, meta);
     const ul = document.createElement("ul"); ul.className = "docs";
-    for (const d of docs) {
+    for (const d of c.docs) {
       const li = document.createElement("li"); const a = document.createElement("a");
       a.href = d.path.split("/").map(encodeURIComponent).join("/");
       const n = document.createElement("span"); n.className = "dname"; n.textContent = d.name;
-      const i = document.createElement("span"); i.className = "dinfo";
-      i.textContent = d.kind + (updates[d.path] ? " · aggiornato il " + fmt(updates[d.path]) : "");
+      const i = document.createElement("span"); i.className = "dinfo"; i.dataset.path = d.path; i.dataset.kind = d.kind;
+      i.textContent = d.kind;
       const ar = document.createElement("span"); ar.className = "arrow"; ar.setAttribute("aria-hidden", "true"); ar.textContent = "→";
       a.append(n, i, ar); li.append(a); ul.append(li);
     }
     row.append(code, info, ul); list.append(row);
   }
-  if (!shown) { const e = document.createElement("p"); e.className = "empty"; e.textContent = `Nessun risultato per "${q}".`; list.append(e); }
 }
-
-document.getElementById("n-courses").textContent = COURSES.length;
-document.getElementById("n-docs").textContent = COURSES.reduce((n, c) => n + c.docs.length, 0);
-const q = document.getElementById("q");
-q.addEventListener("input", () => render(q.value));
-document.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); } });
 render();
+const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
+document.getElementById("n-courses").textContent = COURSES.length;
+document.getElementById("n-docs").textContent = nDocs;
+document.getElementById("n-courses").dataset.uaCount = COURSES.length;
+document.getElementById("n-docs").dataset.uaCount = nDocs;
 
 /* updates.json viene generato dal deploy con la data dell'ultima modifica di ogni file */
 fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
-  updates = data.files || {};
+  const files = data.files || {};
+  document.querySelectorAll(".dinfo").forEach(i => {
+    if (files[i.dataset.path]) i.textContent = i.dataset.kind + " · aggiornato il " + fmt(files[i.dataset.path]);
+  });
   if (data.built) document.getElementById("built").textContent = "Ultimo aggiornamento: " + fmt(data.built);
-  render(q.value);
 }).catch(() => {});
+
+document.getElementById("open-search").addEventListener("click", () => window.UA && UA.openSearch());
 </script>
+<script src="assets/site.js" data-root="./" data-page="index.html"></script>
 </body>
 </html>
