@@ -1,4 +1,5 @@
 # Pubblica la cartella Unisa/ su GitHub Pages a ogni push su main.
+# Dopo la pubblicazione manda la notifica delle notizie nuove (news.json) a chi le ha attivate.
 name: Deploy Unisa su GitHub Pages
 
 on:
@@ -11,16 +12,17 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      nuove: ${{ steps.novita.outputs.nuove }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,8 +35,33 @@ jobs:
         run: |
           pip install pillow
           python .github/scripts/build_site.py
+      - name: Trova le notizie nuove (confronto con il sito online)
+        id: novita
+        run: python .github/scripts/news_nuove.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  notifiche:
+    needs: deploy
+    if: needs.deploy.outputs.nuove != '' && needs.deploy.outputs.nuove != '[]'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: notifiche
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Prepara l'invio
+        run: npm install --prefix .github/scripts --no-save --no-audit --no-fund firebase-admin@14
+      - name: Manda le notifiche
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          NUOVE: ${{ needs.deploy.outputs.nuove }}
+        run: node .github/scripts/invia_notifiche.mjs

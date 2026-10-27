@@ -201,7 +201,7 @@ def main():
     for root_dir, _, files in os.walk(OUT):
         for name in files:
             rel = os.path.relpath(os.path.join(root_dir, name), OUT).replace(os.sep, "/")
-            if rel in ("sw.js", ".nojekyll") or rel.endswith(".md"):
+            if rel in ("sw.js", ".nojekyll") or rel.endswith(".md") or rel.startswith("news/img/"):
                 continue
             precache.append("./" + "/".join(quote_part(x) for x in rel.split("/")))
     precache.sort()

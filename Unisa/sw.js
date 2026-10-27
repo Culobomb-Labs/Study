@@ -87,13 +87,37 @@ self.addEventListener("periodicsync", event => {
   if (event.tag === "news") event.waitUntil(checkNews());
 });
 
-// Push vero e proprio (arriva anche col sito chiuso): pronto per quando si collega un servizio di invio
+// Notifiche istantanee (arrivano anche col sito chiuso): le manda l'azione di GitHub tramite Firebase Cloud Messaging.
+// Firebase mette i campi della notizia in "data": id, titolo, testo, url.
+async function markNotified(id) {
+  try {
+    const c = await caches.open(NEWS_STATE);
+    const hit = await c.match(stateUrl());
+    const done = hit ? await hit.json() : [];
+    if (!done.includes(id)) done.push(id);
+    await c.put(stateUrl(), new Response(JSON.stringify(done), { headers: { "Content-Type": "application/json" } }));
+  } catch (e) {}
+}
+async function showPush(d) {
+  const p = d.data || d;
+  const titolo = p.titolo || (d.notification && d.notification.title);
+  if (!titolo) return checkNews();
+  const id = p.id || "";
+  if (id) await markNotified(id); // così la pagina non la mostra una seconda volta
+  const scope = self.registration.scope;
+  const url = p.url && String(p.url).startsWith(scope) ? p.url : new URL("news.html" + (id ? "#" + encodeURIComponent(id) : ""), scope).href;
+  return self.registration.showNotification(titolo, {
+    body: p.testo || (d.notification && d.notification.body) || "",
+    tag: "news-" + (id || Date.now()),
+    icon: new URL("icon-192.png", scope).href,
+    badge: new URL("favicon-32.png", scope).href,
+    data: { url }
+  });
+}
 self.addEventListener("push", event => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (e) { d = { titolo: event.data && event.data.text() }; }
-  event.waitUntil(d.titolo
-    ? self.registration.showNotification(d.titolo, { body: d.testo || "", tag: "news-" + (d.id || Date.now()), icon: new URL("icon-192.png", self.registration.scope).href, data: { url: new URL("news.html", self.registration.scope).href } })
-    : checkNews());
+  event.waitUntil(showPush(d || {}));
 });
 
 self.addEventListener("notificationclick", event => {

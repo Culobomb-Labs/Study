@@ -1,0 +1,70 @@
+# Pubblica una notizia compilando un modulo, senza modificare news.json a mano.
+# Actions → "Pubblica una news" → Run workflow → compila i campi → Run workflow.
+# Per l'immagine: prima caricala in Unisa/news/img/ (Add file → Upload files), poi scrivi qui il nome del file.
+# Dopo la notizia parte da sola la pubblicazione del sito, e poi la notifica a chi l'ha attivata.
+name: Pubblica una news
+
+on:
+  workflow_dispatch:
+    inputs:
+      titolo:
+        description: "Titolo (è anche il titolo della notifica)"
+        required: true
+        type: string
+      testo:
+        description: "Testo (facoltativo)"
+        required: false
+        type: string
+      corso:
+        description: "Corso (facoltativo)"
+        required: false
+        type: choice
+        default: nessuno
+        options: [nessuno, IS, MP, PD]
+      link:
+        description: "Link (facoltativo): pagina del sito, es. Ingenieria del Software/Quiz IS.html, oppure https://…"
+        required: false
+        type: string
+      immagine:
+        description: "Immagine (facoltativa): nome del file caricato in Unisa/news/img/, es. quiz.jpg"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: news
+  cancel-in-progress: false
+
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Aggiungi la notizia a news.json
+        id: news
+        env:
+          TITOLO: ${{ inputs.titolo }}
+          TESTO: ${{ inputs.testo }}
+          CORSO: ${{ inputs.corso }}
+          LINK: ${{ inputs.link }}
+          IMMAGINE: ${{ inputs.immagine }}
+        run: python .github/scripts/aggiungi_news.py
+      - name: Salva nel repository
+        env:
+          TITOLO: ${{ inputs.titolo }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add Unisa/news.json
+          git commit -m "News: $TITOLO"
+          git push
+      - name: Pubblica il sito (e manda la notifica)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref "${{ github.ref_name }}"

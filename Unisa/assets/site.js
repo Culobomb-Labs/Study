@@ -364,6 +364,291 @@
     });
   }
 
+  /* ---------------- accesso con Google: spunte salvate online (Firebase) ----------------
+     Chi accede con Google ritrova le stesse spunte su tutti i dispositivi.
+     Le pagine continuano a salvare nel browser come sempre: qui ascoltiamo quei salvataggi e li copiamo
+     su Firestore (documento utenti/<id>), e viceversa copiamo nel browser quelli fatti altrove.
+     La libreria di Firebase si scarica solo per chi ha fatto l'accesso o attiva le notifiche.
+     Le chiavi qui sotto sono pubbliche per natura: i dati li proteggono le regole di sicurezza di Firestore. */
+  const T0 = Date.now();
+  const FB_V = "13.1.0";
+  const FB_URL = m => `https://www.gstatic.com/firebasejs/${FB_V}/firebase-${m}.js`;
+  const FB_CONFIG = {
+    apiKey: "AIzaSyAI8QZjC3qSNq33bNBk7Ls19bjanc4-QnQ",
+    authDomain: "appunti-unisa.firebaseapp.com",
+    projectId: "appunti-unisa",
+    storageBucket: "appunti-unisa.firebasestorage.app",
+    messagingSenderId: "682409351930",
+    appId: "1:682409351930:web:728a3ba5a1d23ffe0a0743"
+  };
+  const FB_VAPID = "BDF4bbxkQpLtnCEwTAuHnmPnNcEznKknF_QaEfQ910ATwDbu31pTlv0GUs-lhgVyfAieSh02-4zKnOG6V1nl45k";
+  const CLOUD_ON = "ua-cloud", CLOUD_UID = "ua-cloud-uid", CLOUD_DIRTY = "ua-cloud-dirty", CLOUD_MSG = "ua-cloud-msg";
+  const PROGRESS_KEYS = new Set();
+  CORSI.forEach(c => c.docs.forEach(d => { if (d.progressKey) PROGRESS_KEYS.add(d.progressKey); }));
+  // cosa si sincronizza: le spunte (progressKey in corsi.js) e i risultati dei quiz (chiavi "quiz-...")
+  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-"));
+  const IS_QUIZ = !!(here && here.d.kind === "Quiz");
+  const usesKey = k => IS_HOME || (here && here.d.progressKey === k) || (IS_QUIZ && k.startsWith("quiz-"));
+
+  const origSet = Storage.prototype.setItem, origRemove = Storage.prototype.removeItem;
+  let LS = null; try { LS = window.localStorage; } catch (e) {}
+  const rawGet = k => { try { return LS ? LS.getItem(k) : null; } catch (e) { return null; } };
+  const rawSet = (k, v) => { try { if (LS) origSet.call(LS, k, v); } catch (e) {} };
+  const rawDel = k => { try { if (LS) origRemove.call(LS, k); } catch (e) {} };
+  const dirtyList = () => { try { return JSON.parse(rawGet(CLOUD_DIRTY)) || []; } catch (e) { return []; } };
+  const cloudOn = () => rawGet(CLOUD_ON) === "1";
+
+  let fbCore = null, fbAuthP = null, fbNow = null;
+  let cloudUser = null, cloudRef = null, cloudUnsub = null, cloudTimer = null, cloudBusy = false;
+
+  function fbLoad() {
+    if (!fbCore) {
+      fbCore = Promise.all([import(FB_URL("app")), import(FB_URL("firestore"))]).then(([a, fs]) => {
+        const app = a.getApps().length ? a.getApp() : a.initializeApp(FB_CONFIG);
+        return { a, fs, app, db: fs.getFirestore(app) };
+      });
+      fbCore.catch(() => { fbCore = null; }); // senza rete: si riprova la volta dopo
+    }
+    return fbCore;
+  }
+  function fbAuth() {
+    if (!fbAuthP) {
+      fbAuthP = Promise.all([fbLoad(), import(FB_URL("auth"))]).then(([c, au]) => {
+        const auth = au.getAuth(c.app);
+        auth.languageCode = "it";
+        au.onAuthStateChanged(auth, onUser);
+        return (fbNow = Object.assign({}, c, { au, auth }));
+      });
+      fbAuthP.catch(() => { fbAuthP = null; });
+    }
+    return fbAuthP;
+  }
+
+  // ogni volta che una pagina salva una spunta, la segniamo "da inviare"
+  function watchStorage() {
+    if (!LS) return;
+    const mark = k => {
+      if (!cloudOn() || !isSynced(k)) return;
+      const d = dirtyList();
+      if (!d.includes(k)) { d.push(k); rawSet(CLOUD_DIRTY, JSON.stringify(d)); }
+      clearTimeout(cloudTimer); cloudTimer = setTimeout(pushDirty, 700);
+    };
+    Storage.prototype.setItem = function (k, v) { origSet.call(this, k, v); if (this === LS) mark(String(k)); };
+    Storage.prototype.removeItem = function (k) { origRemove.call(this, k); if (this === LS) mark(String(k)); };
+    const flush = () => { if (dirtyList().length) { clearTimeout(cloudTimer); pushDirty(); } };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) flush(); });
+    window.addEventListener("online", flush);
+  }
+
+  async function pushDirty() {
+    if (!cloudUser || !cloudRef || cloudBusy) return;
+    const keys = dirtyList();
+    if (!keys.length) return;
+    cloudBusy = true;
+    try {
+      const { fs } = await fbLoad();
+      const sent = {}, prog = {};
+      keys.forEach(k => { const v = rawGet(k); sent[k] = v; prog[k] = v === null ? fs.deleteField() : v; });
+      await fs.setDoc(cloudRef, { progressi: prog, aggiornato: fs.serverTimestamp() }, { merge: true });
+      // tolgo dall'elenco solo quello che non è cambiato di nuovo nel frattempo
+      rawSet(CLOUD_DIRTY, JSON.stringify(dirtyList().filter(k => !(k in sent) || rawGet(k) !== sent[k])));
+    } catch (e) { /* senza rete: resta "da inviare" e riparte alla prossima occasione */ }
+    finally { cloudBusy = false; }
+    if (dirtyList().length) { clearTimeout(cloudTimer); cloudTimer = setTimeout(pushDirty, 5000); }
+  }
+
+  // unione delle spunte al primo accesso: una spunta messa su un dispositivo resta messa
+  function mergeAny(x, y) {
+    const obj = o => o && typeof o === "object" && !Array.isArray(o);
+    if (typeof x === "boolean" && typeof y === "boolean") return x || y;
+    if (obj(x) && obj(y)) {
+      if (typeof x.v === "number" && typeof y.v === "number") return x.v >= y.v ? x : y; // statistiche dei quiz: vince chi ha visto di più
+      const o = Object.assign({}, y);
+      for (const k in x) o[k] = k in y ? mergeAny(x[k], y[k]) : x[k];
+      return o;
+    }
+    return x === undefined ? y : x;
+  }
+  function mergeVal(local, remote) {
+    if (local === null) return typeof remote === "string" ? remote : null;
+    if (typeof remote !== "string") return local;
+    try { return JSON.stringify(mergeAny(JSON.parse(local), JSON.parse(remote))); } catch (e) { return local; }
+  }
+  function localSyncedKeys() {
+    const out = [];
+    try { for (let i = 0; i < LS.length; i++) { const k = LS.key(i); if (isSynced(k)) out.push(k); } } catch (e) {}
+    return out;
+  }
+
+  async function linkAccount(user) {
+    const { fs, db } = await fbLoad();
+    cloudRef = fs.doc(db, "utenti", user.uid);
+    if (rawGet(CLOUD_UID) !== user.uid) {
+      // primo accesso su questo dispositivo: unisco le spunte del browser con quelle online
+      const snap = await fs.getDoc(cloudRef);
+      const remote = (snap.exists() && snap.data().progressi) || {};
+      const keys = new Set(localSyncedKeys().concat(Object.keys(remote).filter(isSynced)));
+      const out = {};
+      let touched = false;
+      keys.forEach(k => {
+        const m = mergeVal(rawGet(k), remote[k]);
+        if (m === null) return;
+        out[k] = m;
+        if (rawGet(k) !== m) { rawSet(k, m); if (usesKey(k)) touched = true; }
+      });
+      await fs.setDoc(cloudRef, { progressi: out, aggiornato: fs.serverTimestamp() }, { merge: true });
+      rawSet(CLOUD_UID, user.uid);
+      rawSet(CLOUD_DIRTY, "[]");
+      if (touched) {
+        try { sessionStorage.setItem(CLOUD_MSG, "Accesso fatto: le spunte sono state unite con quelle del tuo account."); } catch (e) {}
+        location.reload();
+        return;
+      }
+      toast("Accesso fatto: le spunte ora si salvano sul tuo account.");
+    } else {
+      await pushDirty();
+    }
+    listenCloud();
+  }
+
+  // aggiornamenti in tempo reale dagli altri dispositivi
+  function listenCloud() {
+    if (!cloudRef) return;
+    let first = true;
+    fbLoad().then(({ fs }) => {
+      if (cloudUnsub) cloudUnsub();
+      cloudUnsub = fs.onSnapshot(cloudRef, snap => {
+        if (snap.metadata.hasPendingWrites) return;
+        const remote = (snap.exists() && snap.data().progressi) || {};
+        const dirty = new Set(dirtyList());
+        const changed = [];
+        for (const k in remote) {
+          if (!isSynced(k) || dirty.has(k) || typeof remote[k] !== "string" || rawGet(k) === remote[k]) continue;
+          rawSet(k, remote[k]);
+          changed.push(k);
+        }
+        if (changed.some(usesKey)) remoteChanged(first);
+        first = false;
+      }, () => {});
+    });
+  }
+
+  let reloadOnShow = false;
+  function remoteChanged(first) {
+    // la pagina ha già disegnato le spunte vecchie: la ricarico (mai a metà di un quiz)
+    if (!IS_QUIZ && first && Date.now() - T0 < 10000) { location.reload(); return; }
+    if (!IS_QUIZ && document.hidden) { reloadOnShow = true; return; }
+    toast("Spunte aggiornate da un altro dispositivo.", "Aggiorna", () => location.reload());
+  }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && reloadOnShow) location.reload(); });
+
+  function onUser(user) {
+    cloudUser = user || null;
+    if (cloudUnsub) { cloudUnsub(); cloudUnsub = null; }
+    if (user) {
+      rawSet(CLOUD_ON, "1");
+      linkAccount(user).catch(() => toast("Non riesco a raggiungere il tuo account. Le spunte restano salvate qui e si inviano appena torna la rete."));
+    } else {
+      cloudRef = null;
+      [CLOUD_ON, CLOUD_UID, CLOUD_DIRTY].forEach(rawDel);
+    }
+    paintAccount();
+    if (sync && !sync.hidden && sync.querySelector(".ua-acct-box")) renderAccount();
+  }
+
+  async function signIn(btn, err) {
+    const say = m => { err.innerHTML = m; err.hidden = !m; };
+    say("");
+    btn.disabled = true; btn.textContent = "Apro Google…";
+    const reset = () => { btn.disabled = false; btn.textContent = "Accedi con Google"; };
+    let A = fbNow;
+    try {
+      if (!A) A = await fbAuth();
+      await A.au.signInWithPopup(A.auth, new A.au.GoogleAuthProvider());
+    } catch (e) {
+      const code = (e && e.code) || "";
+      if (A && /popup-blocked|operation-not-supported/.test(code)) { // finestra bloccata: si passa dalla pagina di Google
+        rawSet(CLOUD_ON, "1");
+        try { await A.au.signInWithRedirect(A.auth, new A.au.GoogleAuthProvider()); return; } catch (e2) {}
+      }
+      reset();
+      if (/popup-closed-by-user|cancelled-popup-request|user-cancelled/.test(code)) return;
+      say(/network/.test(code) || !A ? "Serve la connessione a internet per accedere. Riprova quando sei online."
+        : /unauthorized-domain/.test(code) ? "Questo indirizzo non è autorizzato per l'accesso (impostazioni di Firebase)."
+        : "Accesso non riuscito. Riprova tra poco.");
+    }
+  }
+  async function signOutNow() {
+    try { await pushDirty(); const A = fbNow || await fbAuth(); await A.au.signOut(A.auth); } catch (e) {}
+    onUser(null);
+  }
+
+  const initialOf = u => esc(((u && (u.displayName || u.email)) || "?").trim().charAt(0).toUpperCase());
+  function paintAccount() {
+    document.querySelectorAll(".ua-open-sync").forEach(b => {
+      if (cloudUser) {
+        const who = cloudUser.displayName || cloudUser.email || "account Google";
+        b.innerHTML = `<span class="ua-avatar ua-avatar-sm" aria-hidden="true">${initialOf(cloudUser)}</span>`;
+        b.setAttribute("aria-label", `I tuoi progressi: accesso fatto come ${who}, spunte sincronizzate`);
+        b.title = `Accesso fatto come ${who}`;
+      } else {
+        b.innerHTML = ICON.sync;
+        b.setAttribute("aria-label", "I tuoi progressi: accedi con Google o spostali con un link");
+        b.title = "I tuoi progressi su tutti i dispositivi";
+      }
+    });
+  }
+
+  function renderAccount() {
+    const u = cloudUser;
+    const body = u
+      ? `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
+        <div class="ua-acct-box"><span class="ua-avatar" aria-hidden="true">${initialOf(u)}</span>
+          <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
+        <p class="ua-sync-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Le spunte del piano di studio, dei quaderni e i risultati dei quiz si salvano sul tuo account e si aggiornano da sole su ogni dispositivo dove accedi.</p>
+        <div class="ua-sync-actions"><button type="button" class="ua-btn ua-do-logout">Esci</button><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Chiudi</button></div>
+        <button type="button" class="ua-acct-alt ua-do-export">Oppure sposta le spunte con un link o un QR</button>`
+      : `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
+        <p class="ua-sync-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
+        <div class="ua-acct-box ua-acct-box-out"><button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login" data-focus>Accedi con Google</button></div>
+        <p class="ua-sync-note ua-acct-err" role="alert" hidden></p>
+        <p class="ua-sync-note">Le spunte già presenti su questo dispositivo vengono unite a quelle del tuo account.</p>
+        <div class="ua-sync-actions"><button type="button" class="ua-btn" data-close>Chiudi</button></div>
+        <button type="button" class="ua-acct-alt ua-do-export">Senza account: sposta le spunte con un link o un QR</button>`;
+    showSync(body);
+    const login = sync.querySelector(".ua-do-login");
+    if (login) login.addEventListener("click", () => signIn(login, sync.querySelector(".ua-acct-err")));
+    const out = sync.querySelector(".ua-do-logout");
+    if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
+    sync.querySelector(".ua-do-export").addEventListener("click", openExport);
+  }
+  function openAccount() {
+    if (!cloudUser) fbAuth().catch(() => {}); // la libreria arriva mentre leggi: il tocco su "Accedi" apre subito Google
+    renderAccount();
+  }
+
+  /* avviso breve in basso */
+  let toastEl = null, toastTimer = null;
+  function toast(msg, action, onAction) {
+    if (!toastEl) { toastEl = el("div", { class: "ua-toast", role: "status" }); document.body.append(toastEl); }
+    toastEl.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button" class="ua-toast-act">${esc(action)}</button>` : ""}<button type="button" class="ua-toast-x" aria-label="Chiudi">×</button>`;
+    const hide = () => { toastEl.classList.remove("is-on"); };
+    toastEl.querySelector(".ua-toast-x").addEventListener("click", hide);
+    if (action) toastEl.querySelector(".ua-toast-act").addEventListener("click", () => { hide(); onAction(); });
+    requestAnimationFrame(() => toastEl.classList.add("is-on"));
+    clearTimeout(toastTimer);
+    if (!action) toastTimer = setTimeout(hide, 5000);
+  }
+
+  function startCloud() {
+    watchStorage();
+    if (cloudOn()) fbAuth().catch(() => {});
+    let msg = null;
+    try { msg = sessionStorage.getItem(CLOUD_MSG); sessionStorage.removeItem(CLOUD_MSG); } catch (e) {}
+    if (msg) setTimeout(() => toast(msg), 400);
+  }
+
   /* ---------------- "riprendi da dove eri" ----------------
      Sulle pagine di appunti ricorda l'ultimo capitolo che stavi leggendo. La home lo mostra. */
   const LAST_KEY = "ua-last";
@@ -409,6 +694,7 @@
   const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
   const phone = () => matchMedia("(max-width: 640px)").matches;
   const fmtDay = d => { try { return new Date(d + "T12:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return d; } };
+  const newsImg = n => n.immagine ? (/^https:/.test(n.immagine) ? n.immagine : ROOT + enc(n.immagine)) : "";
   const newsHref = n => n.link ? (/^https?:/.test(n.link) ? n.link : ROOT + enc(n.link)) : NEWS_PAGE + "#" + encodeURIComponent(n.id);
 
   // quali notizie sono già state notificate: in una cache, così lo vedono sia la pagina sia il service worker
@@ -462,7 +748,8 @@
         const reg = await navigator.serviceWorker.ready;
         if (reg.periodicSync) await reg.periodicSync.register("news", { minInterval: 6 * 60 * 60 * 1000 });
       } catch (e) {}
-      try { const reg = await navigator.serviceWorker.getRegistration(ROOT); if (reg) reg.showNotification("Notifiche attive", { body: "Ti avviseremo quando arriva una notizia nuova.", tag: "news-on", icon: ROOT + "icon-192.png" }); } catch (e) {}
+      try { const reg = await navigator.serviceWorker.getRegistration(ROOT); if (reg) reg.showNotification("Notifiche attive", { body: "Ti avviseremo appena arriva una notizia nuova, anche a sito chiuso.", tag: "news-on", icon: ROOT + "icon-192.png" }); } catch (e) {}
+      pushSubscribe().catch(() => {}); // notifiche istantanee (Firebase Cloud Messaging)
     }
     refreshNotifControls();
   }
@@ -470,6 +757,42 @@
     lsSet(NEWS_ON, false);
     try { const reg = await navigator.serviceWorker.ready; if (reg.periodicSync) await reg.periodicSync.unregister("news"); } catch (e) {}
     refreshNotifControls();
+    pushUnsubscribe();
+  }
+
+  /* notifiche istantanee: il dispositivo riceve un codice da Firebase Cloud Messaging e lo registra
+     in Firestore (notifiche/<codice>). Quando esce una notizia, l'azione di GitHub la manda a tutti i codici. */
+  const PUSH_TOKEN = "news-token", PUSH_AT = "news-token-at", WEEK = 7 * 24 * 3600 * 1000;
+  const swReady = () => Promise.race([navigator.serviceWorker.ready, new Promise((_, ko) => setTimeout(() => ko(new Error("sw")), 15000))]);
+  async function pushSubscribe() {
+    const c = await fbLoad();
+    const m = await import(FB_URL("messaging"));
+    if (!(await m.isSupported())) return false;
+    const reg = await swReady();
+    const token = await m.getToken(m.getMessaging(c.app), { vapidKey: FB_VAPID, serviceWorkerRegistration: reg });
+    if (!token) return false;
+    const old = lsGet(PUSH_TOKEN, null);
+    await c.fs.setDoc(c.fs.doc(c.db, "notifiche", token), { token, aggiornato: c.fs.serverTimestamp() });
+    if (old && old !== token) c.fs.deleteDoc(c.fs.doc(c.db, "notifiche", old)).catch(() => {});
+    lsSet(PUSH_TOKEN, token); lsSet(PUSH_AT, Date.now());
+    return true;
+  }
+  async function pushUnsubscribe() {
+    const old = lsGet(PUSH_TOKEN, null);
+    try { localStorage.removeItem(PUSH_TOKEN); localStorage.removeItem(PUSH_AT); } catch (e) {}
+    if (!old) return;
+    try {
+      const c = await fbLoad();
+      const m = await import(FB_URL("messaging"));
+      await c.fs.deleteDoc(c.fs.doc(c.db, "notifiche", old));
+      if (await m.isSupported()) await m.deleteToken(m.getMessaging(c.app));
+    } catch (e) {}
+  }
+  // il codice può cambiare o scadere: lo rinnovo una volta a settimana (o se manca)
+  function pushRefresh() {
+    if (!notifSupported() || Notification.permission !== "granted" || !lsGet(NEWS_ON, false)) return;
+    if (lsGet(PUSH_TOKEN, null) && Date.now() - lsGet(PUSH_AT, 0) < WEEK) return;
+    setTimeout(() => pushSubscribe().catch(() => {}), 3000);
   }
 
   // interruttore delle notifiche, o una spiegazione se su questo dispositivo non si può
@@ -504,9 +827,11 @@
     const meta = `<span class="ua-ni-meta">${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh}</span>`;
     if (full) {
       const link = n.link ? `<a class="ua-ni-link" href="${esc(newsHref(n))}">Apri →</a>` : "";
-      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" id="${esc(n.id)}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${link}</li>`;
+      const img = n.immagine ? `<img class="ua-ni-img" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
+      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" id="${esc(n.id)}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
     }
-    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" href="${esc(newsHref(n))}">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</a></li>`;
+    const thumb = n.immagine ? `<img class="ua-ni-thumb" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
+    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
   }
   const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
 
@@ -617,9 +942,12 @@
     const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme, .ua-open-sync");
     if (!b) return;
     if (b.classList.contains("ua-theme")) cycleTheme();
-    else if (b.classList.contains("ua-open-sync")) openExport();
+    else if (b.classList.contains("ua-open-sync")) openAccount();
     else openSearch();
   });
+  paintAccount();
+  startCloud();
+  pushRefresh();
   checkImport();
   trackLast();
   registerSW();
