@@ -49,16 +49,21 @@ button{font:inherit;color:inherit}
   background:var(--ink);color:var(--bg);margin-bottom:30px}
 .sim h2{font-family:var(--f-display);font-size:22px;margin:0}
 .sim p{margin:0;opacity:.75;font-size:14.5px}
-.sim .btn{grid-row:1 / span 2;grid-column:2;background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.sim .tot{font-family:var(--f-mono);font-size:12.5px;opacity:.65}
+.sim .tot b{font-weight:600}
+.sim .btn{grid-row:1 / span 3;grid-column:2;background:var(--bg);color:var(--ink);border-color:var(--bg)}
 .chaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .chap{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;cursor:pointer;
   display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;transition:border-color .15s,transform .15s}
 .chap:hover{border-color:var(--c);transform:translateY(-1px)}
-.chap .n{grid-row:1 / span 2;font-family:var(--f-mono);font-weight:500;color:var(--c);font-size:14px;padding-top:2px}
+.chap .n{grid-row:1 / span 4;font-family:var(--f-mono);font-weight:500;color:var(--c);font-size:14px;padding-top:2px}
 .chap .t{font-weight:600;line-height:1.3}
+.chap .t,.chap .s{grid-column:2}
 .chap .s{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
 .chap .s b{font-weight:500;color:var(--ok)}
 .chap .s b.mid{color:var(--c)}
+.chap .m{grid-column:2;height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
+.chap .m i{display:block;height:100%;background:var(--ok);border-radius:2px}
 .note{margin-top:22px;color:var(--muted);font-size:14px}
 
 /* domanda */
@@ -246,7 +251,249 @@ const Q = [
   { c: "dyn", q: "Passando da un caso d'uso al sequence, cosa c'è nella seconda colonna?", o: ["Un oggetto boundary, con cui l'attore interagisce", "Un oggetto control", "Un oggetto entity", "Il database"], e: "Prima colonna = attore; seconda = boundary; terza = control, che gestisce il resto del caso d'uso." },
   { c: "dyn", q: "L'oggetto control…", o: ["Coordina il caso d'uso ed è creato dal boundary", "Contiene i dati persistenti del dominio", "È l'interfaccia con l'attore", "Non può creare altri oggetti"], e: "Boundary = interfaccia (form, bottoni); Control = logica del flusso; Entity = dati persistenti (Torneo, Conto)." },
   { c: "dyn", q: "Cosa rappresenta il rettangolino stretto sulla lifeline?", o: ["L'attivazione: il tempo in cui un metodo è in esecuzione", "La creazione dell'oggetto", "Un frame opt", "Un messaggio di ritorno"], e: "Lifeline = linea tratteggiata verticale (la vita dell'oggetto); attivazione = il rettangolino sopra." },
-  { c: "dyn", q: "Il collaboration diagram rispetto al sequence…", o: ["Mostra gli stessi messaggi ma evidenzia i collegamenti tra oggetti; l'ordine è dato dai numeri", "Mostra gli stati di un oggetto", "Non mostra i messaggi", "Mette in evidenza il tempo più del sequence"], e: "I messaggi annidati si numerano con la notazione puntata (2.1, 2.2)." }
+  { c: "dyn", q: "Il collaboration diagram rispetto al sequence…", o: ["Mostra gli stessi messaggi ma evidenzia i collegamenti tra oggetti; l'ordine è dato dai numeri", "Mostra gli stati di un oggetto", "Non mostra i messaggi", "Mette in evidenza il tempo più del sequence"], e: "I messaggi annidati si numerano con la notazione puntata (2.1, 2.2)." },
+
+  // ——— Domande aggiunte per il quiz dinamico ———
+  // 01 · Ciclo di vita (altre)
+  { c: "cvs", q: "Secondo IEEE 610.12, il ciclo di vita del software comprende…", o: ["Tutto il periodo dall'idea al ritiro del prodotto, uso e manutenzione inclusi", "Solo la progettazione e la codifica", "Solo il tratto dalla decisione di sviluppare alla consegna", "Solo la manutenzione dopo il rilascio"], e: "Ciclo di vita = dall'idea al ritiro, uso e manutenzione compresi. Il tratto decisione → consegna è il ciclo di sviluppo, che ne è solo una parte." },
+  { c: "cvs", q: "Studio di fattibilità e analisi dei requisiti appartengono alla macro-fase di…", o: ["Definizione (il cosa)", "Sviluppo (il come)", "Manutenzione (il dopo)", "Validazione"], e: "Definizione = capire il problema e i vincoli. Sviluppo = progettare, codificare, testare, integrare. Manutenzione = correggere, adattare, aggiungere." },
+  { c: "cvs", q: "Progettare, scrivere il codice, testare e integrare è la macro-fase di…", o: ["Sviluppo (il come)", "Definizione (il cosa)", "Manutenzione (il dopo)", "Fattibilità"], e: "Le tre macro-fasi: Definizione (il cosa), Sviluppo (il come), Manutenzione (il dopo)." },
+  { c: "cvs", q: "Adattare il software a un nuovo sistema operativo rientra nella…", o: ["Manutenzione", "Definizione", "Codifica iniziale", "Analisi dei requisiti"], e: "La manutenzione (il dopo) comprende correggere errori, adattare a nuovi ambienti e aggiungere funzioni." },
+  { c: "cvs", q: "Il modello a cascata è nato come reazione a…", o: ["Il \"code and fix\": scrivere codice e aggiustare a caso", "Il modello a spirale", "Extreme Programming", "La prototipazione evolutiva"], e: "Royce, anni '70: la cascata mette ordine al \"code and fix\", ispirandosi all'industria manifatturiera." },
+  { c: "cvs", q: "Chi ha proposto il modello a cascata?", o: ["Royce, negli anni '70", "Boehm, insieme alla spirale", "Basili, col modello di riuso", "Jacobson, con OOSE"], e: "Cascata: Royce, anni '70. Spirale: Boehm. Riuso completo con COTS: Basili." },
+  { c: "cvs", q: "Nel modello a cascata, cosa succede alla fine di ogni fase?", o: ["C'è una milestone e i prodotti della fase vengono \"congelati\"", "Si torna alla fase precedente per ricontrollarla", "Si consegna una versione al cliente", "Si esegue il β-test"], e: "Ogni fase produce semilavorati (documenti, codice) che sono l'input della successiva; la fine della fase è una milestone." },
+  { c: "cvs", q: "Quale di questi è un VANTAGGIO del modello a cascata?", o: ["È semplice da capire e da pianificare, con controllo su tempi e costi", "Il cliente vede il prodotto fin dall'inizio", "Accoglie facilmente requisiti che cambiano", "Richiede pochissima documentazione"], e: "Pro: semplice, pianificabile, tempi e costi sotto controllo, tanta documentazione. Contro: rigida, il cliente vede tutto solo alla fine." },
+  { c: "cvs", q: "Nel modello a V, il test di sistema corrisponde a…", o: ["Il progetto di sistema", "L'analisi dei requisiti", "Il progetto di dettaglio", "La codifica"], e: "Requisiti ↔ accettazione · progetto di sistema ↔ test di sistema · progetto di dettaglio ↔ test di unità e integrazione." },
+  { c: "cvs", q: "Nel modello a V, i test di unità e di integrazione corrispondono a…", o: ["Il progetto di dettaglio", "Il progetto di sistema", "L'analisi dei requisiti", "Lo studio di fattibilità"], e: "Più si scende a sinistra (dettaglio), più il test corrispondente a destra è piccolo (unità e integrazione)." },
+  { c: "cvs", q: "Cosa sta al vertice (al centro) del modello a V?", o: ["La codifica", "Il test di accettazione", "L'analisi dei requisiti", "La manutenzione"], e: "È la cascata \"piegata\": a sinistra il progetto, a destra i test, al centro la codifica." },
+  { c: "cvs", q: "Nel modello a V un test a destra fallisce. Cosa si fa?", o: ["Si torna alla fase collegata a sinistra e la si migliora", "Si ricomincia tutto da capo", "Si passa comunque alla manutenzione", "Si rimanda il problema al β-test"], e: "Il modello a V rende esplicito che si può iterare, migliorando requisiti, progetto e codice." },
+  { c: "cvs", q: "Quando conviene usare la prototipazione?", o: ["Quando il cliente non sa bene cosa vuole", "Quando i requisiti sono chiari e stabili", "Solo per sistemi safety critical", "Quando si assemblano componenti COTS"], e: "Il prototipo, una versione finta o parziale, serve a far vedere qualcosa al cliente e capire i requisiti." },
+  { c: "cvs", q: "Un breadboard è un prototipo che contiene…", o: ["La logica, senza interfaccia vera", "Solo l'interfaccia, senza logica", "La specifica matematica", "Il prodotto finale già completo"], e: "Breadboard = logica senza interfaccia. Mock-up = interfaccia senza logica." },
+  { c: "cvs", q: "Un prototipo esplorativo (evolutivo)…", o: ["Viene raffinato fino a diventare il prodotto finale", "Si butta appena chiariti i requisiti", "Contiene solo l'interfaccia grafica", "È una specifica formale da trasformare in codice"], e: "Usa e getta: si butta dopo aver capito i requisiti. Evolutivo: si raffina fino al prodotto finale." },
+  { c: "cvs", q: "Cosa significa COTS?", o: ["Commercial Off-The-Shelf: componenti già pronti sul mercato", "Component Oriented Testing System", "Code Of The System", "Common Object Transfer Standard"], e: "Il modello basato su componenti costruisce il sistema assemblando COTS: è il modello di riuso completo di Basili." },
+  { c: "cvs", q: "Il modello basato su componenti…", o: ["Costruisce il sistema assemblando componenti già esistenti", "Trasforma una specifica matematica in codice", "Consegna il prodotto in più rilasci", "Ripete lo stesso ciclo raffinando tutto il sistema"], e: "Componenti COTS assemblati: è il modello di riuso completo di Basili." },
+  { c: "cvs", q: "Il modello iterativo…", o: ["Ripete più volte lo stesso ciclo, raffinando ogni volta tutto il sistema", "Consegna più rilasci, ognuno con funzioni nuove", "Assembla componenti già esistenti", "Non torna mai indietro tra le fasi"], e: "Iterativo = rifaccio il ciclo migliorando tutto. Incrementale = aggiungo funzioni a ogni rilascio." },
+  { c: "cvs", q: "Il cliente non ha subito i soldi per l'intero progetto. Quale modello aiuta?", o: ["Incrementale", "A cascata", "Trasformazioni formali", "A V"], e: "Con l'incrementale si consegna in più rilasci: il cliente paga e riceve un pezzo alla volta. Utile anche per i grandi progetti." },
+  { c: "cvs", q: "Nella spirale di Boehm, cosa rappresenta il raggio che cresce a ogni giro?", o: ["Il costo speso fino a quel momento", "Il numero di requisiti raccolti", "La qualità del prodotto", "Il numero di persone nel team"], e: "Più si va avanti nella spirale, più il raggio, cioè il costo speso, cresce." },
+  { c: "cvs", q: "Nella spirale, in quale quadrante si usa spesso un prototipo?", o: ["Valutare le alternative e risolvere i rischi", "Determinare obiettivi e vincoli", "Pianificare il giro successivo", "Rilasciare il prodotto"], e: "Il secondo quadrante analizza i rischi, spesso costruendo un prototipo. Poi si sviluppa e verifica, poi si pianifica il giro dopo." },
+  { c: "cvs", q: "Spirale con rischi bassi e requisiti chiari: ogni giro si comporta come…", o: ["Una cascata", "Un prototipo", "Un ciclo XP", "Un'ispezione del codice"], e: "Per questo è un meta-modello: se le interfacce utente sono incerte invece ogni giro diventa un prototipo." },
+  { c: "cvs", q: "Spirale con interfacce utente molto incerte: ogni giro diventa…", o: ["Un prototipo", "Una cascata", "Una trasformazione formale", "Un rilascio definitivo"], e: "La spirale si adatta ai rischi: incertezza sull'interfaccia → prototipo; rischi bassi e requisiti chiari → cascata." },
+  { c: "cvs", q: "Qual è l'ordine corretto dei 4 quadranti della spirale?", o: ["Obiettivi e vincoli → alternative e rischi → sviluppo e verifica → pianificazione", "Sviluppo → rischi → obiettivi → pianificazione", "Pianificazione → sviluppo → obiettivi → rischi", "Rischi → obiettivi → pianificazione → sviluppo"], e: "1 obiettivi, alternative e vincoli · 2 valutare le alternative e risolvere i rischi · 3 sviluppare e verificare · 4 pianificare il giro successivo." },
+  { c: "cvs", q: "In XP, \"pair programming\" significa…", o: ["Due persone lavorano sullo stesso computer", "Due team sviluppano lo stesso modulo in parallelo", "Ogni funzione ha due implementazioni", "Il cliente e il capo progetto scrivono il codice insieme"], e: "Regola 12 di XP: due persone, un computer." },
+  { c: "cvs", q: "Quale di queste È una regola di XP?", o: ["Integrare continuamente", "Congelare i requisiti all'inizio", "Fare straordinari nelle settimane finali", "Ogni modulo ha un solo proprietario del codice"], e: "XP: integrazione continua, proprietà collettiva del codice, 40 ore a settimana, cliente presente, refactoring, pair programming…" },
+  // 02 · Scrum (altre)
+  { c: "scrum", q: "Quanto dura di solito uno sprint?", o: ["Da 2 a 4 settimane", "Un giorno", "Da 3 a 6 mesi", "Un anno"], e: "Scrum lavora in cicli brevi, gli sprint, di 2–4 settimane." },
+  { c: "scrum", q: "Cosa si ottiene alla fine di ogni sprint?", o: ["Un incremento di prodotto potenzialmente rilasciabile", "La documentazione completa del sistema", "Il product backlog definitivo", "Un prototipo da buttare"], e: "A ogni sprint si consegna un pezzo di prodotto funzionante, cominciando da quello che vale di più." },
+  { c: "scrum", q: "Manifesto Agile: individui e interazioni più che…", o: ["Processi e strumenti", "Documentazione esaustiva", "Negoziazione del contratto", "Seguire un piano"], e: "Individui e interazioni > processi e strumenti · software funzionante > documentazione · collaborazione col cliente > contratto · rispondere al cambiamento > piano." },
+  { c: "scrum", q: "Manifesto Agile: collaborazione col cliente più che…", o: ["Negoziazione del contratto", "Processi e strumenti", "Seguire un piano", "Documentazione esaustiva"], e: "Le quattro coppie del Manifesto: impara a riconoscere il termine giusto per ciascuna." },
+  { c: "scrum", q: "Manifesto Agile: rispondere al cambiamento più che…", o: ["Seguire un piano", "Negoziazione del contratto", "Processi e strumenti", "Software funzionante"], e: "Attenzione al trabocchetto: \"software funzionante\" è il lato che il Manifesto valorizza, non quello a cui si dà meno valore." },
+  { c: "scrum", q: "Come è fatto il team in Scrum?", o: ["Auto-organizzato, interfunzionale e a tempo pieno", "Guidato dallo ScrumMaster, che assegna i task", "Composto solo da programmatori", "Formato da persone su più progetti part-time"], e: "Team di 5–9 persone, auto-organizzato, interfunzionale (programmatori, tester, designer…), a tempo pieno." },
+  { c: "scrum", q: "Chi decide COME fare il lavoro dello sprint?", o: ["Il team", "Il Product Owner", "Lo ScrumMaster", "Il cliente"], e: "Il PO decide cosa fare (e le priorità), il team decide come farlo." },
+  { c: "scrum", q: "Chi accetta o rifiuta il lavoro fatto?", o: ["Il Product Owner", "Lo ScrumMaster", "Il team stesso", "Il tester più esperto"], e: "Il PO definisce le funzionalità, le ordina per valore e accetta o rifiuta il lavoro." },
+  { c: "scrum", q: "Ogni quanto il Product Owner può cambiare le priorità?", o: ["A ogni sprint", "Ogni giorno, durante il daily scrum", "Mai, una volta definite", "Solo a fine progetto"], e: "Il PO può riordinare il product backlog a ogni sprint; durante lo sprint lo sprint backlog lo tocca solo il team." },
+  { c: "scrum", q: "Un manager esterno interrompe di continuo il team. Chi deve proteggerlo?", o: ["Lo ScrumMaster", "Il Product Owner", "Il membro più anziano del team", "Il cliente"], e: "Lo ScrumMaster fa rispettare le regole, rimuove gli ostacoli e protegge il team dalle interferenze esterne." },
+  { c: "scrum", q: "Cosa succede nello sprint planning?", o: ["Si scelgono elementi dal product backlog e si crea lo sprint backlog, con task stimati in ore", "Si mostra la demo al cliente", "Si discute come migliorare il processo", "Ognuno dice cosa ha fatto ieri"], e: "Planning a inizio sprint: le storie scelte si spezzano in task stimati in ore." },
+  { c: "scrum", q: "Quanto dura il daily scrum?", o: ["15 minuti, in piedi", "Un'ora, seduti", "Mezza giornata", "Quanto serve per risolvere i problemi"], e: "15 minuti ogni giorno, in piedi. Non serve a risolvere i problemi." },
+  { c: "scrum", q: "Quale di questi NON è uno scopo del daily scrum?", o: ["Risolvere i problemi tecnici emersi", "Dire cosa si è fatto ieri", "Dire cosa si farà oggi", "Segnalare gli ostacoli"], e: "Il daily non serve a risolvere problemi né è un report al capo: si risponde alle 3 domande e basta." },
+  { c: "scrum", q: "Come si prepara la sprint review?", o: ["In modo informale: massimo 2 ore di preparazione, niente slide", "Con una presentazione di slide dettagliata", "Con un report scritto per il management", "Non si prepara: si salta se lo sprint è andato male"], e: "La review è una demo informale di cosa si è fatto." },
+  { c: "scrum", q: "\"Start, Stop, Continue\" è la tecnica tipica della…", o: ["Sprint retrospective", "Sprint review", "Sprint planning", "Daily scrum"], e: "Nella retrospective il team decide cosa iniziare, smettere e continuare a fare." },
+  { c: "scrum", q: "Com'è ordinato il product backlog?", o: ["In alto gli elementi a priorità alta, dettagliati; in basso quelli meno importanti, più vaghi", "In ordine di inserimento", "In ordine alfabetico", "In alto i task più facili"], e: "È una pila ordinata per priorità dal Product Owner." },
+  { c: "scrum", q: "Cosa mostra il burndown chart?", o: ["Le ore di lavoro rimanenti, giorno per giorno", "Gli story point consegnati negli sprint passati", "Le ore lavorate da ogni persona", "Il numero di bug aperti"], e: "Deve scendere fino a zero alla fine dello sprint." },
+  { c: "scrum", q: "Come si ottiene ogni punto del burndown?", o: ["Sommando le ore rimanenti di tutti i task in quel giorno", "Contando i task completati quel giorno", "Moltiplicando persone per ore", "Chiedendo una stima al Product Owner"], e: "Nello sprint backlog ogni riga è un task e ogni colonna un giorno: la somma della colonna è il punto del grafico." },
+  { c: "scrum", q: "Burndown \"too late\" (in ritardo per tutto lo sprint): cosa fare?", o: ["Abbassare la capacità pianificata nel prossimo sprint", "Aumentare il focus factor", "Aggiungere più storie", "Smettere di aggiornare il grafico"], e: "Too late: impegno non completato, si era preso troppo lavoro." },
+  { c: "scrum", q: "Burndown \"too early\" (finiscono prima): cosa indica?", o: ["Storie sovrastimate o velocity stimata male; servono altre storie pronte", "Il team non aggiorna i progressi", "Task aggiunti ogni giorno", "Il PO ha tolto storie"], e: "Se si finisce prima del tempo bisogna avere altre storie pronte da prendere." },
+  { c: "scrum", q: "Burndown con linea piatta (\"let's have a rest\"): cosa indica?", o: ["Non aggiornano i progressi, o il PO aggiunge lavoro quanto ne viene fatto", "Il team ha finito in anticipo", "Il team è ideale", "Il primo sprint di un team nuovo"], e: "Piatta = non scende: nessuno aggiorna, oppure entra lavoro alla stessa velocità con cui esce." },
+  { c: "scrum", q: "Burndown \"nice team\": com'è l'andamento?", o: ["Lento all'inizio, poi adattano lo scope e finiscono in tempo", "Scende regolare fino a zero", "Sale invece di scendere", "Resta piatto"], e: "Ideal team: discesa regolare. Nice team: partenza lenta ma scope adattato e sprint chiuso in tempo." },
+  { c: "scrum", q: "Nell'esempio delle slide, il team aveva preso troppo lavoro (quasi 600 ore al giorno 13). Cosa ha salvato lo sprint?", o: ["Il Product Owner ha tolto delle storie", "Il team ha fatto straordinari", "Lo sprint è stato allungato", "Lo ScrumMaster ha aggiunto persone"], e: "Il salto in giù nel grafico è il PO che riduce lo scope." },
+  { c: "scrum", q: "Come si scala Scrum a progetti con centinaia di persone?", o: ["Scrum of scrums: un rappresentante per team si incontra con gli altri", "Un unico team molto grande", "Un solo Product Owner che coordina tutti i task", "Sprint di sei mesi"], e: "Team da 7 ± 2 persone; i team si coordinano con lo Scrum of scrums." },
+  { c: "scrum", q: "Team di 4 persone, 6 ore al giorno, sprint di 10 giorni, focus factor 0,75. Capacità reale?", o: ["180 ore", "240 ore", "160 ore", "200 ore"], e: "4 × 6 × 10 = 240 ore teoriche; 240 × 0,75 = 180 ore da pianificare." },
+  { c: "scrum", q: "Team di 7 persone, 8 ore al giorno, sprint di 15 giorni, focus factor 0,8. Capacità reale?", o: ["672 ore", "840 ore", "588 ore", "560 ore"], e: "7 × 8 × 15 = 840 ore teoriche; 840 × 0,8 = 672 ore." },
+  { c: "scrum", q: "Pianifico 30 story point e ne consegno 24. Qual è la velocity?", o: ["24", "30", "27", "6"], e: "La velocity conta gli story point effettivamente consegnati, non quelli pianificati." },
+  { c: "scrum", q: "Differenza tra capacità e velocity?", o: ["Capacità = ore disponibili nello sprint; velocity = story point consegnati", "Sono la stessa misura", "Capacità = story point; velocity = ore", "Capacità misura la bravura, velocity il tempo"], e: "Capacità serve a pianificare lo sprint in ore; velocity misura i punti consegnati." },
+  { c: "scrum", q: "Un focus factor di 0,9 è…", o: ["Rischioso: oltre 0,8 si sovrastima il tempo davvero disponibile", "Consigliato per team nuovi", "Il valore standard di Scrum", "Obbligatorio per sprint lunghi"], e: "Si usa 0,6–0,8: le persone hanno riunioni, mail, imprevisti." },
+  // 03 · Riunioni e minuta (altre)
+  { c: "minuta", q: "Chi guida la riunione, segue l'agenda e dà la parola?", o: ["Il facilitatore", "Il timekeeper", "Il minute taker", "Il Product Owner"], e: "Facilitatore = guida. Timekeeper = tempi. Minute taker = scrive la minuta." },
+  { c: "minuta", q: "Chi scrive la minuta?", o: ["Il minute taker", "Il facilitatore", "Il timekeeper", "Tutti i presenti a turno"], e: "Il minute taker è il ruolo che verbalizza la riunione." },
+  { c: "minuta", q: "Quali sono i ruoli indicati nell'intestazione della minuta?", o: ["Facilitatore, timekeeper, minute taker (più presenti e assenti)", "Product Owner, ScrumMaster, team", "Cliente, analista, programmatore", "Presidente, segretario, revisore"], e: "Non confondere con i ruoli di Scrum." },
+  { c: "minuta", q: "Cosa contiene l'intestazione della minuta?", o: ["Progetto, numero della riunione, data, ora di inizio e fine, luogo e ruoli", "Solo l'elenco degli action item", "Le risoluzioni prese", "La critica della riunione"], e: "Poi vengono le sezioni: obiettivo, comunicazioni, status, discussione, wrap up, prossima riunione." },
+  { c: "minuta", q: "Qual è l'ordine delle sezioni della minuta?", o: ["Obiettivo → Comunicazioni → Status → Discussione → Wrap up → Prossima riunione", "Discussione → Obiettivo → Wrap up → Status → Comunicazioni", "Status → Discussione → Obiettivo → Comunicazioni → Wrap up", "Comunicazioni → Wrap up → Status → Discussione → Obiettivo"], e: "Il template è fisso: impararlo fa risparmiare tempo." },
+  { c: "minuta", q: "Cosa va nella sezione Comunicazioni?", o: ["Informazioni da dare a tutti", "I problemi da discutere", "I nuovi action item", "Data e luogo della prossima riunione"], e: "Le comunicazioni sono informazioni, non problemi da discutere: quelli vanno in Discussione." },
+  { c: "minuta", q: "Quali colonne ha la tabella delle attività pianificate (Status 3.1)?", o: ["Task, Responsabile, Data prevista, Status, Note", "Issue, Proposta, Argomento, Risoluzione", "Nome, Ruolo, Presente, Assente", "Story, Story point, Priorità, Sprint"], e: "Status: 3.1 attività pianificate e 3.2 tabella degli action item aperti." },
+  { c: "minuta", q: "In quale sezione si usa la notazione I[n], P[n.i], R[n]?", o: ["Discussione", "Comunicazioni", "Status", "Intestazione"], e: "La Discussione riporta i problemi discussi con una notazione precisa." },
+  { c: "minuta", q: "Cosa indica I[n]?", o: ["Una issue: il problema da discutere", "Un'informazione per tutti", "Un incarico già completato", "L'intervento n-esimo di un presente"], e: "I[1] Che database usiamo?" },
+  { c: "minuta", q: "Cosa indica R[n]?", o: ["La risoluzione dell'issue n", "Il responsabile del task n", "Il rischio numero n", "La riunione numero n"], e: "R[1] Si usa MySQL, vedi AI[3]." },
+  { c: "minuta", q: "Cosa indica \"+A\" nella discussione?", o: ["Un argomento a favore di una proposta", "Un action item aggiunto", "Un'approvazione della minuta", "Un assente giustificato"], e: "+A = a favore, −A = contro." },
+  { c: "minuta", q: "In P[n.i], cosa indica la n?", o: ["Il numero dell'issue a cui la proposta si riferisce", "Il numero della proposta", "Il numero della riunione", "Il numero di voti ricevuti"], e: "P[n.i] = proposta i-esima per l'issue n." },
+  { c: "minuta", q: "Cosa indica P[3.1]?", o: ["La prima proposta per l'issue numero 3", "La terza proposta per l'issue numero 1", "L'issue 3 della riunione 1", "Il punto 3.1 dello status"], e: "Prima il numero dell'issue, poi il numero della proposta." },
+  { c: "minuta", q: "\"Che database usiamo?\" come si annota nella discussione?", o: ["I[1]", "P[1.1]", "R[1]", "AI[1]"], e: "È il problema da discutere: un'issue." },
+  { c: "minuta", q: "\"MongoDB\" proposto come seconda opzione per l'issue 1 si scrive…", o: ["P[1.2]", "P[2.1]", "I[2]", "R[1.2]"], e: "P[1.1] MySQL · P[1.2] MongoDB." },
+  { c: "minuta", q: "\"Lo conosciamo tutti\", detto a sostegno di MySQL, si annota come…", o: ["+A", "−A", "R[1]", "P[1.1]"], e: "È un argomento a favore di una proposta." },
+  { c: "minuta", q: "\"Ha uno schema rigido\", detto contro una proposta, si annota come…", o: ["−A", "+A", "I[n]", "AI[m]"], e: "−A = argomento contro." },
+  { c: "minuta", q: "\"Mario installa MySQL entro venerdì\" si annota come…", o: ["AI[m]: action item con responsabile e scadenza", "R[n]: risoluzione", "P[n.i]: proposta", "I[n]: issue"], e: "Un action item ha sempre un responsabile e una scadenza." },
+  { c: "minuta", q: "Cosa significa \"R[1] Si usa MySQL, vedi AI[3]\"?", o: ["L'issue 1 è risolta con MySQL e c'è un compito collegato, l'action item 3", "La proposta 1 è stata rifiutata", "MySQL è la terza proposta", "L'issue 3 è stata riaperta"], e: "La risoluzione chiude l'issue e rimanda all'action item che la mette in pratica." },
+  { c: "minuta", q: "Un action item, oltre al compito, deve avere…", o: ["Un responsabile e una scadenza", "Un argomento a favore e uno contro", "Una proposta alternativa", "La firma del facilitatore"], e: "AI[3] Mario installa MySQL entro venerdì: chi, cosa, entro quando." },
+  { c: "minuta", q: "Dove si trovano gli action item ancora aperti delle riunioni precedenti?", o: ["Nello Status, nella tabella 3.2", "Nelle Comunicazioni", "Nell'intestazione", "Nella Prossima riunione"], e: "Lo Status riporta le attività pianificate (3.1) e gli action item aperti (3.2)." },
+  { c: "minuta", q: "Cosa va nella sezione Prossima riunione?", o: ["Data, ora e luogo", "Gli action item aperti", "La critica della riunione", "Le issue risolte"], e: "Sezione finale: quando e dove ci si rivede." },
+  { c: "minuta", q: "Dove si scrive una breve critica della riunione stessa?", o: ["Nel Wrap up", "Nella Discussione", "Nelle Comunicazioni", "Nello Status"], e: "Wrap up: nuovi action item e una breve critica della riunione." },
+  { c: "minuta", q: "A cosa serve la minuta nel progetto del corso?", o: ["A verbalizzare le riunioni del team con una struttura fissa", "A descrivere i casi d'uso", "A pianificare gli sprint", "A raccogliere i requisiti dal cliente"], e: "Le riunioni del team vanno verbalizzate con una minuta, seguendo il template." },
+  { c: "minuta", q: "Nell'issue 2 sono state fatte tre proposte, ma non si è deciso. Cosa manca nella minuta?", o: ["R[2]: senza risoluzione l'issue resta aperta", "P[2.4]", "Un −A", "AI[2]"], e: "Un'issue senza R[n] torna alla riunione successiva." },
+  // 04 · UML (altre)
+  { c: "uml", q: "Cos'è un modello?", o: ["Un'astrazione: tiene i dettagli importanti e butta via il resto", "Il codice sorgente del sistema", "Una copia fedele di ogni dettaglio", "Un documento di requisiti"], e: "Si modella per capire sistemi troppo complessi da tenere in testa." },
+  { c: "uml", q: "Il dominio della soluzione (classi, database, rete) è modellato da…", o: ["Il design", "L'analisi", "Il cliente", "Il test di accettazione"], e: "Dominio applicativo = il mondo del problema, modellato dall'analisi. Dominio della soluzione = la tecnologia, modellata dal design." },
+  { c: "uml", q: "Da quali metodi nasce UML?", o: ["Booch, OMT (Rumbaugh) e OOSE (Jacobson)", "Cascata, spirale e XP", "Scrum, Kanban e XP", "FURPS+, SMART e MoSCoW"], e: "UML è la fusione di più metodi object-oriented; standard OMG dal 1997." },
+  { c: "uml", q: "UML è uno standard di quale organizzazione, e da quando?", o: ["OMG, dal novembre 1997", "ISO, dal 2010", "IEEE, dal 1985", "W3C, dal 2005"], e: "Standard OMG dal novembre 1997; oggi UML 2.5." },
+  { c: "uml", q: "Cosa dice la regola 80/20 su UML?", o: ["Con il 20% di UML si modella l'80% dei sistemi", "L'80% dei diagrammi è sbagliato", "Il 20% del tempo va speso a modellare", "L'80% dei sistemi non ha bisogno di UML"], e: "Conviene imparare bene quel 20%." },
+  { c: "uml", q: "Il modello funzionale (cosa fa il sistema) si descrive con…", o: ["Lo use case diagram", "Il class diagram", "Il sequence diagram", "Il package diagram"], e: "Funzionale = use case · a oggetti = class · dinamico = sequence, statechart, activity." },
+  { c: "uml", q: "Quali diagrammi descrivono il modello dinamico?", o: ["Sequence, statechart e activity", "Use case e class", "Solo il class diagram", "Package e deployment"], e: "Il modello dinamico descrive il comportamento nel tempo." },
+  { c: "uml", q: "In uno use case diagram, come si disegnano attore e caso d'uso?", o: ["Attore = omino, caso d'uso = ovale", "Attore = ovale, caso d'uso = rettangolo", "Attore = rettangolo, caso d'uso = omino", "Attore = cerchio, caso d'uso = rombo"], e: "Omino per il ruolo esterno, ovale per la funzionalità." },
+  { c: "uml", q: "Cos'è lo use case model?", o: ["L'insieme di tutti i casi d'uso, che descrivono completamente il sistema", "Un singolo caso d'uso molto dettagliato", "Il class diagram degli attori", "Il template del corso"], e: "Tutti i casi d'uso insieme descrivono il sistema completo." },
+  { c: "uml", q: "Una stessa persona può corrispondere a più attori?", o: ["Sì: l'attore è un ruolo, e una persona può avere più ruoli", "No, ogni persona è un solo attore", "Solo se è un amministratore", "Solo se gli attori sono sistemi esterni"], e: "Attore = ruolo esterno, persona o altro sistema." },
+  { c: "uml", q: "ValidateUser specializzato in CheckPassword e CheckFingerprint. Che relazione è?", o: ["Generalizzazione", "<<include>>", "<<extend>>", "Composizione"], e: "Generalizzazione tra casi d'uso: freccia dal figlio al padre, triangolo vuoto." },
+  { c: "uml", q: "\"Il pagamento richiede SEMPRE l'autenticazione\", messa a fattor comune. Che relazione è?", o: ["<<include>>", "<<extend>>", "Generalizzazione", "Aggregazione"], e: "Include: \"lo uso sempre\". Extend: \"a volte succede anche questo\"." },
+  { c: "uml", q: "\"Se il credito non basta, mostra un avviso\": un comportamento che si attiva solo in certe condizioni. Che relazione è?", o: ["<<extend>>", "<<include>>", "Generalizzazione", "Associazione"], e: "Extend = comportamento eccezionale o opzionale." },
+  { c: "uml", q: "In che verso va la freccia di <<include>>?", o: ["Dal caso base al caso incluso", "Dal caso incluso al caso base", "Dall'attore al caso d'uso", "Non ha verso"], e: "Include: base → incluso. Extend: estensione → base (il verso opposto, ed è lì il trabocchetto)." },
+  { c: "uml", q: "Un rombo vuoto su un'associazione indica…", o: ["Aggregazione: le parti possono vivere da sole", "Composizione: le parti muoiono col tutto", "Ereditarietà", "Dipendenza"], e: "Rombo vuoto = aggregazione. Rombo pieno = composizione." },
+  { c: "uml", q: "Come si disegna l'ereditarietà nel class diagram?", o: ["Freccia con triangolo vuoto verso la superclasse", "Rombo pieno", "Linea tratteggiata con <<extend>>", "Rombo vuoto"], e: "La sottoclasse è un tipo speciale della superclasse." },
+  { c: "uml", q: "\"Ogni Country ha una capitale City\" e \"un Polygon ha molti Point\" sono associazioni…", o: ["1-a-1 e 1-a-molti", "1-a-molti e 1-a-1", "Entrambe 1-a-molti", "Entrambe molti-a-molti"], e: "I numeri sulla linea sono la molteplicità." },
+  { c: "uml", q: "\"tarif2006:TarifSchedule\" scritto sottolineato è…", o: ["Un oggetto (istanza) della classe TarifSchedule", "Una classe astratta", "Un attore", "Un package"], e: "Istanza: nome sottolineato nella forma nome:Classe, con attributi che hanno valori." },
+  { c: "uml", q: "Cosa contiene una classe nel class diagram?", o: ["Nome, attributi e operazioni", "Solo il nome", "Attori e casi d'uso", "Stati e transizioni"], e: "Esempio: TarifSchedule con attributo zone2price e operazione getPrice(Zone)." },
+  { c: "uml", q: "In quali attività si usa il class diagram?", o: ["Analisi, system design e object design", "Solo nella codifica", "Solo nel test", "Solo nella raccolta dei requisiti"], e: "In analisi descrive i concetti del dominio, in system design i sottosistemi, in object design i dettagli." },
+  { c: "uml", q: "Differenza tra attore e classe?", o: ["L'attore è esterno al sistema; la classe modella un'entità dentro il sistema", "Sono la stessa cosa disegnata in modo diverso", "L'attore è un'istanza di una classe", "La classe è sempre una persona"], e: "Attore = fuori e interagisce. Classe = astrazione dentro. Oggetto = istanza di una classe." },
+  { c: "uml", q: "Nel sequence diagram, cosa sono le linee tratteggiate verticali?", o: ["Le lifeline degli oggetti", "I messaggi di ritorno", "Le dipendenze tra package", "Le transizioni"], e: "Rettangoli = istanze, linee tratteggiate = lifeline, frecce = messaggi, rettangolini stretti = attivazioni." },
+  { c: "uml", q: "A cosa serve il sequence diagram in analisi?", o: ["A raffinare i casi d'uso e trovare oggetti nuovi", "A descrivere gli stati di un oggetto", "A raggruppare i sottosistemi", "A elencare i requisiti non funzionali"], e: "In system design serve invece a definire le interfacce dei sottosistemi." },
+  { c: "uml", q: "\"UML dice in che ordine lavorare\". Vero o falso?", o: ["Falso: UML è un linguaggio, dice come disegnare, non in che ordine lavorare", "Vero: è un metodo di sviluppo completo", "Vero, ma solo per la fase di analisi", "Falso: UML serve solo per il codice"], e: "UML è una notazione, non un metodo." },
+  // 05 · Statechart, activity, package (altre)
+  { c: "state", q: "Come si disegna lo stato finale in uno statechart?", o: ["Pallino cerchiato (a bersaglio)", "Pallino pieno", "Rombo", "Barra spessa"], e: "Stato iniziale = pallino pieno. Stato finale = pallino cerchiato." },
+  { c: "state", q: "Come si disegna uno stato?", o: ["Rettangolo con angoli arrotondati", "Ovale", "Rombo", "Omino"], e: "Lo stato è una condizione dell'oggetto, disegnata come rettangolo arrotondato." },
+  { c: "state", q: "Dentro uno stato, cosa indica entry/?", o: ["Un'azione eseguita all'ingresso nello stato", "Un'azione eseguita all'uscita", "Un'attività che dura finché si resta nello stato", "L'evento che fa uscire dallo stato"], e: "entry/ all'ingresso · exit/ all'uscita · do/ attività che dura finché si resta lì." },
+  { c: "state", q: "Dentro uno stato, cosa indica exit/?", o: ["Un'azione eseguita all'uscita dallo stato", "Lo stato finale", "Un'azione all'ingresso", "La guardia della transizione"], e: "exit/ si esegue quando si lascia lo stato." },
+  { c: "state", q: "Quando scatta una transizione \"evento [guardia] / azione\"?", o: ["Quando arriva l'evento e la guardia è vera", "Appena la guardia diventa vera, anche senza evento", "Quando finisce l'azione", "Sempre, dopo un tempo fisso"], e: "Arriva l'evento, si controlla la guardia: se è vera si esegue l'azione e si cambia stato." },
+  { c: "state", q: "Nell'etichetta di una transizione, cosa sta tra parentesi quadre?", o: ["La guardia, cioè una condizione", "L'azione da eseguire", "Il nome dello stato di arrivo", "L'evento"], e: "Forma: evento [guardia] / azione." },
+  { c: "state", q: "Nell'etichetta \"moneta [credito ≥ prezzo] / eroga\", qual è l'azione?", o: ["eroga", "moneta", "credito ≥ prezzo", "Non c'è azione"], e: "moneta = evento · [credito ≥ prezzo] = guardia · eroga = azione." },
+  { c: "state", q: "Decomposizione OR di uno stato significa…", o: ["L'oggetto è in uno solo dei sotto-stati", "L'oggetto è in tutti i sotto-stati insieme", "Lo stato ha due stati finali", "Le transizioni sono facoltative"], e: "OR = un sotto-stato alla volta. AND = uno per ogni regione concorrente." },
+  { c: "state", q: "Nella decomposizione AND, come si separano le regioni concorrenti?", o: ["Con una linea tratteggiata", "Con una barra spessa", "Con un rombo", "Con una freccia"], e: "Le regioni parallele sono separate da linee tratteggiate dentro lo stato." },
+  { c: "state", q: "Uno stato con decomposizione AND ha 2 regioni. In quanti sotto-stati è l'oggetto contemporaneamente?", o: ["2, uno per regione", "1", "Tutti i sotto-stati", "Nessuno finché non arriva un evento"], e: "AND = concorrenza: un sotto-stato attivo per ciascuna regione." },
+  { c: "state", q: "Cambio automatico: MarciaAvanti contiene Prima, Seconda e Terza. Che tipo di stato è MarciaAvanti?", o: ["Uno stato composto con decomposizione OR", "Uno stato con decomposizione AND", "Uno stato finale", "Un'attività"], e: "Si è in una sola marcia alla volta: decomposizione OR." },
+  { c: "state", q: "Qual è la differenza tra statechart e activity diagram?", o: ["Statechart = gli stati di UN oggetto; activity = i passi di UN processo", "Sono equivalenti", "Statechart = un processo; activity = un oggetto", "L'activity mostra solo le classi"], e: "Statechart: come cambia un oggetto. Activity: come scorre un'attività." },
+  { c: "state", q: "Cos'è un activity diagram?", o: ["Un diagramma di flusso moderno: la sequenza di attività di un processo, anche in parallelo", "La struttura statica delle classi", "L'elenco dei casi d'uso", "La vita di un singolo oggetto"], e: "Elementi: attività, start ed end, fork e join, branch e merge." },
+  { c: "state", q: "Cosa fa il join in un activity diagram?", o: ["Aspetta che finiscano tutti i rami paralleli", "Sceglie un ramo in base a una condizione", "Divide il flusso in rami paralleli", "Termina il diagramma"], e: "Fork divide in parallelo, join aspetta tutti. Entrambi sono barre spesse." },
+  { c: "state", q: "Come si disegna un branch e cosa fa?", o: ["Rombo: sceglie un solo ramo in base a una [condizione]", "Barra spessa: crea rami paralleli", "Pallino pieno: inizio del flusso", "Linea tratteggiata: separa le corsie"], e: "Branch e merge sono rombi; il merge riunisce i rami." },
+  { c: "state", q: "Cosa fa il merge?", o: ["Riunisce i rami alternativi aperti da un branch", "Aspetta la fine di rami paralleli", "Divide il flusso", "Crea una swimlane"], e: "Merge chiude un branch (scelta), join chiude un fork (parallelismo)." },
+  { c: "state", q: "\"Il pagamento e la preparazione del pacco avvengono in parallelo, poi si spedisce\": che elementi usi?", o: ["Fork e join", "Branch e merge", "Due stati finali", "Decomposizione OR"], e: "Parallelismo = fork (divide) e join (aspetta entrambi)." },
+  { c: "state", q: "\"Se l'utente è registrato fa il login, altrimenti si registra\": che elementi usi?", o: ["Branch e merge", "Fork e join", "Swimlane", "Object flow"], e: "Una scelta con condizione: branch, poi merge per riunire." },
+  { c: "state", q: "In un activity diagram, cosa mostra un object flow?", o: ["Gli oggetti che passano tra le attività, con il loro stato tra parentesi quadre", "Le chiamate di metodo nel tempo", "Le dipendenze tra package", "Gli stati di un oggetto"], e: "Esempio: Order [pagato] che passa da un'attività all'altra." },
+  { c: "state", q: "Cos'è un package?", o: ["Una cartellina che raggruppa elementi del modello per gestire la complessità", "Un tipo di stato composto", "Un messaggio asincrono", "Un attore esterno"], e: "Ad esempio si usa per i sottosistemi." },
+  { c: "state", q: "Il package A dipende dal package B. Cosa significa?", o: ["Un cambio in B può toccare A", "Un cambio in A può toccare B", "A e B non possono cambiare", "A contiene B"], e: "La freccia tratteggiata va da A (che dipende) a B." },
+  { c: "state", q: "Vuoi descrivere come un ordine online passa da \"creato\" a \"pagato\" a \"spedito\". Quale diagramma?", o: ["Statechart", "Activity", "Use case", "Package"], e: "Gli stati di un singolo oggetto (l'ordine): statechart." },
+  { c: "state", q: "Vuoi descrivere i passi del processo di reso, con chi fa cosa tra cliente e magazzino. Quale diagramma?", o: ["Activity con swimlane", "Statechart", "Class diagram", "Use case diagram"], e: "Un processo a passi, con corsie per chi lo svolge." },
+  { c: "state", q: "Gli stati di un libro in biblioteca (acquisito, in prestito, in ritardo…) sono un esempio di…", o: ["Statechart", "Activity diagram", "Sequence diagram", "Package diagram"], e: "Un singolo oggetto, il libro, e come cambia stato." },
+  // 06 · Requisiti (altre)
+  { c: "req", q: "Il laser che doveva puntare a 10.023 piedi e puntava a 10.023 miglia è un esempio di…", o: ["Specifica ambigua", "Funzionalità indesiderata", "Requisito non realistico", "Vincolo implementativo"], e: "Un'unità di misura non definita: il requisito poteva essere letto in due modi." },
+  { c: "req", q: "Il treno di Londra che partiva senza il macchinista è un esempio di…", o: ["Funzionalità indesiderata: un caso che nessuno aveva previsto", "Specifica ambigua sulle unità di misura", "Requisito non funzionale violato", "Errore di codifica"], e: "Nessuno aveva previsto quel caso: i requisiti erano incompleti." },
+  { c: "req", q: "Con quale altro nome si chiama il problem statement?", o: ["Statement of Work", "Requirements Analysis Document", "Use case model", "Product backlog"], e: "Lo scrive il cliente ed è il punto di partenza dell'analisi." },
+  { c: "req", q: "Quale di questi NON è un ingrediente del problem statement?", o: ["Il class diagram di design", "La situazione attuale", "Il calendario con milestone e consegna", "I criteri di accettazione del cliente"], e: "Ingredienti: situazione attuale, scenari, requisiti e vincoli, calendario, ambiente di destinazione, criteri di accettazione." },
+  { c: "req", q: "\"Il server deve essere disponibile 24 ore su 24\" è un requisito…", o: ["Non funzionale", "Funzionale", "Vincolo (pseudo-requisito)", "Di dominio della soluzione"], e: "Aspetto visibile all'utente ma non legato a una funzione specifica." },
+  { c: "req", q: "I requisiti funzionali descrivono…", o: ["Le interazioni tra sistema e ambiente, indipendenti dall'implementazione", "Il linguaggio di programmazione da usare", "Tempi di risposta e disponibilità", "La struttura interna del sistema"], e: "Esempio: \"Un operatore ARENA deve poter definire un nuovo gioco\"." },
+  { c: "req", q: "\"Il sistema deve usare un database Oracle\", imposto dal cliente, è…", o: ["Un vincolo (pseudo-requisito)", "Un requisito funzionale", "Un requisito non funzionale di performance", "Uno scenario"], e: "Vincoli: imposti dal cliente o dall'ambiente (linguaggio, piattaforma…)." },
+  { c: "req", q: "Cosa di solito NON dovrebbe stare nei requisiti?", o: ["Struttura del sistema, tecnologia, metodologia e linguaggio di sviluppo", "Le funzioni che l'utente userà", "I tempi di risposta attesi", "I criteri di accettazione"], e: "Se il cliente prova a imporli, il consiglio delle slide è: \"combatti!\"" },
+  { c: "req", q: "Un progetto greenfield…", o: ["Parte da zero: non c'è un sistema precedente e i requisiti vengono da utenti e cliente", "Riscrive un sistema esistente con nuova tecnologia", "Cambia solo l'interfaccia di un sistema esistente", "Assembla componenti COTS"], e: "Greenfield = da zero. Re-engineering = riscrivere. Interface engineering = nuova interfaccia." },
+  { c: "req", q: "Un'app per un servizio che prima non esisteva in nessuna forma è un progetto…", o: ["Greenfield", "Re-engineering", "Interface engineering", "Di manutenzione"], e: "Nessun sistema precedente: si parte da zero." },
+  { c: "req", q: "Vuoi raccogliere opinioni da 500 utenti con dati confrontabili, spendendo poco. Quale tecnica?", o: ["Questionari", "Interviste", "Osservazione", "Focus group"], e: "Questionari: economici, tante persone, dati confrontabili; ma risposte superficiali." },
+  { c: "req", q: "Qual è lo svantaggio tipico dei questionari?", o: ["Risposte superficiali, senza possibilità di approfondire", "Sono lenti e costosi", "Chi parla di più domina", "Le persone osservate cambiano comportamento"], e: "Per approfondire servono le interviste, con domande di follow-up." },
+  { c: "req", q: "Pro e contro delle interviste?", o: ["Dettagliate, con domande di follow-up; ma lente, costose e con poche persone", "Economiche e con tante persone; ma superficiali", "Fanno emergere idee di gruppo; ma qualcuno domina", "Scoprono cose non dette; ma le persone cambiano comportamento"], e: "Ogni tecnica ha un pro e un contro tipici: impara le coppie." },
+  { c: "req", q: "Qual è il contro dell'osservazione?", o: ["Richiede tempo e le persone osservate cambiano comportamento", "Le risposte sono superficiali", "Costa poco ma dà idee poche e non rappresentative", "Rischia di copiare invece di innovare"], e: "Il pro è che scopre cose che gli utenti non sanno dire." },
+  { c: "req", q: "Qual è il rischio dell'analisi della concorrenza?", o: ["Copiare invece di innovare", "Risposte superficiali", "Costi altissimi", "Nessun dato confrontabile"], e: "Il pro: idee già collaudate." },
+  { c: "req", q: "Qual è il limite dei suggerimenti spontanei degli utenti?", o: ["Sono pochi e non rappresentativi", "Costano troppo", "Richiedono un workshop", "Sono sempre ambigui"], e: "Costano poco e danno idee reali, ma arrivano da pochi utenti." },
+  { c: "req", q: "Cos'è il JAD (Joint Application Design)?", o: ["Un workshop in cui utenti, clienti e sviluppatori scrivono insieme i requisiti", "Un tipo di diagramma UML", "Un questionario standardizzato", "Un test di accettazione automatico"], e: "Sessioni intensive in cui tutti scrivono i requisiti insieme." },
+  { c: "req", q: "Criterio di validazione \"completezza\": cosa chiede?", o: ["Sono descritti tutti gli scenari, anche quelli eccezionali?", "I requisiti si contraddicono?", "Si possono implementare e consegnare?", "Rappresentano il punto di vista del cliente?"], e: "Il caso del treno senza macchinista è un difetto di completezza." },
+  { c: "req", q: "Criterio di validazione \"realismo\": cosa chiede?", o: ["Si possono implementare e consegnare?", "Ci sono contraddizioni?", "Ogni funzione si riconduce a un requisito?", "Sono descritti anche i casi eccezionali?"], e: "Correttezza, completezza, consistenza, realismo, tracciabilità." },
+  { c: "req", q: "Criterio \"tracciabilità\": cosa chiede?", o: ["Ogni funzione del sistema si può ricondurre a un requisito?", "I requisiti sono scritti in voce attiva?", "Il sistema è disponibile 24 ore su 24?", "Il cliente ha firmato il contratto?"], e: "Si deve poter seguire il filo da ogni funzione al requisito che la giustifica." },
+  { c: "req", q: "Criterio \"correttezza\": cosa chiede?", o: ["I requisiti rappresentano il punto di vista del cliente?", "Il codice è privo di bug?", "Ci sono requisiti che si contraddicono?", "Ogni requisito ha una priorità?"], e: "Correttezza qui riguarda i requisiti rispetto al cliente, non il codice." },
+  { c: "req", q: "Quando si validano i requisiti?", o: ["All'inizio e poi alla consegna, con il test di accettazione", "Solo alla fine del progetto", "Solo durante la codifica", "Mai: li valida il cliente da solo"], e: "Prima si controllano coi 5 criteri, poi alla consegna li verifica il test di accettazione." },
+  { c: "req", q: "Qual è il problema pratico durante l'elicitation?", o: ["I requisiti cambiano in fretta: servono strumenti con un repository condiviso", "Il cliente non scrive mai il problem statement", "Non esistono tecniche per raccoglierli", "I requisiti non funzionali non si possono scrivere"], e: "Per questo si tengono in un repository condiviso." },
+  { c: "req", q: "Nel RAD, la sezione \"sistema proposto\" contiene…", o: ["Requisiti funzionali e non funzionali e i modelli: scenari, use case, object model, modello dinamico, interfaccia", "Solo il codice sorgente", "Solo il calendario di progetto", "Le minute delle riunioni"], e: "RAD: introduzione, sistema attuale, sistema proposto, glossario." },
+  { c: "req", q: "Cos'è ARENA, l'esempio del libro?", o: ["Una piattaforma per comunità di giocatori online con tornei e punteggi", "Un sistema di gestione delle emergenze", "Un bancomat", "Un sistema di biglietteria ferroviaria"], e: "ARENA registra giochi e giocatori, organizza tornei, tiene i punteggi e ospita inserzionisti." },
+  // 07 · Buoni requisiti (altre)
+  { c: "reqq", q: "In ISO 29148, \"should\" (dovrebbe) indica…", o: ["Una preferenza, desiderata ma non obbligatoria", "Un requisito obbligatorio", "Un testo descrittivo", "Un suggerimento da ignorare"], e: "shall = obbligatorio · should = preferenza · may = concessione · is/are/was = descrizione." },
+  { c: "reqq", q: "In ISO 29148, \"may\" (può) indica…", o: ["Un suggerimento, una concessione", "Un requisito obbligatorio", "Un obiettivo desiderato", "Un divieto"], e: "Le parole chiave hanno un significato preciso: usale sempre allo stesso modo." },
+  { c: "reqq", q: "Frasi con \"is / are / was\" in un documento di requisiti sono…", o: ["Testo descrittivo, non requisiti", "Requisiti obbligatori", "Requisiti opzionali", "Vincoli legali"], e: "Solo \"shall\" introduce un requisito obbligatorio." },
+  { c: "reqq", q: "Quale formulazione rispetta la voce attiva?", o: ["The system shall detect the error", "The error should be detected", "The error shall be detected by the system", "Detection of the error is required"], e: "Voce attiva: si capisce subito chi fa l'azione." },
+  { c: "reqq", q: "Quale forma va evitata nei requisiti?", o: ["\"shall not\": meglio frasi positive", "\"shall\"", "Una condizione iniziale", "Un vincolo misurabile"], e: "Frasi positive, voce attiva, termini del glossario." },
+  { c: "reqq", q: "Perché i termini dei requisiti vanno messi in un glossario?", o: ["Per definirli e usarli sempre allo stesso modo", "Per tradurli in inglese", "Per ordinarli per priorità", "Perché lo richiede MoSCoW"], e: "Un termine usato in due modi diversi crea ambiguità." },
+  { c: "reqq", q: "\"Quando riceve il segnale x, il sistema deve impostare il bit entro 2 secondi\": cos'è \"entro 2 secondi\"?", o: ["Il vincolo", "La condizione", "L'oggetto", "Il soggetto"], e: "[Condizione] quando riceve x · [Soggetto] il sistema · [Azione] deve impostare · [Oggetto] il bit · [Vincolo] entro 2 secondi." },
+  { c: "reqq", q: "Nella stessa frase, \"quando riceve il segnale x\" è…", o: ["La condizione", "Il vincolo", "L'azione", "L'oggetto"], e: "La sintassi ISO parte dalla condizione." },
+  { c: "reqq", q: "\"Il sistema deve supportare circa 100 utenti\": qual è il problema?", o: ["\"Circa\" è ambiguo e non verificabile", "Manca il soggetto", "È un vincolo legale", "Usa la voce passiva"], e: "Parole da evitare: circa, almeno, veloce, robusto, user friendly, se possibile, e/o, ecc." },
+  { c: "reqq", q: "Un requisito \"libero da implementazione\"…", o: ["Dice cosa deve fare il sistema, non come", "Non ha bisogno di essere testato", "Non ha una priorità", "È scritto senza la parola shall"], e: "Il come è compito del design." },
+  { c: "reqq", q: "Un requisito \"verificabile\"…", o: ["Si può testare", "Viene dal cliente", "Non contraddice altri requisiti", "È scritto al passivo"], e: "Se non si può testare, non si può dire se è soddisfatto." },
+  { c: "reqq", q: "\"Il sistema deve permettere il login e inviare un report settimanale\": quale caratteristica viola?", o: ["Singolare: esprime due cose", "Fattibile", "Necessario", "Tracciabile"], e: "Un requisito, una cosa sola: vanno separati." },
+  { c: "reqq", q: "\"Il sistema deve salvare i clienti in una HashMap\": quale caratteristica viola?", o: ["Libero da implementazione", "Singolare", "Consistente", "Completo"], e: "Dice come farlo (una struttura dati), non cosa deve fare." },
+  { c: "reqq", q: "L'INSIEME dei requisiti deve essere…", o: ["Completo, consistente, affordable e bounded", "Singolare, attivo e positivo", "Must, Should, Could e Won't", "Specific, Measurable e Traceable"], e: "Le caratteristiche del singolo requisito sono altre (necessario, non ambiguo, verificabile…)." },
+  { c: "reqq", q: "Che cosa significa che l'insieme dei requisiti è \"bounded\"?", o: ["È limitato a ciò che serve", "È realizzabile con budget e tempi", "Non ha contraddizioni", "Copre tutti gli scenari"], e: "Affordable = realizzabile con budget e tempi. Bounded = limitato al necessario." },
+  { c: "reqq", q: "Cosa significa la M di SMART?", o: ["Measurable: misurabile, così si può verificare", "Must have", "Maintainable", "Minimal"], e: "Specific, Measurable, Attainable, Realisable, Traceable." },
+  { c: "reqq", q: "Cosa significa la T di SMART?", o: ["Traceable: tracciabile fino alla sua origine", "Testable", "Timely", "Technical"], e: "La tracciabilità si gestisce con la matrice di tracciabilità." },
+  { c: "reqq", q: "Un'app con funzioni avanzate, ma hai 2 settimane e una sola persona. Il requisito è…", o: ["Realisable ma non attainable", "Attainable ma non realisable", "Né attainable né realisable", "Sia attainable sia realisable"], e: "La tecnologia c'è (realisable), ma non con le tue risorse e i tuoi tempi (attainable)." },
+  { c: "reqq", q: "\"Quanti utenti contemporanei? Con che tempi di risposta?\": categoria FURPS?", o: ["Performance", "Usability", "Reliability", "Supportability"], e: "Performance: attributi misurabili come tempo di risposta, throughput, disponibilità, accuratezza." },
+  { c: "reqq", q: "\"Riavviare dopo un guasto è accettabile? Quanti dati si possono perdere?\": categoria FURPS?", o: ["Reliability", "Performance", "Usability", "+ Operations"], e: "Reliability, oggi dependability: affidabilità, robustezza, safety." },
+  { c: "reqq", q: "\"Che documentazione serve all'utente? Che esperienza ha?\": categoria FURPS?", o: ["Usability", "Supportability", "+ Packaging", "Performance"], e: "Usability = facilità di imparare e usare il sistema." },
+  { c: "reqq", q: "\"Il sistema andrà portato su altre piattaforme?\": categoria FURPS?", o: ["Supportability", "+ Implementation", "Reliability", "+ Interface"], e: "Supportability: manutenibilità, adattabilità, internazionalizzazione (in ISO 9126 manutenibilità e portabilità)." },
+  { c: "reqq", q: "\"Il sistema deve rispettare la normativa sulla privacy\": categoria FURPS+?", o: ["+ Legal", "+ Operations", "Usability", "+ Interface"], e: "Legal: licenze, norme, certificazioni." },
+  { c: "reqq", q: "\"Chi installa il sistema e su che supporto?\": categoria FURPS+?", o: ["+ Packaging", "+ Implementation", "Supportability", "+ Operations"], e: "Packaging: come viene consegnato e installato." },
+  { c: "reqq", q: "\"Deve scambiare dati con un sistema esterno esistente in un formato dato\": categoria FURPS+?", o: ["+ Interface", "+ Implementation", "Performance", "+ Legal"], e: "Interface: vincoli da sistemi esterni e formati di scambio." },
+  { c: "reqq", q: "\"Deve girare su Linux, scritto in Java\": categoria FURPS+?", o: ["+ Implementation", "+ Packaging", "Supportability", "+ Interface"], e: "Implementation: strumenti, linguaggi, hardware imposti." },
+  { c: "reqq", q: "\"Chi amministra il sistema quando è in esercizio?\": categoria FURPS+?", o: ["+ Operations", "Reliability", "+ Packaging", "Usability"], e: "Operations: amministrazione e gestione del sistema in esercizio." },
+  { c: "reqq", q: "MoSCoW: cosa significa \"Should have\"?", o: ["Importante ma non vitale", "Indispensabile", "Bello da avere, se resta tempo", "Non in questa versione"], e: "Must = indispensabile · Should = importante ma non vitale · Could = bello da avere · Won't = non ora." },
+  { c: "reqq", q: "MoSCoW: cosa significa \"Could have\"?", o: ["Bello da avere", "Indispensabile", "Importante ma non vitale", "Escluso per sempre"], e: "Could = se avanza tempo." },
+  { c: "reqq", q: "Con la scala Alta / Media / Bassa, priorità \"media\" significa…", o: ["Serve, ma può arrivare dopo la prima versione", "Indispensabile già nella prima versione", "Opzionale, se resta tempo", "Da non fare"], e: "Alta = subito, media = serve ma dopo, bassa = opzionale." },
+  // 08 · Casi d'uso (altre)
+  { c: "uc", q: "\"Bob, sulla sua auto, vede fumo uscire da un magazzino…\" è…", o: ["Uno scenario", "Un caso d'uso", "Un attore", "Un requisito non funzionale"], e: "Storia concreta, con nomi veri: scenario. Il caso d'uso è la descrizione generale (ReportEmergency)." },
+  { c: "uc", q: "Uno scenario \"as-is\" descrive…", o: ["La situazione attuale; tipico del re-engineering", "Il sistema futuro; tipico del greenfield", "I compiti su cui verrà valutato il sistema", "Le istruzioni per insegnare a usarlo"], e: "As-is = oggi. Visionary = futuro. Evaluation = valutazione. Training = formazione." },
+  { c: "uc", q: "Uno scenario \"evaluation\" descrive…", o: ["I compiti dell'utente su cui verrà valutato il sistema", "La situazione attuale", "Il sistema futuro", "Le istruzioni passo passo per gli utenti"], e: "Serve a verificare che il sistema supporti bene quei compiti." },
+  { c: "uc", q: "In un progetto di re-engineering vuoi descrivere come si lavora oggi. Che scenario scrivi?", o: ["As-is", "Visionary", "Training", "Evaluation"], e: "As-is è tipico del re-engineering, visionary del greenfield." },
+  { c: "uc", q: "Dallo scenario \"Warehouse on Fire\" (FRIEND) si ricavano i casi d'uso…", o: ["ReportEmergency e AllocateResources", "WithdrawMoney e CheckPin", "PurchaseTicket e GetPrice", "CreateTournament e ApplyForTournament"], e: "Bob segnala l'incendio (ReportEmergency), Alice manda i vigili del fuoco (AllocateResources)." },
+  { c: "uc", q: "Qual è il primo passo per trovare i casi d'uso?", o: ["Trovare gli attori: chi usa il sistema?", "Scrivere il flusso principale", "Disegnare il class diagram", "Definire gli extension point"], e: "Attori → scenari → casi d'uso → raffinamento." },
+  { c: "uc", q: "Cosa si fa nell'ultimo passo, il raffinamento dei casi d'uso?", o: ["Si aggiungono eccezioni, include/extend e requisiti non funzionali", "Si trovano gli attori", "Si scrivono gli scenari con nomi veri", "Si scrive il codice"], e: "Prima si generalizzano gli scenari, poi si raffinano i casi d'uso." },
+  { c: "uc", q: "Withdraw Money: qual è la entry condition?", o: ["Il cliente ha carta e PIN validi e il bancomat è attivo", "Il cliente ha i soldi e la carta", "Il saldo è aggiornato", "La carta è stata trattenuta"], e: "Entry = cosa deve essere vero prima di iniziare. Exit = lo stato finale." },
+  { c: "uc", q: "Withdraw Money: qual è la exit condition?", o: ["Il cliente ha i soldi e la carta; il saldo è aggiornato", "Il cliente ha inserito la carta", "Il bancomat è attivo", "Il PIN è stato chiesto"], e: "La exit condition descrive come stanno le cose alla fine." },
+  { c: "uc", q: "Withdraw Money: il cliente sbaglia il PIN 3 volte. Cosa succede?", o: ["Il bancomat trattiene la carta", "Il bancomat espelle la carta", "Si blocca il conto", "Il bancomat eroga comunque"], e: "Le eccezioni: carta non valida → espulsa; PIN errato → richiesto di nuovo, dopo 3 errori trattenuta; importo oltre limite → nuova richiesta." },
+  { c: "uc", q: "Withdraw Money: la carta non è valida. Cosa fa il sistema?", o: ["La espelle", "La trattiene subito", "Chiede il PIN tre volte", "Mostra il menu"], e: "È una delle eccezioni del caso d'uso, descritte a parte rispetto al flusso principale." },
+  { c: "uc", q: "Come vanno scritti attori e passi di un caso d'uso?", o: ["Attori come sostantivi; passi in voce attiva", "Attori come verbi; passi al passivo", "Attori in codice; passi in UML", "Non c'è una regola"], e: "Esempio: \"Il sistema invia…\", non \"Viene inviato…\"." },
+  { c: "uc", q: "Quale passo di un caso d'uso è scritto bene?", o: ["Il sistema invia la conferma al cliente", "La conferma viene inviata", "Invio conferma", "Si procede con la conferma"], e: "Voce attiva e si capisce chi fa cosa." },
+  { c: "uc", q: "Come si alternano i passi del flusso principale?", o: ["Tra attore e sistema", "Solo passi del sistema", "Solo passi dell'attore", "Tra attore principale e attori secondari"], e: "A ogni passo si capisce chi fa cosa." },
+  { c: "uc", q: "Dove vanno le parole del dominio usate nei casi d'uso?", o: ["Nel glossario", "Negli extension point", "Nella exit condition", "Nel nome del caso d'uso"], e: "Come per i requisiti, i termini si definiscono una volta sola." },
+  { c: "uc", q: "Nel template del corso, com'è fatto l'identificativo?", o: ["Un codice univoco tipo UC_Pack_TUC, più nome, data, versione e autore", "Solo il nome del caso d'uso", "Il numero di pagina del RAD", "L'ID del commit"], e: "Pacchetto + numero, per riferirlo in modo univoco." },
+  { c: "uc", q: "Differenza tra attore principale e attori secondari nel template?", o: ["Il principale avvia il caso d'uso; i secondari partecipano, ognuno col suo interesse", "Il principale è sempre una persona, i secondari sistemi", "Non c'è differenza", "Il secondario sostituisce il principale se assente"], e: "Per ciascuno si scrive anche il suo interesse." },
+  { c: "uc", q: "Cosa indica il campo \"Frequenza stimata\"?", o: ["Quante volte viene usato il caso d'uso, ad esempio 50 al giorno", "Quanto è importante", "Quanti passi ha", "Quante eccezioni ha"], e: "Quanto è importante va invece in Rilevanza / User priority." },
+  { c: "uc", q: "Cosa va nel campo \"Generalization of\"?", o: ["Il caso d'uso padre, se questo è una specializzazione", "Il caso d'uso che lo estende", "La lista degli attori", "I requisiti non funzionali"], e: "Corrisponde alla generalizzazione tra casi d'uso nel diagramma." },
+  { c: "uc", q: "Nel flusso principale, come si richiama un caso d'uso incluso?", o: ["Con un passo include(UCIn)", "Con un extension point", "Con un flusso 1.1", "Scrivendo il suo flusso per intero"], e: "Il comportamento comune non si riscrive: si include." },
+  { c: "uc", q: "Cosa va nel campo \"Note / Special requirements\"?", o: ["I requisiti non funzionali legati a quel caso d'uso", "Il flusso principale", "L'elenco degli attori", "La data di creazione"], e: "Esempio: tempi di risposta di quel caso d'uso." },
+  { c: "uc", q: "Un flusso alternativo numerato 3.1 significa…", o: ["Al passo 3 del flusso principale può succedere anche questo", "È il terzo caso d'uso del pacchetto 1", "È il primo errore del caso d'uso 3", "È la versione 3.1 del documento"], e: "Alternativi ed errori si numerano dal passo da cui partono." },
+  { c: "uc", q: "Cosa va nel campo \"Entry condition\"?", o: ["Cosa deve essere vero prima di iniziare", "Lo stato finale se va bene", "Il primo passo del flusso", "Chi avvia il caso d'uso"], e: "On success e on failure appartengono invece alla exit condition." },
+  // 09 · Sequence (altre)
+  { c: "dyn", q: "In un sequence diagram, come scorre il tempo?", o: ["Verso il basso; gli oggetti sono disposti in orizzontale", "Da sinistra a destra", "Dal basso verso l'alto", "Non è rappresentato"], e: "Oggetti in alto in orizzontale, tempo che scende, frecce = messaggi." },
+  { c: "dyn", q: "Come si scrivono gli oggetti in cima a un sequence diagram?", o: ["nomeOggetto:NomeClasse", "NomeClasse.nomeOggetto", "<<nomeOggetto>>", "nomeOggetto()"], e: "Come le istanze nel class diagram." },
+  { c: "dyn", q: "Cos'è la lifeline?", o: ["La linea tratteggiata verticale che rappresenta la vita dell'oggetto", "Il rettangolino del metodo in esecuzione", "La freccia di ritorno", "Il frame loop"], e: "Sulla lifeline si disegnano le attivazioni." },
+  { c: "dyn", q: "Come si disegna un messaggio asincrono?", o: ["Freccia aperta: il chiamante continua senza aspettare", "Freccia piena chiusa: il chiamante aspetta", "Freccia tratteggiata", "Una X sulla lifeline"], e: "Sincrono = freccia piena chiusa (aspetta). Asincrono = freccia aperta (non aspetta). Ritorno = tratteggiata." },
+  { c: "dyn", q: "Come si rappresenta la creazione di un oggetto?", o: ["Una freccia new/create che punta al rettangolo del nuovo oggetto, disegnato più in basso", "Una X sulla lifeline", "Un frame opt", "Un oggetto disegnato in cima con gli altri"], e: "L'oggetto parte più in basso perché nasce in quel momento." },
+  { c: "dyn", q: "Una freccia che parte e torna sullo stesso oggetto è…", o: ["Una self-call (anche ricorsione)", "Un messaggio di ritorno", "Una distruzione", "Un frame alt"], e: "L'oggetto chiama un proprio metodo." },
+  { c: "dyn", q: "Dopo la X sulla lifeline, l'oggetto…", o: ["Non si può più usare", "Viene ricreato", "Diventa asincrono", "Torna all'inizio"], e: "La X indica la distruzione." },
+  { c: "dyn", q: "Il frame alt corrisponde a…", o: ["if / else: più alternative, ciascuna con la sua [condizione]", "if senza else", "while / for", "una chiamata asincrona"], e: "alt = if/else · opt = if senza else · loop = ripetizione." },
+  { c: "dyn", q: "\"Se la stampante è libera stampa, altrimenti metti in coda\": quale frame?", o: ["alt", "opt", "loop", "Nessuno: si usa una self-call"], e: "Due alternative con condizioni [printer free] e [printer busy]: alt." },
+  { c: "dyn", q: "\"Invia l'email di conferma solo se l'utente l'ha richiesta\": quale frame?", o: ["opt", "alt", "loop", "fork"], e: "Una sola alternativa, eseguita solo se la condizione è vera." },
+  { c: "dyn", q: "Oltre al frame loop, come si può indicare una ripetizione?", o: ["Scrivendo *[condizione] sul messaggio", "Con una X sulla lifeline", "Con una freccia tratteggiata", "Con un frame opt"], e: "L'asterisco indica l'iterazione." },
+  { c: "dyn", q: "remove() parte solo se [hasStock] è vero. Come si chiama?", o: ["Esecuzione condizionata (guardia sul messaggio)", "Messaggio asincrono", "Self-call", "Distruzione"], e: "La condizione tra quadre davanti al messaggio decide se viene inviato." },
+  { c: "dyn", q: "Un oggetto boundary è…", o: ["L'interfaccia con l'attore: form, bottoni, schermate", "Il dato persistente del dominio", "Chi coordina il caso d'uso", "Un sottosistema esterno"], e: "Boundary = interfaccia · Control = logica del flusso · Entity = dati persistenti." },
+  { c: "dyn", q: "Torneo, Giocatore, Conto sono oggetti di tipo…", o: ["Entity", "Boundary", "Control", "Actor"], e: "Gli entity sono i dati persistenti del dominio." },
+  { c: "dyn", q: "Passando da un caso d'uso al sequence, cosa c'è nella prima colonna?", o: ["L'attore che avvia il caso d'uso", "L'oggetto control", "Un oggetto entity", "Il database"], e: "1 attore · 2 boundary · 3 control." },
+  { c: "dyn", q: "Passando da un caso d'uso al sequence, cosa c'è nella terza colonna?", o: ["L'oggetto control che gestisce il resto del caso d'uso", "L'attore", "Il boundary", "Il primo entity"], e: "Il control viene creato dal boundary." },
+  { c: "dyn", q: "Chi può creare altri oggetti boundary?", o: ["Il control", "Un entity", "Solo l'attore", "Nessuno"], e: "Il control è creato dal boundary e può a sua volta creare altri boundary." },
+  { c: "dyn", q: "Da chi sono usati gli oggetti entity?", o: ["Da control e boundary", "Solo dall'attore", "Da nessuno: sono passivi anche verso il control", "Solo da altri entity"], e: "Un entity però non chiama mai un boundary o un control." },
+  { c: "dyn", q: "Nella notazione degli oggetti di analisi, il cerchio sottolineato è…", o: ["Entity", "Control", "Boundary", "Attore"], e: "Control = cerchio con freccia · Entity = cerchio sottolineato · Boundary = cerchio con trattino." },
+  { c: "dyn", q: "Il cerchio con una freccia sopra rappresenta un oggetto…", o: ["Control", "Entity", "Boundary", "Package"], e: "La freccia ricorda il controllo del flusso." },
+  { c: "dyn", q: "Struttura \"stair\" (a scala):", o: ["Ogni oggetto chiama il successivo; controllo decentralizzato", "Un oggetto chiama tutti gli altri; controllo centralizzato", "Tutti gli oggetti chiamano l'attore", "Nessun oggetto chiama gli altri"], e: "Stair = responsabilità distribuite. Fork = un oggetto comanda." },
+  { c: "dyn", q: "Quando va bene la struttura stair?", o: ["Quando le operazioni sono fortemente collegate e si fanno sempre nello stesso ordine", "Quando l'ordine delle operazioni cambia spesso", "Quando si prevedono molti nuovi requisiti", "Sempre: è la migliore"], e: "Se invece servono cambiamenti, conviene il fork (centralizzato)." },
+  { c: "dyn", q: "Nella struttura fork, chi chiama tutti gli altri oggetti?", o: ["Un oggetto, di solito il control", "L'entity", "Il boundary", "Ogni oggetto chiama il successivo"], e: "Controllo centralizzato: si può cambiare l'ordine e aggiungere operazioni." },
+  { c: "dyn", q: "Nel collaboration diagram, come si capisce l'ordine dei messaggi?", o: ["Dai numeri, con notazione puntata per i messaggi annidati (2.1, 2.2)", "Dalla posizione verticale", "Dal colore delle frecce", "Non c'è ordine"], e: "Senza asse del tempo, l'ordine lo danno i numeri." },
+  { c: "dyn", q: "Modellando CreateTournament (ARENA) con un sequence, cosa succede?", o: ["Saltano fuori classi nuove (un form, un controllo del torneo, l'entità Tournament) assenti nel class diagram", "Si scopre che il caso d'uso non serve", "Si ottiene il codice del sistema", "Si eliminano tutti gli entity"], e: "I sequence in analisi servono proprio a trovare nuovi oggetti e responsabilità." },
 ];
 
 const STORE = "quiz-ingsw";
@@ -258,40 +505,94 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { c
 const load = () => { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } };
 const store = d => { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) {} };
 
+/* Quiz dinamico: ogni giro di un capitolo pesca PER_GIRO domande dal capitolo intero.
+   Per ogni domanda si ricorda: v = volte vista, w = volte sbagliata, s = risposte giuste di fila.
+   Escono prima quelle sbagliate e non ancora recuperate, poi quelle mai viste; quelle già sapute escono di rado.
+   Le domande dell'ultimo giro dello stesso capitolo vengono evitate, così i giri si somigliano poco. */
+const STATS = "quiz-ingsw-domande";
+const PER_GIRO = 10;
+const SAPUTA = 2; // giuste di fila per considerarla saputa
+const qid = q => { let h = 5381; const t = q.c + "|" + q.q; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+Q.forEach(q => { q.id = qid(q); });
+const loadStats = () => { try { return JSON.parse(localStorage.getItem(STATS)) || {}; } catch (e) { return {}; } };
+const saveStats = d => { try { localStorage.setItem(STATS, JSON.stringify(d)); } catch (e) {} };
+const known = (st, id) => { const x = st[id]; return !!x && x.s >= SAPUTA; };
+function weight(x) {
+  if (!x) return 3;                         // mai vista
+  if (x.w > 0 && x.s < SAPUTA) return 6;    // sbagliata, da recuperare
+  if (x.s >= SAPUTA + 1) return 0.35;       // la sai bene
+  if (x.s >= SAPUTA) return 0.7;            // la sai
+  return 1.5;
+}
+// estrazione pesata senza ripetizioni (chiave = random^(1/peso))
+function pick(pool, n, avoid) {
+  const st = loadStats(), skip = new Set(avoid || []);
+  const scored = pool.map(q => {
+    let w = weight(st[q.id]);
+    if (skip.has(q.id) && w < 6) w *= 0.15;
+    return { q, k: Math.pow(Math.random(), 1 / w) };
+  });
+  return scored.sort((a, b) => b.k - a.k).slice(0, n).map(x => x.q);
+}
+function chapterRun(cid) {
+  const st = loadStats(), last = (st._ultimo || {})[cid] || [];
+  return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
+}
+function simRun() {
+  const st = loadStats(), last = (st._ultimo || {}).sim || [];
+  let out = [];
+  CHAPTERS.forEach(c => { out = out.concat(pick(Q.filter(q => q.c === c.id), 2, last)); });
+  const used = new Set(out.map(q => q.id));
+  out = out.concat(pick(Q.filter(q => !used.has(q.id)), 20 - out.length, last));
+  return shuffle(out);
+}
+function rememberRun(key, items) {
+  const st = loadStats(); st._ultimo = st._ultimo || {}; st._ultimo[key] = items.map(it => it.q.id); saveStats(st);
+}
+function record(q, ok) {
+  const st = loadStats(), x = st[q.id] || { v: 0, w: 0, s: 0 };
+  x.v++; if (ok) x.s++; else { x.w++; x.s = 0; }
+  st[q.id] = x; saveStats(st);
+}
+
 let run = null; // { title, items: [{q, opts, right}], i, answers: [] }
 
 function home() {
   run = null;
   document.body.classList.remove("running");
-  const saved = load();
+  const saved = load(), st = loadStats();
+  const totKnown = Q.filter(q => known(st, q.id)).length;
   const chips = CHAPTERS.map(c => {
-    const n = Q.filter(q => q.c === c.id).length, s = saved[c.id];
+    const all = Q.filter(q => q.c === c.id), n = all.length, s = saved[c.id];
+    const k = all.filter(q => known(st, q.id)).length, rip = all.filter(q => { const x = st[q.id]; return x && x.w > 0 && x.s < SAPUTA; }).length;
     const pct = s ? Math.round(100 * s.best / s.total) : null;
     const best = s ? `migliore <b class="${pct >= 80 ? "" : "mid"}">${s.best}/${s.total}</b>` : "non ancora fatto";
-    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span><span class="s">${n} domande · ${best}</span></button>`;
+    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span><span class="s">${PER_GIRO} a giro su ${n} · ${best}</span><span class="s">ne sai <b class="${k === n ? "" : "mid"}">${k}/${n}</b>${rip ? ` · ${rip} da recuperare` : ""}</span><span class="m"><i style="width:${100 * k / n}%"></i></span></button>`;
   }).join("");
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione della prova</h2>
-      <p>20 domande miste da tutti i capitoli, in ordine casuale. Alla fine vedi il punteggio per capitolo.</p>
+      <p>20 domande miste, almeno 2 per ogni capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
+      <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <button class="btn" type="button" id="go-sim">Inizia →</button>
     </section>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
-    <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.</p>`;
-  app.querySelector("#go-sim").onclick = () => start("Simulazione della prova", shuffle(Q).slice(0, 20), null);
+    <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
+  app.querySelector("#go-sim").onclick = () => start("Simulazione della prova", simRun(), null, "sim");
   app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
     const c = chap(b.dataset.c);
-    start(`${c.n} · ${c.t}`, shuffle(Q.filter(q => q.c === c.id)), c.id);
+    start(`${c.n} · ${c.t}`, chapterRun(c.id), c.id, c.id);
   });
   window.scrollTo({ top: 0 });
 }
 
-function start(title, questions, chapterId) {
-  run = { title, chapterId, i: 0, answers: [], items: questions.map(q => {
+function start(title, questions, chapterId, key, from) {
+  run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => {
     const opts = shuffle(q.o.map((t, k) => ({ t, ok: k === 0 })));
     return { q, opts };
   }) };
+  if (key) rememberRun(key, run.items);
   ask();
 }
 
@@ -317,6 +618,7 @@ function answer(k) {
   if (run.answers[run.i] !== undefined) return;
   const ok = it.opts[k].ok;
   run.answers[run.i] = { k, ok };
+  record(it.q, ok);
   app.querySelectorAll(".opt").forEach((b, j) => {
     b.disabled = true;
     if (it.opts[j].ok) b.classList.add("right");
@@ -348,22 +650,24 @@ function result() {
       <p class="yours">La tua risposta: ${esc(it.opts[a.k].t)}</p>
       <p><b>Giusta:</b> ${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
       <p><a href="${QUADERNO}#${it.q.c}">Capitolo ${chap(it.q.c).n} nel quaderno →</a></p></div>`).join("");
+  const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
   const verdict = pct >= 90 ? "Ottimo, questa parte la sai." : pct >= 70 ? "Buono. Ripassa gli errori qui sotto e rifallo." : pct >= 50 ? "Ci sei quasi: rileggi i capitoli segnati e riprova domani." : "Da ripassare: riprendi il quaderno e poi rifai il quiz.";
   app.innerHTML = `
     <p class="label">${esc(run.title)}</p>
     <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
     <p class="verdict">${verdict}</p>
+    ${from && from.cid ? (() => { const st = loadStats(), all = Q.filter(q => q.c === from.cid), k = all.filter(q => known(st, q.id)).length; return `<p class="label">Capitolo ${chap(from.cid).n}: ne sai ${k} su ${all.length}</p><div class="bar"><i style="width:${100 * k / all.length}%"></i></div>`; })() : ""}
     ${Object.keys(by).length > 1 ? `<p class="label">Per capitolo</p><ul class="byc">${rows}</ul>` : ""}
     ${wrong.length ? `<p class="label">Da rivedere (${wrong.length})</p><div class="errs">${errs}</div>` : ""}
     <div class="actions">
       ${wrong.length ? `<button class="btn solid" type="button" id="redo">Rifai solo gli errori</button>` : ""}
-      <button class="btn" type="button" id="again">Rifai da capo</button>
+      ${from ? `<button class="btn" type="button" id="again">${from.cid ? `Altre ${PER_GIRO} domande` : "Nuova simulazione"}</button>` : ""}
       <button class="btn" type="button" id="back">Torna ai capitoli</button>
     </div>`;
   const redo = app.querySelector("#redo");
-  if (redo) redo.onclick = () => start(run.title + " · errori", shuffle(wrong.map(w => w.it.q)), null);
-  const title = run.title, cid = run.chapterId;
-  app.querySelector("#again").onclick = () => start(title, cid ? shuffle(Q.filter(q => q.c === cid)) : shuffle(Q).slice(0, 20), cid);
+  if (redo) redo.onclick = () => { start((from ? from.title : run.title) + " · errori", shuffle(wrong.map(w => w.it.q)), null, null, from); };
+  const again = app.querySelector("#again");
+  if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : simRun(), from.cid, from.key);
   app.querySelector("#back").onclick = home;
   window.scrollTo({ top: 0 });
 }
