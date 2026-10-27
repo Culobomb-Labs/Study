@@ -17,7 +17,8 @@ window.CORSI =
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
-      { "name": "Piano di studio, prima prova", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano Studio IS.html", "progressKey": "piano-ingsw-v1" }
+      { "name": "Piano di studio, prima prova", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano Studio IS.html", "progressKey": "piano-ingsw-v1" },
+      { "name": "Quiz, capitoli 01–09", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {
