@@ -78,7 +78,7 @@ async function checkNews() {
       body: n.testo || "", tag: "news-" + n.id,
       icon: new URL("icon-192.png", self.registration.scope).href,
       badge: new URL("favicon-32.png", self.registration.scope).href,
-      data: { url: new URL("index.html#news", self.registration.scope).href }
+      data: { url: new URL("news.html" + (n && n.id ? "#" + encodeURIComponent(n.id) : ""), self.registration.scope).href }
     });
   }
 }
@@ -92,7 +92,7 @@ self.addEventListener("push", event => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (e) { d = { titolo: event.data && event.data.text() }; }
   event.waitUntil(d.titolo
-    ? self.registration.showNotification(d.titolo, { body: d.testo || "", tag: "news-" + (d.id || Date.now()), icon: new URL("icon-192.png", self.registration.scope).href, data: { url: new URL("index.html#news", self.registration.scope).href } })
+    ? self.registration.showNotification(d.titolo, { body: d.testo || "", tag: "news-" + (d.id || Date.now()), icon: new URL("icon-192.png", self.registration.scope).href, data: { url: new URL("news.html", self.registration.scope).href } })
     : checkNews());
 });
 

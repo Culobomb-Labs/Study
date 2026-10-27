@@ -68,7 +68,7 @@
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
       <div class="ua-actions">
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
-        <a class="ua-btn ua-news-btn" href="${ROOT}index.html#news" aria-label="News" title="News">${ICON.bell}<span class="ua-news-dot" hidden></span></a>
+        <button class="ua-btn ua-news-btn" type="button" aria-label="News" title="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
         <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
         <button class="ua-btn ua-theme" type="button"></button>
       </div></div>`;
@@ -103,6 +103,7 @@
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
     dock.innerHTML = `<a href="${ROOT}index.html" aria-label="Torna alla home">${ICON.home}<span class="ua-label">Home</span></a>
       <button type="button" class="ua-open-search" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-label">Cerca</span></button>
+      <button type="button" class="ua-news-btn" aria-label="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
       <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
     const up = dock.querySelector(".ua-up");
@@ -154,6 +155,7 @@
   }
 
   function openSearch(prefill) {
+    closeNewsPanel(true);
     lastFocus = document.activeElement;
     pal.hidden = false;
     document.documentElement.style.overflow = "hidden";
@@ -389,19 +391,25 @@
 
   /* ---------------- news e notifiche ----------------
      Le notizie stanno in news.json (nella cartella Unisa). Per pubblicarne una basta aggiungerla in cima alla lista.
-     - il campanello nella barra ha un pallino quando c'è qualcosa di non letto
-     - la home mostra la sezione News; aprendola le notizie contano come lette
-     - con le notifiche attive, ogni notizia nuova arriva come notifica del sistema
-       quando apri il sito (e, se il sito è installato come app su Android/PC, anche controllando in sottofondo) */
+     - il campanello (barra in alto, e pulsanti in basso sulle pagine di appunti) apre una tendina con le ultime notizie
+       e l'interruttore delle notifiche; su telefono la tendina sale dal basso
+     - "Tutte le notizie" porta alla pagina news.html, con l'elenco completo
+     - con le notifiche attive, ogni notizia nuova arriva come notifica del sistema quando apri il sito
+       (e, se il sito è installato come app su Android/PC, anche controllando in sottofondo) */
   const NEWS_SEEN = "news-lette", NEWS_ON = "news-notifiche";
   const NEWS_STATE = "ua-news-stato", NEWS_STATE_URL = ROOT + "__news-notificate";
-  let news = [];
+  const NEWS_PAGE = ROOT + "news.html";
+  const IS_NEWS_PAGE = PAGE === "news.html";
+  const PANEL_MAX = 4;
+  let news = [], newsLoaded = false, np = null, npTrigger = null, npFresh = new Set();
   const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const notifSupported = () => "Notification" in window && "serviceWorker" in navigator;
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const phone = () => matchMedia("(max-width: 640px)").matches;
   const fmtDay = d => { try { return new Date(d + "T12:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return d; } };
+  const newsHref = n => n.link ? (/^https?:/.test(n.link) ? n.link : ROOT + enc(n.link)) : NEWS_PAGE + "#" + encodeURIComponent(n.id);
 
   // quali notizie sono già state notificate: in una cache, così lo vedono sia la pagina sia il service worker
   async function notifiedGet() { try { const r = await (await caches.open(NEWS_STATE)).match(NEWS_STATE_URL); return r ? await r.json() : null; } catch (e) { return null; } }
@@ -413,17 +421,19 @@
       const d = await r.json();
       news = (Array.isArray(d.news) ? d.news : []).filter(n => n && n.id && n.titolo);
     } catch (e) { news = []; }
+    newsLoaded = true;
     paintNewsDot();
-    renderNews();
+    if (np && !np.hidden) { npFresh = new Set(unread().map(n => n.id)); renderPanel(); markRead(); }
+    renderNewsPage();
     notifyNew();
   }
   function unread() { const seen = new Set(lsGet(NEWS_SEEN, [])); return news.filter(n => !seen.has(n.id)); }
   function paintNewsDot() {
     const k = unread().length;
     document.querySelectorAll(".ua-news-btn").forEach(b => {
-      b.querySelector(".ua-news-dot").hidden = !k;
-      b.setAttribute("aria-label", k ? `News, ${k} da leggere` : "News");
-      b.title = k ? `News · ${k} da leggere` : "News";
+      const dot = b.querySelector(".ua-news-dot"); if (dot) dot.hidden = !k;
+      const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
+      b.setAttribute("aria-label", l); b.title = l;
     });
   }
   function markRead() { lsSet(NEWS_SEEN, news.map(n => n.id)); paintNewsDot(); }
@@ -437,64 +447,134 @@
     await notifiedSet(done.concat(fresh.map(n => n.id)));
     const reg = await navigator.serviceWorker.getRegistration(ROOT).catch(() => null);
     for (const n of fresh.slice(0, 3)) {
-      const opt = { body: n.testo || "", tag: "news-" + n.id, icon: ROOT + "icon-192.png", badge: ROOT + "favicon-32.png", data: { url: ROOT + "index.html#news" } };
+      const opt = { body: n.testo || "", tag: "news-" + n.id, icon: ROOT + "icon-192.png", badge: ROOT + "favicon-32.png", data: { url: NEWS_PAGE + "#" + encodeURIComponent(n.id) } };
       try { if (reg) await reg.showNotification(n.titolo, opt); else new Notification(n.titolo, opt); } catch (e) {}
     }
   }
 
   async function enableNotifications() {
     let p = Notification.permission;
-    if (p === "default") { try { p = await Notification.requestPermission(); } catch (e) {} }
-    if (p !== "granted") { renderNews(); return; }
-    lsSet(NEWS_ON, true);
-    await notifiedSet(news.map(n => n.id)); // da adesso in poi: le notizie già uscite non arrivano come notifica
-    try {
-      const reg = await navigator.serviceWorker.ready;
-      if (reg.periodicSync) await reg.periodicSync.register("news", { minInterval: 6 * 60 * 60 * 1000 });
-    } catch (e) {}
-    try { const reg = await navigator.serviceWorker.getRegistration(ROOT); if (reg) reg.showNotification("Notifiche attive", { body: "Ti avviseremo qui quando arriva una notizia nuova.", tag: "news-on", icon: ROOT + "icon-192.png" }); } catch (e) {}
-    renderNews();
+    if (p === "default") { try { p = await Notification.requestPermission(); } catch (e) {} } // va chiesto subito dopo il tocco (Safari)
+    if (p === "granted") {
+      lsSet(NEWS_ON, true);
+      await notifiedSet(news.map(n => n.id)); // da adesso in poi: le notizie già uscite non arrivano come notifica
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        if (reg.periodicSync) await reg.periodicSync.register("news", { minInterval: 6 * 60 * 60 * 1000 });
+      } catch (e) {}
+      try { const reg = await navigator.serviceWorker.getRegistration(ROOT); if (reg) reg.showNotification("Notifiche attive", { body: "Ti avviseremo quando arriva una notizia nuova.", tag: "news-on", icon: ROOT + "icon-192.png" }); } catch (e) {}
+    }
+    refreshNotifControls();
   }
   async function disableNotifications() {
     lsSet(NEWS_ON, false);
     try { const reg = await navigator.serviceWorker.ready; if (reg.periodicSync) await reg.periodicSync.unregister("news"); } catch (e) {}
-    renderNews();
+    refreshNotifControls();
   }
 
+  // interruttore delle notifiche, o una spiegazione se su questo dispositivo non si può
   function notifControl() {
+    const head = `<span class="ua-nt-ic">${ICON.bell}</span>`;
     if (!notifSupported()) {
-      return isIOS && !standalone()
-        ? `<p class="ua-news-hint">Per le notifiche su iPhone: tocca <b>Condividi → Aggiungi alla schermata Home</b>, apri il sito dall'icona e attivale da qui.</p>`
-        : `<p class="ua-news-hint">Questo browser non supporta le notifiche.</p>`;
+      const why = isIOS && !standalone()
+        ? `Su iPhone e iPad: tocca <b>Condividi</b> → <b>Aggiungi alla schermata Home</b>, apri il sito dall'icona e attivale da qui.`
+        : `Questo browser non supporta le notifiche. Prova con Chrome, Edge, Safari o Firefox aggiornati.`;
+      return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche</b><span>${why}</span></div></div>`;
     }
-    if (Notification.permission === "denied") return `<p class="ua-news-hint">Le notifiche sono bloccate per questo sito: puoi riattivarle dalle impostazioni del browser.</p>`;
-    if (Notification.permission === "granted" && lsGet(NEWS_ON, false)) {
-      return `<div class="ua-news-on"><span class="ua-news-ok">${ICON.bell}Notifiche attive</span><button type="button" class="ua-news-link" data-news="off">Disattiva</button></div>`;
+    if (Notification.permission === "denied") {
+      return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche bloccate</b><span>Le hai bloccate per questo sito: riattivale dalle impostazioni del browser, poi torna qui.</span></div></div>`;
     }
-    return `<button type="button" class="ua-news-cta" data-news="on">${ICON.bell}Attiva le notifiche</button>`;
+    const on = Notification.permission === "granted" && lsGet(NEWS_ON, false);
+    return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche</b><span>${on ? "Ti avvisiamo quando arriva una notizia nuova." : "Ricevi un avviso quando arriva una notizia nuova."}</span></div>
+      <button type="button" class="ua-switch" role="switch" aria-checked="${on}" aria-label="Notifiche delle news" data-news-switch><i></i></button></div>`;
   }
+  function refreshNotifControls() {
+    document.querySelectorAll("[data-ua-nt]").forEach(box => { box.innerHTML = notifControl(); });
+  }
+  document.addEventListener("click", e => {
+    const s = e.target.closest && e.target.closest("[data-news-switch]");
+    if (!s) return;
+    s.getAttribute("aria-checked") === "true" ? disableNotifications() : enableNotifications();
+  });
 
-  function renderNews() {
-    const box = document.getElementById("ua-news");
-    if (!box) return;
-    const fresh = new Set(unread().map(n => n.id));
-    const corso = code => CORSI.find(c => c.code === code);
-    const items = news.slice(0, 5).map(n => {
-      const c = corso(n.corso);
-      const tag = c ? `<span class="ua-news-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
-      const link = n.link ? ` <a href="${esc(/^https?:/.test(n.link) ? n.link : ROOT + n.link)}">Apri →</a>` : "";
-      return `<li class="${fresh.has(n.id) ? "ua-news-new" : ""}"><div class="ua-news-meta">${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh.has(n.id) ? `<span class="ua-news-badge">nuova</span>` : ""}</div>
-        <p class="ua-news-t">${esc(n.titolo)}</p>${n.testo || link ? `<p class="ua-news-x">${esc(n.testo || "")}${link}</p>` : ""}</li>`;
-    }).join("");
-    box.innerHTML = `<div class="ua-news-head"><h2>News</h2>${notifControl()}</div>
-      ${news.length ? `<ul class="ua-news-list">${items}</ul>`
-        : `<div class="ua-news-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi: li trovi in questa sezione. Attiva le notifiche per saperlo subito.</p></div>`}`;
-    box.querySelectorAll("[data-news]").forEach(b => b.addEventListener("click", () => b.dataset.news === "on" ? enableNotifications() : disableNotifications()));
-    // le notizie si segnano come lette quando la sezione si vede davvero
-    if (fresh.size && "IntersectionObserver" in window) {
-      const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(markRead, 1500); } }, { threshold: 0.4 });
-      io.observe(box);
+  function newsItem(n, full) {
+    const c = CORSI.find(x => x.code === n.corso);
+    const tag = c ? `<span class="ua-ni-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
+    const fresh = npFresh.has(n.id) ? `<span class="ua-ni-new">nuova</span>` : "";
+    const meta = `<span class="ua-ni-meta">${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh}</span>`;
+    if (full) {
+      const link = n.link ? `<a class="ua-ni-link" href="${esc(newsHref(n))}">Apri →</a>` : "";
+      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" id="${esc(n.id)}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${link}</li>`;
     }
+    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" href="${esc(newsHref(n))}">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</a></li>`;
+  }
+  const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
+
+  /* tendina */
+  function buildNewsPanel() {
+    np = el("div", { class: "ua-np", role: "dialog", "aria-modal": "false", "aria-label": "News", hidden: "" });
+    np.innerHTML = `<div class="ua-np-veil"></div><div class="ua-np-box" tabindex="-1"><span class="ua-np-grip" aria-hidden="true"></span><div class="ua-np-in"></div></div>`;
+    document.body.append(np);
+    np.querySelector(".ua-np-veil").addEventListener("click", closeNewsPanel);
+    np.addEventListener("click", e => { if (e.target.closest(".ua-np-close")) closeNewsPanel(); });
+    // su telefono: trascina in giù la maniglia per chiudere
+    const box = np.querySelector(".ua-np-box"); let y0 = null;
+    box.addEventListener("touchstart", e => { if (phone() && (e.target.closest(".ua-np-grip,.ua-np-head") || box.scrollTop <= 0)) y0 = e.touches[0].clientY; }, { passive: true });
+    box.addEventListener("touchmove", e => { if (y0 === null) return; const dy = e.touches[0].clientY - y0; if (dy > 0) box.style.transform = `translateY(${dy}px)`; }, { passive: true });
+    box.addEventListener("touchend", e => { if (y0 === null) return; const dy = (e.changedTouches[0].clientY - y0); y0 = null; box.style.transform = ""; if (dy > 90) closeNewsPanel(); });
+  }
+  function renderPanel() {
+    const list = news.slice(0, PANEL_MAX);
+    const more = news.length > PANEL_MAX ? `Tutte le notizie (${news.length}) →` : "Tutte le notizie →";
+    np.querySelector(".ua-np-in").innerHTML = `
+      <div class="ua-np-head"><h2>News</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
+      <div class="ua-np-body">${!newsLoaded ? `<p class="ua-ni-wait">Carico…</p>` : list.length ? `<ul class="ua-ni-list">${list.map(n => newsItem(n, false)).join("")}</ul>` : emptyNews}</div>
+      <div class="ua-np-nt" data-ua-nt>${notifControl()}</div>
+      <a class="ua-np-all" href="${NEWS_PAGE}">${more}</a>`;
+  }
+  function placePanel() {
+    const box = np.querySelector(".ua-np-box");
+    box.style.top = box.style.bottom = box.style.right = box.style.left = "";
+    if (phone() || !npTrigger) return; // su telefono il CSS lo mette in basso, a tutta larghezza
+    const r = npTrigger.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = innerHeight;
+    box.style.right = Math.max(12, vw - r.right) + "px";
+    if (r.top < vh / 2) box.style.top = (r.bottom + 8) + "px";
+    else box.style.bottom = (vh - r.top + 8) + "px";
+  }
+  function openNewsPanel(trigger) {
+    if (!np) buildNewsPanel();
+    if (pal && !pal.hidden) closeSearch();
+    npTrigger = trigger;
+    npFresh = new Set(unread().map(n => n.id));
+    renderPanel(); np.hidden = false; placePanel();
+    document.querySelectorAll(".ua-news-btn").forEach(b => b.setAttribute("aria-expanded", "true"));
+    np.querySelector(".ua-np-box").focus({ preventScroll: true });
+    if (newsLoaded) markRead(); // aperta la tendina, le notizie contano come lette (l'etichetta "nuova" resta finché è aperta)
+  }
+  function closeNewsPanel(noFocus) {
+    if (!np || np.hidden) return;
+    np.hidden = true;
+    document.querySelectorAll(".ua-news-btn").forEach(b => b.setAttribute("aria-expanded", "false"));
+    if (!noFocus && npTrigger && document.contains(npTrigger)) npTrigger.focus({ preventScroll: true });
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest && e.target.closest(".ua-news-btn");
+    if (b) { e.preventDefault(); (np && !np.hidden && npTrigger === b) ? closeNewsPanel() : openNewsPanel(b); return; }
+    if (np && !np.hidden && !e.target.closest(".ua-np-box") && !phone()) closeNewsPanel();
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && np && !np.hidden) { e.preventDefault(); closeNewsPanel(); } });
+  window.addEventListener("resize", () => { if (np && !np.hidden) placePanel(); });
+  window.addEventListener("scroll", () => { if (np && !np.hidden && !phone()) closeNewsPanel(); }, { passive: true });
+
+  /* pagina news.html: elenco completo */
+  function renderNewsPage() {
+    const box = document.getElementById("ua-news-page");
+    if (!box) return;
+    npFresh = new Set(unread().map(n => n.id));
+    box.innerHTML = `<div class="ua-np-nt ua-np-nt-card" data-ua-nt>${notifControl()}</div>
+      ${news.length ? `<ul class="ua-ni-list ua-ni-full">${news.map(n => newsItem(n, true)).join("")}</ul>` : emptyNews}`;
+    if (location.hash) { const t = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t) t.scrollIntoView({ block: "center" }); }
+    markRead();
   }
 
   /* ---------------- uso offline (app installabile) ---------------- */
@@ -528,7 +608,7 @@
   /* ---------------- avvio ---------------- */
   buildBar();
   buildCopyright();
-  if (!IS_HOME) buildDock();
+  if (!IS_HOME && !IS_NEWS_PAGE) buildDock();
   buildPalette();
   loadNews();
   buildSyncDialog();

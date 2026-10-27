@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>News · Appunti Unisa</title>
+<meta name="description" content="Notizie e avvisi su appunti, quiz e corsi di Appunti Unisa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* La pagina usa i colori comuni del sito (assets/site.css, variabili --ua-...), collegati in pubblicazione. */
+html{background:var(--ua-bg,#fff)}
+body{margin:0;background:var(--ua-bg,#fff);color:var(--ua-ink,#111418);font:400 16px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-right,0px)) 40px max(20px,env(safe-area-inset-left,0px))}
+.eyebrow{font:500 12.5px/1 "IBM Plex Mono",ui-monospace,monospace;color:var(--ua-muted,#5d636b)}
+.eyebrow a{color:inherit;text-underline-offset:3px}
+h1{font:800 clamp(36px,8vw,52px)/1 "Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;margin:12px 0 10px}
+.lede{color:var(--ua-muted,#5d636b);margin:0 0 28px;max-width:56ch}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="eyebrow"><a href="index.html">Appunti Unisa</a> · News</div>
+    <h1>News</h1>
+    <p class="lede">Nuovi appunti, quiz, cambi di programma e avvisi sui corsi. Attiva le notifiche per saperlo appena esce qualcosa.</p>
+    <div id="ua-news-page"><p class="ua-ni-wait">Carico le notizie…</p></div>
+  </main>
+</body>
+</html>
