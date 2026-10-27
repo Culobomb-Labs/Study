@@ -113,9 +113,9 @@ def head_meta(root, title, desc, rel):
     t, d = html.escape(title, quote=True), html.escape(desc, quote=True)
     page_url = SITE_URL + "/".join(quote_part(x) for x in rel.split("/"))
     return (f'<meta name="theme-color" content="#111418">\n'
-            f'<link rel="icon" href="{root}icon.svg" type="image/svg+xml">\n'
-            f'<link rel="icon" href="{root}favicon-32.png" sizes="32x32" type="image/png">\n'
-            f'<link rel="apple-touch-icon" href="{root}apple-touch-icon.png">\n'
+            f'<link rel="icon" href="{root}icon.svg?v=2" type="image/svg+xml">\n'
+            f'<link rel="icon" href="{root}favicon-32.png?v=2" sizes="32x32" type="image/png">\n'
+            f'<link rel="apple-touch-icon" href="{root}apple-touch-icon.png?v=2">\n'
             f'<link rel="manifest" href="{root}manifest.webmanifest">\n'
             f'<meta property="og:type" content="article">\n'
             f'<meta property="og:site_name" content="Appunti Unisa">\n'
