@@ -122,7 +122,7 @@ def head_meta(root, title, desc, rel):
             f'<meta property="og:title" content="{t}">\n'
             f'<meta property="og:description" content="{d}">\n'
             f'<meta property="og:url" content="{page_url}">\n'
-            f'<meta property="og:image" content="{SITE_URL}og.png?v=2">\n'
+            f'<meta property="og:image" content="{SITE_URL}og.png?v=3">\n'
             f'<meta property="og:locale" content="it_IT">\n'
             f'<meta name="twitter:card" content="summary_large_image">\n')
 
