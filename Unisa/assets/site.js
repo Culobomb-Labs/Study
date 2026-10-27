@@ -69,8 +69,8 @@
       <div class="ua-actions">
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
         <button class="ua-btn ua-news-btn" type="button" aria-label="News" title="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
-        <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
         <button class="ua-btn ua-theme" type="button"></button>
+        <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
       </div></div>`;
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
     const fit = () => {
