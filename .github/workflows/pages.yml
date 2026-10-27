@@ -26,8 +26,13 @@ jobs:
         with:
           fetch-depth: 0   # serve la cronologia per le date di aggiornamento
       - uses: actions/configure-pages@v5
-      - name: Prepara il sito (pulsante home + date)
-        run: python3 .github/scripts/build_site.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepara il sito (barra, ricerca, immagini, uso offline)
+        run: |
+          pip install pillow
+          python .github/scripts/build_site.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

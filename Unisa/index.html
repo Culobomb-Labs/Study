@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Appunti Unisa</title>
 <meta name="description" content="Quaderni di studio e piani per i corsi di Informatica all'Università di Salerno.">
+<meta name="theme-color" content="#111418">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Appunti Unisa">
+<meta property="og:title" content="Appunti Unisa">
+<meta property="og:description" content="Quaderni di studio e piani per i corsi di Informatica all'Università di Salerno.">
+<meta property="og:url" content="https://culobomb-labs.github.io/Study/">
+<meta property="og:image" content="https://culobomb-labs.github.io/Study/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="it_IT">
+<meta name="twitter:card" content="summary_large_image">
 <script>try{var t=localStorage.getItem("ua-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,6 +93,24 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 .soon-box p{margin:0}
 .soon-box p+p{margin-top:8px;font-family:var(--f-mono);font-size:12px}
 
+/* riprendi da dove eri */
+.resume-wrap{padding-block:0 22px}
+.resume{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:14px 18px;border:1px solid var(--line);
+  border-radius:10px;background:var(--surface);text-decoration:none;transition:border-color .2s,transform .2s var(--ua-ease)}
+.resume:hover{border-color:var(--c)}
+.resume:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.resume-dot{grid-row:1 / span 2;width:10px;height:10px;border-radius:50%;background:var(--c)}
+.resume-k,.resume-t{grid-column:2}
+.resume-k{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.resume-t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resume-t small{font-weight:400;color:var(--muted);margin-left:6px}
+.resume .arrow{grid-row:1 / span 2;grid-column:3}
+.resume:hover .arrow{transform:translateX(4px);color:var(--c)}
+
+/* avanzamento */
+.prog{grid-column:1;display:block;height:3px;margin-top:8px;border-radius:2px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--c);border-radius:2px;transition:width .6s var(--ua-ease)}
+
 footer{border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
 footer a{text-underline-offset:3px}
@@ -106,6 +139,15 @@ footer a{text-underline-offset:3px}
     </div>
   </div></header>
 
+
+  <div class="wrap resume-wrap" id="resume-wrap" hidden>
+    <a class="resume" id="resume" href="#">
+      <span class="resume-dot" aria-hidden="true"></span>
+      <span class="resume-k">Riprendi da dove eri</span>
+      <span class="resume-t" id="resume-t"></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
 
   <main class="wrap">
     <div class="list" id="list"></div>
@@ -150,9 +192,11 @@ function render() {
       a.href = d.path.split("/").map(encodeURIComponent).join("/");
       const n = document.createElement("span"); n.className = "dname"; n.textContent = d.name;
       const i = document.createElement("span"); i.className = "dinfo"; i.dataset.path = d.path; i.dataset.kind = d.kind;
-      i.textContent = d.kind;
+      if (d.progressKey) i.dataset.key = d.progressKey;
       const ar = document.createElement("span"); ar.className = "arrow"; ar.setAttribute("aria-hidden", "true"); ar.textContent = "→";
-      a.append(n, i, ar); li.append(a); ul.append(li);
+      a.append(n, i, ar);
+      if (d.progressKey) { const pr = document.createElement("span"); pr.className = "prog"; pr.setAttribute("aria-hidden", "true"); pr.append(document.createElement("i")); a.append(pr); }
+      li.append(a); ul.append(li);
     }
     row.append(code, info, ul); list.append(row);
   }
@@ -171,15 +215,56 @@ document.getElementById("n-docs").textContent = nDocs;
 document.getElementById("n-courses").dataset.uaCount = COURSES.length;
 document.getElementById("n-docs").dataset.uaCount = nDocs;
 
-/* updates.json viene generato dal deploy con la data dell'ultima modifica di ogni file */
+/* Avanzamento: legge le spunte salvate nel browser dalle pagine (capitoli fatti, attività del piano) */
+function progressOf(key, meta) {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(key)) || {}; } catch (e) {}
+  if (meta && meta.ids) return { done: meta.ids.filter(id => saved[id] === true).length, total: meta.ids.length, what: "capitoli fatti" };
+  if (meta && meta.total) return { done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length), total: meta.total, what: "attività fatte" };
+  return null;
+}
+function paintInfo(data) {
+  const files = (data && data.files) || {}, prog = (data && data.progress) || {};
+  document.querySelectorAll(".dinfo").forEach(i => {
+    const parts = [i.dataset.kind];
+    const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
+    if (p) parts.push(`${p.done}/${p.total} ${p.what}`);
+    if (files[i.dataset.path]) parts.push("aggiornato il " + fmt(files[i.dataset.path]));
+    i.textContent = parts.join(" · ");
+    const bar = i.parentElement.querySelector(".prog i");
+    if (bar) bar.style.width = p && p.total ? (100 * p.done / p.total) + "%" : "0%";
+  });
+}
+paintInfo(null);
+
+/* updates.json viene generato dal deploy: date di aggiornamento e capitoli di ogni quaderno */
 fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
-  const files = data.files || {};
-  document.querySelectorAll(".dinfo").forEach(i => {
-    if (files[i.dataset.path]) i.textContent = i.dataset.kind + " · aggiornato il " + fmt(files[i.dataset.path]);
-  });
+  paintInfo(data);
   if (data.built) document.getElementById("built").textContent = "Ultimo aggiornamento: " + fmt(data.built);
 }).catch(() => {});
+
+/* Riprendi da dove eri */
+(function () {
+  let last = null;
+  try { last = JSON.parse(localStorage.getItem("ua-last")); } catch (e) {}
+  if (!last || !last.p) return;
+  let found = null;
+  for (const c of COURSES) for (const d of c.docs) if (d.path === last.p) found = { c, d };
+  if (!found) return;
+  const box = document.getElementById("resume");
+  box.href = last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "#" + last.i : "");
+  box.style.setProperty("--c", `var(--ua-c-${found.c.color})`);
+  const t = document.getElementById("resume-t");
+  t.textContent = found.d.name;
+  if (last.t) { const s = document.createElement("small"); s.textContent = (last.n ? last.n + " · " : "") + last.t; t.append(s); }
+  const mins = Math.round((Date.now() - (last.at || Date.now())) / 60000);
+  const rtf = new Intl.RelativeTimeFormat("it", { numeric: "auto" });
+  const when = mins < 60 ? rtf.format(-mins, "minute") : mins < 1440 ? rtf.format(-Math.round(mins / 60), "hour") : rtf.format(-Math.round(mins / 1440), "day");
+  box.querySelector(".resume-k").textContent = "Riprendi da dove eri · " + when;
+  document.getElementById("resume-wrap").hidden = false;
+})();
+window.addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
 
 </script>
 <script src="assets/site.js" data-root="./" data-page="index.html"></script>
