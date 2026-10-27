@@ -202,9 +202,9 @@
 
     const docs = [];
     for (const c of CORSI) for (const d of c.docs) {
-      const hay = norm(c.name + " " + c.code + " " + d.name + " " + d.kind);
+      const hay = norm(c.name + " " + c.code + " " + d.name + " " + d.kind + (c.resto ? " resto " + c.resto : ""));
       if (!terms.length || terms.every(t => hay.includes(t)))
-        docs.push({ href: url(d.path), path: d.path, color: c.color, title: esc(d.name), tag: c.code, text: esc(c.name + " · " + d.kind) });
+        docs.push({ href: url(d.path), path: d.path, color: c.color, title: esc(d.name), tag: c.code, text: esc(c.name + " · " + d.kind + (c.resto ? " · Resto " + c.resto : "")) });
     }
 
     const secs = [];

@@ -77,7 +77,10 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 .docs a:hover .arrow{transform:translateX(4px);color:var(--c)}
 
 /* stato degli appunti */
-.state{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:4px 10px 4px 8px;border-radius:999px;
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.resto{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);
+  font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--ink)}
+.state{display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:999px;
   font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--s);background:var(--s-bg)}
 .state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .state.ok{--s:var(--ok);--s-bg:var(--ok-bg)}
@@ -178,14 +181,22 @@ function render() {
     const meta = document.createElement("div"); meta.className = "meta";
     meta.textContent = `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`;
     info.append(h2, meta);
+    const tags = document.createElement("div"); tags.className = "tags";
+    if (c.resto) {
+      const r = document.createElement("div"); r.className = "resto";
+      r.textContent = `Resto ${c.resto}`;
+      r.title = `Appunti del canale Resto ${c.resto}: per l'altro canale programma e docente possono essere diversi`;
+      tags.append(r);
+    }
     if (c.stato) {
       const st = document.createElement("div");
       const ok = c.stato === "aggiornato";
       st.className = "state " + (ok ? "ok" : "wip");
       st.textContent = ok ? "Appunti aggiornati" : "In aggiornamento";
       st.title = ok ? "Gli appunti coprono tutte le lezioni fatte finora" : "Gli appunti vengono completati man mano che il corso va avanti";
-      info.append(st);
+      tags.append(st);
     }
+    if (tags.children.length) info.append(tags);
     const ul = document.createElement("ul"); ul.className = "docs";
     for (const d of c.docs) {
       const li = document.createElement("li"); const a = document.createElement("a");

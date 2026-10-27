@@ -2,6 +2,7 @@
    - path: percorso del file a partire dalla cartella Unisa (gli spazi vanno bene)
    - color: is | mp | pd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
    - stato: "aggiornato" (appunti completi e aggiornati) oppure "in-aggiornamento" (appunti ancora in lavorazione)
+   - resto (facoltativo): il canale del corso a cui si riferiscono gli appunti, es. "1" per Resto 1
    - progressKey (facoltativo): la chiave con cui la pagina salva le spunte nel browser;
      serve alla home per mostrare l'avanzamento ("4/18 capitoli fatti")
    Il contenuto tra le due righe CORSI deve restare JSON valido (virgolette doppie, niente virgole finali):
@@ -11,6 +12,7 @@ window.CORSI =
 [
   {
     "code": "IS",
+    "resto": "1",
     "name": "Ingegneria del Software",
     "meta": "3° anno",
     "stato": "in-aggiornamento",
@@ -33,6 +35,7 @@ window.CORSI =
   },
   {
     "code": "PD",
+    "resto": "1",
     "name": "Programmazione Distribuita",
     "meta": "3° anno · Sistemi distribuiti",
     "stato": "in-aggiornamento",
