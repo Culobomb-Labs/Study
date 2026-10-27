@@ -1,7 +1,8 @@
 /* Elenco dei corsi del sito. È l'unico posto da modificare quando aggiungi materiale.
    - path: percorso del file a partire dalla cartella Unisa (gli spazi vanno bene)
    - color: is | mp | pd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
-   - stato: "aggiornato" (appunti completi e aggiornati) oppure "in-aggiornamento" (appunti ancora in lavorazione)
+   - stato: "aggiornato" (appunti completi e aggiornati), "in-aggiornamento" (appunti ancora in lavorazione)
+     oppure "in-arrivo" (corso aggiunto, appunti non ancora caricati: "docs" può restare vuoto, cioè [])
    - resto (facoltativo): il canale del corso a cui si riferiscono gli appunti, es. "1" per Resto 1
    - progressKey (facoltativo): la chiave con cui la pagina salva le spunte nel browser;
      serve alla home per mostrare l'avanzamento ("4/18 capitoli fatti")
@@ -43,6 +44,15 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" }
     ]
+  },
+  {
+    "code": "SO",
+    "resto": "1",
+    "name": "Sistemi Operativi",
+    "meta": "2° anno",
+    "stato": "in-arrivo",
+    "color": "so",
+    "docs": []
   }
 ]
 /* CORSI-FINE */
