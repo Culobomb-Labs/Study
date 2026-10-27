@@ -80,6 +80,13 @@
 .ua-field svg{color:var(--ua-muted);flex:none}
 .ua-field input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;color:var(--ua-ink);font:400 17px/1 var(--ua-font)}
 .ua-field input::placeholder{color:var(--ua-muted)}
+/* Le pagine hanno un loro input:focus-visible (bordo colorato): nella ricerca lo togliamo,
+   il campo è già evidente e il cursore basta. Il focus si vede dall'icona che si accende. */
+.ua-pal .ua-field input,.ua-pal .ua-field input:focus,.ua-pal .ua-field input:focus-visible{outline:none!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;border-radius:0}
+.ua-pal .ua-field input::-webkit-search-decoration,.ua-pal .ua-field input::-webkit-search-cancel-button{-webkit-appearance:none}
+.ua-field svg{transition:color .15s ease}
+.ua-field:focus-within svg{color:var(--ua-ink)}
+.ua-pal .ua-close:focus-visible{outline:none;border-color:var(--ua-muted);color:var(--ua-ink)}
 .ua-close{appearance:none;border:1px solid var(--ua-line);background:transparent;color:var(--ua-muted);border-radius:6px;font:500 11px/1 var(--ua-mono);padding:5px 7px;cursor:pointer}
 .ua-results{overflow-y:auto;overscroll-behavior:contain;padding:8px;flex:1}
 .ua-group{font:500 11px/1 var(--ua-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ua-muted);padding:12px 10px 6px}
