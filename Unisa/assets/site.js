@@ -28,6 +28,7 @@
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
+    bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
@@ -67,6 +68,7 @@
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
       <div class="ua-actions">
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
+        <a class="ua-btn ua-news-btn" href="${ROOT}index.html#news" aria-label="News" title="News">${ICON.bell}<span class="ua-news-dot" hidden></span></a>
         <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
         <button class="ua-btn ua-theme" type="button"></button>
       </div></div>`;
@@ -385,6 +387,116 @@
     if (!prev || prev.p !== PAGE) save(null); // non perdiamo il capitolo se riapri la stessa pagina dall'inizio
   }
 
+  /* ---------------- news e notifiche ----------------
+     Le notizie stanno in news.json (nella cartella Unisa). Per pubblicarne una basta aggiungerla in cima alla lista.
+     - il campanello nella barra ha un pallino quando c'è qualcosa di non letto
+     - la home mostra la sezione News; aprendola le notizie contano come lette
+     - con le notifiche attive, ogni notizia nuova arriva come notifica del sistema
+       quando apri il sito (e, se il sito è installato come app su Android/PC, anche controllando in sottofondo) */
+  const NEWS_SEEN = "news-lette", NEWS_ON = "news-notifiche";
+  const NEWS_STATE = "ua-news-stato", NEWS_STATE_URL = ROOT + "__news-notificate";
+  let news = [];
+  const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const notifSupported = () => "Notification" in window && "serviceWorker" in navigator;
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const fmtDay = d => { try { return new Date(d + "T12:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return d; } };
+
+  // quali notizie sono già state notificate: in una cache, così lo vedono sia la pagina sia il service worker
+  async function notifiedGet() { try { const r = await (await caches.open(NEWS_STATE)).match(NEWS_STATE_URL); return r ? await r.json() : null; } catch (e) { return null; } }
+  async function notifiedSet(ids) { try { await (await caches.open(NEWS_STATE)).put(NEWS_STATE_URL, new Response(JSON.stringify(ids), { headers: { "Content-Type": "application/json" } })); } catch (e) {} }
+
+  async function loadNews() {
+    try {
+      const r = await fetch(ROOT + "news.json", { cache: "no-cache" });
+      const d = await r.json();
+      news = (Array.isArray(d.news) ? d.news : []).filter(n => n && n.id && n.titolo);
+    } catch (e) { news = []; }
+    paintNewsDot();
+    renderNews();
+    notifyNew();
+  }
+  function unread() { const seen = new Set(lsGet(NEWS_SEEN, [])); return news.filter(n => !seen.has(n.id)); }
+  function paintNewsDot() {
+    const k = unread().length;
+    document.querySelectorAll(".ua-news-btn").forEach(b => {
+      b.querySelector(".ua-news-dot").hidden = !k;
+      b.setAttribute("aria-label", k ? `News, ${k} da leggere` : "News");
+      b.title = k ? `News · ${k} da leggere` : "News";
+    });
+  }
+  function markRead() { lsSet(NEWS_SEEN, news.map(n => n.id)); paintNewsDot(); }
+
+  async function notifyNew() {
+    if (!notifSupported() || Notification.permission !== "granted" || !lsGet(NEWS_ON, false) || !news.length) return;
+    const done = await notifiedGet();
+    if (done === null) { await notifiedSet(news.map(n => n.id)); return; } // prima volta: niente raffica di notizie vecchie
+    const fresh = news.filter(n => !done.includes(n.id) && !lsGet(NEWS_SEEN, []).includes(n.id));
+    if (!fresh.length) return;
+    await notifiedSet(done.concat(fresh.map(n => n.id)));
+    const reg = await navigator.serviceWorker.getRegistration(ROOT).catch(() => null);
+    for (const n of fresh.slice(0, 3)) {
+      const opt = { body: n.testo || "", tag: "news-" + n.id, icon: ROOT + "icon-192.png", badge: ROOT + "favicon-32.png", data: { url: ROOT + "index.html#news" } };
+      try { if (reg) await reg.showNotification(n.titolo, opt); else new Notification(n.titolo, opt); } catch (e) {}
+    }
+  }
+
+  async function enableNotifications() {
+    let p = Notification.permission;
+    if (p === "default") { try { p = await Notification.requestPermission(); } catch (e) {} }
+    if (p !== "granted") { renderNews(); return; }
+    lsSet(NEWS_ON, true);
+    await notifiedSet(news.map(n => n.id)); // da adesso in poi: le notizie già uscite non arrivano come notifica
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg.periodicSync) await reg.periodicSync.register("news", { minInterval: 6 * 60 * 60 * 1000 });
+    } catch (e) {}
+    try { const reg = await navigator.serviceWorker.getRegistration(ROOT); if (reg) reg.showNotification("Notifiche attive", { body: "Ti avviseremo qui quando arriva una notizia nuova.", tag: "news-on", icon: ROOT + "icon-192.png" }); } catch (e) {}
+    renderNews();
+  }
+  async function disableNotifications() {
+    lsSet(NEWS_ON, false);
+    try { const reg = await navigator.serviceWorker.ready; if (reg.periodicSync) await reg.periodicSync.unregister("news"); } catch (e) {}
+    renderNews();
+  }
+
+  function notifControl() {
+    if (!notifSupported()) {
+      return isIOS && !standalone()
+        ? `<p class="ua-news-hint">Per le notifiche su iPhone: tocca <b>Condividi → Aggiungi alla schermata Home</b>, apri il sito dall'icona e attivale da qui.</p>`
+        : `<p class="ua-news-hint">Questo browser non supporta le notifiche.</p>`;
+    }
+    if (Notification.permission === "denied") return `<p class="ua-news-hint">Le notifiche sono bloccate per questo sito: puoi riattivarle dalle impostazioni del browser.</p>`;
+    if (Notification.permission === "granted" && lsGet(NEWS_ON, false)) {
+      return `<div class="ua-news-on"><span class="ua-news-ok">${ICON.bell}Notifiche attive</span><button type="button" class="ua-news-link" data-news="off">Disattiva</button></div>`;
+    }
+    return `<button type="button" class="ua-news-cta" data-news="on">${ICON.bell}Attiva le notifiche</button>`;
+  }
+
+  function renderNews() {
+    const box = document.getElementById("ua-news");
+    if (!box) return;
+    const fresh = new Set(unread().map(n => n.id));
+    const corso = code => CORSI.find(c => c.code === code);
+    const items = news.slice(0, 5).map(n => {
+      const c = corso(n.corso);
+      const tag = c ? `<span class="ua-news-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
+      const link = n.link ? ` <a href="${esc(/^https?:/.test(n.link) ? n.link : ROOT + n.link)}">Apri →</a>` : "";
+      return `<li class="${fresh.has(n.id) ? "ua-news-new" : ""}"><div class="ua-news-meta">${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh.has(n.id) ? `<span class="ua-news-badge">nuova</span>` : ""}</div>
+        <p class="ua-news-t">${esc(n.titolo)}</p>${n.testo || link ? `<p class="ua-news-x">${esc(n.testo || "")}${link}</p>` : ""}</li>`;
+    }).join("");
+    box.innerHTML = `<div class="ua-news-head"><h2>News</h2>${notifControl()}</div>
+      ${news.length ? `<ul class="ua-news-list">${items}</ul>`
+        : `<div class="ua-news-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi: li trovi in questa sezione. Attiva le notifiche per saperlo subito.</p></div>`}`;
+    box.querySelectorAll("[data-news]").forEach(b => b.addEventListener("click", () => b.dataset.news === "on" ? enableNotifications() : disableNotifications()));
+    // le notizie si segnano come lette quando la sezione si vede davvero
+    if (fresh.size && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); setTimeout(markRead, 1500); } }, { threshold: 0.4 });
+      io.observe(box);
+    }
+  }
+
   /* ---------------- uso offline (app installabile) ---------------- */
   function registerSW() {
     if (!("serviceWorker" in navigator) || !(location.protocol === "https:" || location.hostname === "localhost")) return;
@@ -418,6 +530,7 @@
   buildCopyright();
   if (!IS_HOME) buildDock();
   buildPalette();
+  loadNews();
   buildSyncDialog();
   applyTheme(getTheme());
   document.addEventListener("click", e => {

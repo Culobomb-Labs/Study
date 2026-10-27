@@ -1,0 +1,4 @@
+{
+  "_come_si_usa": "Per pubblicare una notizia aggiungila IN CIMA alla lista news. Campi: id (unico, es. 2026-10-28-quiz), data (AAAA-MM-GG), titolo, testo (facoltativo), corso (facoltativo: IS, MP, PD), link (facoltativo: percorso di una pagina del sito o indirizzo web). Chi ha le notifiche attive la riceve.",
+  "news": []
+}
