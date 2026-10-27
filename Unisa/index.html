@@ -86,6 +86,9 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 .state.ok{--s:var(--ok);--s-bg:var(--ok-bg)}
 .state.wip{--s:var(--wip);--s-bg:var(--wip-bg)}
 .state.wip::before{animation:pulse 2.2s ease-in-out infinite}
+.state.soon{--s:var(--muted);--s-bg:var(--hover)}
+.docs-empty{border:1px dashed var(--line);border-radius:8px;padding:16px 18px;color:var(--muted);font-size:15px;line-height:1.5}
+.docs-empty b{color:var(--ink);font-weight:600}
 @keyframes pulse{50%{opacity:.35}}
 
 /* in arrivo */
@@ -179,7 +182,7 @@ function render() {
     const info = document.createElement("div");
     const h2 = document.createElement("h2"); h2.textContent = c.name;
     const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`;
+    meta.textContent = c.docs.length ? `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}` : `${c.meta} · appunti in arrivo`;
     info.append(h2, meta);
     const tags = document.createElement("div"); tags.className = "tags";
     if (c.resto) {
@@ -190,10 +193,10 @@ function render() {
     }
     if (c.stato) {
       const st = document.createElement("div");
-      const ok = c.stato === "aggiornato";
-      st.className = "state " + (ok ? "ok" : "wip");
-      st.textContent = ok ? "Appunti aggiornati" : "In aggiornamento";
-      st.title = ok ? "Gli appunti coprono tutte le lezioni fatte finora" : "Gli appunti vengono completati man mano che il corso va avanti";
+      const ok = c.stato === "aggiornato", soon = c.stato === "in-arrivo";
+      st.className = "state " + (ok ? "ok" : soon ? "soon" : "wip");
+      st.textContent = ok ? "Appunti aggiornati" : soon ? "In arrivo" : "In aggiornamento";
+      st.title = ok ? "Gli appunti coprono tutte le lezioni fatte finora" : soon ? "Il corso è nel sito, gli appunti arrivano a breve" : "Gli appunti vengono completati man mano che il corso va avanti";
       tags.append(st);
     }
     if (tags.children.length) info.append(tags);
@@ -208,6 +211,11 @@ function render() {
       a.append(n, i, ar);
       if (d.progressKey) { const pr = document.createElement("span"); pr.className = "prog"; pr.setAttribute("aria-hidden", "true"); pr.append(document.createElement("i")); a.append(pr); }
       li.append(a); ul.append(li);
+    }
+    if (!c.docs.length) {
+      const empty = document.createElement("div"); empty.className = "docs-empty";
+      empty.innerHTML = `<b>Appunti in arrivo.</b> I quaderni di ${c.name.replace(/[<&>]/g, "")} verranno caricati a breve.`;
+      row.append(code, info, empty); list.append(row); continue;
     }
     row.append(code, info, ul); list.append(row);
   }
