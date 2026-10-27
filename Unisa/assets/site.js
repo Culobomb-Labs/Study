@@ -343,6 +343,37 @@
     });
   }
 
+  /* ---------------- "riprendi da dove eri" ----------------
+     Sulle pagine di appunti ricorda l'ultimo capitolo che stavi leggendo. La home lo mostra. */
+  const LAST_KEY = "ua-last";
+  function trackLast() {
+    if (!here) return;
+    const save = (sec) => {
+      const v = { p: PAGE, at: Date.now() };
+      if (sec) { v.i = sec.id; v.t = sec.dataset.t || (sec.querySelector("h2") || {}).textContent || ""; const n = sec.querySelector(".ch-num"); if (n) v.n = n.textContent.trim(); }
+      try { localStorage.setItem(LAST_KEY, JSON.stringify(v)); } catch (e) {}
+    };
+    const secs = [...document.querySelectorAll("section.ch[id]")];
+    if (!secs.length || !("IntersectionObserver" in window)) { save(null); return; }
+    let timer = null, current = null;
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) current = e.target;
+      if (timer) return; // al massimo un salvataggio al secondo
+      timer = setTimeout(() => { timer = null; if (current) save(current); }, 1000);
+    }, { rootMargin: "-15% 0px -70% 0px" });
+    secs.forEach(s => io.observe(s));
+    window.addEventListener("pagehide", () => { if (current) save(current); });
+    let prev = null;
+    try { prev = JSON.parse(localStorage.getItem(LAST_KEY)); } catch (e) {}
+    if (!prev || prev.p !== PAGE) save(null); // non perdiamo il capitolo se riapri la stessa pagina dall'inizio
+  }
+
+  /* ---------------- uso offline (app installabile) ---------------- */
+  function registerSW() {
+    if (!("serviceWorker" in navigator) || !(location.protocol === "https:" || location.hostname === "localhost")) return;
+    window.addEventListener("load", () => navigator.serviceWorker.register(ROOT + "sw.js").catch(() => {}));
+  }
+
   /* ---------------- effetti della home ---------------- */
   function homeEffects() {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -379,6 +410,8 @@
     else openSearch();
   });
   checkImport();
+  trackLast();
+  registerSW();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }
     if (IS_HOME && e.key === "/" && pal.hidden && !/input|textarea|select/i.test((document.activeElement || {}).tagName || "")) { e.preventDefault(); openSearch(); }

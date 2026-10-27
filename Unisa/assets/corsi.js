@@ -2,6 +2,8 @@
    - path: percorso del file a partire dalla cartella Unisa (gli spazi vanno bene)
    - color: is | mp | pd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
    - stato: "aggiornato" (appunti completi e aggiornati) oppure "in-aggiornamento" (appunti ancora in lavorazione)
+   - progressKey (facoltativo): la chiave con cui la pagina salva le spunte nel browser;
+     serve alla home per mostrare l'avanzamento ("4/18 capitoli fatti")
    Il contenuto tra le due righe CORSI deve restare JSON valido (virgolette doppie, niente virgole finali):
    lo legge anche lo script di pubblicazione per costruire la ricerca. */
 window.CORSI =
@@ -14,8 +16,8 @@ window.CORSI =
     "stato": "in-aggiornamento",
     "color": "is",
     "docs": [
-      { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html" },
-      { "name": "Piano di studio, prima prova", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano Studio IS.html" }
+      { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
+      { "name": "Piano di studio, prima prova", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano Studio IS.html", "progressKey": "piano-ingsw-v1" }
     ]
   },
   {
@@ -25,7 +27,7 @@ window.CORSI =
     "stato": "aggiornato",
     "color": "mp",
     "docs": [
-      { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html" }
+      { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" }
     ]
   },
   {
@@ -35,7 +37,7 @@ window.CORSI =
     "stato": "in-aggiornamento",
     "color": "pd",
     "docs": [
-      { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html" }
+      { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" }
     ]
   }
 ]
