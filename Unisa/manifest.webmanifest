@@ -1,7 +1,7 @@
 {
   "name": "Appunti Unisa",
   "short_name": "Appunti",
-  "description": "Quaderni di studio e piani per i corsi di Informatica all'Università di Salerno.",
+  "description": "Quaderni, quiz e piani di studio per i corsi di Informatica all'Università di Salerno.",
   "lang": "it",
   "start_url": "./index.html",
   "scope": "./",
