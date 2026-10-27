@@ -53,6 +53,14 @@
   .ua-search-label,.ua-kbd{display:none}
 }
 
+/* ---------- copyright in fondo alla pagina ---------- */
+.ua-copy{box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;text-align:center;clear:both;
+  margin-top:48px;padding:20px max(16px,env(safe-area-inset-left,0px)) max(20px,env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--ua-line);background:transparent;font:400 12.5px/1.5 var(--ua-font);color:var(--ua-muted);-webkit-font-smoothing:antialiased}
+.ua-copy span:first-child{color:var(--ua-ink);font-weight:500}
+.ua-copy-dock{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+@media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
+
 /* ---------- pulsanti fluttuanti sulle pagine di appunti ---------- */
 .ua-dock{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
   display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--ua-ink);box-shadow:var(--ua-shadow);

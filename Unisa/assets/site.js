@@ -79,6 +79,23 @@
     fit(); window.addEventListener("resize", fit);
   }
 
+  /* ---------------- copyright in fondo a ogni pagina ---------------- */
+  const COPY_START = 2026;
+  function buildCopyright() {
+    if (document.querySelector(".ua-copy")) return;
+    const y = new Date().getFullYear(), years = y > COPY_START ? `${COPY_START}–${y}` : `${COPY_START}`;
+    const foot = el("footer", { class: "ua-copy" + (IS_HOME ? "" : " ua-copy-dock") });
+    foot.innerHTML = `<span>© ${years} Culobomb-Labs · Appunti Unisa</span><span>Appunti personali per lo studio. Vietata la copia o la vendita senza permesso.</span>`;
+    document.body.append(foot);
+    /* alcune pagine hanno un margine laterale sul body: il piè di pagina va da bordo a bordo, come la barra */
+    const fit = () => {
+      foot.style.marginLeft = "0px"; foot.style.width = "";
+      const left = foot.getBoundingClientRect().left, full = document.documentElement.clientWidth;
+      if (left > 0.5 || foot.offsetWidth < full - 0.5) { foot.style.marginLeft = -left + "px"; foot.style.width = full + "px"; }
+    };
+    fit(); window.addEventListener("resize", fit);
+  }
+
   /* ---------------- pulsanti fluttuanti ---------------- */
   function buildDock() {
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
@@ -398,6 +415,7 @@
 
   /* ---------------- avvio ---------------- */
   buildBar();
+  buildCopyright();
   if (!IS_HOME) buildDock();
   buildPalette();
   buildSyncDialog();
