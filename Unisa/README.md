@@ -1,2 +1,2 @@
 # Unisa
-Materiale universitario dell'Università di Salerno.
+Materiale di studio universitario dell'Università di Salerno.
