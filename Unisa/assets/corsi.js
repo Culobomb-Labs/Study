@@ -53,7 +53,7 @@ window.CORSI =
     "stato": "aggiornato",
     "color": "so",
     "docs": [
-        { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" }
+        { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" },
         { "name": "Quiz, capitoli 01–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
     ]
   }
