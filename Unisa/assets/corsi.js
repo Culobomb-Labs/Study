@@ -50,9 +50,11 @@ window.CORSI =
     "resto": "1",
     "name": "Sistemi Operativi",
     "meta": "2° anno",
-    "stato": "in-arrivo",
+    "stato": "aggiornato",
     "color": "so",
-    "docs": []
+    "docs": [
+        { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" }
+    ]
   }
 ]
 /* CORSI-FINE */
