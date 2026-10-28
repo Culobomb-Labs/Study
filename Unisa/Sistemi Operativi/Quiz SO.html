@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz di Sistemi Operativi · Capitoli 1–15</title>
+<meta name="description" content="Domande a risposta multipla sui capitoli 1–15 di Sistemi Operativi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una colonna di lettura. Scelta del capitolo → una domanda alla volta → risultato con gli errori da rivedere.
+   Rosso del quaderno per l'avanzamento; verde e rosso restano per giusto e sbagliato. */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --soft:#efefec;
+  --c:#e05b50; --c-soft:#fff0e9;
+  --ok:#22744a; --ok-bg:#e3f2e9; --ko:#b3261e; --ko-bg:#fbe9e7;
+  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#352517; --ok:#6fd398; --ok-bg:#15291e; --ko:#ff8a80; --ko-bg:#33191a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#352517; --ok:#6fd398; --ok-bg:#15291e; --ko:#ff8a80; --ko-bg:#33191a; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+a{color:inherit}
+.wrap{max-width:780px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--c);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,6vw,48px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 28px;max-width:60ch}
+button{font:inherit;color:inherit}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--muted)}
+.btn:focus-visible,.opt:focus-visible,.chap:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.solid:hover{opacity:.88}
+.btn[disabled]{opacity:.4;cursor:default}
+.label{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 10px}
+
+/* scelta */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:center;padding:20px;border-radius:10px;
+  background:var(--ink);color:var(--bg);margin-bottom:30px}
+.sim h2{font-family:var(--f-display);font-size:22px;margin:0}
+.sim p{margin:0;opacity:.75;font-size:14.5px}
+.sim .tot{font-family:var(--f-mono);font-size:12.5px;opacity:.65}
+.sim .tot b{font-weight:600}
+.sim .btn{grid-row:1 / span 3;grid-column:2;background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.chaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.chap{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;cursor:pointer;
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;transition:border-color .15s,transform .15s}
+.chap:hover{border-color:var(--c);transform:translateY(-1px)}
+.chap .n{grid-row:1 / span 4;font-family:var(--f-mono);font-weight:500;color:var(--c);font-size:14px;padding-top:2px}
+.chap .t{font-weight:600;line-height:1.3}
+.chap .t,.chap .s{grid-column:2}
+.chap .s{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.chap .s b{font-weight:500;color:var(--ok)}
+.chap .s b.mid{color:var(--c)}
+.chap .m{grid-column:2;height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
+.chap .m i{display:block;height:100%;background:var(--ok);border-radius:2px}
+.note{margin-top:22px;color:var(--muted);font-size:14px}
+
+/* domanda */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.qhead a{color:var(--muted)}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-bottom:26px}
+.bar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:12px;color:var(--c);background:var(--c-soft);border-radius:999px;padding:3px 10px;margin-bottom:12px}
+.q{font-family:var(--f-display);font-weight:700;font-size:clamp(20px,3.6vw,25px);line-height:1.3;margin:0 0 20px;text-wrap:pretty}
+.opts{display:flex;flex-direction:column;gap:10px}
+.answerbox{display:grid;gap:10px}.answerbox textarea{width:100%;min-height:120px;resize:vertical;padding:13px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.5}.answerbox textarea:focus{outline:2px solid var(--c);outline-offset:2px}
+.opt{appearance:none;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:13px 16px;cursor:pointer;
+  display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;transition:border-color .15s,background .15s}
+.opt:hover:not([disabled]){border-color:var(--muted)}
+.opt .k{font-family:var(--f-mono);font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:6px;text-align:center;line-height:22px;height:24px}
+.opt[disabled]{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.right .k{border-color:var(--ok);color:var(--ok)}
+.opt.wrong{border-color:var(--ko);background:var(--ko-bg)}
+.opt.wrong .k{border-color:var(--ko);color:var(--ko)}
+.opt.dim{opacity:.55}
+.fb{margin-top:18px;padding:14px 16px;border-radius:10px;border-left:3px solid var(--c);background:var(--surface)}
+.fb b.ok{color:var(--ok)} .fb b.ko{color:var(--ko)}
+.fb p{margin:4px 0 0}
+.fb a{font-size:14px;color:var(--c);text-underline-offset:3px}
+.next{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.hint{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:14px;text-align:right}
+
+/* risultato */
+.score{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.score b{font-family:var(--f-display);font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.score span{color:var(--muted)}
+.verdict{margin:0 0 24px;font-size:17px}
+.byc{list-style:none;margin:0 0 28px;padding:0;border-top:1px solid var(--line)}
+.byc li{display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.byc .m{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.byc .m i{display:block;height:100%;background:var(--c)}
+.byc .v{font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.errs{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.err{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface)}
+.err .eq{font-weight:600;margin:0 0 6px}
+.err p{margin:4px 0 0;font-size:14.5px;color:var(--muted)}
+.err p b{color:var(--ink);font-weight:600}
+.err .yours{color:var(--ko)}
+.err a{font-size:14px;color:var(--c)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+body.running .lede{display:none}
+@media (hover:none),(max-width:640px){.hint{display:none}}
+@media (max-width:560px){.sim{grid-template-columns:1fr}.sim .btn{grid-row:auto;grid-column:1;justify-self:start;margin-top:8px}.byc li{grid-template-columns:minmax(0,1fr) 70px 46px}}
+@media (prefers-reduced-motion:reduce){.chap,.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Sistemi Operativi · capitoli 1–15</div>
+  <h1>Quiz di Sistemi Operativi</h1>
+  <p class="lede">Domande a risposta aperta sui capitoli 1–15. Scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<script>
+/* Domande: capitoli 1–15 di Sistemi Operativi. La prima opzione è corretta; a ogni giro le opzioni vengono mescolate. */
+const CHAPTERS = [
+  { id: "intro", n: "01", t: "Introduzione" },
+  { id: "strutture", n: "02", t: "Strutture del sistema operativo" },
+  { id: "processi", n: "03", t: "Processi" },
+  { id: "thread", n: "04", t: "Thread" },
+  { id: "scheduling", n: "05", t: "Scheduling della CPU" },
+  { id: "sincronizzazione", n: "06", t: "Sincronizzazione" },
+  { id: "problemi", n: "07", t: "Esempi di sincronizzazione" },
+  { id: "deadlock", n: "08", t: "Stallo dei processi" },
+  { id: "centrale", n: "09", t: "Memoria centrale" },
+  { id: "virtuale", n: "10", t: "Memoria virtuale" },
+  { id: "massa", n: "11", t: "Memoria di massa" },
+  { id: "io", n: "12", t: "Sistemi di I/O" },
+  { id: "file", n: "13", t: "Interfaccia del file system" },
+  { id: "implementazione", n: "14", t: "Realizzazione del file system" },
+  { id: "dettagli", n: "15", t: "Protezione e sicurezza" }
+];
+const Q = [
+  {"c": "massa", "q": "Quale componente contribuisce maggiormente al tempo di accesso di un disco magnetico?", "o": ["Il tempo di ricerca e la latenza rotazionale", "La sola velocità della CPU", "La dimensione del file system", "Il numero di processi pronti"], "e": "Il tempo di accesso dipende soprattutto dal movimento della testina fino alla traccia (seek time) e dall’attesa che il settore ruoti sotto la testina (latenza rotazionale)."},
+  {"c": "massa", "q": "Come si comporta SCAN?", "o": ["La testina attraversa il disco in una direzione servendo le richieste, poi inverte direzione", "La testina serve solo la richiesta arrivata per prima", "Il disco salta direttamente al settore più vicino senza una direzione", "La testina torna al punto iniziale dopo ogni richiesta"], "e": "SCAN è spesso chiamato algoritmo dell’ascensore: la testina percorre il disco in una direzione, servendo le richieste incontrate, e poi torna indietro."},
+  {"c": "massa", "q": "Che cosa si intende per I/O grezzo (raw I/O)?", "o": ["Accesso ai blocchi del dispositivo senza passare dalle normali astrazioni del file system", "Accesso ai file esclusivamente tramite nomi e directory", "Una copia dei dati conservata nella cache della CPU", "Un metodo di scheduling che ignora le priorità"], "e": "L’I/O grezzo consente a un’applicazione o a un sistema di accedere direttamente ai blocchi, evitando parte delle funzioni del file system."},
+  {"c": "massa", "q": "Che cos’è una SAN?", "o": ["Una rete dedicata che collega server e dispositivi di memorizzazione a livello di blocco", "Un algoritmo di scheduling per dischi magnetici", "Un file system montato localmente", "Una partizione usata esclusivamente per lo swap"], "e": "Una Storage-Area Network connette server e unità di storage tramite una rete ad alte prestazioni, spesso con accesso ai blocchi."},
+  {"c": "massa", "q": "Qual è la caratteristica principale di RAID 0?", "o": ["Striping senza ridondanza", "Mirroring con una copia completa", "Parità distribuita su più dischi", "Doppia parità per tollerare due guasti"], "e": "RAID 0 distribuisce i dati tra i dischi ma non conserva informazioni ridondanti: il guasto di un disco può compromettere l’intero array."},
+  {"c": "massa", "q": "Quale livello RAID può tollerare il guasto simultaneo di due dischi grazie alla doppia parità?", "o": ["RAID 6", "RAID 0", "RAID 1", "RAID 5"], "e": "RAID 6 conserva due informazioni di parità indipendenti e può quindi ricostruire i dati anche dopo il guasto di due dischi."},
+  {"c": "intro", "q": "Qual è il ruolo del sistema operativo?", "o": ["Gestisce le risorse e offre servizi a programmi e utenti", "Compila sempre il codice sorgente", "Sostituisce ogni applicazione", "Controlla soltanto la rete"], "e": "Il sistema operativo coordina hardware e software e fornisce un ambiente per l’esecuzione dei programmi."},
+  {"c": "intro", "q": "Che cos’è il kernel?", "o": ["La parte centrale del sistema operativo", "Un programma utente", "Un file system", "Un dispositivo di I/O"], "e": "Il kernel gestisce le funzioni fondamentali del sistema e opera con privilegi elevati."},
+  {"c": "intro", "q": "A che cosa serve un interrupt?", "o": ["Segnalare un evento che richiede attenzione della CPU", "Allocare una directory", "Avviare sempre un nuovo processo", "Tradurre un indirizzo virtuale"], "e": "Un interrupt trasferisce temporaneamente il controllo a una routine che gestisce l’evento."},
+  {"c": "strutture", "q": "Che cos’è una system call?", "o": ["Una richiesta controllata di servizio al kernel", "Una chiamata tra due file", "Un tipo di memoria cache", "Un algoritmo di scheduling"], "e": "Le system call espongono servizi del sistema operativo ai programmi."},
+  {"c": "strutture", "q": "Quale vantaggio offre un microkernel?", "o": ["Sposta molti servizi fuori dal kernel e favorisce modularità e isolamento", "Elimina ogni comunicazione tra servizi", "Fa eseguire tutto in modalità kernel", "Rimuove i driver"], "e": "Il microkernel mantiene nel nucleo le funzioni essenziali e delega altri servizi a processi separati."},
+  {"c": "strutture", "q": "A che cosa servono i moduli caricabili?", "o": ["A estendere il kernel durante l’esecuzione", "A sostituire la RAM con il disco", "A disabilitare gli interrupt", "A creare utenti"], "e": "I moduli permettono di aggiungere driver o funzionalità senza ricostruire l’intero kernel."},
+  {"c": "processi", "q": "Che cos’è un processo?", "o": ["Un programma in esecuzione con il proprio stato", "Un file sorgente", "Un settore del disco", "Un driver"], "e": "Il processo è un’istanza attiva di un programma e comprende stato e risorse."},
+  {"c": "processi", "q": "Che cosa contiene tipicamente il PCB?", "o": ["Stato, registri e informazioni di gestione del processo", "Solo il codice sorgente", "Le partizioni del disco", "Le password degli utenti"], "e": "Il Process Control Block conserva il contesto necessario al sistema operativo per gestire il processo."},
+  {"c": "processi", "q": "Che cosa avviene durante un context switch?", "o": ["Si salva il contesto di un processo e si ripristina quello di un altro", "Si copia un file sul disco", "Si cancella la memoria del kernel", "Si cambia il file system"], "e": "Il sistema salva registri e stato del processo sospeso e carica quelli del processo selezionato."},
+  {"c": "thread", "q": "Che cos’è un thread?", "o": ["Un flusso di esecuzione appartenente a un processo", "Una partizione di swap", "Una tabella di file", "Un dispositivo"], "e": "I thread condividono le risorse del processo, ma mantengono il proprio contesto di esecuzione."},
+  {"c": "thread", "q": "Quali risorse condividono normalmente i thread dello stesso processo?", "o": ["Spazio di indirizzamento e risorse del processo", "Stack e registri privati", "Contatore di programma", "Nessuna risorsa"], "e": "Ogni thread ha registri e stack propri; codice e dati del processo sono condivisi."},
+  {"c": "thread", "q": "Qual è un vantaggio del multithreading?", "o": ["Migliora reattività e può sfruttare più core", "Elimina ogni race condition", "Garantisce una CPU per thread", "Evita la sincronizzazione"], "e": "I thread possono procedere in parallelo, ma gli accessi ai dati condivisi vanno sincronizzati."},
+  {"c": "scheduling", "q": "Qual è il compito dello scheduler a breve termine?", "o": ["Scegliere un processo pronto a cui assegnare la CPU", "Scegliere un file da eliminare", "Assegnare gli indirizzi IP", "Formattare il disco"], "e": "Lo scheduler seleziona un processo dalla coda dei pronti."},
+  {"c": "scheduling", "q": "Come funziona Round Robin?", "o": ["Assegna un quanto di CPU a turno a ciascun processo", "Esegue sempre il processo più lungo", "Non usa prelazione", "Ordina per PID"], "e": "Allo scadere del quanto, il processo non terminato torna in coda."},
+  {"c": "scheduling", "q": "Che cosa può causare lo scheduling a priorità?", "o": ["Starvation dei processi a bassa priorità", "Perdita della TLB", "Frammentazione esterna", "Guasto del disco"], "e": "L’invecchiamento può contrastare la starvation aumentando col tempo la priorità dei processi in attesa."},
+  {"c": "sincronizzazione", "q": "Che cos’è una race condition?", "o": ["Un risultato che dipende dall’interleaving di accessi concorrenti ai dati", "Una richiesta di I/O", "Una politica di paging", "Un cambio di contesto"], "e": "Gli accessi concorrenti non controllati possono produrre risultati imprevedibili."},
+  {"c": "sincronizzazione", "q": "Che cosa garantisce la mutua esclusione?", "o": ["Un solo processo alla volta nella sezione critica", "Tutti i processi eseguono insieme", "La CPU resta sempre occupata", "Ogni processo ha priorità uguale"], "e": "La mutua esclusione protegge l’accesso simultaneo a dati condivisi."},
+  {"c": "sincronizzazione", "q": "Che cos’è uno spinlock?", "o": ["Un lock per cui il thread attende controllando ripetutamente la disponibilità", "Una coda di processi su disco", "Un algoritmo di paging", "Una modalità di I/O"], "e": "Lo spinlock usa attesa attiva e può sprecare CPU se la sezione protetta dura a lungo."},
+  {"c": "problemi", "q": "Nel problema produttore-consumatore, a cosa serve il buffer?", "o": ["A conservare temporaneamente elementi prodotti e non ancora consumati", "A salvare il kernel", "A sostituire la RAM", "A contenere le priorità"], "e": "Il buffer è condiviso e richiede sincronizzazione su inserimenti e rimozioni."},
+  {"c": "problemi", "q": "Nel problema dei lettori-scrittori, quale vincolo è comune?", "o": ["Più lettori possono accedere insieme; uno scrittore richiede accesso esclusivo", "Lettori e scrittori modificano insieme", "Ogni lettore blocca gli altri lettori", "Lo scrittore non può accedere"], "e": "La soluzione coordina letture concorrenti e scritture esclusive."},
+  {"c": "problemi", "q": "Che cosa modella il problema dei filosofi a cena?", "o": ["Processi concorrenti che competono per risorse condivise", "La gestione delle directory", "La paginazione", "Le interruzioni hardware"], "e": "Il problema illustra stallo e starvation nella competizione per risorse."},
+  {"c": "deadlock", "q": "Quale condizione è necessaria per il deadlock?", "o": ["Attesa circolare tra processi che trattengono risorse", "Uso di memoria virtuale", "Presenza di un solo processo", "Scheduling Round Robin"], "e": "Le condizioni classiche includono mutua esclusione, possesso e attesa, assenza di preemption e attesa circolare."},
+  {"c": "deadlock", "q": "Che cosa indica un grafo di allocazione delle risorse?", "o": ["Richieste e assegnazioni tra processi e risorse", "Solo l’ordine dei file", "Le pagine libere", "I tempi di CPU"], "e": "Gli archi rappresentano richieste dei processi o assegnazioni delle risorse."},
+  {"c": "deadlock", "q": "Uno stato non sicuro è già un deadlock?", "o": ["No: significa che non è garantita una sequenza sicura", "Sì, sempre", "Solo con un singolo processore", "Solo quando la CPU è inattiva"], "e": "Uno stato non sicuro può portare a deadlock, ma non implica che sia già avvenuto."},
+  {"c": "centrale", "q": "A che cosa serve la TLB?", "o": ["Memorizzare traduzioni recenti di indirizzi virtuali e fisici", "Contenere i file aperti", "Gestire i thread", "Ordinare le richieste del disco"], "e": "La TLB è una cache veloce delle traduzioni della tabella delle pagine."},
+  {"c": "centrale", "q": "Come si suddivide un indirizzo logico nella paginazione?", "o": ["Numero di pagina e offset", "Traccia e settore", "Processo e priorità", "Directory e nome file"], "e": "La pagina seleziona la voce di tabella; l’offset indica la posizione interna alla pagina."},
+  {"c": "centrale", "q": "Che cos’è la frammentazione interna?", "o": ["Spazio sprecato all’interno di un’unità allocata", "Spazio libero diviso in buchi esterni", "Un errore di directory", "Un ritardo di rotazione"], "e": "Con unità di dimensione fissa può restare spazio inutilizzato dentro l’unità assegnata."},
+  {"c": "virtuale", "q": "Che cosa provoca un page fault?", "o": ["L’accesso a una pagina non presente in memoria fisica", "La lettura di un file in cache", "Un cambio di priorità", "Un interrupt del timer"], "e": "Il sistema deve recuperare la pagina e aggiornare le strutture di memoria."},
+  {"c": "virtuale", "q": "Quale politica sceglie la pagina usata meno recentemente?", "o": ["LRU", "FIFO", "FCFS", "SCAN"], "e": "LRU sostituisce la pagina il cui ultimo utilizzo è più remoto."},
+  {"c": "virtuale", "q": "Che cos’è il thrashing?", "o": ["Una condizione in cui si passa molto tempo a trasferire pagine", "Un algoritmo di disco", "Un tipo di deadlock hardware", "Un metodo di compressione"], "e": "L’eccesso di page fault riduce il tempo dedicato all’esecuzione utile."},
+  {"c": "io", "q": "A che cosa serve il DMA?", "o": ["Trasferire dati tra dispositivo e memoria con poco intervento della CPU", "Sostituire la tabella delle pagine", "Ordinare i thread", "Montare un volume"], "e": "Il DMA gestisce trasferimenti a blocchi e avvisa la CPU al termine."},
+  {"c": "io", "q": "Qual è il compito di un device controller?", "o": ["Gestire le operazioni del dispositivo e comunicare con il sistema", "Pianificare thread utente", "Assegnare directory", "Calcolare parità RAID"], "e": "Il controller gestisce l’hardware e interagisce con il sistema operativo tramite registri e interrupt."},
+  {"c": "io", "q": "Che cosa misura il throughput di un dispositivo?", "o": ["La quantità di dati trasferita per unità di tempo", "Il ritardo di una singola richiesta", "La dimensione della RAM", "Il numero di directory"], "e": "Il throughput misura il volume di lavoro completato nell’unità di tempo."},
+  {"c": "file", "q": "Che cosa associa una directory?", "o": ["Nomi di file ai riferimenti necessari per individuarli", "Pagine a processi", "Settori a thread", "Interrupt a driver"], "e": "La directory organizza i nomi e i riferimenti agli oggetti file."},
+  {"c": "file", "q": "Che cos’è un file pointer?", "o": ["La posizione corrente per le operazioni di lettura o scrittura", "La posizione della testina", "L’indirizzo della directory radice", "Il numero di processi pronti"], "e": "L’offset del file aperto indica da dove proseguire con la lettura o scrittura."},
+  {"c": "file", "q": "Che cosa fa mount?", "o": ["Collega un file system a un punto dell’albero delle directory", "Copia tutti i dati in RAM", "Svuota la TLB", "Formatta la superficie del disco"], "e": "Il montaggio rende accessibile il file system tramite un mount point."},
+  {"c": "implementazione", "q": "Che cosa contiene un inode Unix?", "o": ["Metadati e riferimenti ai blocchi del file, non il nome nella directory", "Solo il nome", "L’intero disco", "La coda dei processi"], "e": "Il nome risiede nella directory; l’inode descrive attributi e localizzazione del file."},
+  {"c": "implementazione", "q": "Qual è un vantaggio dell’allocazione indicizzata?", "o": ["Consente accesso diretto senza richiedere blocchi contigui", "Non richiede metadati", "Elimina ogni frammentazione", "Usa un solo blocco per file"], "e": "Un indice contiene i riferimenti ai blocchi del file e supporta accesso diretto."},
+  {"c": "implementazione", "q": "A che cosa serve il journaling?", "o": ["A facilitare il ripristino della coerenza dopo un arresto anomalo", "A sostituire i backup", "A comprimere i file", "A scegliere il processo successivo"], "e": "Il journal aiuta a recuperare operazioni del file system dopo un crash, ma non sostituisce il backup."},
+  {"c": "dettagli", "q": "Qual è la differenza tra autenticazione e autorizzazione?", "o": ["La prima verifica l’identità, la seconda stabilisce i permessi", "Sono sinonimi", "La prima assegna pagine, la seconda pianifica la CPU", "L’autorizzazione verifica la password"], "e": "Autenticazione stabilisce chi è l’utente; autorizzazione definisce le operazioni consentite."},
+  {"c": "dettagli", "q": "Che cosa esprime una matrice di controllo degli accessi?", "o": ["Quali soggetti possono eseguire operazioni su quali oggetti", "Quali processi sono in deadlock", "La distribuzione RAID", "Le pagine residenti"], "e": "La matrice rappresenta i diritti di accesso tra soggetti o domini e oggetti."},
+  {"c": "dettagli", "q": "Che cosa stabilisce il principio del minimo privilegio?", "o": ["Concedere solo i permessi necessari al compito", "Dare privilegi amministrativi a tutti", "Eseguire tutto in modalità kernel", "Disabilitare il controllo accessi"], "e": "Limitare i privilegi riduce i danni possibili in caso di errore o compromissione."},
+];
+
+const STORE = "quiz-so-1-15";
+const QUADERNO = "Quaderno%20di%20Sistemi%20Operativi.html";
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const chap = id => CHAPTERS.find(c => c.id === id);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } };
+const store = d => { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) {} };
+
+/* Quiz dinamico: ogni giro di un capitolo pesca PER_GIRO domande dal capitolo intero.
+   Per ogni domanda si ricorda: v = volte vista, w = volte sbagliata, s = risposte giuste di fila.
+   Escono prima quelle sbagliate e non ancora recuperate, poi quelle mai viste; quelle già sapute escono di rado.
+   Le domande dell'ultimo giro dello stesso capitolo vengono evitate, così i giri si somigliano poco. */
+const STATS = "quiz-so-1-15-domande";
+const PER_GIRO = 3;
+const SAPUTA = 2; // giuste di fila per considerarla saputa
+const qid = q => { let h = 5381; const t = q.c + "|" + q.q; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+Q.forEach(q => { q.id = qid(q); });
+const loadStats = () => { try { return JSON.parse(localStorage.getItem(STATS)) || {}; } catch (e) { return {}; } };
+const saveStats = d => { try { localStorage.setItem(STATS, JSON.stringify(d)); } catch (e) {} };
+const known = (st, id) => { const x = st[id]; return !!x && x.s >= SAPUTA; };
+function weight(x) {
+  if (!x) return 3;                         // mai vista
+  if (x.w > 0 && x.s < SAPUTA) return 6;    // sbagliata, da recuperare
+  if (x.s >= SAPUTA + 1) return 0.35;       // la sai bene
+  if (x.s >= SAPUTA) return 0.7;            // la sai
+  return 1.5;
+}
+// estrazione pesata senza ripetizioni (chiave = random^(1/peso))
+function pick(pool, n, avoid) {
+  const st = loadStats(), skip = new Set(avoid || []);
+  const scored = pool.map(q => {
+    let w = weight(st[q.id]);
+    if (skip.has(q.id) && w < 6) w *= 0.15;
+    return { q, k: Math.pow(Math.random(), 1 / w) };
+  });
+  return scored.sort((a, b) => b.k - a.k).slice(0, n).map(x => x.q);
+}
+function chapterRun(cid) {
+  const st = loadStats(), last = (st._ultimo || {})[cid] || [];
+  return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
+}
+function simRun() {
+  const st = loadStats(), last = (st._ultimo || {}).sim || [];
+  let out = [];
+  CHAPTERS.forEach(c => { out = out.concat(pick(Q.filter(q => q.c === c.id), 2, last)); });
+  return shuffle(out);
+}
+function rememberRun(key, items) {
+  const st = loadStats(); st._ultimo = st._ultimo || {}; st._ultimo[key] = items.map(it => it.q.id); saveStats(st);
+}
+function record(q, ok) {
+  const st = loadStats(), x = st[q.id] || { v: 0, w: 0, s: 0 };
+  x.v++; if (ok) x.s++; else { x.w++; x.s = 0; }
+  st[q.id] = x; saveStats(st);
+}
+
+let run = null; // { title, items: [{q}], i, answers: [] }
+
+function home() {
+  run = null;
+  document.body.classList.remove("running");
+  const saved = load(), st = loadStats();
+  const totKnown = Q.filter(q => known(st, q.id)).length;
+  const chips = CHAPTERS.map(c => {
+    const all = Q.filter(q => q.c === c.id), n = all.length, s = saved[c.id];
+    const k = all.filter(q => known(st, q.id)).length, rip = all.filter(q => { const x = st[q.id]; return x && x.w > 0 && x.s < SAPUTA; }).length;
+    const pct = s ? Math.round(100 * s.best / s.total) : null;
+    const best = s ? `migliore <b class="${pct >= 80 ? "" : "mid"}">${s.best}/${s.total}</b>` : "non ancora fatto";
+    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span><span class="s">${PER_GIRO} a giro su ${n} · ${best}</span><span class="s">ne sai <b class="${k === n ? "" : "mid"}">${k}/${n}</b>${rip ? ` · ${rip} da recuperare` : ""}</span><span class="m"><i style="width:${100 * k / n}%"></i></span></button>`;
+  }).join("");
+  app.innerHTML = `
+    <section class="sim">
+      <h2>Simulazione della prova</h2>
+      <p>30 domande miste, 2 per ogni capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
+      <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
+      <button class="btn" type="button" id="go-sim">Inizia →</button>
+    </section>
+    <p class="label">Un capitolo alla volta</p>
+    <div class="chaps">${chips}</div>
+    <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
+  app.querySelector("#go-sim").onclick = () => start("Simulazione della prova", simRun(), null, "sim");
+  app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
+    const c = chap(b.dataset.c);
+    start(`${c.n} · ${c.t}`, chapterRun(c.id), c.id, c.id);
+  });
+  window.scrollTo({ top: 0 });
+}
+
+function start(title, questions, chapterId, key, from) {
+  run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => ({ q })) };
+  if (key) rememberRun(key, run.items);
+  ask();
+}
+
+function ask() {
+  document.body.classList.add("running");
+  const it = run.items[run.i], c = chap(it.q.c), n = run.items.length;
+  app.innerHTML = `
+    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n} · <a href="#" id="quit">esci</a></span></div>
+    <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
+    <span class="tag">${c.n} · ${esc(c.t)}</span>
+    <h2 class="q">${esc(it.q.q)}</h2>
+    <div class="answerbox"><label class="label" for="response">La tua risposta</label><textarea id="response" placeholder="Scrivi con parole tue…"></textarea><div class="next"><button class="btn solid" type="button" id="reveal">Mostra la soluzione</button></div></div>
+    <div id="after"></div>
+    <p class="hint">Rispondi liberamente, poi confronta la soluzione e valuta la tua risposta.</p>`;
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); home(); };
+  const response = app.querySelector("#response");
+  response.focus({ preventScroll: true });
+  app.querySelector("#reveal").onclick = () => {
+    const typed = response.value.trim();
+    response.disabled = true;
+    app.querySelector("#reveal").remove();
+    const after = app.querySelector("#after");
+    after.innerHTML = `
+      <div class="fb"><b>Soluzione</b><p>${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
+        <p><a href="${QUADERNO}#${it.q.c}">Rivedi il capitolo ${chap(it.q.c).n} nel quaderno →</a></p>
+        <p>La tua risposta: ${typed ? esc(typed) : "(nessuna risposta inserita)"}</p>
+      </div>
+      <div class="next"><button class="btn ghost" type="button" id="mark-wrong">Da ripassare</button><button class="btn solid" type="button" id="mark-right">Risposta centrata</button></div>`;
+    after.querySelector("#mark-wrong").onclick = () => answer(false, typed);
+    after.querySelector("#mark-right").onclick = () => answer(true, typed);
+    after.querySelector("#mark-wrong").focus({ preventScroll: true });
+  };
+  window.scrollTo({ top: 0 });
+}
+
+function answer(ok, response) {
+  if (run.answers[run.i] !== undefined) return;
+  const it = run.items[run.i];
+  run.answers[run.i] = { ok, response };
+  record(it.q, ok);
+  const last = run.i === run.items.length - 1;
+  app.querySelector("#after").innerHTML = `<div class="fb"><b class="${ok ? "ok" : "ko"}">${ok ? "Segnata come corretta." : "Segnata da ripassare."}</b></div>
+    <div class="next"><button class="btn solid" type="button" id="next">${last ? "Vedi il risultato" : "Avanti →"}</button></div>`;
+  const nx = app.querySelector("#next");
+  nx.onclick = () => { if (last) result(); else { run.i++; ask(); } };
+  nx.focus({ preventScroll: true });
+}
+
+function result() {
+  const n = run.items.length, good = run.answers.filter(a => a && a.ok).length, pct = Math.round(100 * good / n);
+  if (run.chapterId) {
+    const saved = load(), prev = saved[run.chapterId];
+    saved[run.chapterId] = { best: Math.max(good, prev ? prev.best : 0), last: good, total: n };
+    store(saved);
+  }
+  const by = {};
+  run.items.forEach((it, i) => { const c = it.q.c; by[c] = by[c] || { ok: 0, n: 0 }; by[c].n++; if (run.answers[i] && run.answers[i].ok) by[c].ok++; });
+  const rows = CHAPTERS.filter(c => by[c.id]).map(c => `<li><span>${c.n} · ${esc(c.t)}</span><span class="m"><i style="width:${100 * by[c.id].ok / by[c.id].n}%"></i></span><span class="v">${by[c.id].ok}/${by[c.id].n}</span></li>`).join("");
+  const wrong = run.items.map((it, i) => ({ it, a: run.answers[i] })).filter(x => !x.a.ok);
+  const errs = wrong.map(({ it, a }) => `<div class="err"><p class="eq">${esc(it.q.q)}</p>
+      <p class="yours">La tua risposta: ${esc(a.response || "(nessuna risposta inserita)")}</p>
+      <p><b>Giusta:</b> ${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
+      <p><a href="${QUADERNO}#${it.q.c}">Capitolo ${chap(it.q.c).n} nel quaderno →</a></p></div>`).join("");
+  const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
+  const verdict = pct >= 90 ? "Ottimo, questa parte la sai." : pct >= 70 ? "Buono. Ripassa gli errori qui sotto e rifallo." : pct >= 50 ? "Ci sei quasi: rileggi i capitoli segnati e riprova domani." : "Da ripassare: riprendi il quaderno e poi rifai il quiz.";
+  app.innerHTML = `
+    <p class="label">${esc(run.title)}</p>
+    <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
+    <p class="verdict">${verdict}</p>
+    ${from && from.cid ? (() => { const st = loadStats(), all = Q.filter(q => q.c === from.cid), k = all.filter(q => known(st, q.id)).length; return `<p class="label">Capitolo ${chap(from.cid).n}: ne sai ${k} su ${all.length}</p><div class="bar"><i style="width:${100 * k / all.length}%"></i></div>`; })() : ""}
+    ${Object.keys(by).length > 1 ? `<p class="label">Per capitolo</p><ul class="byc">${rows}</ul>` : ""}
+    ${wrong.length ? `<p class="label">Da rivedere (${wrong.length})</p><div class="errs">${errs}</div>` : ""}
+    <div class="actions">
+      ${wrong.length ? `<button class="btn solid" type="button" id="redo">Rifai solo gli errori</button>` : ""}
+      ${from ? `<button class="btn" type="button" id="again">${from.cid ? `Altre ${PER_GIRO} domande` : "Nuova simulazione"}</button>` : ""}
+      <button class="btn" type="button" id="back">Torna ai capitoli</button>
+    </div>`;
+  const redo = app.querySelector("#redo");
+  if (redo) redo.onclick = () => { start((from ? from.title : run.title) + " · errori", shuffle(wrong.map(w => w.it.q)), null, null, from); };
+  const again = app.querySelector("#again");
+  if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : simRun(), from.cid, from.key);
+  app.querySelector("#back").onclick = home;
+  window.scrollTo({ top: 0 });
+}
+
+document.addEventListener("keydown", e => {
+  if (!run || e.metaKey || e.ctrlKey || e.altKey || e.key !== "Enter") return;
+  if (document.querySelector(".ua-pal:not([hidden])")) return;
+  if (run.answers[run.i] !== undefined) {
+    const nx = document.getElementById("next");
+    if (nx) { e.preventDefault(); nx.click(); }
+  } else if (document.activeElement && document.activeElement.id === "response") {
+    e.preventDefault();
+    const reveal = document.getElementById("reveal");
+    if (reveal) reveal.click();
+  }
+});
+
+home();
+</script>
+</body>
+</html>
