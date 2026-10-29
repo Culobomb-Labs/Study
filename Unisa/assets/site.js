@@ -585,11 +585,25 @@
   }
 
   const initialOf = u => esc(((u && (u.displayName || u.email)) || "?").trim().charAt(0).toUpperCase());
+  const photoOf = u => {
+    try {
+      const photo = new URL(u && u.photoURL);
+      return photo.protocol === "https:" ? photo.href : "";
+    } catch (e) { return ""; }
+  };
+  const avatarOf = (u, small = false) => {
+    const photo = photoOf(u);
+    return `<span class="ua-avatar${small ? " ua-avatar-sm" : ""}" aria-hidden="true"${photo ? ' style="position:relative;overflow:hidden"' : ""}>${initialOf(u)}${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit">` : ""}</span>`;
+  };
+  function installAvatarFallbacks(root = document) {
+    root.querySelectorAll(".ua-avatar img").forEach(img => img.addEventListener("error", () => img.remove(), { once: true }));
+  }
   function paintAccount() {
     document.querySelectorAll(".ua-open-sync").forEach(b => {
       if (cloudUser) {
         const who = cloudUser.displayName || cloudUser.email || "account Google";
-        b.innerHTML = `<span class="ua-avatar ua-avatar-sm" aria-hidden="true">${initialOf(cloudUser)}</span>`;
+        b.innerHTML = avatarOf(cloudUser, true);
+        installAvatarFallbacks(b);
         b.setAttribute("aria-label", `I tuoi progressi: accesso fatto come ${who}, spunte sincronizzate`);
         b.title = `Accesso fatto come ${who}`;
       } else {
@@ -604,7 +618,7 @@
     const u = cloudUser;
     const body = u
       ? `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
-        <div class="ua-acct-box"><span class="ua-avatar" aria-hidden="true">${initialOf(u)}</span>
+        <div class="ua-acct-box">${avatarOf(u)}
           <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
         <p class="ua-sync-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Le spunte del piano di studio, dei quaderni e i risultati dei quiz si salvano sul tuo account e si aggiornano da sole su ogni dispositivo dove accedi.</p>
         <div class="ua-sync-actions"><button type="button" class="ua-btn ua-do-logout">Esci</button><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Chiudi</button></div>
@@ -617,6 +631,7 @@
         <div class="ua-sync-actions"><button type="button" class="ua-btn" data-close>Chiudi</button></div>
         <button type="button" class="ua-acct-alt ua-do-export">Senza account: sposta le spunte con un link o un QR</button>`;
     showSync(body);
+    installAvatarFallbacks(sync);
     const login = sync.querySelector(".ua-do-login");
     if (login) login.addEventListener("click", () => signIn(login, sync.querySelector(".ua-acct-err")));
     const out = sync.querySelector(".ua-do-logout");
