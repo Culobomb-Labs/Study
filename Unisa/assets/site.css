@@ -209,7 +209,7 @@ a.ua-ni.has-thumb{flex-direction:row;align-items:center;gap:12px}
 .ua-ni-img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;margin-top:10px;border-radius:12px;border:1px solid var(--ua-line);background:var(--ua-soft)}
 
 /* ---------- accesso con Google ---------- */
-.ua-avatar{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;flex:none;
+.ua-avatar{position:relative;overflow:hidden;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;flex:none;
   background:var(--ua-ink);color:var(--ua-bg);font:600 17px/1 var(--ua-font)}
 .ua-avatar-sm{width:24px;height:24px;font-size:12.5px}
 .ua-open-sync:has(.ua-avatar-sm){padding:0 4px}
