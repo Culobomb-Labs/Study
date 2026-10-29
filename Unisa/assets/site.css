@@ -194,6 +194,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-sync-row{display:flex;gap:8px}
 .ua-sync-link{flex:1;min-width:0;height:34px;border:1px solid var(--ua-line);border-radius:8px;background:var(--ua-soft);color:var(--ua-muted);padding:0 10px;font:400 12.5px/1 var(--ua-mono)}
 .ua-sync-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.ua-sync-actions a[href$="segnalazioni.html"]{margin-right:auto}
 .ua-btn-solid{background:var(--ua-ink);color:var(--ua-bg);border-color:var(--ua-ink)}
 .ua-btn-solid:hover{background:var(--ua-ink);opacity:.88}
 
