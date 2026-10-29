@@ -586,10 +586,17 @@
 
   const initialOf = u => esc(((u && (u.displayName || u.email)) || "?").trim().charAt(0).toUpperCase());
   const photoOf = u => {
-    try {
-      const photo = new URL(u && u.photoURL);
-      return photo.protocol === "https:" ? photo.href : "";
-    } catch (e) { return ""; }
+    const candidates = [u && u.photoURL];
+    if (u && Array.isArray(u.providerData)) {
+      u.providerData.forEach(p => { if (p && p.providerId === "google.com") candidates.push(p.photoURL); });
+    }
+    for (const value of candidates) {
+      try {
+        const photo = new URL(value);
+        if (photo.protocol === "https:") return photo.href;
+      } catch (e) {}
+    }
+    return "";
   };
   const avatarOf = (u, small = false) => {
     const photo = photoOf(u);
