@@ -50,8 +50,8 @@ self.addEventListener("fetch", event => {
 
   // stile, script, immagini: subito dalla cache, aggiornati in sottofondo
   event.respondWith(caches.open(CACHE).then(async c => {
-    const hit = await c.match(req, { ignoreSearch: true });
-    const net = fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }).catch(() => hit);
+    const hit = await c.match(req);
+    const net = fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }).catch(async () => hit || await c.match(req, { ignoreSearch: true }));
     return hit || net;
   }));
 });
