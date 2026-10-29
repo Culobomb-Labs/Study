@@ -2,6 +2,15 @@
   "_come_si_usa": "Le notizie per documenti nuovi o aggiornati si creano da sole (per evitarlo scrivi [no news] nel messaggio del commit). Il modo comodo per scriverne una: Actions → Pubblica una news (un modulo da compilare). A mano: aggiungi la notizia IN CIMA alla lista news. Campi: id (unico, es. 2026-10-28-quiz), data (AAAA-MM-GG), titolo, testo (facoltativo), corso (facoltativo: IS, MP, PD), link (facoltativo: percorso di una pagina del sito o indirizzo web), immagine (facoltativa: news/img/nome.jpg, dopo averla caricata in Unisa/news/img). Chi ha le notifiche attive la riceve subito dopo la pubblicazione.",
   "news": [
     {
+      "id": "auto-2026-10-29-de6696ad",
+      "data": "2026-10-29",
+      "titolo": "Aggiornato: Quaderno di Ingegneria del Software",
+      "testo": "Ingegneria del Software · Resto 1: ci sono modifiche nuove, dai un'occhiata.",
+      "corso": "IS",
+      "link": "Ingenieria del Software/Quaderno di Ingegneria del Software.html",
+      "auto": true
+    },
+    {
       "id": "auto-2026-10-29-b1485a1c",
       "data": "2026-10-29",
       "titolo": "Aggiornato: Quiz, capitoli 01–15",
