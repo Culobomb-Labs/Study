@@ -265,7 +265,7 @@ fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
     const built = new Date(data.built);
     const time = new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(built);
     const date = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome" }).format(built);
-    document.getElementById("built").textContent = `${time}, ${date}`;
+    document.getElementById("built").textContent = `${date}, ${time}`;
   }
   if (data.version) document.getElementById("version").textContent = "Versione " + data.version;
 }).catch(() => {});
