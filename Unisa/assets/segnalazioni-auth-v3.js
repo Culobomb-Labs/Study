@@ -1,9 +1,11 @@
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, getRedirectResult, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
-import { getFirestore, collection, query, where, onSnapshot, addDoc, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
+import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
 const app = getApps().find(a => a.name === '[DEFAULT]') || initializeApp({apiKey:'AIzaSyAI8QZjC3qSNq33bNBk7Ls19bjanc4-QnQ',authDomain:'appunti-unisa.firebaseapp.com',projectId:'appunti-unisa',storageBucket:'appunti-unisa.firebasestorage.app',messagingSenderId:'682409351930',appId:'1:682409351930:web:728a3ba5a1d23ffe0a0743'});
 const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
+const drafts=new Map();
+const romeDay = date => new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Rome', year:'numeric', month:'2-digit', day:'2-digit'}).format(date);
 let admin=false;
 const isAdmin=()=>admin;
 let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
@@ -28,7 +30,7 @@ onAuthStateChanged(auth,async u=>{
   const version=++authVersion;
   if(unsubscribe){unsubscribe();unsubscribe=null;}
   $('#list').replaceChildren(); $('#list-message').textContent=u?'Verifica dell’account…':'Accedi per vedere le segnalazioni.';
-  admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
+  drafts.clear(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
   $('#identity').textContent=u?(u.displayName||u.email):''; $('#send').disabled=true;
   $('#list-title').textContent='Le tue segnalazioni';
   if($('#auth-message').textContent==='Verifica dell’account…') authMsg('');
@@ -79,9 +81,9 @@ onAuthStateChanged(auth,async u=>{
         select.onchange=async()=>{select.disabled=true;try{await updateDoc(doc(db,'reports',item.id),{status:select.value,updatedAt:serverTimestamp()})}catch(e){select.value=d.status;$('#list-message').textContent='Impossibile aggiornare lo stato.'}finally{select.disabled=false}};
         label.append(select);card.append(label);
         const commentLabel=document.createElement('label'), input=document.createElement('textarea'), save=document.createElement('button'), result=document.createElement('p');
-        commentLabel.textContent='Risposta per l’utente (facoltativa)'; input.rows=3; input.maxLength=1500; input.value=d.adminComment||'';input.placeholder='Scrivi una risposta…';
+        commentLabel.textContent='Risposta per l’utente (facoltativa)'; input.rows=3; input.maxLength=1500; input.value=drafts.has(item.id)?drafts.get(item.id):(d.adminComment||'');input.oninput=()=>drafts.set(item.id,input.value);input.placeholder='Scrivi una risposta…';
         save.type='button';save.className='save-comment';save.textContent='Salva risposta';result.setAttribute('role','status');
-        save.onclick=async()=>{save.disabled=true;result.textContent='Salvataggio…';try{await updateDoc(doc(db,'reports',item.id),{adminComment:input.value.trim(),updatedAt:serverTimestamp()});result.textContent='Risposta salvata.'}catch(e){result.textContent='Impossibile salvare la risposta.'}finally{save.disabled=false}};
+        save.onclick=async()=>{save.disabled=true;result.textContent='Salvataggio…';try{const value=input.value.trim();await updateDoc(doc(db,'reports',item.id),{adminComment:value,updatedAt:serverTimestamp()});if(drafts.get(item.id)?.trim()===value)drafts.delete(item.id);result.textContent='Risposta salvata.'}catch(e){result.textContent='Impossibile salvare la risposta.'}finally{save.disabled=false}};
         commentLabel.append(input);card.append(commentLabel,save,result);
       }
       $('#list').append(card);
@@ -118,10 +120,18 @@ $('#form').onsubmit=async e=>{
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
   sending=true; $('#send').disabled=true; msg('Invio in corso…');
   try {
-    await addDoc(collection(db,'reports'),{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    await runTransaction(db,async tx=>{
+      const quotaRef=doc(db,'reportQuota',sender.uid), reportRef=doc(collection(db,'reports'));
+      const quota=await tx.get(quotaRef), old=quota.exists()?quota.data():null;
+      const sameDay=old?.updatedAt && romeDay(old.updatedAt.toDate())===romeDay(new Date());
+      const count=sameDay?old.count+1:1;
+      if(count>5)throw new Error('daily-limit');
+      tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
+      tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    });
     if(user===sender && auth.currentUser===sender){form.reset();$('#counter').textContent='0 / 1500';msg('Segnalazione inviata.');}
   } catch(e) {
-    if(user===sender && auth.currentUser===sender)msg('Invio non riuscito. Controlla la connessione e riprova.');
+    if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!user || readyUser!==user;}
 };
 
