@@ -73,6 +73,7 @@ onAuthStateChanged(auth,async u=>{
       card.className='entry'; title.textContent=d.title; text.textContent=d.message;
       badge.className='status '+(Object.hasOwn(statuses,d.status)?d.status:''); badge.textContent=statuses[d.status]||'Sconosciuta';
       card.append(title,badge,text);
+      if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
       if(d.contact){const c=document.createElement('p');c.textContent='Contatto: '+d.contact;card.append(c)}
       if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
       if(isAdmin()){
@@ -106,7 +107,7 @@ $('#form').onsubmit=async e=>{
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
   sending=true; $('#send').disabled=true; msg('Invio in corso…');
   try {
-    await addDoc(collection(db,'reports'),{userId:sender.uid,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    await addDoc(collection(db,'reports'),{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     if(user===sender && auth.currentUser===sender){form.reset();$('#counter').textContent='0 / 1500';msg('Segnalazione inviata.');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg('Invio non riuscito. Controlla la connessione e riprova.');
