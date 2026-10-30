@@ -364,6 +364,24 @@ html{scroll-behavior:smooth}
   <div class="def"><b class="lbl">In una frase</b>La <b>requirements elicitation</b> (raccolta dei requisiti) è l'attività in cui cliente e sviluppatori definiscono insieme <mark>cosa deve fare il sistema</mark>, senza ancora dire come.</div>
   <p>È la fase più delicata: un errore qui si propaga in tutto il resto. Le slide mostrano due classici: una specifica ambigua (il laser che doveva puntare a 10.023 <i>piedi</i> d'altezza e invece puntava a 10.023 <i>miglia</i>) e una funzionalità indesiderata (il treno di Londra che partiva senza il macchinista, perché nessuno aveva previsto quel caso).</p>
 
+  <h3>Dall’elicitation all’analisi</h3>
+  <p>L’<b>analisi</b> trasforma le richieste raccolte in un modello formale o semiformale del sistema. Serve a rendere espliciti i concetti del dominio, chiarire i flussi e scoprire errori prima del design. Si procede in modo <b>iterativo e incrementale</b>: formalizzare una richiesta può rivelare ambiguità, omissioni o contraddizioni, che si chiariscono con cliente e utenti e poi si riflettono nei requisiti.</p>
+  <div class="levels">
+    <div><b>Funzionale<small>cosa fa</small></b><span>Use case e scenari, raffinati a partire dalle richieste.</span></div>
+    <div><b>A oggetti<small>quali concetti</small></b><span>Classi, oggetti e relazioni del dominio.</span></div>
+    <div><b>Dinamico<small>come si comporta</small></b><span>Sequence diagram e statechart per interazioni e cambiamenti di stato.</span></div>
+  </div>
+  <p>Il modello di analisi, insieme ai requisiti non funzionali, guida il design ad alto livello. Perciò il RAD deve restare comprensibile al cliente anche quando i diagrammi UML da soli non bastano.</p>
+  <div class="tbl"><table>
+    <tr><th>Obiettivo dell’analisi</th><th>Che cosa verificare</th></tr>
+    <tr><td><b>Corretto</b></td><td>Il modello descrive ciò che cliente e utenti intendono davvero.</td></tr>
+    <tr><td><b>Completo</b></td><td>Include funzioni, regole, casi limite ed eccezioni pertinenti.</td></tr>
+    <tr><td><b>Consistente</b></td><td>Termini, regole e diagrammi non si contraddicono.</td></tr>
+    <tr><td><b>Non ambiguo</b></td><td>Ogni termine, quantità e condizione ha un significato condiviso: per esempio, una data include fuso orario e formato.</td></tr>
+  </table></div>
+  <p>La formalizzazione non è una riscrittura meccanica dei requisiti. Costringe il team a decidere che cosa significano le parole e a fare domande prima che ipotesi non dichiarate diventino codice. Se il modello mette in luce una lacuna, si torna da cliente e utenti, si chiarisce e si aggiorna anche la specifica.</p>
+
+
   <h3>Il problem statement</h3>
   <p>Il punto di partenza. Lo scrive il cliente (si chiama anche <i>Statement of Work</i>). Ingredienti:</p>
   <ul>
@@ -414,8 +432,13 @@ html{scroll-behavior:smooth}
     <tr><td><b>Tracciabilità</b></td><td>Ogni funzione del sistema si può ricondurre a un requisito?</td></tr>
   </table></div>
   <p>Problema: durante l'elicitation i requisiti <b>cambiano in fretta</b>. Servono strumenti che li tengano in un repository condiviso.</p>
+  <h3>Gestire e rivedere il modello di analisi</h3>
+  <p>Una revisione del modello completa quella dei singoli requisiti. Per ogni classe chiediti se è necessaria a uno use case; per ogni operazione verifica chi la invoca e quale risultato produce. Controlla che gli stessi concetti abbiano sempre lo stesso nome e che gli scenari alternativi non siano stati dimenticati. Se il progetto coinvolge più team, distingui chi genera le informazioni, chi integra i contributi nel modello comune e chi li revisiona.</p>
+  <p>L’accettazione del cliente conferma che il modello descrive il dominio e i comportamenti concordati; non significa che i dettagli di implementazione siano già decisi. I modelli e le modifiche restano collegati ai requisiti di origine.</p>
   <h3>Il documento finale: RAD</h3>
   <p>Il risultato dell'analisi è il <b>RAD</b> (Requirements Analysis Document): introduzione, sistema attuale, sistema proposto (requisiti funzionali, non funzionali, modelli: scenari, use case, object model, modello dinamico, interfaccia utente), glossario.</p>
+  <div class="note">Nel RAD si ritrovano normalmente scopo e contesto del sistema, descrizione della situazione attuale e di quella proposta, requisiti funzionali e non funzionali, use case/scenari, modelli degli oggetti e dinamico, interfaccia utente e glossario. Il RAD raccoglie la specifica e i risultati dell’analisi: deve essere leggibile anche da chi non legge UML ogni giorno.</div>
+
   <div class="quiz"><h4>Domande lampo</h4>
     <details><summary>"Il sistema deve essere scritto in Java": che tipo di requisito è?</summary><p>Un vincolo (pseudo-requisito), di tipo implementativo.</p></details>
     <details><summary>Greenfield o re-engineering: rifare in web un gestionale anni '90?</summary><p>Re-engineering.</p></details>
@@ -713,6 +736,34 @@ html{scroll-behavior:smooth}
       </ul>
     </div>
   </div>
+  <h3>Dal caso d’uso agli oggetti di analisi</h3>
+  <p>Leggi gli scenari e individua gli oggetti che partecipano, poi verifica i candidati con la conoscenza del dominio e con il cliente. L’<b>euristica di Abbott</b> usa le parti del discorso come indizi: sostantivi per classi o attributi, verbi per operazioni o associazioni, aggettivi per proprietà. Sono indizi da verificare: non ogni sostantivo merita una classe.</p>
+  <div class="tbl"><table>
+    <tr><th>Stereotipo</th><th>Ruolo nel modello</th><th>Esempio</th></tr>
+    <tr><td><b>Entity</b></td><td>Informazioni e concetti persistenti del dominio.</td><td><code>Report</code>, <code>Incident</code>, <code>Giocatore</code>.</td></tr>
+    <tr><td><b>Boundary</b></td><td>Interfaccia tra sistema e attore o sistema esterno.</td><td>Form, schermata, interfaccia di servizio.</td></tr>
+    <tr><td><b>Control</b></td><td>Coordina il flusso di un caso d’uso e le interazioni.</td><td><code>ReportEmergencyControl</code>.</td></tr>
+  </table></div>
+  <p>Questa classificazione separa l’interfaccia, il coordinamento e i dati del dominio, rendendo il modello più resistente ai cambiamenti. Gli oggetti partecipanti degli scenari sono la base del modello di analisi: si aggiunge un oggetto solo quando è motivato da una responsabilità o da un requisito.</p>
+  <h4>Indizi per riconoscere i tre ruoli</h4>
+  <ul>
+    <li><b>Entity:</b> cerca informazioni che il sistema deve ricordare o che compaiono in più scenari. Verifica se hanno identità, attributi o regole proprie; non confondere un valore semplice con una classe non necessaria.</li>
+    <li><b>Boundary:</b> individua i punti di contatto che servono agli attori per avviare azioni, inserire dati o leggere risposte. Un form molto ricco può richiedere più boundary, ma non una classe per ogni singolo controllo grafico.</li>
+    <li><b>Control:</b> individua il coordinamento di un caso d’uso, soprattutto quando il flusso ha più passi, alternative o interazioni. Il control governa la sequenza; le entity conservano le informazioni di dominio.</li>
+  </ul>
+  <p>Per esempio, nel caso <code>ReportEmergency</code>, l’ufficiale sul campo usa un form per indicare tipo e luogo dell’emergenza; un control valida e coordina l’invio; un <code>EmergencyReport</code> rappresenta la segnalazione. La risposta del dispatcher può rivelare un nuovo concetto, <code>Acknowledgment</code>: è un buon esempio di come l’analisi raffini il modello quando si chiarisce uno scenario.</p>
+
+  <div class="note">Per trovare associazioni, cerca nei requisiti verbi come “ha”, “contiene”, “gestisce” o “segnala”. Specifica nome del ruolo e molteplicità, e verifica che ogni relazione serva davvero a uno scenario o a una regola del dominio.</div>
+  <h3>Dettagliare associazioni, attributi e gerarchie</h3>
+  <p>Un’associazione descrive un legame tra classi; un <b>link</b> è un legame concreto tra due istanze. Per ogni associazione annota nome, ruoli alle estremità e molteplicità. Per esempio, un rapporto è inviato da un ufficiale: per ciascun <code>EmergencyReport</code> c’è un <code>FieldOfficer</code>, mentre un ufficiale può aver inviato più rapporti. Le associazioni sono normalmente navigabili in entrambe le direzioni; specifica una direzione solo se il modello ne ha davvero bisogno.</p>
+  <p>L’<b>aggregazione</b> esprime una relazione “parte di” in cui la parte può vivere autonomamente; la <b>composizione</b> indica una dipendenza di ciclo di vita più forte. La <b>generalizzazione</b> raggruppa concetti “è un tipo di”: la sottoclasse eredita attributi e operazioni della superclasse. Usa queste relazioni per chiarire il dominio, evitando gerarchie introdotte solo per riutilizzare codice.</p>
+  <p>Gli <b>attributi</b> sono proprietà rilevanti delle istanze. Aggettivi e frasi possessive possono suggerirli (“rapporto urgente”, “data del rapporto”), ma il modello deve conservare soltanto dati necessari a requisiti o regole. Per ogni attributo chiarisci tipo, significato e vincoli; ad esempio, <code>EmergencyReport.location</code> deve avere una definizione interpretabile e non essere una stringa vaga se il sistema deve localizzare l’intervento.</p>
+  <div class="vs">
+    <div><h4>Brainstorming</h4><p>Raccogli prima i candidati da problem statement, scenari, interviste e glossario. Poi elimina duplicati e parole che non rappresentano concetti utili.</p></div>
+    <div><h4>Classificazione e iterazione</h4><p>Assegna responsabilità Entity/Boundary/Control, collega gli oggetti e torna agli scenari per verificare le ipotesi. Il modello si precisa in più passaggi, non in un’unica seduta.</p></div>
+  </div>
+
+
   <h3>Attore, classe, oggetto: non confonderli</h3>
   <div class="levels">
     <div><b>Attore</b><span>Entità <b>esterna</b> al sistema che interagisce con esso (Passenger).</span></div>
@@ -817,6 +868,24 @@ html{scroll-behavior:smooth}
     <li>Un entity <mark>non chiama mai</mark> un boundary o un control.</li>
   </ol>
   <p>Esempio ARENA: modellando <i>CreateTournament</i> saltano fuori classi nuove (un form, un controllo del torneo, l'entità Tournament) che nel class diagram non c'erano.</p>
+
+  <h3>Responsabilità e controllo dello scenario</h3>
+  <p>In analisi il sequence diagram aiuta a distribuire il comportamento del caso d’uso tra gli oggetti. Ogni messaggio deve corrispondere a un’operazione del destinatario; le <b>precondizioni</b> dicono quando un’operazione può essere eseguita, le <b>postcondizioni</b> quale risultato deve aver prodotto.</p>
+  <p>Un metodo utile è partire dallo scenario, non dal diagramma vuoto: sottolinea chi agisce e che cosa succede, assegna ogni passaggio a un oggetto e poi disegna i messaggi nell’ordine temporale. Se un passo non ha un responsabile, individua un oggetto o chiarisci il requisito; se un oggetto non riceve né invia messaggi in alcuno scenario, chiediti se serve davvero.</p>
+  <ul>
+    <li>La lifeline dell’attore avvia il flusso; subito dopo compare il boundary usato.</li>
+    <li>Il control riceve l’azione e coordina il caso d’uso; può interrogare o aggiornare le entity.</li>
+    <li>Le entity non devono dipendere dall’interfaccia: non chiamano boundary o control.</li>
+    <li>Un messaggio rappresenta una richiesta a un destinatario e dovrebbe corrispondere a una sua operazione. Usa guardie per condizioni ed i frame <code>alt</code>, <code>opt</code> e <code>loop</code> per alternative, passi opzionali e ripetizioni.</li>
+  </ul>
+  <p>Le responsabilità possono essere centralizzate in un control (struttura <b>fork</b>) oppure passare da un oggetto al successivo (struttura <b>stair</b>). La seconda è adatta quando i passi sono fortemente collegati e l’ordine cambia poco; il fork rende più semplice cambiare l’ordine o aggiungere comportamenti, perché il coordinamento è esplicito.</p>
+
+  <ul>
+    <li>La prima lifeline è di solito l’attore che avvia il caso d’uso, seguita dal boundary con cui interagisce.</li>
+    <li>Il control coordina il flusso; le entity forniscono o aggiornano le informazioni del dominio.</li>
+    <li>Confronta il diagramma con lo scenario: ogni passo, esito e caso alternativo deve essere rappresentato. Se serve inventare un’informazione, chiariscila e aggiorna lo scenario.</li>
+  </ul>
+  <div class="note">Il modello si rivede per correttezza, completezza, consistenza e realismo: ogni oggetto deve servire a uno use case; i nomi devono essere coerenti; eccezioni e limiti devono essere coperti; le scelte devono essere fattibili e comprensibili al cliente.</div>
 
   <h3>Fork o stair?</h3>
   <div class="figrow">
