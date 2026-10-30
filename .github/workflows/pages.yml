@@ -40,6 +40,8 @@ jobs:
       - name: News automatica (documenti nuovi o aggiornati)
         id: auto
         run: python .github/scripts/news_auto.py
+      - name: Verifica il calcolo della versione
+        run: python -m unittest discover -s .github/tests -p "test_*.py"
       - name: Prepara il sito (barra, ricerca, immagini, uso offline)
         run: |
           pip install pillow
