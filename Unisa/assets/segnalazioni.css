@@ -34,7 +34,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 .panel-heading h2{font:700 22px/1.2 var(--font-display);letter-spacing:-.02em;margin:0}
 .panel-heading p{color:var(--muted);font-size:14px;margin:5px 0 0}
 #form label,.entry label{display:block;font-weight:600;font-size:14px;margin:17px 0 6px}
-#form label:first-child{margin-top:0}
+#form > label:first-child{margin-top:0}
 .optional{font:400 12px/1 var(--font-body);color:var(--muted);margin-left:4px}
 .label-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .label-row small{color:var(--muted);font:400 12px/1 var(--font-mono)}
