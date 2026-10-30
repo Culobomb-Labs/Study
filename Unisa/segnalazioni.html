@@ -43,6 +43,11 @@
     </section>
     <section class="report-panel list-panel" aria-labelledby="list-title">
       <div class="panel-heading"><span class="panel-number">02</span><div><h2 id="list-title">Le tue segnalazioni</h2><p>Controlla qui gli aggiornamenti e lo stato delle richieste.</p></div></div>
+      <div id="admin-tools" class="admin-tools" hidden>
+        <label for="report-search">Cerca<input id="report-search" type="search" placeholder="Titolo, testo, email o contatto"></label>
+        <label for="report-filter">Stato<select id="report-filter"><option value="all">Tutti gli stati</option><option value="new">Nuova</option><option value="in_progress">In elaborazione</option><option value="resolved">Risolta</option><option value="rejected">Rifiutata</option></select></label>
+        <label for="report-sort">Ordina<select id="report-sort"><option value="newest">Più recenti</option><option value="oldest">Meno recenti</option><option value="status">Per stato</option></select></label>
+      </div>
       <p id="list-message" role="status" aria-live="polite">Accedi per vedere le segnalazioni.</p>
       <div id="list"></div>
     </section>
