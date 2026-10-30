@@ -6,6 +6,17 @@ const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
 const drafts=new Map();
 const romeDay = date => new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Rome', year:'numeric', month:'2-digit', day:'2-digit'}).format(date);
+const reportDateFormat=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+function reportDateElement(timestamp){
+  const date=timestamp?.toDate?.();
+  if(!(date instanceof Date) || Number.isNaN(date.getTime()))return null;
+  const parts=Object.fromEntries(reportDateFormat.formatToParts(date).map(part=>[part.type,part.value]));
+  const time=document.createElement('time');
+  time.className='report-date';
+  time.dateTime=date.toISOString();
+  time.textContent=`Inviata: ${parts.day}-${parts.month}-${parts.year}, ${parts.hour}:${parts.minute}`;
+  return time;
+}
 let admin=false;
 const isAdmin=()=>admin;
 let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
@@ -71,7 +82,10 @@ onAuthStateChanged(auth,async u=>{
       const d=item.data(), card=document.createElement('article'), title=document.createElement('h3'), text=document.createElement('p'), badge=document.createElement('span');
       card.className='entry'; title.textContent=d.title; text.textContent=d.message;
       badge.className='status '+(Object.hasOwn(statuses,d.status)?d.status:''); badge.textContent=statuses[d.status]||'Sconosciuta';
-      card.append(title,badge,text);
+      card.append(title,badge);
+      const sentAt=reportDateElement(d.createdAt);
+      if(sentAt)card.append(sentAt);
+      card.append(text);
       if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
       if(d.contact){const c=document.createElement('p');c.textContent='Contatto: '+d.contact;card.append(c)}
       if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
@@ -99,7 +113,7 @@ onAuthStateChanged(auth,async u=>{
       if(!item.metadata.hasPendingWrites){
         const previous=known.get(item.id);
         if(isAdmin() && !previous && d.status==='new')
-          reportNotice('Nuova segnalazione',d.title,d.message);
+          reportNotice('Nuova segnalazione',d.title,d.message,d.createdAt);
         else if(!isAdmin() && ((previous && previous.status!==d.status) || (!previous && initial && d.status!=='new')))
           reportNotice('Stato aggiornato',d.title,statuses[d.status]||'Sconosciuta');
       }
@@ -109,11 +123,13 @@ onAuthStateChanged(auth,async u=>{
     latestDocs=snap.docs.slice(); renderReports();
   },()=>$('#list-message').textContent='Impossibile caricare le segnalazioni. Riprova più tardi.');
 });
-function reportNotice(heading,title,body){
+function reportNotice(heading,title,body,createdAt){
   const box=document.createElement('article'), strong=document.createElement('strong'), subject=document.createElement('p'), text=document.createElement('p'), close=document.createElement('button');
   box.className='report-notice';strong.textContent=heading;subject.textContent=title||'';text.textContent=body||'';
   close.type='button';close.textContent='Chiudi';close.onclick=()=>box.remove();
-  box.append(strong,subject,text,close);$('#report-notices').prepend(box);
+  box.append(strong,subject);
+  const sentAt=reportDateElement(createdAt);if(sentAt)box.append(sentAt);
+  box.append(text,close);$('#report-notices').prepend(box);
 }
 
 $('#form').onsubmit=async e=>{
