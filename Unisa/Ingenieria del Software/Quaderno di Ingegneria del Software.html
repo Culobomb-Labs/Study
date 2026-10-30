@@ -751,7 +751,27 @@ html{scroll-behavior:smooth}
     <li><b>Boundary:</b> individua i punti di contatto che servono agli attori per avviare azioni, inserire dati o leggere risposte. Un form molto ricco può richiedere più boundary, ma non una classe per ogni singolo controllo grafico.</li>
     <li><b>Control:</b> individua il coordinamento di un caso d’uso, soprattutto quando il flusso ha più passi, alternative o interazioni. Il control governa la sequenza; le entity conservano le informazioni di dominio.</li>
   </ul>
-  <p>Per esempio, nel caso <code>ReportEmergency</code>, l’ufficiale sul campo usa un form per indicare tipo e luogo dell’emergenza; un control valida e coordina l’invio; un <code>EmergencyReport</code> rappresenta la segnalazione. La risposta del dispatcher può rivelare un nuovo concetto, <code>Acknowledgment</code>: è un buon esempio di come l’analisi raffini il modello quando si chiarisce uno scenario.</p>
+  <p>Nel caso <code>ReportEmergency</code>, dall’use case, dalla conoscenza del dominio e dalle interviste emergono queste <b>Entity</b>. Alcuni concetti, come <code>EmergencyReport</code>, si deducono dal flusso anche se non sono nominati subito con il loro nome di dominio.</p>
+  <div class="tbl"><table>
+    <tr><th>Entity</th><th>Che cosa rappresenta</th><th>Informazioni / responsabilità utili</th></tr>
+    <tr><td><code>Dispatcher</code></td><td>Operatore dell’ufficio di polizia che gestisce gli incidenti.</td><td>Apre, documenta e chiude gli incidenti; identificato dal numero di badge.</td></tr>
+    <tr><td><code>FieldOfficer</code></td><td>Funzionario in servizio presso polizia o vigili del fuoco.</td><td>Identificato dal badge; può essere assegnato al più a un incidente alla volta.</td></tr>
+    <tr><td><code>Incident</code></td><td>Situazione che richiede attenzione e gestione.</td><td>Descrizione, risposta, stato (aperto, chiuso, documentato), luogo e FieldOfficer assegnati.</td></tr>
+    <tr><td><code>EmergencyReport</code></td><td>Segnalazione iniziale di un FieldOfficer a un Dispatcher su un incidente.</td><td>Livello e tipo di emergenza, luogo e descrizione; di solito porta alla creazione di un Incident.</td></tr>
+  </table></div>
+  <p>Nel flusso, FRIEND presenta il form al <code>FieldOfficer</code>, che inserisce tipo, luogo, descrizione e risorse richieste. Quando invia il report, il <code>Dispatcher</code> lo esamina, crea o aggiorna l’<code>Incident</code>, sceglie una risposta e invia una conferma al FieldOfficer. L’analisi rende così espliciti sia gli oggetti sia le informazioni che passano tra loro.</p>
+  <h4>Boundary individuati nello stesso use case</h4>
+  <p>Ogni attore interagisce con almeno un Boundary. Il Boundary raccoglie informazioni dall’attore e le traduce in una forma usabile da Control ed Entity; rappresenta il confine dell’interazione, <b>non il disegno grafico della UI</b>. Non modellare singole scrollbar o dettagli visuali: l’interfaccia evolve spesso con prototipi e prove di usabilità.</p>
+  <div class="tbl"><table>
+    <tr><th>Boundary</th><th>Uso nello scenario</th></tr>
+    <tr><td><code>ReportEmergencyButton</code></td><td>Permette al FieldOfficer di avviare il caso d’uso.</td></tr>
+    <tr><td><code>EmergencyReportForm</code></td><td>Raccoglie tutti i campi del report e l’azione per inviarlo, sul FieldOfficerStation.</td></tr>
+    <tr><td><code>AcknowledgmentNotice</code></td><td>Mostra al FieldOfficer la conferma del Dispatcher.</td></tr>
+    <tr><td><code>FieldOfficerStation</code></td><td>Rappresenta il terminale attraverso cui il FieldOfficer usa il sistema.</td></tr>
+    <tr><td><code>DispatcherStation</code></td><td>Rappresenta il terminale usato dal Dispatcher.</td></tr>
+    <tr><td><code>IncidentForm</code></td><td>Permette al Dispatcher di creare l’Incident, assegnare risorse e notificare la presa in carico.</td></tr>
+  </table></div>
+  <div class="note">Per identificare i Boundary, cerca i controlli che avviano lo use case, i form che raccolgono dati, gli avvisi con cui il sistema risponde e i terminali usati dagli attori coinvolti. Dai loro nomi usa il linguaggio dell’utente finale, non dettagli di implementazione.</div>
 
   <div class="note">Per trovare associazioni, cerca nei requisiti verbi come “ha”, “contiene”, “gestisce” o “segnala”. Specifica nome del ruolo e molteplicità, e verifica che ogni relazione serva davvero a uno scenario o a una regola del dominio.</div>
   <h3>Dettagliare associazioni, attributi e gerarchie</h3>
