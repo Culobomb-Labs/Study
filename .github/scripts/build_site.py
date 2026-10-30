@@ -29,6 +29,25 @@ EXT = {"png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "webp": "webp", 
 THEME_BOOT = '<script>try{var t=localStorage.getItem("ua-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>'
 
 
+def site_version():
+    """Calcola una versione stabile a partire dal commit che introduce il marcatore."""
+    marker = ".github/site-version-origin"
+    origin = subprocess.run(
+        ["git", "log", "--first-parent", "--diff-merges=first-parent",
+         "--diff-filter=A", "--format=%H", "--", marker],
+        capture_output=True, text=True, check=True,
+    ).stdout.splitlines()
+    if not origin:
+        raise RuntimeError("Impossibile trovare il commit iniziale del versionamento: serve la cronologia Git completa.")
+    commits = subprocess.run(
+        ["git", "log", "--first-parent", "--format=%s", origin[-1] + "..HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.splitlines()
+    # La news automatica non rappresenta una modifica indipendente del sito.
+    count = sum(1 for message in commits if not message.startswith("News automatica: "))
+    return f"1.{count // 10}.{count % 10}"
+
+
 def last_commit_date(path):
     out = subprocess.run(["git", "log", "-1", "--format=%cI", "--", path],
                          capture_output=True, text=True).stdout.strip()
@@ -193,7 +212,7 @@ def main():
     with open(os.path.join(OUT, "search-index.json"), "w", encoding="utf-8") as f:
         json.dump({"secs": index_secs}, f, ensure_ascii=False, separators=(",", ":"))
     with open(os.path.join(OUT, "updates.json"), "w", encoding="utf-8") as f:
-        json.dump({"built": datetime.now(timezone.utc).isoformat(), "files": updates, "progress": progress}, f, ensure_ascii=False, indent=1)
+        json.dump({"built": datetime.now(timezone.utc).isoformat(), "version": site_version(), "files": updates, "progress": progress}, f, ensure_ascii=False, indent=1)
     open(os.path.join(OUT, ".nojekyll"), "w").close()
 
     # service worker: versione del sito + elenco di tutti i file da salvare per l'uso offline
