@@ -57,6 +57,8 @@ onAuthStateChanged(auth,async u=>{
   $('#list-message').textContent='Caricamento…';
   const ref=collection(db,'reports');
   let initial=true, known=new Map();
+  const seenKey='ua-report-seen-v1:'+u.uid;
+  try {const saved=JSON.parse(localStorage.getItem(seenKey)||'{}');known=new Map(Object.entries(saved));} catch(e) {known=new Map();}
   renderReports=()=>{
     $('#list').replaceChildren();
     const term=isAdmin()?$('#report-search').value.trim().toLocaleLowerCase('it'):'';
@@ -94,15 +96,16 @@ onAuthStateChanged(auth,async u=>{
     const current=new Map();
     for(const item of snap.docs){
       const d=item.data(); current.set(item.id,{status:d.status});
-      if(!initial && !item.metadata.hasPendingWrites){
+      if(!item.metadata.hasPendingWrites){
         const previous=known.get(item.id);
-        if(isAdmin() && !previous && d.userId!==u.uid)
+        if(isAdmin() && !previous && d.status==='new')
           reportNotice('Nuova segnalazione',d.title,d.message);
-        else if(!isAdmin() && previous && previous.status!==d.status)
+        else if(!isAdmin() && ((previous && previous.status!==d.status) || (!previous && initial && d.status!=='new')))
           reportNotice('Stato aggiornato',d.title,statuses[d.status]||'Sconosciuta');
       }
     }
     known=current; initial=false;
+    if(!snap.metadata.fromCache && !snap.metadata.hasPendingWrites){try{localStorage.setItem(seenKey,JSON.stringify(Object.fromEntries(current)));}catch(e){}}
     latestDocs=snap.docs.slice(); renderReports();
   },()=>$('#list-message').textContent='Impossibile caricare le segnalazioni. Riprova più tardi.');
 });
