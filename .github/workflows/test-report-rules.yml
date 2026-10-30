@@ -1,0 +1,23 @@
+name: Test report rules
+on:
+  push:
+    branches: [feature/report-status-comments]
+  pull_request:
+    paths: ['firestore.rules', '.github/scripts/test-report-rules.mjs', '.github/workflows/test-report-rules.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-audit --no-fund firebase firebase-tools @firebase/rules-unit-testing
+      - run: echo '{"emulators":{"firestore":{"port":8080},"ui":{"enabled":false}}}' > firebase.json
+      - run: npx firebase emulators:exec --only firestore --project demo-report-rules "node .github/scripts/test-report-rules.mjs"
