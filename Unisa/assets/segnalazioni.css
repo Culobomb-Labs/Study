@@ -57,7 +57,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 .entry p{white-space:pre-wrap;margin:12px 0 0;color:var(--ink);font-size:14.5px;line-height:1.6}
 .status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font:600 12px/1.1 var(--font-body)}
 .status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.status.new{color:#865008;background:#fbefdc}.status.rejected{color:#9b3030;background:#fbe5e5}.status.resolved{color:#21663c;background:#e4f2e9}
+.status.new{color:#164a98;background:#e4efff}.status.in_progress{color:#865008;background:#fbefdc}.status.rejected{color:#9b3030;background:#fbe5e5}.status.resolved{color:#21663c;background:#e4f2e9}
 .entry select{margin-top:6px;cursor:pointer}
 @media(max-width:760px){.reports-hero{padding:38px 0 26px}.grid{grid-template-columns:1fr}.report-panel{padding:22px}.intro{font-size:16px}}
 @media(max-width:420px){.account{width:100%;flex-wrap:wrap}.account-copy{flex:1}#login{width:100%}.reports-page{padding-bottom:40px}}
@@ -68,3 +68,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 .account-icon,.account-label,#identity{display:none}
 .account:has(#login[hidden]):has(#auth-message:empty){display:none}
 #send{margin-top:18px}
+
+.entry textarea{display:block;width:100%;margin-top:6px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;padding:10px;resize:vertical}
+.entry textarea:focus-visible,.save-comment:focus-visible,.report-notice button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.save-comment,.report-notice button{margin-top:10px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:600 13px var(--font-body);cursor:pointer}
+.save-comment:disabled{opacity:.5}
+.admin-response{margin-top:14px;padding:12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:4px}
+.admin-response strong{font-size:13px}.admin-response p{margin-top:5px}
+.report-notices{display:grid;gap:10px;margin-bottom:18px}.report-notices:empty{display:none}
+.report-notice{padding:16px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;background:var(--surface);overflow-wrap:anywhere}
+.report-notice p{white-space:pre-wrap;margin:5px 0;color:var(--ink)}
