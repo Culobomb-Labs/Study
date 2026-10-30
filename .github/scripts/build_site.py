@@ -31,12 +31,14 @@ THEME_BOOT = '<script>try{var t=localStorage.getItem("ua-theme");if(t)document.d
 
 def site_version():
     """Calcola una versione stabile a partire dal commit che introduce il marcatore."""
-    marker = ".github/site-version-origin"
-    origin = subprocess.run(
+    marker = ".github/site-version-start"
+    output = subprocess.run(
         ["git", "log", "--first-parent", "--diff-merges=first-parent",
-         "--diff-filter=A", "--format=%H", "--", marker],
+         "--diff-filter=A", "--no-patch", "--format=%H", "--", marker],
         capture_output=True, text=True, check=True,
     ).stdout.splitlines()
+    # Accetta solo identificativi di commit, anche con configurazioni Git personalizzate.
+    origin = [line for line in output if re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", line)]
     if not origin:
         raise RuntimeError("Impossibile trovare il commit iniziale del versionamento: serve la cronologia Git completa.")
     commits = subprocess.run(

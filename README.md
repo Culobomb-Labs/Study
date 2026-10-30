@@ -39,7 +39,7 @@ La pubblicazione è gestita dal workflow GitHub Actions: una modifica a `main` a
 
 In fondo alla pagina principale sono mostrati il momento della build in ora di Roma e la versione del sito. La data dei singoli documenti corrisponde all'ultimo commit che ha modificato il relativo file.
 
-Il versionamento parte da `1.0.0` con il commit che introduce `.github/site-version-origin`. Per ogni commit successivo sulla storia principale, esclusi quelli automatici con messaggio che inizia per `News automatica: `, l'ultima cifra aumenta da 0 a 9 e poi si incrementa la cifra centrale: `1.0.9`, `1.1.0`, `1.1.1`. Una nuova build dello stesso commit mantiene la stessa versione. Il numero identifica lo stato della storia Git, non il numero di deploy riusciti; più commit possono essere pubblicati insieme. Non eliminare o rinominare il marcatore e conservare la cronologia completa durante la build.
+Il versionamento parte da `1.0.0` con il commit che introduce `.github/site-version-start`. Per ogni commit successivo sulla storia principale, esclusi quelli automatici con messaggio che inizia per `News automatica: `, l'ultima cifra aumenta da 0 a 9 e poi si incrementa la cifra centrale: `1.0.9`, `1.1.0`, `1.1.1`. Una nuova build dello stesso commit mantiene la stessa versione. Il numero identifica lo stato della storia Git, non il numero di deploy riusciti; più commit possono essere pubblicati insieme. Non eliminare o rinominare il marcatore e conservare la cronologia completa durante la build.
 
 ## Account, progressi e segnalazioni
 
