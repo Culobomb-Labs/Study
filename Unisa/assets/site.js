@@ -424,6 +424,9 @@
     return fbAuthP;
   }
 
+  // La pagina delle segnalazioni condivide lo stesso accesso e la sincronizzazione.
+  window.addEventListener("ua-reports-auth", () => { fbAuth().catch(() => {}); });
+
   // ogni volta che una pagina salva una spunta, la segniamo "da inviare"
   function watchStorage() {
     if (!LS) return;
