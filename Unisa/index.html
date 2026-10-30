@@ -261,7 +261,7 @@ paintInfo(null);
 fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
   paintInfo(data);
-  if (data.built) document.getElementById("built").textContent = "Ultimo aggiornamento: " + fmt(data.built) + " (ora di Roma)";
+  if (data.built) document.getElementById("built").textContent = fmt(data.built);
   if (data.version) document.getElementById("version").textContent = "Versione " + data.version;
 }).catch(() => {});
 
