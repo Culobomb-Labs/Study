@@ -1,1 +1,52 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Segnalazioni · Appunti Unisa</title><script>try{var t=localStorage.getItem('ua-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="assets/site.css"><link rel="stylesheet" href="assets/segnalazioni.css"></head><body><main><h1>Segnalazioni</h1><p>Segnala un problema e controlla qui lo stato della tua richiesta. Per inviare e vedere le segnalazioni accedi con Google. Per uscire, usa il menu del tuo account nella barra in alto.</p><div class="account"><button id="login" type="button" hidden disabled>Accedi con Google</button><span id="identity"></span></div><p id="auth-message" role="status" aria-live="polite">Verifica dell’account…</p><div class="grid"><section><h2>Nuova segnalazione</h2><form id="form"><label>Titolo<input name="title" minlength="3" maxlength="120" required></label><label>Testo<textarea name="text" rows="9" minlength="10" maxlength="1500" required></textarea></label><small id="counter">0 / 1500</small><label>Contatto per la risposta (facoltativo)<input name="contact" maxlength="200" placeholder="Email o altro contatto"></label><button id="send" disabled>Invia segnalazione</button><p id="message" role="status"></p></form></section><section><h2 id="list-title">Le tue segnalazioni</h2><p id="list-message" role="status">Accedi per vedere le segnalazioni.</p><div id="list"></div></section></div></main><script type="module">import("./assets/segnalazioni-auth-v3.js?v=1").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script></body></html>
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111418">
+<title>Segnalazioni · Appunti Unisa</title>
+<script>try{var t=localStorage.getItem('ua-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/segnalazioni.css">
+</head>
+<body>
+<main class="reports-page">
+  <header class="reports-hero">
+    <p class="eyebrow">Appunti Unisa <span aria-hidden="true">/</span> Assistenza</p>
+    <h1>Segnalazioni<span class="hero-dot" aria-hidden="true">.</span></h1>
+    <p class="intro">Hai trovato un problema? Raccontaci cosa è successo e segui qui lo stato della tua segnalazione.</p>
+    <div class="account">
+      <span class="account-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+      <div class="account-copy"><span class="account-label">Il tuo account</span><span id="identity"></span><p id="auth-message" role="status" aria-live="polite">Verifica dell’account…</p></div>
+      <button id="login" type="button" hidden disabled>Accedi con Google</button>
+    </div>
+    <p class="account-note">Per inviare e consultare le segnalazioni accedi con Google. Per uscire, usa il menu del tuo account nella barra in alto.</p>
+  </header>
+  <div class="grid">
+    <section class="report-panel form-panel" aria-labelledby="form-title">
+      <div class="panel-heading"><span class="panel-number">01</span><div><h2 id="form-title">Nuova segnalazione</h2><p>Raccontaci il problema con qualche dettaglio.</p></div></div>
+      <form id="form">
+        <label for="report-title">Titolo</label>
+        <input id="report-title" name="title" minlength="3" maxlength="120" required placeholder="Riassumi il problema">
+        <div class="label-row"><label for="report-text">Testo</label><small id="counter">0 / 1500</small></div>
+        <textarea id="report-text" name="text" rows="9" minlength="10" maxlength="1500" required placeholder="Descrivi cosa è successo e, se possibile, come riprodurre il problema." aria-describedby="counter"></textarea>
+        <label for="report-contact">Contatto per la risposta <span class="optional">Facoltativo</span></label>
+        <input id="report-contact" name="contact" maxlength="200" placeholder="Email o altro contatto">
+        <p class="privacy-note">Non inserire password o dati sensibili nella segnalazione.</p>
+        <button id="send" type="submit" disabled>Invia segnalazione <span aria-hidden="true">↗</span></button>
+        <p id="message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    <section class="report-panel list-panel" aria-labelledby="list-title">
+      <div class="panel-heading"><span class="panel-number">02</span><div><h2 id="list-title">Le tue segnalazioni</h2><p>Controlla qui gli aggiornamenti e lo stato delle richieste.</p></div></div>
+      <p id="list-message" role="status" aria-live="polite">Accedi per vedere le segnalazioni.</p>
+      <div id="list"></div>
+    </section>
+  </div>
+</main>
+<script type="module">import("./assets/segnalazioni-auth-v3.js?v=1").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
+</body>
+</html>

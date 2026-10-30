@@ -267,7 +267,7 @@ fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
     const date = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome" }).format(built);
     document.getElementById("built").textContent = `${date}, ${time}`;
   }
-  if (data.version) document.getElementById("version").textContent = "Versione " + data.version;
+  if (data.version) document.getElementById("version").textContent = "ver. " + data.version;
 }).catch(() => {});
 
 /* Riprendi da dove eri */
