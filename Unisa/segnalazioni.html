@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/segnalazioni.css">
+<link rel="stylesheet" href="assets/segnalazioni.css?v=2">
 </head>
 <body>
 <main class="reports-page">
@@ -25,6 +25,7 @@
     </div>
     <p class="account-note">Per inviare e consultare le segnalazioni accedi con Google. Per uscire, usa il menu del tuo account nella barra in alto.</p>
   </header>
+  <div id="report-notices" class="report-notices" aria-live="polite"></div>
   <div class="grid">
     <section class="report-panel form-panel" aria-labelledby="form-title">
       <div class="panel-heading"><span class="panel-number">01</span><div><h2 id="form-title">Nuova segnalazione</h2><p>Raccontaci il problema con qualche dettaglio.</p></div></div>
@@ -35,18 +36,23 @@
         <textarea id="report-text" name="text" rows="9" minlength="10" maxlength="1500" required placeholder="Descrivi cosa è successo e, se possibile, come riprodurre il problema." aria-describedby="counter"></textarea>
         <label for="report-contact">Contatto per la risposta <span class="optional">Facoltativo</span></label>
         <input id="report-contact" name="contact" maxlength="200" placeholder="Email o altro contatto">
-        <p class="privacy-note">Non inserire password o dati sensibili nella segnalazione.</p>
+        <p class="privacy-note">Puoi inviare fino a 5 segnalazioni al giorno. L’indirizzo email del tuo account Google sarà visibile agli amministratori insieme alla segnalazione. Non inserire password o dati sensibili.</p>
         <button id="send" type="submit" disabled>Invia segnalazione <span aria-hidden="true">↗</span></button>
         <p id="message" role="status" aria-live="polite"></p>
       </form>
     </section>
     <section class="report-panel list-panel" aria-labelledby="list-title">
       <div class="panel-heading"><span class="panel-number">02</span><div><h2 id="list-title">Le tue segnalazioni</h2><p>Controlla qui gli aggiornamenti e lo stato delle richieste.</p></div></div>
+      <div id="admin-tools" class="admin-tools" hidden>
+        <label for="report-search">Cerca<input id="report-search" type="search" placeholder="Titolo, testo, email o contatto"></label>
+        <label for="report-filter">Stato<select id="report-filter"><option value="all">Tutti gli stati</option><option value="new">Nuova</option><option value="in_progress">In elaborazione</option><option value="resolved">Risolta</option><option value="rejected">Rifiutata</option></select></label>
+        <label for="report-sort">Ordina<select id="report-sort"><option value="newest">Più recenti</option><option value="oldest">Meno recenti</option><option value="status">Per stato</option></select></label>
+      </div>
       <p id="list-message" role="status" aria-live="polite">Accedi per vedere le segnalazioni.</p>
       <div id="list"></div>
     </section>
   </div>
 </main>
-<script type="module">import("./assets/segnalazioni-auth-v3.js?v=1").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
+<script type="module">import("./assets/segnalazioni-auth-v3.js?v=3").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
 </body>
 </html>
