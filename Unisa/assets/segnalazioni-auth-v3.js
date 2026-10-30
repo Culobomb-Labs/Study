@@ -6,7 +6,8 @@ const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
 let admin=false;
 const isAdmin=()=>admin;
-let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0;
+let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
+for(const id of ['report-search','report-filter','report-sort']) document.getElementById(id).addEventListener('input',()=>renderReports());
 const msg=(s)=>$('#message').textContent=s;
 const authMsg=(s)=>$('#auth-message').textContent=s;
 auth.languageCode='it';
@@ -48,27 +49,21 @@ onAuthStateChanged(auth,async u=>{
   readyUser=u;
   $('#send').disabled=!u || sending;
   $('#list-title').textContent=isAdmin()?'Tutte le segnalazioni':'Le tue segnalazioni';
+  $('#admin-tools').hidden=!isAdmin();
   $('#report-notices').replaceChildren();
   if(!u){$('#list-message').textContent='Accedi per vedere le segnalazioni.';return}
   $('#list-message').textContent='Caricamento…';
   const ref=collection(db,'reports');
   let initial=true, known=new Map();
-  unsubscribe=onSnapshot(isAdmin()?ref:query(ref,where('userId','==',u.uid)),snap=>{
-    if(version!==authVersion)return;
-    const current=new Map();
-    for(const item of snap.docs){
-      const d=item.data(); current.set(item.id,{status:d.status});
-      if(!initial && !item.metadata.hasPendingWrites){
-        const previous=known.get(item.id);
-        if(isAdmin() && !previous && d.userId!==u.uid)
-          reportNotice('Nuova segnalazione',d.title,d.message);
-        else if(!isAdmin() && previous && previous.status!==d.status)
-          reportNotice('Stato aggiornato',d.title,statuses[d.status]||'Sconosciuta');
-      }
-    }
-    known=current; initial=false;
-    $('#list').replaceChildren(); $('#list-message').textContent=snap.empty?'Nessuna segnalazione.':'';
-    for(const item of snap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0))){
+  renderReports=()=>{
+    $('#list').replaceChildren();
+    const term=isAdmin()?$('#report-search').value.trim().toLocaleLowerCase('it'):'';
+    const filter=isAdmin()?$('#report-filter').value:'all';
+    const order=isAdmin()?$('#report-sort').value:'newest';
+    const docs=latestDocs.filter(item=>{const d=item.data();return (filter==='all'||d.status===filter)&&(!term||[d.title,d.message,d.contact,d.authorEmail].some(x=>String(x||'').toLocaleLowerCase('it').includes(term)))});
+    docs.sort((a,b)=>{const x=a.data(),y=b.data(),delta=(x.createdAt?.seconds||0)-(y.createdAt?.seconds||0);return order==='oldest'?delta:order==='status'?(String(x.status).localeCompare(String(y.status))||-delta):-delta});
+    $('#list-message').textContent=docs.length?'':(latestDocs.length?'Nessuna segnalazione corrisponde alla ricerca.':'Nessuna segnalazione.');
+    for(const item of docs){
       const d=item.data(), card=document.createElement('article'), title=document.createElement('h3'), text=document.createElement('p'), badge=document.createElement('span');
       card.className='entry'; title.textContent=d.title; text.textContent=d.message;
       badge.className='status '+(Object.hasOwn(statuses,d.status)?d.status:''); badge.textContent=statuses[d.status]||'Sconosciuta';
@@ -91,6 +86,22 @@ onAuthStateChanged(auth,async u=>{
       }
       $('#list').append(card);
     }
+  };
+  unsubscribe=onSnapshot(isAdmin()?ref:query(ref,where('userId','==',u.uid)),snap=>{
+    if(version!==authVersion)return;
+    const current=new Map();
+    for(const item of snap.docs){
+      const d=item.data(); current.set(item.id,{status:d.status});
+      if(!initial && !item.metadata.hasPendingWrites){
+        const previous=known.get(item.id);
+        if(isAdmin() && !previous && d.userId!==u.uid)
+          reportNotice('Nuova segnalazione',d.title,d.message);
+        else if(!isAdmin() && previous && previous.status!==d.status)
+          reportNotice('Stato aggiornato',d.title,statuses[d.status]||'Sconosciuta');
+      }
+    }
+    known=current; initial=false;
+    latestDocs=snap.docs.slice(); renderReports();
   },()=>$('#list-message').textContent='Impossibile caricare le segnalazioni. Riprova più tardi.');
 });
 function reportNotice(heading,title,body){
