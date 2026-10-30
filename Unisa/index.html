@@ -120,6 +120,7 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 footer{border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
 footer a{text-underline-offset:3px}
+.build-meta{display:flex;flex-direction:column;gap:2px}
 
 @media (max-width:720px){
   .hero .wrap{grid-template-columns:1fr;padding-block:36px 26px}
@@ -161,13 +162,13 @@ footer a{text-underline-offset:3px}
 
   <footer><div class="wrap">
     <span>Il sito si aggiorna da solo a ogni modifica del repository · <a href="https://github.com/Culobomb-Labs/Study">sorgente su GitHub</a></span>
-    <span id="built"></span>
+    <div class="build-meta"><span id="built"></span><span id="version"></span></div>
   </div></footer>
 
 <script src="assets/corsi.js"></script>
 <script>
 const COURSES = window.CORSI || [];
-const fmt = iso => new Date(iso).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" });
+const fmt = iso => new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(new Date(iso));
 const list = document.getElementById("list");
 let updates = {};
 
@@ -260,7 +261,8 @@ paintInfo(null);
 fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
   paintInfo(data);
-  if (data.built) document.getElementById("built").textContent = "Ultimo aggiornamento: " + fmt(data.built);
+  if (data.built) document.getElementById("built").textContent = "Ultimo aggiornamento: " + fmt(data.built) + " (ora di Roma)";
+  if (data.version) document.getElementById("version").textContent = "Versione " + data.version;
 }).catch(() => {});
 
 /* Riprendi da dove eri */
