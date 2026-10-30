@@ -29,6 +29,15 @@ try {
   for(let i=0;i<4;i++) await assertSucceeds(submit(user));
   await assertFails(submit(user));
   await assertFails(submit(user,'reader',1));
+  await env.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(),'reportQuota','reader'),{count:5,lastReportId:'old',updatedAt:new Date(Date.now()-3*86400000)});
+  });
+  await assertSucceeds(submit(user,'reader',1));
+  for(let i=0;i<3;i++) await assertSucceeds(submit(user));
+  const parallel=await Promise.allSettled([submit(user),submit(user)]);
+  if(parallel.filter(x=>x.status==='fulfilled').length!==1) throw new Error('Concurrent submissions exceeded quota');
+  const fake=env.authenticatedContext('fake',{...claims,email_verified:false}).firestore();
+  await assertFails(getDoc(doc(fake,'reportQuota','fake')));
   const qa=doc(another,'reportQuota','another'), r1=doc(collection(another,'reports')), r2=doc(collection(another,'reports'));
   const batch=writeBatch(another);
   const anotherPayload=()=>({...payload(),userId:'another',authorEmail:'another@example.com'});
