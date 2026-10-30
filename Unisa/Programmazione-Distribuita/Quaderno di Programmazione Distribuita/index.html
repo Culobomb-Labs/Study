@@ -1082,6 +1082,13 @@ end = System.currentTimeMillis();            <span class="c">// fermo il cronome
     <tr><td>Web</td><td>Rispondono a richieste HTTP: <b>Servlet</b> (classi che costruiscono risposte), <b>JSP</b> (documenti di testo che diventano servlet), <b>JSF</b> (costruite su servlet e JSP).</td></tr>
     <tr><td>Business</td><td><b>EJB</b>: componenti gestiti dal container per la logica transazionale. Accessibili in locale o da remoto (RMI, oppure HTTP per SOAP e REST).</td></tr>
   </table></div>
+  <h3>CDI: Context and Dependency Injection</h3>
+  <p><b>CDI</b> (Contexts and Dependency Injection) è il servizio Java EE che collega componenti gestiti dal container. Riunisce due idee: il <b>contesto</b>, che stabilisce ciclo di vita e ambito di un bean, e la <b>dependency injection</b>, con cui il container fornisce al bean le dipendenze di cui ha bisogno. I bean CDI possono integrarsi con altri servizi della piattaforma, come EJB e componenti web.</p>
+  <div class="def"><b class="lbl">Inversion of control</b>Con IoC il container controlla la creazione e la configurazione dei componenti, invece di lasciare al codice applicativo il compito di istanziare e collegare tutto. La DI è il meccanismo con cui risolve e inietta le dipendenze. L’applicazione dichiara ciò che le serve; il container chiama il codice nei momenti appropriati (“Don’t call us, we’ll call you”).</div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Il container risolve una dipendenza e la inietta nel bean che la richiede"><img src="img/cdi-dependency-injection.png" alt="Il container risolve una dipendenza e la inietta nel bean che la richiede" loading="lazy" decoding="async"></button><figcaption>Dependency injection: il bean dichiara il punto d’iniezione e il container fornisce l’implementazione compatibile <span>· CDI</span></figcaption></figure>
+
+  <div class="note">CDI promuove “loose coupling, strong typing”: le classi dipendono da tipi e contratti ben definiti, ma non devono conoscere direttamente la classe concreta che fornisce il servizio.</div>
+
   <h3>I servizi del container</h3>
   <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I container con le API e i servizi che offrono"><img src="img/jee-servizi.png" alt="I container con le API e i servizi che offrono" width="970" height="541" loading="lazy" decoding="async"></button><figcaption>I container con le API e i servizi che offrono <span>· Introduzione a Java EE</span></figcaption></figure>
   <div class="tbl"><table>
@@ -1158,11 +1165,147 @@ end = System.currentTimeMillis();            <span class="c">// fermo il cronome
     <details><summary>Vantaggio dei deployment descriptor?</summary><p>Si possono modificare senza cambiare il codice sorgente e senza ricompilare.</p></details>
     <details><summary>Cosa significa @Stateless?</summary><p>Che il bean non mantiene uno stato tra una chiamata e l'altra.</p></details>
   </div>
+
 </section>
 
 <!-- ================= 19 ================= -->
+<section class="ch" id="cdi1" data-t="Java EE 2: CDI 1 - Dependency Injection e Contexti" data-part="Java EE">
+  <div class="ch-head"><span class="ch-num">19</span><h2>Java EE 2 · CDI 1: Dependency Injection e Contexti</h2><span class="ch-sub">Bean, injection, qualifier, producer e scope</span></div>
+<h3>CDI Bean e dependency injection</h3>
+  <p>Un <b>POJO</b> è una normale classe Java. JavaBeans segue convenzioni come proprietà con getter/setter e costruttore senza argomenti; un EJB è un componente gestito dal container e può ricevere servizi come transazioni e sicurezza. Un <b>CDI Bean</b> è un oggetto scoperto e gestito dal container, con un ciclo di vita e uno scope. Si può usare da un altro bean tramite injection oppure, in applicazioni web, da componenti come una pagina JSF.</p>
+  <p>Con creazione manuale il servizio decide l’implementazione e resta legato ad essa:</p>
+  <pre><code>public class BookService {
+  private NumberGenerator generator = new IsbnGenerator();
+}</code></pre>
+  <p>Se si vuole cambiare implementazione bisogna modificare il servizio o passargli la dipendenza a mano. Con CDI il bean dichiara il punto d’iniezione e il container risolve il collegamento:</p>
+  <pre><code>public class BookService {
+  @Inject
+  private NumberGenerator generator;
+
+  public Book createBook(String title) {
+    Book book = new Book(title);
+    book.setIsbn(generator.generateNumber());
+    return book;
+  }
+}</code></pre>
+  <p>Il bean non usa <code>new</code> per creare un’altra istanza gestita dal container. CDI può iniettare su campi, parametri di costruttore e metodi inizializzatori. L’iniezione via costruttore rende esplicite le dipendenze necessarie; quella su campo è concisa ma meno visibile dall’esterno. Le dipendenze sono disponibili prima dell’invocazione dei metodi di business.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I container standard Java EE, compreso il ruolo del container che gestisce i componenti"><img src="img/jee-container.png" alt="I container standard Java EE: i componenti sono eseguiti e gestiti dai rispettivi container" width="494" height="425" loading="lazy" decoding="async"></button><figcaption>I container Java EE forniscono il contesto in cui i componenti gestiti possono ricevere servizi e dipendenze <span>· Introduzione a Java EE</span></figcaption></figure>
+
+  <h3>Qualifiers: scegliere l’implementazione giusta</h3>
+  <p>Il tipo dell’injection point non sempre identifica un solo bean. Se <code>NumberGenerator</code> ha un solo bean compatibile, CDI può usare il qualifier predefinito <code>@Default</code>. Se non ne trova nessuno la dipendenza è insoddisfatta; se ne trova più di uno senza poter distinguere, è ambigua e il deploy fallisce. Il container verifica questi problemi all’avvio, prima che una richiesta raggiunga il metodo.</p>
+  <p>Un <b>qualifier</b> è un’annotazione usata sia sull’implementazione sia sul punto d’iniezione per indicare quale bean scegliere. Per esempio, <code>@ThirteenDigits</code> distingue il generatore ISBN dal generatore ISSN a otto cifre:</p>
+  <pre><code>@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, FIELD, PARAMETER, METHOD})
+public @interface ThirteenDigits {}
+
+@ThirteenDigits
+public class IsbnGenerator implements NumberGenerator { ... }
+
+@Inject
+@ThirteenDigits
+private NumberGenerator generator;</code></pre>
+  <p>La regola è che il bean iniettato deve corrispondere al tipo richiesto e a tutti i qualifier dell’injection point. I qualifier personalizzati sono type-safe: un nome sbagliato o un bean mancante viene rilevato dal container, non rimandato a un lookup testuale durante l’esecuzione.</p>
+
+  <h3>Producer e disposer</h3>
+  <p>Non tutte le dipendenze sono bean CDI. Classi di libreria come <code>String</code>, <code>Date</code> o <code>Connection</code> non si possono annotare per trasformarle in bean. Un metodo o campo <b>producer</b> (<code>@Produces</code>) consente al container di fornire un valore di quel tipo e, se serve, di applicarvi qualifier e scope.</p>
+  <pre><code>public class NumberProducer {
+  @Produces
+  @ThirteenDigits
+  NumberGenerator createIsbnGenerator() {
+    return new IsbnGenerator();
+  }
+}</code></pre>
+  <p>Un producer può centralizzare la creazione di risorse o valori configurati. Quando il contesto del bean client termina, un metodo <b>disposer</b> con parametro <code>@Disposes</code> può rilasciare la risorsa corrispondente, per esempio chiudere una connessione JDBC. Il tipo e gli eventuali qualifier del parametro disposer devono corrispondere a quelli prodotti.</p>
+  <pre><code>@Produces
+Connection openConnection() { ... }
+
+void closeConnection(@Disposes Connection connection)
+    throws SQLException {
+  connection.close();
+}</code></pre>
+  <div class="note">Producer = crea e rende iniettabile una dipendenza. Disposer = esegue la pulizia associata quando il contesto del client termina.</div>
+
+  <h3>Contesti, scope e ciclo di vita</h3>
+  <p>In un programma Java ordinario il codice crea un oggetto con <code>new</code> e la memoria viene poi recuperata dal garbage collector. Per i bean gestiti, il container controlla creazione, riuso e distruzione in base allo <b>scope</b>. Le richieste che ricadono nello stesso contesto condividono la stessa istanza appropriata.</p>
+  <div class="tbl"><table>
+    <tr><th>Scope CDI</th><th>Durata e uso tipico</th></tr>
+    <tr><td><code>@ApplicationScoped</code></td><td>Una istanza condivisa per la durata dell’applicazione.</td></tr>
+    <tr><td><code>@SessionScoped</code></td><td>Una istanza per sessione utente, riusata tra le richieste della stessa sessione; adatta, per esempio, a un carrello.</td></tr>
+    <tr><td><code>@RequestScoped</code></td><td>Una istanza per una singola richiesta/invocazione.</td></tr>
+    <tr><td><code>@ConversationScoped</code></td><td>Un contesto esteso su più richieste di una conversazione, avviato e terminato esplicitamente.</td></tr>
+    <tr><td><code>@Dependent</code></td><td>Scope predefinito: il ciclo di vita del bean dipende dal bean o dal punto che lo riceve.</td></tr>
+  </table></div>
+  <p>Usa uno scope coerente con i dati: un carrello di Anna non deve essere condiviso con Luca. I bean di sessione e conversazione che attraversano richieste web devono rispettare i requisiti di serializzazione della piattaforma (tipicamente implementare <code>Serializable</code>). Il container invoca callback come <code>@PostConstruct</code> dopo l’iniezione e <code>@PreDestroy</code> prima della distruzione, utili per inizializzare o liberare risorse.</p>
+  <div class="flow"><span>creazione</span><i>→</i><span class="hot">iniezione</span><i>→</i><span>@PostConstruct</span><i>→</i><span>uso nel contesto</span><i>→</i><span>@PreDestroy</span><i>→</i><span>disposizione</span></div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Ciclo di vita di un CDI bean nei diversi scope e callback"><img src="img/cdi-scopes-lifecycle.png" alt="Ciclo di vita di un CDI bean nei diversi scope e callback" loading="lazy" decoding="async"></button><figcaption>Scope e ciclo di vita: il container gestisce l’istanza fino alla fine del suo contesto <span>· CDI</span></figcaption></figure>
+
+<h3>Attivare CDI e leggere il deployment descriptor</h3>
+  <p>Il container deve scoprire i bean e sapere quali servizi abilitare. Nelle versioni e modalità trattate dalle slide, <code>beans.xml</code> si colloca in <code>META-INF</code> o <code>WEB-INF</code>; descrive la configurazione e può abilitare interceptor e decorator. Nelle applicazioni modulari, ogni archivio che deve partecipare al bean discovery può richiedere la propria configurazione, secondo la versione CDI e la modalità di discovery adottata.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: I deployment descriptor Java EE e dove si trovano"><img src="img/jee-dd.png" alt="Posizione dei deployment descriptor nei moduli Java EE, tra cui META-INF e WEB-INF" width="710" height="428" loading="lazy" decoding="async"></button><figcaption>Deployment descriptor e collocazione nei moduli Java EE <span>· Introduzione a Java EE</span></figcaption></figure>
+  <p>La configurazione XML è esterna al codice, mentre le annotazioni sono vicine ai componenti. In caso di impostazioni sovrapposte, attieniti alle regole del componente e della versione Java EE/CDI usata nel corso.</p>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Chi crea e collega un bean quando si usa @Inject?</summary><p>Il container CDI crea i bean gestiti, individua le dipendenze compatibili e le inietta nei punti dichiarati.</p></details>
+    <details><summary>Che cosa succede se un injection point ha due bean compatibili e nessun qualifier che li distingua?</summary><p>La dipendenza è ambigua; il container segnala l’errore durante la validazione/deploy.</p></details>
+    <details><summary>A cosa servono @Produces e @Disposes?</summary><p>Il producer rende disponibile una dipendenza non bean o costruita appositamente; il disposer la rilascia quando termina il contesto del client.</p></details>
+    <details><summary>Quando condividono lo stesso bean due richieste HTTP?</summary><p>Quando ricadono nello stesso contesto dello scope; con @SessionScoped le richieste della stessa sessione condividono l’istanza, sessioni diverse ne hanno una ciascuna.</p></details>
+  </div>
+</section>
+
+<!-- ================= 20 ================= -->
+<section class="ch" id="cdi2" data-t="Java EE 3: CDI 2 - Interceptor, Decorator ed Eventi" data-part="Java EE">
+  <div class="ch-head"><span class="ch-num">20</span><h2>Java EE 3 · CDI 2: Interceptor, Decorator ed Eventi</h2><span class="ch-sub">Comportamento trasversale, decorazione e comunicazione disaccoppiata</span></div>
+<h3>Interceptor: servizi trasversali</h3>
+  <p>Un <b>interceptor</b> si inserisce attorno a un’invocazione gestita dal container. È utile per i <i>cross-cutting concerns</i>, cioè attività tecniche che attraversano molti metodi, come logging, misurazione dei tempi, sicurezza e transazioni. La logica di logging resta separata dal codice aziendale.</p>
+  <p>Un metodo <code>@AroundInvoke</code> riceve un <code>InvocationContext</code> e restituisce un <code>Object</code>. La chiamata a <code>proceed()</code> continua la catena e raggiunge l’interceptor successivo o il metodo originale; il valore restituito è il risultato dell’invocazione. L’interceptor può eseguire operazioni prima e dopo, e può propagare eccezioni.</p>
+  <pre><code>@AroundInvoke
+public Object log(InvocationContext context) throws Exception {
+  logger.info("Inizio " + context.getMethod().getName());
+  try {
+    return context.proceed();
+  } finally {
+    logger.info("Fine " + context.getMethod().getName());
+  }
+}</code></pre>
+  <p>Gli interceptor possono essere associati direttamente con <code>@Interceptors</code> a un metodo o a un bean. Più interceptor sono invocati nell’ordine specificato. Un <b>interceptor binding</b> personalizzato, marcato <code>@InterceptorBinding</code>, permette di collegare l’interceptor a un’annotazione descrittiva come <code>@Loggable</code>. Il binding introduce indirezione e riuso; quando serve un ordine, la piattaforma permette di stabilire una priorità o dichiarare esplicitamente la sequenza secondo la configurazione supportata.</p>
+  <p>Esistono anche callback di ciclo di vita: <code>@AroundConstruct</code> intercetta la costruzione; <code>@PostConstruct</code> e <code>@PreDestroy</code> sono callback di inizializzazione e distruzione; <code>@AroundTimeout</code> riguarda le invocazioni di timeout. Gli interceptor di lifecycle hanno firma e risultato diversi da <code>@AroundInvoke</code>.</p>
+  <div class="note">Un interceptor dovrebbe essere indipendente dal significato del metodo intercettato: registra o controlla un aspetto trasversale senza diventare parte della logica specifica di <code>createBook()</code>.</div>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Sequenza di invocazione attraverso container, interceptor, metodo business e logger"><img src="img/cdi-interceptor-chain.png" alt="Sequenza di invocazione attraverso container, interceptor, metodo business e logger" loading="lazy" decoding="async"></button><figcaption>Interceptor: il container inserisce logica trasversale prima e dopo il metodo business <span>· CDI</span></figcaption></figure>
+
+
+  <h3>Decorator: estendere la logica di business</h3>
+  <p>Il <b>decorator</b> ha uno scopo diverso dall’interceptor: aggiunge comportamento consapevole del contratto di business di un tipo, implementandone la stessa interfaccia e delegando al bean decorato tramite <code>@Delegate</code>. Nell’esempio delle slide, un decorator trasforma il generatore ISSN a otto cifre per ottenere il formato a tredici cifre richiesto dal servizio.</p>
+  <p>Il decorator avvolge la chiamata e può modificare il comportamento o il risultato secondo le regole del dominio. Interceptor e decorator sono entrambi gestiti dal container; vanno abilitati/configurati nel <code>beans.xml</code> secondo la versione CDI usata. In breve: interceptor per aspetti tecnici trasversali e indipendenti dalla semantica; decorator per comportamento aggiuntivo di business sul tipo decorato.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Un decorator CDI delega al bean decorato e aggiunge comportamento di business"><img src="img/cdi-decorator.png" alt="Un decorator CDI delega al bean decorato e aggiunge comportamento di business" loading="lazy" decoding="async"></button><figcaption>Decorator: implementa lo stesso contratto e arricchisce la chiamata delegata <span>· CDI</span></figcaption></figure>
+
+
+  <h3>Eventi CDI: comunicare senza dipendenze dirette</h3>
+  <p>Con gli <b>eventi</b> un bean pubblica che qualcosa è accaduto senza conoscere i bean che reagiranno. Il produttore inietta <code>Event&lt;T&gt;</code> e chiama <code>fire(evento)</code>; uno o più observer dichiarano un metodo con parametro annotato <code>@Observes</code>. Il modello è quello Observer: chi emette e chi ascolta sono disaccoppiati anche se appartengono a package o layer diversi.</p>
+  <pre><code>public class BookService {
+  @Inject Event&lt;Book&gt; bookAdded;
+
+  public Book createBook(...) {
+    Book book = ...;
+    bookAdded.fire(book);
+    return book;
+  }
+}
+
+public class InventoryService {
+  public void addBook(@Observes Book book) {
+    inventory.add(book);
+  }
+}</code></pre>
+  <p>Gli observer CDI standard sono sincroni: <code>fire()</code> non termina finché gli observer sincroni non hanno completato il lavoro. Se un servizio deve reagire in modo diverso a eventi dello stesso tipo, qualifier come <code>@Added</code> e <code>@Removed</code> distinguono le notifiche. È possibile combinare gli observer con qualifier e relative membri per filtrare gli eventi, per esempio osservare solo libri con prezzo sopra una soglia.</p>
+  <figure class="fig"><button type="button" class="zoom" aria-label="Ingrandisci: Bean produttore pubblica un evento CDI ricevuto da uno o più observer"><img src="img/cdi-events.png" alt="Bean produttore pubblica un evento CDI ricevuto da uno o più observer" loading="lazy" decoding="async"></button><figcaption>Eventi CDI: producer e observer comunicano senza dipendenze dirette <span>· CDI</span></figcaption></figure>
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Interceptor o decorator per aggiungere il log prima e dopo ogni metodo?</summary><p>Interceptor: il logging è un aspetto tecnico trasversale, indipendente dal significato del metodo.</p></details>
+    <details><summary>In cosa differisce un evento CDI dall’invocare direttamente un metodo?</summary><p>Il produttore emette una notifica senza conoscere gli observer; con gli observer sincroni standard, però, fire() attende che finiscano.</p></details>
+  </div>
+</section>
+
 <section class="ch" id="standard" data-t="Standard, JCP e storia" data-part="Java EE">
-  <div class="ch-head"><span class="ch-num">19</span><h2>Standard, JCP e storia</h2><span class="ch-sub">Chi decide come è fatto Java EE</span></div>
+  <div class="ch-head"><span class="ch-num">21</span><h2>Standard, JCP e storia</h2><span class="ch-sub">Chi decide come è fatto Java EE</span></div>
   <ul>
     <li>Java EE è una "<b>specifica ombrello</b>" che raccoglie tante specifiche, sviluppate con il <b>Java Community Process</b> (JCP).</li>
     <li>Oggi l'evoluzione continua come <b>Jakarta EE</b>, sotto la <b>Eclipse Foundation</b>, con il <b>Jakarta EE Specification Process</b> (JESP).</li>
@@ -1199,9 +1342,9 @@ end = System.currentTimeMillis();            <span class="c">// fermo il cronome
 
 <div class="partbreak">Parte 5 · Messaging (JMS)</div>
 
-<!-- ================= 20 ================= -->
+<!-- ================= 22 ================= -->
 <section class="ch" id="messaging" data-t="Messaging: concetti" data-part="JMS">
-  <div class="ch-head"><span class="ch-num">20</span><h2>Messaging: i concetti</h2><span class="ch-sub">Lezione 5 · comunicare senza aspettarsi a vicenda</span></div>
+  <div class="ch-head"><span class="ch-num">22</span><h2>Messaging: i concetti</h2><span class="ch-sub">Lezione 5 · comunicare senza aspettarsi a vicenda</span></div>
   <div class="def"><b class="lbl">MOM</b>Un <b>Message-Oriented Middleware</b> è un software (il <b>provider</b>) che permette di scambiare messaggi <b>asincroni</b> tra sistemi diversi. Funziona come un <b>buffer</b>: qualcuno ci mette messaggi, qualcun altro li prende.</div>
   <ul>
     <li>È <b>loosely coupled</b> (debolmente accoppiato): chi produce non sa chi consumerà il messaggio.</li>
@@ -1248,9 +1391,9 @@ end = System.currentTimeMillis();            <span class="c">// fermo il cronome
   </div>
 </section>
 
-<!-- ================= 21 ================= -->
+<!-- ================= 23 ================= -->
 <section class="ch" id="jms-api" data-t="JMS: producer e consumer" data-part="JMS">
-  <div class="ch-head"><span class="ch-num">21</span><h2>JMS: producer e consumer</h2><span class="ch-sub">L'API e il codice delle slide</span></div>
+  <div class="ch-head"><span class="ch-num">23</span><h2>JMS: producer e consumer</h2><span class="ch-sub">L'API e il codice delle slide</span></div>
   <h3>I pezzi dell'API</h3>
   <figure class="fig small"><button type="button" class="zoom" aria-label="Ingrandisci: Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi"><img src="img/jms-factory.png" alt="Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi" width="224" height="202" loading="lazy" decoding="async"></button><figcaption>Dalla connection factory alla connessione, alla sessione, a producer, consumer e messaggi <span>· Messaging (1)</span></figcaption></figure>
   <ul>
