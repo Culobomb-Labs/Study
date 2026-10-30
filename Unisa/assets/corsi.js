@@ -16,7 +16,7 @@ window.CORSI =
     "resto": "1",
     "name": "Ingegneria del Software",
     "meta": "3° anno",
-    "stato": "in-aggiornamento",
+    "stato": "aggiornato",
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
