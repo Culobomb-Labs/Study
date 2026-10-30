@@ -261,7 +261,12 @@ paintInfo(null);
 fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
   paintInfo(data);
-  if (data.built) document.getElementById("built").textContent = fmt(data.built);
+  if (data.built) {
+    const built = new Date(data.built);
+    const time = new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(built);
+    const date = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome" }).format(built);
+    document.getElementById("built").textContent = `${time}, ${date}`;
+  }
   if (data.version) document.getElementById("version").textContent = "Versione " + data.version;
 }).catch(() => {});
 
