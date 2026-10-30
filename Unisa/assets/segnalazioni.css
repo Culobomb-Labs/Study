@@ -34,7 +34,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 .panel-heading h2{font:700 22px/1.2 var(--font-display);letter-spacing:-.02em;margin:0}
 .panel-heading p{color:var(--muted);font-size:14px;margin:5px 0 0}
 #form label,.entry label{display:block;font-weight:600;font-size:14px;margin:17px 0 6px}
-#form label:first-child{margin-top:0}
+#form > label:first-child{margin-top:0}
 .optional{font:400 12px/1 var(--font-body);color:var(--muted);margin-left:4px}
 .label-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .label-row small{color:var(--muted);font:400 12px/1 var(--font-mono)}
@@ -80,3 +80,5 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 .report-notice p{white-space:pre-wrap;margin:5px 0;color:var(--ink)}
 
 .admin-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.admin-tools[hidden]{display:none}.admin-tools label:first-child{grid-column:1/-1}.admin-tools label{font-size:13px;font-weight:600}.admin-tools input,.admin-tools select{display:block;width:100%;margin-top:5px;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}.admin-tools :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.report-date{display:block;margin-top:10px;color:var(--muted);font:400 12px/1.4 var(--font-mono)}
