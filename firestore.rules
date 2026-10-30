@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function googleUser() {
+      return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function isAdmin() {
+      return googleUser() && request.auth.token.email == 'gpeluso03@gmail.com';
+    }
+    // The EU clock changes at 01:00 UTC on the last Sundays of March and October.
+    function lastSunday(year, month) {
+      let end = timestamp.date(year, month, 31);
+      return end - duration.value(end.dayOfWeek() % 7, 'd');
+    }
+    function romeDate(t) {
+      let start = lastSunday(t.year(), 3) + duration.value(1, 'h');
+      let end = lastSunday(t.year(), 10) + duration.value(1, 'h');
+      let hours = t >= start && t < end ? 2 : 1;
+      return (t + duration.value(hours, 'h')).date();
+    }
+
+    match /utenti/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    match /notifiche/{token} {
+      allow create, update: if request.resource.data.token == token
+        && request.resource.data.keys().hasOnly(['token', 'aggiornato']);
+      allow delete: if true;
+      allow read: if false;
+    }
+    match /reportQuota/{uid} {
+      function reportPath() {
+        return /databases/$(database)/documents/reports/$(request.resource.data.lastReportId);
+      }
+      function correctCount() {
+        return !exists(/databases/$(database)/documents/reportQuota/$(uid))
+          ? request.resource.data.count == 1
+          : (romeDate(resource.data.updatedAt) == romeDate(request.time)
+             ? request.resource.data.count == resource.data.count + 1
+             : request.resource.data.count == 1);
+      }
+      allow get: if googleUser() && request.auth.uid == uid;
+      allow list, delete: if false;
+      allow create, update: if googleUser() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['count', 'lastReportId', 'updatedAt'])
+        && request.resource.data.keys().hasAll(['count', 'lastReportId', 'updatedAt'])
+        && request.resource.data.count is int
+        && request.resource.data.count >= 1 && request.resource.data.count <= 5
+        && request.resource.data.lastReportId is string
+        && request.resource.data.updatedAt == request.time
+        && correctCount()
+        && !exists(reportPath())
+        && getAfter(reportPath()).data.userId == uid
+        && getAfter(reportPath()).data.createdAt == request.time;
+    }
+    match /reports/{reportId} {
+      function quotaPath() {
+        return /databases/$(database)/documents/reportQuota/$(request.auth.uid);
+      }
+      allow create: if googleUser()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'authorEmail', 'title', 'message', 'contact',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'userId', 'authorEmail', 'title', 'message', 'contact',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 3 && request.resource.data.title.size() <= 120
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 10 && request.resource.data.message.size() <= 1500
+        && request.resource.data.contact is string && request.resource.data.contact.size() <= 200
+        && request.resource.data.status == 'new'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && getAfter(quotaPath()).data.lastReportId == reportId
+        && getAfter(quotaPath()).data.updatedAt == request.time;
+      allow read: if signedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'adminComment', 'updatedAt'])
+        && request.resource.data.status in ['new', 'in_progress', 'rejected', 'resolved']
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['adminComment'])
+            || (request.resource.data.adminComment is string
+                && request.resource.data.adminComment.size() <= 1500))
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
