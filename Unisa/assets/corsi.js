@@ -39,7 +39,7 @@ window.CORSI =
     "resto": "1",
     "name": "Programmazione Distribuita",
     "meta": "3° anno · Sistemi distribuiti",
-    "stato": "in-aggiornamento",
+    "stato": "aggiornato",
     "color": "pd",
     "docs": [
       { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" }
