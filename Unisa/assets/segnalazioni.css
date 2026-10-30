@@ -62,3 +62,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--fon
 @media(max-width:760px){.reports-hero{padding:38px 0 26px}.grid{grid-template-columns:1fr}.report-panel{padding:22px}.intro{font-size:16px}}
 @media(max-width:420px){.account{width:100%;flex-wrap:wrap}.account-copy{flex:1}#login{width:100%}.reports-page{padding-bottom:40px}}
 @media(prefers-reduced-motion:reduce){#form input,#form textarea,.entry select,#send,#login{transition:none}}
+
+/* Account access and spacing */
+.account{border:0;background:transparent;border-radius:0;padding:0;gap:12px;flex-wrap:wrap}
+.account-icon,.account-label,#identity{display:none}
+.account:has(#login[hidden]):has(#auth-message:empty){display:none}
+#send{margin-top:18px}
