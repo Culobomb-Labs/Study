@@ -20,7 +20,7 @@ window.CORSI =
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
-      { "name": "Quiz, capitoli 01–09", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
+      { "name": "Quiz, capitoli 00–17", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {
