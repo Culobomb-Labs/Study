@@ -36,7 +36,11 @@ $('#login').onclick=async()=>{
       : 'Accesso non riuscito. Verifica la connessione e riprova.');
   } finally { button.disabled=false; }
 };
-$('#form').elements.text.addEventListener('input',e=>$('#counter').textContent=`${e.target.value.length} / 1500`);
+const MAX_TEXT=550;
+function paintCounter(){const t=$('#form').elements.text, n=t.value.length, c=$('#counter'), bar=$('#counter-bar');
+  c.textContent=`${n} / ${MAX_TEXT}`; const st=n>=MAX_TEXT?'full':n>=MAX_TEXT*0.9?'near':'';
+  c.dataset.state=st; if(bar){bar.style.width=Math.min(100,100*n/MAX_TEXT)+'%';bar.dataset.state=st;}}
+$('#form').elements.text.addEventListener('input',paintCounter); paintCounter();
 onAuthStateChanged(auth,async u=>{
   const version=++authVersion;
   if(unsubscribe){unsubscribe();unsubscribe=null;}
@@ -137,6 +141,7 @@ $('#form').onsubmit=async e=>{
   if(!user || readyUser!==user || sending)return;
   const sender=user, form=e.currentTarget, title=form.elements.title.value.trim(), text=form.elements.text.value.trim(), contact=form.elements.contact.value.trim();
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
+  if(text.length>MAX_TEXT){msg(`Il testo può essere lungo al massimo ${MAX_TEXT} caratteri.`);return}
   sending=true; $('#send').disabled=true; msg('Invio in corso…');
   try {
     await runTransaction(db,async tx=>{
@@ -148,7 +153,7 @@ $('#form').onsubmit=async e=>{
       tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
       tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
-    if(user===sender && auth.currentUser===sender){form.reset();$('#counter').textContent='0 / 1500';msg('Segnalazione inviata.');}
+    if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata.');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!user || readyUser!==user;}

@@ -30,6 +30,7 @@
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
     bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
+    bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
 
@@ -631,14 +632,14 @@
         <div class="ua-acct-box">${avatarOf(u)}
           <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
         <p class="ua-sync-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Le spunte del piano di studio, dei quaderni e i risultati dei quiz si salvano sul tuo account e si aggiornano da sole su ogni dispositivo dove accedi.</p>
-        <div class="ua-sync-actions"><a class="ua-btn" href="${ROOT}segnalazioni.html">Segnala un problema</a><button type="button" class="ua-btn ua-do-logout">Esci</button><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Chiudi</button></div>
+        <div class="ua-sync-actions"><a class="ua-btn ua-report" href="${ROOT}segnalazioni.html">${ICON.bug}<span>Segnala un problema</span></a><button type="button" class="ua-btn ua-do-logout">Esci</button><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Chiudi</button></div>
         <button type="button" class="ua-acct-alt ua-do-export">Oppure sposta le spunte con un link o un QR</button>`
       : `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
         <p class="ua-sync-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
         <div class="ua-acct-box ua-acct-box-out"><button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login" data-focus>Accedi con Google</button></div>
         <p class="ua-sync-note ua-acct-err" role="alert" hidden></p>
         <p class="ua-sync-note">Le spunte già presenti su questo dispositivo vengono unite a quelle del tuo account.</p>
-        <div class="ua-sync-actions"><a class="ua-btn" href="${ROOT}segnalazioni.html">Segnala un problema</a><button type="button" class="ua-btn" data-close>Chiudi</button></div>
+        <div class="ua-sync-actions"><a class="ua-btn ua-report" href="${ROOT}segnalazioni.html">${ICON.bug}<span>Segnala un problema</span></a><button type="button" class="ua-btn" data-close>Chiudi</button></div>
         <button type="button" class="ua-acct-alt ua-do-export">Senza account: sposta le spunte con un link o un QR</button>`;
     showSync(body);
     installAvatarFallbacks(sync);
