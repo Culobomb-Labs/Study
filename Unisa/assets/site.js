@@ -31,6 +31,7 @@
     bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
+    logout: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
 
@@ -558,7 +559,7 @@
       [CLOUD_ON, CLOUD_UID, CLOUD_DIRTY].forEach(rawDel);
     }
     paintAccount();
-    if (sync && !sync.hidden && sync.querySelector(".ua-acct-box")) renderAccount();
+    if (ap && !ap.hidden) renderAccount();
   }
 
   async function signIn(btn, err) {
@@ -625,34 +626,68 @@
     });
   }
 
+  /* scheda "I tuoi progressi": tendina come quella delle News
+     (sotto il pulsante su PC, dal basso su telefono) */
+  let ap = null, apTrigger = null;
+  function buildAccountPanel() {
+    ap = el("div", { class: "ua-np ua-ap", role: "dialog", "aria-modal": "false", "aria-label": "I tuoi progressi", hidden: "" });
+    ap.innerHTML = `<div class="ua-np-veil"></div><div class="ua-np-box" tabindex="-1"><span class="ua-np-grip" aria-hidden="true"></span><div class="ua-np-in"></div></div>`;
+    document.body.append(ap);
+    ap.querySelector(".ua-np-veil").addEventListener("click", () => closeAccount());
+    ap.addEventListener("click", e => { if (e.target.closest(".ua-np-close")) closeAccount(); });
+    sheetSwipe(ap.querySelector(".ua-np-box"), () => closeAccount());
+  }
   function renderAccount() {
     const u = cloudUser;
-    const body = u
-      ? `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
-        <div class="ua-acct-box">${avatarOf(u)}
+    const item = (cls, ic, t, x, href) => {
+      const inner = `<span class="ua-nt-ic">${ic}</span><span class="ua-nt-txt"><b>${t}</b><span>${x}</span></span>`;
+      return `<li>${href ? `<a class="ua-ap-item ${cls}" href="${href}">${inner}</a>` : `<button type="button" class="ua-ap-item ${cls}">${inner}</button>`}</li>`;
+    };
+    const top = u
+      ? `<div class="ua-acct-box">${avatarOf(u)}
           <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
-        <p class="ua-sync-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Le spunte del piano di studio, dei quaderni e i risultati dei quiz si salvano sul tuo account e si aggiornano da sole su ogni dispositivo dove accedi.</p>
-        <div class="ua-sync-actions"><a class="ua-btn ua-report" href="${ROOT}segnalazioni.html">${ICON.bug}<span>Segnala un problema</span></a><button type="button" class="ua-btn ua-do-logout">Esci</button><button type="button" class="ua-btn ua-btn-solid" data-close data-focus>Chiudi</button></div>
-        <button type="button" class="ua-acct-alt ua-do-export">Oppure sposta le spunte con un link o un QR</button>`
-      : `<h2 class="ua-sync-t" id="ua-sync-t">I tuoi progressi</h2>
-        <p class="ua-sync-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
-        <div class="ua-acct-box ua-acct-box-out"><button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login" data-focus>Accedi con Google</button></div>
-        <p class="ua-sync-note ua-acct-err" role="alert" hidden></p>
-        <p class="ua-sync-note">Le spunte già presenti su questo dispositivo vengono unite a quelle del tuo account.</p>
-        <div class="ua-sync-actions"><a class="ua-btn ua-report" href="${ROOT}segnalazioni.html">${ICON.bug}<span>Segnala un problema</span></a><button type="button" class="ua-btn" data-close>Chiudi</button></div>
-        <button type="button" class="ua-acct-alt ua-do-export">Senza account: sposta le spunte con un link o un QR</button>`;
-    showSync(body);
-    installAvatarFallbacks(sync);
-    const login = sync.querySelector(".ua-do-login");
-    if (login) login.addEventListener("click", () => signIn(login, sync.querySelector(".ua-acct-err")));
-    const out = sync.querySelector(".ua-do-logout");
+        <p class="ua-ap-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Spunte del piano di studio, dei quaderni e risultati dei quiz si aggiornano da sole su ogni dispositivo dove accedi.</p>`
+      : `<p class="ua-ap-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
+        <button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login">Accedi con Google</button>
+        <p class="ua-ap-p ua-acct-err" role="alert" hidden></p>
+        <p class="ua-ap-note">Le spunte già presenti qui vengono unite a quelle del tuo account.</p>`;
+    ap.querySelector(".ua-np-in").innerHTML = `
+      <div class="ua-np-head"><h2>I tuoi progressi</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
+      <div class="ua-ap-body">${top}</div>
+      <ul class="ua-ap-menu">
+        ${item("ua-do-export", ICON.sync, "Sposta le spunte", u ? "Con un link o un QR" : "Senza account, con un link o un QR")}
+        ${item("ua-ap-report", ICON.bug, "Segnala un problema", "Qualcosa non va negli appunti o nel sito?", `${ROOT}segnalazioni.html`)}
+      </ul>
+      ${u ? `<button type="button" class="ua-np-all ua-do-logout">${ICON.logout}<span>Esci</span></button>` : ""}`;
+    installAvatarFallbacks(ap);
+    const login = ap.querySelector(".ua-do-login");
+    if (login) login.addEventListener("click", () => signIn(login, ap.querySelector(".ua-acct-err")));
+    const out = ap.querySelector(".ua-do-logout");
     if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
-    sync.querySelector(".ua-do-export").addEventListener("click", openExport);
+    ap.querySelector(".ua-do-export").addEventListener("click", () => { closeAccount(true); openExport(); });
   }
-  function openAccount() {
+  function openAccount(trigger) {
     if (!cloudUser) fbAuth().catch(() => {}); // la libreria arriva mentre leggi: il tocco su "Accedi" apre subito Google
-    renderAccount();
+    if (!ap) buildAccountPanel();
+    if (pal && !pal.hidden) closeSearch();
+    closeNewsPanel(true);
+    apTrigger = trigger || document.querySelector(".ua-open-sync");
+    renderAccount(); ap.hidden = false; placeBox(ap.querySelector(".ua-np-box"), apTrigger);
+    document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "true"));
+    ap.querySelector(".ua-np-box").focus({ preventScroll: true });
   }
+  function closeAccount(noFocus) {
+    if (!ap || ap.hidden) return;
+    ap.hidden = true;
+    document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "false"));
+    if (!noFocus && apTrigger && document.contains(apTrigger)) apTrigger.focus({ preventScroll: true });
+  }
+  document.addEventListener("click", e => {
+    if (ap && !ap.hidden && !phone() && !e.target.closest(".ua-np-box, .ua-open-sync")) closeAccount(true);
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && ap && !ap.hidden) { e.preventDefault(); closeAccount(); } });
+  window.addEventListener("resize", () => { if (ap && !ap.hidden) placeBox(ap.querySelector(".ua-np-box"), apTrigger); });
+  window.addEventListener("scroll", () => { if (ap && !ap.hidden && !phone()) closeAccount(true); }, { passive: true });
 
   /* avviso breve in basso */
   let toastEl = null, toastTimer = null;
@@ -868,11 +903,7 @@
     document.body.append(np);
     np.querySelector(".ua-np-veil").addEventListener("click", closeNewsPanel);
     np.addEventListener("click", e => { if (e.target.closest(".ua-np-close")) closeNewsPanel(); });
-    // su telefono: trascina in giù la maniglia per chiudere
-    const box = np.querySelector(".ua-np-box"); let y0 = null;
-    box.addEventListener("touchstart", e => { if (phone() && (e.target.closest(".ua-np-grip,.ua-np-head") || box.scrollTop <= 0)) y0 = e.touches[0].clientY; }, { passive: true });
-    box.addEventListener("touchmove", e => { if (y0 === null) return; const dy = e.touches[0].clientY - y0; if (dy > 0) box.style.transform = `translateY(${dy}px)`; }, { passive: true });
-    box.addEventListener("touchend", e => { if (y0 === null) return; const dy = (e.changedTouches[0].clientY - y0); y0 = null; box.style.transform = ""; if (dy > 90) closeNewsPanel(); });
+    sheetSwipe(np.querySelector(".ua-np-box"), () => closeNewsPanel());
   }
   function renderPanel() {
     const list = news.slice(0, PANEL_MAX);
@@ -883,18 +914,27 @@
       <div class="ua-np-nt" data-ua-nt>${notifControl()}</div>
       <a class="ua-np-all" href="${NEWS_PAGE}">${more}</a>`;
   }
-  function placePanel() {
-    const box = np.querySelector(".ua-np-box");
+  // su telefono: trascina in giù la maniglia per chiudere
+  function sheetSwipe(box, close) {
+    let y0 = null;
+    box.addEventListener("touchstart", e => { if (phone() && (e.target.closest(".ua-np-grip,.ua-np-head") || box.scrollTop <= 0)) y0 = e.touches[0].clientY; }, { passive: true });
+    box.addEventListener("touchmove", e => { if (y0 === null) return; const dy = e.touches[0].clientY - y0; if (dy > 0) box.style.transform = `translateY(${dy}px)`; }, { passive: true });
+    box.addEventListener("touchend", e => { if (y0 === null) return; const dy = (e.changedTouches[0].clientY - y0); y0 = null; box.style.transform = ""; if (dy > 90) close(); });
+  }
+  // su PC: la tendina si apre sotto (o sopra) il pulsante che l'ha aperta
+  function placeBox(box, trigger) {
     box.style.top = box.style.bottom = box.style.right = box.style.left = "";
-    if (phone() || !npTrigger) return; // su telefono il CSS lo mette in basso, a tutta larghezza
-    const r = npTrigger.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = innerHeight;
+    if (phone() || !trigger) return; // su telefono il CSS lo mette in basso, a tutta larghezza
+    const r = trigger.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = innerHeight;
     box.style.right = Math.max(12, vw - r.right) + "px";
     if (r.top < vh / 2) box.style.top = (r.bottom + 8) + "px";
     else box.style.bottom = (vh - r.top + 8) + "px";
   }
+  const placePanel = () => placeBox(np.querySelector(".ua-np-box"), npTrigger);
   function openNewsPanel(trigger) {
     if (!np) buildNewsPanel();
     if (pal && !pal.hidden) closeSearch();
+    closeAccount(true);
     npTrigger = trigger;
     npFresh = new Set(unread().map(n => n.id));
     renderPanel(); np.hidden = false; placePanel();
@@ -968,7 +1008,7 @@
     const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme, .ua-open-sync");
     if (!b) return;
     if (b.classList.contains("ua-theme")) cycleTheme();
-    else if (b.classList.contains("ua-open-sync")) openAccount();
+    else if (b.classList.contains("ua-open-sync")) (ap && !ap.hidden && apTrigger === b) ? closeAccount() : openAccount(b);
     else openSearch();
   });
   paintAccount();
