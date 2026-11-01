@@ -150,3 +150,10 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .quota[data-state=full] .quota-msg{color:var(--ink)}
 .quota-cd{font:600 14px/1 var(--font-mono);color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 @media(prefers-reduced-motion:reduce){.quota-bar i{transition:none}}
+
+/* conferma di invio: spunta e testo verdi */
+#message[data-state=ok]{display:flex;align-items:center;gap:8px;color:var(--ok,#1f7a45);font-weight:600}
+#message[data-state=ok]::before{content:"";flex:none;width:20px;height:20px;border-radius:50%;background:var(--ok-dot,#1f7a45) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
+:root{--ok:#1f7a45;--ok-dot:#1f7a45}
+:root[data-theme=dark]{--ok:#5fd18f;--ok-dot:#2a9d5c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--ok:#5fd18f;--ok-dot:#2a9d5c}}

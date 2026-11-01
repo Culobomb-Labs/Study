@@ -21,7 +21,7 @@ let admin=false;
 const isAdmin=()=>admin;
 let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
 for(const id of ['report-search','report-filter','report-sort']) document.getElementById(id).addEventListener('input',()=>renderReports());
-const msg=(s)=>$('#message').textContent=s;
+const msg=(s,kind='')=>{const m=$('#message'); m.textContent=s; m.dataset.state=kind;};
 const authMsg=(s)=>$('#auth-message').textContent=s;
 auth.languageCode='it';
 getRedirectResult(auth).catch(e=>authMsg(e.code==='auth/unauthorized-domain' ? 'Questo indirizzo non è autorizzato per l’accesso Google.' : 'Accesso Google non riuscito. Riprova.'));
@@ -195,7 +195,7 @@ $('#form').onsubmit=async e=>{
       tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
       tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
-    if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata.');}
+    if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata.','ok');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!canSend();}
