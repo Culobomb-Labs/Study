@@ -57,7 +57,7 @@ window.CORSI =
     "docs": [
         { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" },
         { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Sistemi Operativi/Piano di studio SO.html", "progressKey": "piano-esame-so" },
-        { "name": "Quiz, capitoli 01–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
+        { "name": "Quiz, capitoli 03–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
     ]
   }
 ]

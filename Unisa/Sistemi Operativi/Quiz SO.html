@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Quiz di Sistemi Operativi · Capitoli 1–15</title>
-<meta name="description" content="Domande a risposta multipla sui capitoli 1–15 di Sistemi Operativi.">
+<title>Quiz di Sistemi Operativi · Capitoli 03–15</title>
+<meta name="description" content="Domande a risposta aperta sui capitoli 03–15 di Sistemi Operativi, con la numerazione del quaderno.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -122,21 +122,19 @@ body.running .lede{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Sistemi Operativi · capitoli 1–15</div>
+  <div class="eyebrow">Sistemi Operativi · capitoli 03–15</div>
   <h1>Quiz di Sistemi Operativi</h1>
-  <p class="lede">Domande a risposta aperta sui capitoli 1–15. Scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
+  <p class="lede">Domande a risposta aperta sui capitoli 03–15, con la stessa numerazione del quaderno. Scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
 <script>
-/* Domande: capitoli 1–15 di Sistemi Operativi. La prima opzione è corretta; a ogni giro le opzioni vengono mescolate. */
+/* Domande: capitoli 03–15 di Sistemi Operativi (numerazione del quaderno; 01 e 02 introduttivi esclusi). La prima opzione è corretta; a ogni giro le opzioni vengono mescolate. */
 const CHAPTERS = [
-  { id: "intro", n: "01", t: "Introduzione" },
-  { id: "strutture", n: "02", t: "Strutture del sistema operativo" },
   { id: "processi", n: "03", t: "Processi" },
-  { id: "thread", n: "04", t: "Thread" },
+  { id: "thread", n: "04", t: "Thread e concorrenza" },
   { id: "scheduling", n: "05", t: "Scheduling della CPU" },
-  { id: "sincronizzazione", n: "06", t: "Sincronizzazione" },
+  { id: "sincronizzazione", n: "06", t: "Strumenti di sincronizzazione" },
   { id: "problemi", n: "07", t: "Esempi di sincronizzazione" },
   { id: "deadlock", n: "08", t: "Stallo dei processi" },
   { id: "centrale", n: "09", t: "Memoria centrale" },
@@ -145,7 +143,7 @@ const CHAPTERS = [
   { id: "io", n: "12", t: "Sistemi di I/O" },
   { id: "file", n: "13", t: "Interfaccia del file system" },
   { id: "implementazione", n: "14", t: "Realizzazione del file system" },
-  { id: "dettagli", n: "15", t: "Protezione e sicurezza" }
+  { id: "dettagli", n: "15", t: "Dettagli interni del file system" }
 ];
 const Q = [
   {"c": "massa", "q": "Quale componente contribuisce maggiormente al tempo di accesso di un disco magnetico?", "o": ["Il tempo di ricerca e la latenza rotazionale", "La sola velocità della CPU", "La dimensione del file system", "Il numero di processi pronti"], "e": "Il tempo di accesso dipende soprattutto dal movimento della testina fino alla traccia (seek time) e dall’attesa che il settore ruoti sotto la testina (latenza rotazionale)."},
@@ -154,12 +152,6 @@ const Q = [
   {"c": "massa", "q": "Che cos’è una SAN?", "o": ["Una rete dedicata che collega server e dispositivi di memorizzazione a livello di blocco", "Un algoritmo di scheduling per dischi magnetici", "Un file system montato localmente", "Una partizione usata esclusivamente per lo swap"], "e": "Una Storage-Area Network connette server e unità di storage tramite una rete ad alte prestazioni, spesso con accesso ai blocchi."},
   {"c": "massa", "q": "Qual è la caratteristica principale di RAID 0?", "o": ["Striping senza ridondanza", "Mirroring con una copia completa", "Parità distribuita su più dischi", "Doppia parità per tollerare due guasti"], "e": "RAID 0 distribuisce i dati tra i dischi ma non conserva informazioni ridondanti: il guasto di un disco può compromettere l’intero array."},
   {"c": "massa", "q": "Quale livello RAID può tollerare il guasto simultaneo di due dischi grazie alla doppia parità?", "o": ["RAID 6", "RAID 0", "RAID 1", "RAID 5"], "e": "RAID 6 conserva due informazioni di parità indipendenti e può quindi ricostruire i dati anche dopo il guasto di due dischi."},
-  {"c": "intro", "q": "Qual è il ruolo del sistema operativo?", "o": ["Gestisce le risorse e offre servizi a programmi e utenti", "Compila sempre il codice sorgente", "Sostituisce ogni applicazione", "Controlla soltanto la rete"], "e": "Il sistema operativo coordina hardware e software e fornisce un ambiente per l’esecuzione dei programmi."},
-  {"c": "intro", "q": "Che cos’è il kernel?", "o": ["La parte centrale del sistema operativo", "Un programma utente", "Un file system", "Un dispositivo di I/O"], "e": "Il kernel gestisce le funzioni fondamentali del sistema e opera con privilegi elevati."},
-  {"c": "intro", "q": "A che cosa serve un interrupt?", "o": ["Segnalare un evento che richiede attenzione della CPU", "Allocare una directory", "Avviare sempre un nuovo processo", "Tradurre un indirizzo virtuale"], "e": "Un interrupt trasferisce temporaneamente il controllo a una routine che gestisce l’evento."},
-  {"c": "strutture", "q": "Che cos’è una system call?", "o": ["Una richiesta controllata di servizio al kernel", "Una chiamata tra due file", "Un tipo di memoria cache", "Un algoritmo di scheduling"], "e": "Le system call espongono servizi del sistema operativo ai programmi."},
-  {"c": "strutture", "q": "Quale vantaggio offre un microkernel?", "o": ["Sposta molti servizi fuori dal kernel e favorisce modularità e isolamento", "Elimina ogni comunicazione tra servizi", "Fa eseguire tutto in modalità kernel", "Rimuove i driver"], "e": "Il microkernel mantiene nel nucleo le funzioni essenziali e delega altri servizi a processi separati."},
-  {"c": "strutture", "q": "A che cosa servono i moduli caricabili?", "o": ["A estendere il kernel durante l’esecuzione", "A sostituire la RAM con il disco", "A disabilitare gli interrupt", "A creare utenti"], "e": "I moduli permettono di aggiungere driver o funzionalità senza ricostruire l’intero kernel."},
   {"c": "processi", "q": "Che cos’è un processo?", "o": ["Un programma in esecuzione con il proprio stato", "Un file sorgente", "Un settore del disco", "Un driver"], "e": "Il processo è un’istanza attiva di un programma e comprende stato e risorse."},
   {"c": "processi", "q": "Che cosa contiene tipicamente il PCB?", "o": ["Stato, registri e informazioni di gestione del processo", "Solo il codice sorgente", "Le partizioni del disco", "Le password degli utenti"], "e": "Il Process Control Block conserva il contesto necessario al sistema operativo per gestire il processo."},
   {"c": "processi", "q": "Che cosa avviene durante un context switch?", "o": ["Si salva il contesto di un processo e si ripristina quello di un altro", "Si copia un file sul disco", "Si cancella la memoria del kernel", "Si cambia il file system"], "e": "Il sistema salva registri e stato del processo sospeso e carica quelli del processo selezionato."},
@@ -193,9 +185,12 @@ const Q = [
   {"c": "implementazione", "q": "Che cosa contiene un inode Unix?", "o": ["Metadati e riferimenti ai blocchi del file, non il nome nella directory", "Solo il nome", "L’intero disco", "La coda dei processi"], "e": "Il nome risiede nella directory; l’inode descrive attributi e localizzazione del file."},
   {"c": "implementazione", "q": "Qual è un vantaggio dell’allocazione indicizzata?", "o": ["Consente accesso diretto senza richiedere blocchi contigui", "Non richiede metadati", "Elimina ogni frammentazione", "Usa un solo blocco per file"], "e": "Un indice contiene i riferimenti ai blocchi del file e supporta accesso diretto."},
   {"c": "implementazione", "q": "A che cosa serve il journaling?", "o": ["A facilitare il ripristino della coerenza dopo un arresto anomalo", "A sostituire i backup", "A comprimere i file", "A scegliere il processo successivo"], "e": "Il journal aiuta a recuperare operazioni del file system dopo un crash, ma non sostituisce il backup."},
-  {"c": "dettagli", "q": "Qual è la differenza tra autenticazione e autorizzazione?", "o": ["La prima verifica l’identità, la seconda stabilisce i permessi", "Sono sinonimi", "La prima assegna pagine, la seconda pianifica la CPU", "L’autorizzazione verifica la password"], "e": "Autenticazione stabilisce chi è l’utente; autorizzazione definisce le operazioni consentite."},
-  {"c": "dettagli", "q": "Che cosa esprime una matrice di controllo degli accessi?", "o": ["Quali soggetti possono eseguire operazioni su quali oggetti", "Quali processi sono in deadlock", "La distribuzione RAID", "Le pagine residenti"], "e": "La matrice rappresenta i diritti di accesso tra soggetti o domini e oggetti."},
-  {"c": "dettagli", "q": "Che cosa stabilisce il principio del minimo privilegio?", "o": ["Concedere solo i permessi necessari al compito", "Dare privilegi amministrativi a tutti", "Eseguire tutto in modalità kernel", "Disabilitare il controllo accessi"], "e": "Limitare i privilegi riduce i danni possibili in caso di errore o compromissione."},
+  {"c": "dettagli", "q": "Che cosa fa l'operazione di mount?", "o": ["Collega la radice di un file system a un mount point nell'albero delle directory, rendendolo raggiungibile nel namespace comune"], "e": "La tabella dei mount instrada poi i percorsi verso il file system giusto."},
+  {"c": "dettagli", "q": "Qual è il compito del Virtual File System (VFS)?", "o": ["Offrire un'interfaccia di operazioni comune e inoltrarle all'implementazione concreta del file system"], "e": "Così il sistema può gestire file system diversi con le stesse chiamate."},
+  {"c": "dettagli", "q": "Differenza tra hard link e link simbolico?", "o": ["L'hard link riferisce lo stesso inode (lo stesso oggetto); il link simbolico contiene un percorso che va risolto"], "e": "Se il file originale viene spostato, il link simbolico può restare 'rotto', l'hard link no."},
+  {"c": "dettagli", "q": "Perché un client NFS può leggere dati vecchi (stale)?", "o": ["Perché la sua cache locale può non aver ancora rilevato o ricevuto un aggiornamento fatto sul server"], "e": "Timeout, ritrasmissioni e cache stale sono problemi tipici dei file system remoti."},
+  {"c": "dettagli", "q": "Cosa dice la session semantics sulla visibilità delle scritture?", "o": ["Le modifiche a un file diventano visibili agli altri solo quando chi scrive chiude il file"], "e": "Nella semantica Unix tradizionale invece le modifiche tendono a essere visibili subito, grazie a cache coerenti."},
+  {"c": "dettagli", "q": "Perché un file system di rete non è 'solo un disco più lento'?", "o": ["Perché cambiano i modi di guasto, l'autenticazione, la cache, la coerenza e la visibilità delle scritture"], "e": "Server e rete possono guastarsi in modo indipendente dal client."}
 ];
 
 const STORE = "quiz-so-1-15";
@@ -272,7 +267,7 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione della prova</h2>
-      <p>30 domande miste, 2 per ogni capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
+      <p>26 domande miste, 2 per ogni capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <button class="btn" type="button" id="go-sim">Inizia →</button>
     </section>
