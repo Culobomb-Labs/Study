@@ -281,6 +281,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 /* Dati della prova */
 const EXAM_DEFAULT = "2026-11-06";
 const Q = "Quaderno%20di%20Ingegneria%20del%20Software.html";
+const DRAW_T = "Esercizio a mano";
 const KEY = "piano-intercorso-ingsw"; // anche in corsi.js come progressKey: così si sincronizza
 const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
 const WD_LONG = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
@@ -469,7 +470,7 @@ function generate(cfg) {
     const lv = cfg.levels[t.id] || 0, f = LEVELS[lv].f, q = Q + "#" + t.cid;
     const items = [];
     items.push({ k: "read", m: Math.max(15, t.min * f), t: lv === 2 ? "Ripassa velocemente" : lv === 1 ? "Rileggi con attenzione" : "Studia", s: t.read, href: q });
-    if (cfg.opts.optDraw && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: "Esercizio a mano", s: t.draw });
+    if (cfg.opts.optDraw && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: DRAW_T, s: t.draw });
     if (cfg.opts.optOpen && lv < 2) items.push({ k: "open", m: 10, t: "Domanda aperta scritta", s: t.open });
     items.push({ k: "lampo", m: 5, t: "Domande lampo del capitolo", s: "Copri la risposta e dilla ad alta voce", href: q });
     if (cfg.opts.optQuiz) items.push({ k: "quiz", m: 10, t: `Quiz del capitolo ${t.cid === "uml" ? "06" : t.cid === "dyn" ? "08" : t.ch}`, s: "Un giro da 10 domande, punta all'80%", href: "Quiz%20IS.html" });
@@ -500,7 +501,7 @@ function generate(cfg) {
 
   // distribuzione: si riempiono i giorni in ordine; un'attività lunga si può dividere tra due giorni.
   // Se il tempo avanza molto (es. esame lontano), lo studio si spalma su tutto il periodo invece di stare nei primi giorni.
-  const capD = Math.min(cap, Math.max(45, Math.ceil(need * 1.3 / days.length / 5) * 5));
+  const capD = Math.min(cap, Math.max(90, Math.ceil(need * 1.3 / days.length / 5) * 5));
   let di = 0;
   const pushTask = (task) => {
     let rest = task.m, part = 0;
@@ -508,6 +509,8 @@ function generate(cfg) {
     while (rest > 0.5 && di < days.length) {
       const day = days[di], free = capD - day.used;
       if (free < 10 && day.used > 0) { di++; continue; }
+      // le attività brevi non si spezzano: se non ci stanno, passano al giorno dopo
+      if (rest === task.m && task.m <= 30 && free < task.m && day.used > 0 && di < days.length - 1) { di++; continue; }
       const take = Math.min(rest, Math.max(free, 10));
       pieces.push({ day, take }); day.used += take; rest -= take;
       if (day.used >= capD - 5) di++;

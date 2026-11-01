@@ -31,7 +31,8 @@ window.CORSI =
     "stato": "aggiornato",
     "color": "mp",
     "docs": [
-      { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" }
+      { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" },
+      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" }
     ]
   },
   {
@@ -42,7 +43,8 @@ window.CORSI =
     "stato": "aggiornato",
     "color": "pd",
     "docs": [
-      { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" }
+      { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" },
+      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione-Distribuita/Piano di studio PD.html", "progressKey": "piano-esame-pd" }
     ]
   },
   {
@@ -54,6 +56,7 @@ window.CORSI =
     "color": "so",
     "docs": [
         { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" },
+        { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Sistemi Operativi/Piano di studio SO.html", "progressKey": "piano-esame-so" },
         { "name": "Quiz, capitoli 01–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
     ]
   }
