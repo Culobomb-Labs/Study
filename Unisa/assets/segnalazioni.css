@@ -2,16 +2,16 @@
 :root {
   color-scheme: light;
   --bg:#f6f6f4; --surface:#fff; --ink:#111418; --muted:#5d636b; --line:#e0e1de;
-  --soft:#f1f1ee; --accent:#b23a1f; --accent-ink:#fff; --accent-soft:#fdf0ec; --accent-line:#f1c9bd;
+  --soft:#f1f1ee; --accent:#c4232b; --accent-ink:#fff; --accent-soft:#fdeced; --accent-line:#f2c2c5;
   --font-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
   --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,monospace;
   --shadow:0 1px 2px rgba(17,20,24,.04),0 12px 32px -18px rgba(17,20,24,.18);
 }
 @media (prefers-color-scheme:dark) {
-  :root:not([data-theme=light]) {color-scheme:dark;--bg:#0e1012;--surface:#15181b;--ink:#eceef0;--muted:#a1a9b0;--line:#2c3136;--soft:#1d2125;--accent:#ff9a82;--accent-ink:#1a0d09;--accent-soft:#2b1814;--accent-line:#5a2c22;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -18px rgba(0,0,0,.7)}
+  :root:not([data-theme=light]) {color-scheme:dark;--bg:#0e1012;--surface:#15181b;--ink:#eceef0;--muted:#a1a9b0;--line:#2c3136;--soft:#1d2125;--accent:#ff8085;--accent-ink:#1c0709;--accent-soft:#2d1416;--accent-line:#5e2328;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -18px rgba(0,0,0,.7)}
 }
-:root[data-theme=dark] {color-scheme:dark;--bg:#0e1012;--surface:#15181b;--ink:#eceef0;--muted:#a1a9b0;--line:#2c3136;--soft:#1d2125;--accent:#ff9a82;--accent-ink:#1a0d09;--accent-soft:#2b1814;--accent-line:#5a2c22;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -18px rgba(0,0,0,.7)}
+:root[data-theme=dark] {color-scheme:dark;--bg:#0e1012;--surface:#15181b;--ink:#eceef0;--muted:#a1a9b0;--line:#2c3136;--soft:#1d2125;--accent:#ff8085;--accent-ink:#1c0709;--accent-soft:#2d1416;--accent-line:#5e2328;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -18px rgba(0,0,0,.7)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--font-body);-webkit-font-smoothing:antialiased}
 .reports-page{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 72px max(20px,env(safe-area-inset-left))}
