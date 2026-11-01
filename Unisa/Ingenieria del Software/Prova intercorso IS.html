@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prova intercorso di Ingegneria del Software</title>
+<meta name="description" content="Argomenti della prova intercorso di Ingegneria del Software (venerdì 6 novembre), capitoli del quaderno corrispondenti e piano di studio personalizzato.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una colonna di lettura. In alto la prova (data e conto alla rovescia), poi i 4 pacchetti di slide
+   con i capitoli del quaderno, poi il generatore del piano personalizzato. Colore del corso (viola). */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --soft:#efefec;
+  --c:var(--ua-c-is,#5b3fa3); --c-soft:#ece7f8; --ok:#22744a; --ok-bg:#e3f2e9; --warn:#a4570e; --warn-bg:#fbf0e3;
+  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#251f38; --ok:#6fd398; --ok-bg:#15291e; --warn:#f0a95e; --warn-bg:#2e2214; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#251f38; --ok:#6fd398; --ok-bg:#15291e; --warn:#f0a95e; --warn-bg:#2e2214; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+a{color:var(--c)}
+.wrap{max-width:820px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--c);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,6vw,48px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:-.01em;margin:48px 0 8px}
+h3{font-size:17px;margin:0 0 4px}
+.lede{color:var(--muted);margin:0 0 24px;max-width:62ch}
+.muted{color:var(--muted)}
+.exam{display:grid;grid-template-columns:auto 1fr auto;gap:6px 20px;align-items:center;background:var(--ink);color:var(--bg);border-radius:12px;padding:18px 20px}
+.exam .day{font-family:var(--f-mono);font-size:13px;text-align:center;line-height:1.2;opacity:.85}
+.exam .day b{display:block;font-family:var(--f-display);font-size:30px;opacity:1}
+.exam h3{font-family:var(--f-display);font-size:20px;margin:0}
+.exam p{margin:0;opacity:.75;font-size:14.5px}
+.exam .cd{font-family:var(--f-display);font-weight:800;font-size:26px;text-align:right;line-height:1}
+.exam .cd small{display:block;font-family:var(--f-mono);font-weight:400;font-size:12px;opacity:.7;margin-top:4px}
+.pkgs{display:grid;gap:14px;margin-top:16px}
+.pkg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.pkg .hd{display:flex;gap:12px;align-items:baseline;margin-bottom:6px}
+.pkg .k{font-family:var(--f-mono);font-size:13px;color:var(--c);flex:none}
+.pkg .who{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pkg p{margin:0 0 10px;color:var(--muted);font-size:15px}
+.pkg ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.pkg li{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:start}
+.pkg li .n{font-family:var(--f-mono);font-size:13px;background:var(--c-soft);color:var(--c);border-radius:6px;text-align:center;padding:2px 0}
+.pkg li a{font-weight:600;text-decoration:none}
+.pkg li a:hover{text-decoration:underline}
+.pkg li span.s{display:block;font-size:14px;color:var(--muted)}
+.note{background:var(--soft);border-left:3px solid var(--c);border-radius:0 8px 8px 0;padding:10px 14px;font-size:15px;margin:16px 0}
+.out{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.out span{font-family:var(--f-mono);font-size:12.5px;border:1px dashed var(--line);border-radius:6px;padding:3px 8px;color:var(--muted)}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600}
+/* generatore */
+form.cfg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:22px;margin-top:16px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+.row{display:flex;flex-wrap:wrap;gap:16px}
+.row label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+input[type=date],select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input[type=range]{width:220px;accent-color:var(--c)}
+output{font-family:var(--f-mono);color:var(--ink)}
+.days{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:14px;background:var(--bg);cursor:pointer;user-select:none}
+.chip input:checked + span{background:var(--c);border-color:var(--c);color:#fff}
+.chip input:focus-visible + span{outline:2px solid var(--c);outline-offset:2px}
+.levels{display:grid;gap:6px}
+.lv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.lv:last-child{border-bottom:0}
+.lv .t{font-size:15px}
+.lv .t small{display:block;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:block;padding:6px 10px;font-size:13px;cursor:pointer;background:var(--bg);border-left:1px solid var(--line);white-space:nowrap}
+.seg label:first-child span{border-left:0}
+.seg input:checked + span{background:var(--c-soft);color:var(--c);font-weight:600}
+.seg input:focus-visible + span{outline:2px solid var(--c);outline-offset:-2px}
+.checks{display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.checks input{accent-color:var(--c);margin-top:4px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.solid{background:var(--c);color:#fff;border-color:var(--c)}
+.btn:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.warn{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:15px}
+.status{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-top:20px}
+.status b.big{font-family:var(--f-display);font-size:26px}
+.bar{grid-column:1/-1;height:8px;background:var(--c-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.plan{display:grid;gap:12px;margin-top:14px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dcard.today{border-color:var(--c);box-shadow:0 0 0 3px var(--c-soft)}
+.dcard.done .dh h3{text-decoration:line-through;text-decoration-color:var(--ok)}
+.dh{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.dh .dt{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center;line-height:1.15}
+.dh .dt b{display:block;font-family:var(--f-display);font-size:22px;color:var(--ink)}
+.dh .min{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.dcard ul{list-style:none;margin:0;padding:6px 0}
+.dcard li label{display:grid;grid-template-columns:20px 1fr auto;gap:12px;padding:8px 16px;cursor:pointer;align-items:start}
+.dcard li label:hover{background:var(--soft)}
+.dcard li input{accent-color:var(--ok);width:18px;height:18px;margin:2px 0 0}
+.dcard li input:checked ~ .tx{color:var(--muted);text-decoration:line-through}
+.dcard li .tx small{display:block;color:var(--muted);font-size:13.5px}
+.dcard li .tm{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.dcard.exam-day{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dcard.exam-day .dh{border-bottom:0}
+.dcard.exam-day .dt,.dcard.exam-day .dt b{color:var(--bg)}
+.tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
+@media (max-width:560px){
+  .exam{grid-template-columns:auto 1fr}.exam .cd{grid-column:1/-1;text-align:left}
+  .lv{grid-template-columns:1fr}.seg{justify-self:start}
+  .dcard li label{grid-template-columns:20px 1fr}.dcard li .tm{grid-column:2}
+}
+@media print{
+  body{background:#fff;color:#000}.no-print,form.cfg,.pkgs,.exam,#argomenti,#mappa{display:none!important}
+  .dcard{break-inside:avoid;border-color:#999}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Ingegneria del Software · prova intercorso</div>
+  <h1>Prova intercorso</h1>
+  <p class="lede">Gli argomenti indicati dalla prof. Ferrucci, i capitoli del quaderno dove li trovi e un piano di studio fatto su misura per te.</p>
+
+  <div class="exam">
+    <div class="day">ven<b>6</b>nov</div>
+    <div><h3>Prova intercorso</h3><p>Quattro pacchetti di slide: Requirements Elicitation, Intro UML, Analisi dei requisiti, Class e sequence diagram.</p></div>
+    <div class="cd" id="cd"></div>
+  </div>
+
+  <h2 id="argomenti">Gli argomenti e dove studiarli</h2>
+  <p class="muted">Per ogni pacchetto di slide, i capitoli e i paragrafi del <a href="Quaderno%20di%20Ingegneria%20del%20Software.html">Quaderno di Ingegneria del Software</a>. Clicca sul capitolo per aprirlo.</p>
+
+  <div class="pkgs">
+    <section class="pkg">
+      <div class="hd"><span class="k">1</span><h3>Requirements Elicitation</h3></div>
+      <p>Raccogliere i requisiti: problem statement, tipi di requisiti, tecniche, scenari e casi d'uso, qualità dei requisiti.</p>
+      <ul>
+        <li><span class="n">02</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#req">Requisiti ed elicitation</a><span class="s">Problem statement, i tre tipi di requisiti, tipi di progetto, tecniche di elicitation, validare i requisiti</span></div></li>
+        <li><span class="n">03</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uc">Scenari e casi d'uso</a><span class="s">Tutto il capitolo: tipi di scenario, come trovarli, regole, template del corso</span></div></li>
+        <li><span class="n">04</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#reqq">Scrivere buoni requisiti</a><span class="s">Tutto il capitolo: ISO 29148, parole ambigue, SMART, tracciabilità, FURPS+, MoSCoW</span></div></li>
+      </ul>
+    </section>
+    <section class="pkg">
+      <div class="hd"><span class="k">2</span><h3>Intro UML</h3></div>
+      <p>La notazione: i tre modelli, use case diagram, class diagram di base, statechart, activity, package. Le figure del quaderno vengono dalle slide "Modeling with UML".</p>
+      <ul>
+        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Prima parte: UML in una frase, i tre modelli, use case diagram, relazioni tra casi d'uso, class diagram, attore/classe/oggetto, sequence in breve</span></div></li>
+        <li><span class="n">07</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#state">Statechart, activity e package</a><span class="s">Tutto il capitolo</span></div></li>
+      </ul>
+    </section>
+    <section class="pkg">
+      <div class="hd"><span class="k">3</span><h3>Analisi dei requisiti</h3></div>
+      <p>Dal caso d'uso al modello di analisi: oggetti entity, boundary e control, modello dinamico, responsabilità e contratti, RAD.</p>
+      <ul>
+        <li><span class="n">02</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#req">Requisiti ed elicitation</a><span class="s">Dall'elicitation all'analisi, Gestire e rivedere il modello di analisi, Il documento finale: RAD</span></div></li>
+        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Dal caso d'uso agli oggetti di analisi (entity, boundary, control, ReportEmergency), Dettagliare associazioni, attributi e gerarchie</span></div></li>
+        <li><span class="n">08</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#dyn">Modello dinamico e sequence</a><span class="s">Gli elementi, i frame, Dai casi d'uso ai sequence diagram, Responsabilità e controllo dello scenario (contratti), Fork o stair, Collaboration diagram</span></div></li>
+      </ul>
+    </section>
+    <section class="pkg">
+      <div class="hd"><span class="k">4</span><h3>Class e sequence diagram</h3><span class="who">lezione del prof. Palomba</span></div>
+      <p>Il class diagram nel dettaglio, il sequence con BCE in pratica e la modellazione nell'era GenAI.</p>
+      <ul>
+        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Che cos'è un modello (Stachowiak, storia UML, 14 diagrammi, analisi e progettazione), Class diagram nel dettaglio (visibilità, sei relazioni, molteplicità, classe associativa, composizione, interfacce, OCL, Abbott, biblioteca)</span></div></li>
+        <li><span class="n">08</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#dyn">Modello dinamico e sequence</a><span class="s">Perché serve, come si scrive un messaggio, BCE in pratica (Accedi, Richiedi prestito, Paga ordine, package), Class e sequence insieme, Modellare nell'era GenAI</span></div></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07 e 08</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prova intercorso" pesca solo da questi capitoli.</div>
+  <p class="muted" style="font-size:14px;margin:0">Non entrano: 00 Java minimo, 01 Riunioni e minuta, 05 Ciclo di vita, 09–16 object design e testing, 17 Scrum. La corrispondenza tra slide e capitoli è ricostruita dagli argomenti dei pacchetti: se in un pacchetto c'è qualcosa che qui manca, segnalalo.</p>
+
+  <div class="tbl" id="mappa"><table>
+    <tr><th>Capitolo</th><th>Requirements Elicitation</th><th>Intro UML</th><th>Analisi dei requisiti</th><th>Class e sequence</th></tr>
+    <tr><td>02 Requisiti ed elicitation</td><td>✓</td><td></td><td>✓ (analisi, RAD)</td><td></td></tr>
+    <tr><td>03 Scenari e casi d'uso</td><td>✓</td><td></td><td></td><td></td></tr>
+    <tr><td>04 Scrivere buoni requisiti</td><td>✓</td><td></td><td></td><td></td></tr>
+    <tr><td>06 UML: use case e classi</td><td></td><td>✓</td><td>✓ (oggetti di analisi)</td><td>✓</td></tr>
+    <tr><td>07 Statechart, activity, package</td><td></td><td>✓</td><td></td><td></td></tr>
+    <tr><td>08 Modello dinamico e sequence</td><td></td><td></td><td>✓</td><td>✓</td></tr>
+  </table></div>
+
+  <h2 id="piano">Il tuo piano di studio</h2>
+  <p class="muted">Dimmi quanto tempo hai e quanto sai già di ogni argomento: il piano distribuisce lo studio nei giorni che hai, mette prima gli argomenti che conosci meno e lascia spazio a quiz e ripasso. Le spunte restano salvate in questo browser (e si sincronizzano se hai attivato l'accesso con Google).</p>
+
+  <form class="cfg" id="cfg" novalidate>
+    <fieldset>
+      <legend>Quando</legend>
+      <div class="row">
+        <label>Comincio il<input type="date" id="start" required></label>
+        <label>La prova è il<input type="date" id="exam" required></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Quanto tempo hai</legend>
+      <div class="row" style="align-items:center">
+        <label>Ore al giorno <input type="range" id="hours" min="1" max="8" step="0.5" value="3"></label>
+        <output id="hoursOut" for="hours">3 ore</output>
+      </div>
+      <p class="muted" style="font-size:14px;margin:10px 0 6px">Giorni in cui puoi studiare</p>
+      <div class="days" id="days"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Quanto sai già</legend>
+      <div class="levels" id="levels"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Come vuoi studiare</legend>
+      <div class="checks">
+        <label><input type="checkbox" id="optDraw" checked><span>Esercizi a mano: disegnare i diagrammi su carta (consigliato, all'esame si disegna)</span></label>
+        <label><input type="checkbox" id="optQuiz" checked><span>Un quiz del capitolo dopo ogni argomento</span></label>
+        <label><input type="checkbox" id="optOpen" checked><span>Domande aperte scritte (definizione, esempio, confronto)</span></label>
+        <label><input type="checkbox" id="optLast" checked><span>Il giorno prima della prova solo ripasso leggero e simulazione</span></label>
+        <label><input type="checkbox" id="optGenai" checked><span>Includi la parte "Modellare nell'era GenAI" (se il tempo è poco puoi toglierla)</span></label>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button class="btn solid" type="submit">Genera il mio piano</button>
+      <span class="muted" id="cfgMsg" style="font-size:14px"></span>
+    </div>
+  </form>
+
+  <div id="planBox"></div>
+</div>
+
+<script>
+/* Dati della prova */
+const EXAM_DEFAULT = "2026-11-06";
+const Q = "Quaderno%20di%20Ingegneria%20del%20Software.html";
+const KEY = "piano-intercorso-ingsw"; // anche in corsi.js come progressKey: così si sincronizza
+const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
+const WD_LONG = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+
+/* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
+   pri = priorità quando il tempo non basta (più alto = più importante). */
+const TOPICS = [
+  { id: "elic", ch: "02", cid: "req", pkg: "Requirements Elicitation", t: "Elicitation dei requisiti", min: 80, pri: 3,
+    read: "Cap. 02: problem statement, tipi di requisiti, tipi di progetto, tecniche di elicitation, validazione",
+    draw: "Scrivi il problem statement di un'app che conosci e classifica 6 requisiti (funzionale, non funzionale, vincolo)",
+    open: "Cos'è l'elicitation? Confronta interviste, questionari e osservazione" },
+  { id: "uc", ch: "03", cid: "uc", pkg: "Requirements Elicitation", t: "Scenari e casi d'uso", min: 80, pri: 5,
+    read: "Cap. 03: tipi di scenario, come trovarli, regole di scrittura, template del corso",
+    draw: "Compila il template del corso per \"Prenota esame\", con un flusso alternativo",
+    open: "Differenza tra scenario e caso d'uso, con un esempio" },
+  { id: "reqq", ch: "04", cid: "reqq", pkg: "Requirements Elicitation", t: "Scrivere buoni requisiti", min: 70, pri: 3,
+    read: "Cap. 04: ISO 29148, parole ambigue, caratteristiche, SMART, tracciabilità, FURPS+, MoSCoW",
+    draw: "Riscrivi 5 requisiti vaghi in forma SMART e assegna categoria FURPS+ e priorità MoSCoW",
+    open: "Cosa rende verificabile un requisito? Esempio prima/dopo" },
+  { id: "umlintro", ch: "06", cid: "uml", pkg: "Intro UML", t: "UML: modelli e use case diagram", min: 60, pri: 4,
+    read: "Cap. 06, prima parte: modello e UML, i tre modelli, use case diagram, include/extend/generalizzazione",
+    draw: "Use case diagram di una biblioteca con almeno un include e un extend",
+    open: "Include ed extend: differenza e verso della freccia" },
+  { id: "class", ch: "06", cid: "uml", pkg: "Intro UML · Class e sequence", t: "Class diagram (base e nel dettaglio)", min: 130, pri: 5,
+    read: "Cap. 06: class diagram, Class diagram nel dettaglio (visibilità, sei relazioni, molteplicità, navigabilità, classe associativa, composizione, interfacce, dipendenza, OCL, Abbott)",
+    draw: "Dal testo del requisito della biblioteca disegna il class diagram con molteplicità; poi fai il \"Prova tu · che relazione è?\"",
+    open: "Aggregazione e composizione: differenza, tre test, esempio" },
+  { id: "state", ch: "07", cid: "state", pkg: "Intro UML", t: "Statechart, activity e package", min: 70, pri: 3,
+    read: "Cap. 07: statechart (evento [guardia] / azione, OR e AND), activity (fork/join, branch/merge, swimlane), package",
+    draw: "Statechart di un ordine online e activity diagram di un prestito con una swimlane per attore",
+    open: "Fork e branch nell'activity diagram: differenza" },
+  { id: "analisi", ch: "02 · 06", cid: "uml", pkg: "Analisi dei requisiti", t: "Analisi: oggetti entity, boundary, control e RAD", min: 80, pri: 4,
+    read: "Cap. 02: Dall'elicitation all'analisi, Gestire e rivedere il modello, RAD · Cap. 06: Dal caso d'uso agli oggetti di analisi, Dettagliare associazioni e attributi",
+    draw: "Dal caso d'uso ReportEmergency (o \"Prenota esame\") elenca entity, boundary e control",
+    open: "Perché si separano boundary, control ed entity?" },
+  { id: "seq", ch: "08", cid: "dyn", pkg: "Analisi dei requisiti · Class e sequence", t: "Sequence diagram e modello dinamico", min: 100, pri: 5,
+    read: "Cap. 08: gli elementi, come si scrive un messaggio, frame alt/opt/loop/par/break/ref, dai casi d'uso ai sequence, contratti, fork o stair, collaboration",
+    draw: "Sequence di \"Richiedi prestito\" con un alt per il libro non disponibile",
+    open: "Fork e stair: quando usare l'una o l'altra" },
+  { id: "bce", ch: "08", cid: "dyn", pkg: "Class e sequence diagram", t: "BCE in pratica e class + sequence", min: 90, pri: 5,
+    read: "Cap. 08: BCE in pratica (robustness diagram, chi parla con chi, esempi Accedi, Richiedi prestito, Paga ordine, tre package, violazioni), Class e sequence insieme",
+    draw: "Robustness diagram e sequence BCE di \"Accedi\" con il blocco dopo tre tentativi; poi aggiorna il class diagram con le operazioni",
+    open: "Le regole di comunicazione BCE: cosa è consentito e cosa è vietato" },
+  { id: "genai", ch: "08", cid: "dyn", pkg: "Class e sequence diagram", t: "Modellare nell'era GenAI", min: 40, pri: 1, optional: "optGenai",
+    read: "Cap. 08: Modellare nell'era GenAI (diagramma come specifica e come verifica, LLM dietro un'interfaccia, RAG, agenti)",
+    draw: "Fai l'esercizio per casa \"promemoria scritti da un LLM\": class diagram e sequence BCE",
+    open: "Dove sta l'LLM in un modello BCE e perché" }
+];
+const LEVELS = [
+  { v: 0, t: "Da zero", f: 1 },
+  { v: 1, t: "L'ho letto", f: 0.6 },
+  { v: 2, t: "Lo so bene", f: 0.3 }
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const fmtMin = m => { m = Math.round(m / 5) * 5; const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h} h ${r}′` : `${h} h`) : `${r}′`; };
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} };
+
+/* Conto alla rovescia */
+(function () {
+  const today = parse(iso(new Date())), ex = parse(EXAM_DEFAULT);
+  const n = Math.round((ex - today) / 864e5);
+  $("#cd").innerHTML = n > 1 ? `${n} giorni<small>alla prova</small>` : n === 1 ? `Domani<small>in bocca al lupo</small>` : n === 0 ? `Oggi<small>in bocca al lupo</small>` : `Fatta<small>la prova è passata</small>`;
+})();
+
+/* Form */
+function buildForm(cfg) {
+  const today = iso(new Date());
+  $("#start").value = cfg.start || (today < EXAM_DEFAULT ? today : EXAM_DEFAULT);
+  $("#exam").value = cfg.exam || EXAM_DEFAULT;
+  $("#hours").value = cfg.hours || 3;
+  const days = cfg.days || [1, 2, 3, 4, 5, 6, 0];
+  $("#days").innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label class="chip"><input type="checkbox" name="wd" value="${d}" ${days.includes(d) ? "checked" : ""}><span>${WD_LONG[d]}</span></label>`).join("");
+  const lv = cfg.levels || {};
+  $("#levels").innerHTML = TOPICS.map(t => `<div class="lv"><div class="t">${esc(t.t)}<small>cap. ${t.ch} · ${esc(t.pkg)}</small></div>
+    <div class="seg" role="radiogroup" aria-label="${esc(t.t)}">${LEVELS.map(l => `<label><input type="radio" name="lv-${t.id}" value="${l.v}" ${(lv[t.id] ?? 0) === l.v ? "checked" : ""}><span>${l.t}</span></label>`).join("")}</div></div>`).join("");
+  ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => { if (cfg.opts && k in cfg.opts) $("#" + k).checked = cfg.opts[k]; });
+  showHours();
+}
+function showHours() { const h = +$("#hours").value; $("#hoursOut").textContent = `${String(h).replace(".", ",")} ${h === 1 ? "ora" : "ore"}`; }
+$("#hours").addEventListener("input", showHours);
+function readForm() {
+  const levels = {}; TOPICS.forEach(t => { const r = document.querySelector(`input[name="lv-${t.id}"]:checked`); levels[t.id] = r ? +r.value : 0; });
+  const opts = {}; ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => opts[k] = $("#" + k).checked);
+  return { start: $("#start").value, exam: $("#exam").value, hours: +$("#hours").value,
+    days: [...document.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value), levels, opts };
+}
+
+/* Generazione del piano */
+function generate(cfg) {
+  const start = parse(cfg.start), exam = parse(cfg.exam), cap = cfg.hours * 60;
+  const warnings = [];
+  // giorni disponibili prima della prova
+  let days = [];
+  for (let d = new Date(start); d < exam; d = addDays(d, 1)) if (cfg.days.includes(d.getDay())) days.push({ date: iso(d), tasks: [], used: 0 });
+  if (!days.length) return { error: "Non c'è nessun giorno di studio prima della prova: controlla le date e i giorni selezionati." };
+  // giorno di ripasso finale
+  let lastDay = null;
+  if (cfg.opts.optLast && days.length >= 3 && days[days.length - 1].date === iso(addDays(exam, -1))) lastDay = days.pop();
+
+  // blocchi di lavoro per ogni argomento
+  const topics = TOPICS.filter(t => !t.optional || cfg.opts[t.optional]);
+  const blocks = topics.map(t => {
+    const lv = cfg.levels[t.id] || 0, f = LEVELS[lv].f, q = Q + "#" + t.cid;
+    const items = [];
+    items.push({ k: "read", m: Math.max(15, t.min * f), t: lv === 2 ? "Ripassa velocemente" : lv === 1 ? "Rileggi con attenzione" : "Studia", s: t.read, href: q });
+    if (cfg.opts.optDraw && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: "Esercizio a mano", s: t.draw });
+    if (cfg.opts.optOpen && lv < 2) items.push({ k: "open", m: 10, t: "Domanda aperta scritta", s: t.open });
+    items.push({ k: "lampo", m: 5, t: "Domande lampo del capitolo", s: "Copri la risposta e dilla ad alta voce", href: q });
+    if (cfg.opts.optQuiz) items.push({ k: "quiz", m: 10, t: `Quiz del capitolo ${t.cid === "uml" ? "06" : t.cid === "dyn" ? "08" : t.ch}`, s: "Un giro da 10 domande, punta all'80%", href: "Quiz%20IS.html" });
+    return { t, lv, items, m: items.reduce((a, i) => a + i.m, 0) };
+  });
+  let need = blocks.reduce((a, b) => a + b.m, 0);
+  const needAll = need;
+  const have = days.length * cap;
+  // se il tempo non basta: si tagliano gli extra degli argomenti a priorità bassa, poi si comprime
+  if (need > have) {
+    const order = [...blocks].sort((a, b) => a.t.pri - b.t.pri || b.lv - a.lv);
+    for (const b of order) {
+      if (need <= have) break;
+      const before = b.m;
+      b.items = b.items.filter(i => i.k !== "draw" && i.k !== "open" || b.t.pri >= 5);
+      b.m = b.items.reduce((a, i) => a + i.m, 0); need -= before - b.m;
+    }
+    if (need > have) {
+      const r = have * 0.95 / need;
+      blocks.forEach(b => { b.items.forEach(i => i.m = Math.max(5, i.m * r)); b.m = b.items.reduce((a, i) => a + i.m, 0); });
+      warnings.push(`Il tempo è poco: servirebbero circa ${fmtMin(needAll)} e ne hai ${fmtMin(have)}. Ho tolto alcuni esercizi e accorciato le letture: dai la precedenza a class diagram, casi d'uso e sequence.`);
+    } else warnings.push("Il tempo è giusto giusto: ho tolto alcuni esercizi sugli argomenti meno importanti.");
+  }
+
+  // distribuzione: si riempiono i giorni in ordine; un'attività lunga si può dividere tra due giorni
+  let di = 0;
+  const pushTask = (task) => {
+    let rest = task.m, part = 0;
+    const pieces = [];
+    while (rest > 0.5 && di < days.length) {
+      const day = days[di], free = cap - day.used;
+      if (free < 10 && day.used > 0) { di++; continue; }
+      const take = Math.min(rest, Math.max(free, 10));
+      pieces.push({ day, take }); day.used += take; rest -= take;
+      if (day.used >= cap - 5) di++;
+    }
+    if (rest > 0.5) { const day = days[days.length - 1]; pieces.push({ day, take: rest }); day.used += rest; }
+    pieces.forEach((p, k) => p.day.tasks.push(Object.assign({}, task, { m: p.take, part: pieces.length > 1 ? `${k + 1}/${pieces.length}` : "" })));
+  };
+  blocks.forEach(b => b.items.forEach(i => pushTask(Object.assign({}, i, { topic: b.t }))));
+
+  // giorni avanzati: ripasso degli argomenti meno noti e simulazioni
+  const weak = [...blocks].sort((a, b) => a.lv - b.lv || b.t.pri - a.t.pri);
+  let wi = 0;
+  days.forEach(day => {
+    let free = cap - day.used;
+    if (free >= 30 && day === days[days.length - 1]) {
+      day.tasks.push({ k: "sim", m: 30, t: "Simulazione prova intercorso", s: "Nel quiz: \"Simulazione prova intercorso\" (20 domande). Poi rivedi gli errori.", href: "Quiz%20IS.html" });
+      day.used += 30; free -= 30;
+    }
+    while (free >= 25 && weak.length) {
+      const b = weak[wi++ % weak.length];
+      day.tasks.push({ k: "rip", m: 25, t: `Ripasso: ${b.t.t}`, s: "Rileggi le parti segnate e rifai il quiz del capitolo finché arrivi all'80%", href: Q + "#" + b.t.cid, topic: b.t });
+      day.used += 25; free -= 25;
+    }
+  });
+  if (lastDay) {
+    const lc = Math.min(cap, 150);
+    lastDay.tasks = [
+      { k: "sim", m: Math.min(40, lc * 0.35), t: "Simulazione prova intercorso", s: "20 domande a tempo nel quiz, come se fosse la prova", href: "Quiz%20IS.html" },
+      { k: "rip", m: Math.min(45, lc * 0.35), t: "Ripassa solo gli errori della simulazione", s: "Apri il capitolo dal link della domanda sbagliata" },
+      { k: "rip", m: Math.min(30, lc * 0.3), t: "Ripasso a memoria", s: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
+      { k: "rest", m: 0, t: "Stacca presto e dormi bene", s: "Niente argomenti nuovi" }
+    ];
+    lastDay.used = lastDay.tasks.reduce((a, t) => a + t.m, 0);
+    days.push(lastDay);
+  }
+  let n = 0;
+  days.forEach(d => d.tasks.forEach(t => { t.id = "t" + (n++); }));
+  return { days, exam: cfg.exam, warnings, built: Date.now() };
+}
+
+/* Visualizzazione */
+function render() {
+  const st = load(), box = $("#planBox");
+  if (!st.plan) { box.innerHTML = ""; return; }
+  const p = st.plan, done = st.done || {};
+  const all = p.days.flatMap(d => d.tasks), nd = all.filter(t => done[t.id]).length;
+  const today = iso(new Date());
+  const ex = parse(p.exam);
+  box.innerHTML = `
+    <div class="status">
+      <div><b class="big">${nd}/${all.length}</b> <span class="muted">attività fatte</span></div>
+      <div class="actions no-print"><button class="btn" type="button" id="print">Stampa</button><button class="btn" type="button" id="reset">Rifai il piano</button></div>
+      <div class="bar"><i style="width:${all.length ? 100 * nd / all.length : 0}%"></i></div>
+    </div>
+    ${(p.warnings || []).map(w => `<p class="warn">${esc(w)}</p>`).join("")}
+    <div class="plan">${p.days.map(d => {
+      const dt = parse(d.date), tot = d.tasks.reduce((a, t) => a + t.m, 0);
+      const dn = d.tasks.length && d.tasks.every(t => done[t.id]);
+      const tags = [...new Set(d.tasks.filter(t => t.topic).map(t => t.topic.t))];
+      const title = tags.length ? tags.join(" · ") : (d.tasks.some(t => t.k === "sim") ? "Simulazione e ripasso finale" : "Ripasso");
+      return `<section class="dcard${d.date === today ? " today" : ""}${dn ? " done" : ""}">
+        <div class="dh"><div class="dt">${WD[dt.getDay()]}<b>${dt.getDate()}</b>${MESI[dt.getMonth()]}</div>
+          <div>${d.date === today ? `<span class="tag">Oggi</span>` : ""}<h3>${esc(title)}</h3></div><span class="min">${fmtMin(tot)}</span></div>
+        <ul>${d.tasks.map(t => `<li><label><input type="checkbox" data-id="${t.id}" ${done[t.id] ? "checked" : ""}>
+          <span class="tx">${esc(t.t)}${t.part ? ` (parte ${t.part})` : ""}${t.topic && !/^Ripasso/.test(t.t) ? ` · <span class="muted">${esc(t.topic.t)}</span>` : ""}
+          <small>${esc(t.s)}${t.href ? ` · <a href="${t.href}">apri</a>` : ""}</small></span>
+          ${t.m ? `<span class="tm">${fmtMin(t.m)}</span>` : ""}</label></li>`).join("")}</ul>
+      </section>`;
+    }).join("")}
+      <section class="dcard exam-day"><div class="dh"><div class="dt">${WD[ex.getDay()]}<b>${ex.getDate()}</b>${MESI[ex.getMonth()]}</div><div><h3>Prova intercorso</h3><span style="opacity:.75;font-size:14.5px">Colazione, niente roba nuova. Leggi tutte le opzioni prima di scegliere.</span></div><span></span></div></section>
+    </div>`;
+  box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener("change", () => {
+    const s = load(); s.done = s.done || {}; if (cb.checked) s.done[cb.dataset.id] = true; else delete s.done[cb.dataset.id]; save(s); render();
+  }));
+  box.querySelectorAll('a').forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+  $("#print").onclick = () => window.print();
+  $("#reset").onclick = () => { $("#cfg").scrollIntoView({ behavior: "smooth" }); $("#cfgMsg").textContent = "Cambia quello che vuoi e premi “Genera il mio piano”."; };
+}
+
+$("#cfg").addEventListener("submit", e => {
+  e.preventDefault();
+  const cfg = readForm(), msg = $("#cfgMsg");
+  if (!cfg.start || !cfg.exam) { msg.textContent = "Inserisci le due date."; return; }
+  if (cfg.start >= cfg.exam) { msg.textContent = "La data di inizio deve venire prima della prova."; return; }
+  if (!cfg.days.length) { msg.textContent = "Scegli almeno un giorno in cui puoi studiare."; return; }
+  const st = load();
+  if (st.plan && Object.keys(st.done || {}).length && !confirm("Rifacendo il piano le spunte attuali si azzerano. Continuo?")) return;
+  const plan = generate(cfg);
+  if (plan.error) { msg.textContent = plan.error; return; }
+  save({ cfg, plan, done: {} });
+  msg.textContent = "";
+  render();
+  $("#planBox").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+buildForm(load().cfg || {});
+render();
+/* se un altro dispositivo aggiorna le spunte (sincronizzazione), ridisegna */
+window.addEventListener("storage", e => { if (e.key === KEY) render(); });
+</script>
+</body>
+</html>

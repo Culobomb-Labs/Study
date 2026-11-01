@@ -20,7 +20,8 @@ window.CORSI =
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
-      { "name": "Quiz, capitoli 00–17", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
+      { "name": "Prova intercorso (ven 6 novembre): argomenti e piano di studio", "kind": "Prova intercorso", "path": "Ingenieria del Software/Prova intercorso IS.html", "progressKey": "piano-intercorso-ingsw" },
+      { "name": "Quiz, capitoli 01–17", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {

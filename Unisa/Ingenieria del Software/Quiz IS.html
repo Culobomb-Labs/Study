@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Quiz di Ingegneria del Software</title>
-<meta name="description" content="Domande a risposta multipla su tutti i capitoli del quaderno di Ingegneria del Software (00–17), con simulazione della prima prova.">
+<meta name="description" content="Domande a risposta multipla sui capitoli 01–17 del quaderno di Ingegneria del Software, con simulazione della prova intercorso.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -120,9 +120,9 @@ body.running .lede{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Ingegneria del Software · tutti i capitoli</div>
+  <div class="eyebrow">Ingegneria del Software · capitoli 01–17</div>
   <h1>Quiz di Ingegneria del Software</h1>
-  <p class="lede">Domande a risposta multipla su tutti i capitoli del quaderno, con la stessa numerazione (00–17). I capitoli della prima prova sono segnati. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
+  <p class="lede">Domande a risposta multipla su tutti i capitoli del quaderno, con la stessa numerazione (01–17). I capitoli della <a href="Prova%20intercorso%20IS.html">prova intercorso</a> sono segnati. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
@@ -130,12 +130,11 @@ body.running .lede{display:none}
 /* Domande: c = capitolo (id della sezione nel quaderno), q = domanda, o = opzioni (la PRIMA è quella giusta,
    vengono mescolate a ogni giro), e = spiegazione. Tutto preso dal Quaderno di Ingegneria del Software. */
 const CHAPTERS = [
-  { id: "java", n: "00", t: "Il Java minimo" },
-  { id: "minuta", n: "01", t: "Riunioni e minuta", p: 1 },
+  { id: "minuta", n: "01", t: "Riunioni e minuta" },
   { id: "req", n: "02", t: "Requisiti ed elicitation", p: 1 },
   { id: "uc", n: "03", t: "Scenari e casi d'uso", p: 1 },
   { id: "reqq", n: "04", t: "Scrivere buoni requisiti", p: 1 },
-  { id: "cvs", n: "05", t: "Ciclo di vita del software", p: 1 },
+  { id: "cvs", n: "05", t: "Ciclo di vita del software" },
   { id: "uml", n: "06", t: "UML: use case e classi", p: 1 },
   { id: "state", n: "07", t: "Statechart, activity e package", p: 1 },
   { id: "dyn", n: "08", t: "Modello dinamico e sequence", p: 1 },
@@ -147,9 +146,9 @@ const CHAPTERS = [
   { id: "cp", n: "14", t: "Category-partition" },
   { id: "wb", n: "15", t: "White-box testing" },
   { id: "its", n: "16", t: "Integrazione e sistema" },
-  { id: "scrum", n: "17", t: "Scrum", p: 1 }
+  { id: "scrum", n: "17", t: "Scrum" }
 ];
-// p: 1 = capitolo della prima prova
+// p: 1 = capitolo della prova intercorso (ven 6 novembre): 02, 03, 04, 06, 07, 08
 const Q = [
   // 05 · Ciclo di vita
   { c: "cvs", q: "Qual è la differenza tra ciclo di vita e ciclo di sviluppo del software?", o: ["Il ciclo di sviluppo va dalla decisione di sviluppare alla consegna ed è una parte del ciclo di vita", "Il ciclo di vita va dalla decisione di sviluppare alla consegna, il ciclo di sviluppo comprende anche la manutenzione", "Sono sinonimi", "Il ciclo di sviluppo comprende il ritiro del prodotto, il ciclo di vita no"], e: "Il ciclo di vita (IEEE 610.12) va dall'idea al ritiro, uso e manutenzione inclusi. Il ciclo di sviluppo è solo il tratto dalla decisione di sviluppare alla consegna." },
@@ -507,38 +506,8 @@ const Q = [
   { c: "dyn", q: "Nella struttura fork, chi chiama tutti gli altri oggetti?", o: ["Un oggetto, di solito il control", "L'entity", "Il boundary", "Ogni oggetto chiama il successivo"], e: "Controllo centralizzato: si può cambiare l'ordine e aggiungere operazioni." },
   { c: "dyn", q: "Nel collaboration diagram, come si capisce l'ordine dei messaggi?", o: ["Dai numeri, con notazione puntata per i messaggi annidati (2.1, 2.2)", "Dalla posizione verticale", "Dal colore delle frecce", "Non c'è ordine"], e: "Senza asse del tempo, l'ordine lo danno i numeri." },
   { c: "dyn", q: "Modellando CreateTournament (ARENA) con un sequence, cosa succede?", o: ["Saltano fuori classi nuove (un form, un controllo del torneo, l'entità Tournament) assenti nel class diagram", "Si scopre che il caso d'uso non serve", "Si ottiene il codice del sistema", "Si eliminano tutti gli entity"], e: "I sequence in analisi servono proprio a trovare nuovi oggetti e responsabilità." },
-  // ——— Domande sui capitoli aggiunti al quiz (00, 09–16) e sui contenuti nuovi ———
-  // 00 · Il Java minimo
-  { c: "java", q: "Che cos'è una classe in Java?", o: ["Uno stampo che descrive dati e azioni di un tipo di oggetto", "Un singolo oggetto già creato in memoria", "Un elenco di metodi senza corpo", "Un contenitore di più oggetti"], e: "La classe è lo stampo (in UML il rettangolo); l'oggetto è l'esemplare che crei con new." },
-  { c: "java", q: "Cosa fa new User(“a@b.it”)?", o: ["Crea un oggetto dallo stampo User", "Dichiara una nuova classe User", "Eredita da User", "Chiama un metodo statico di User"], e: "new crea un'istanza e fa partire il costruttore." },
-  { c: "java", q: "private String email; in UML diventa…", o: ["-email: String", "+email: String", "#email: String", "~email: String"], e: "Il meno è private, il più public, il cancelletto protected, la tilde package." },
-  { c: "java", q: "public String getEmail() in UML diventa…", o: ["+getEmail(): String", "-getEmail(): String", "getEmail: String", "+String getEmail"], e: "Operazione pubblica: + nome(parametri): tipoDiRitorno." },
-  { c: "java", q: "Cos'è il costruttore?", o: ["Un metodo con lo stesso nome della classe che parte quando fai new", "Il metodo che libera la memoria quando l'oggetto non serve più", "Un metodo statico che restituisce la descrizione della classe", "Il metodo main da cui parte l'esecuzione del programma"], e: "Il costruttore inizializza l'oggetto appena creato." },
-  { c: "java", q: "class Agente extends User significa che…", o: ["Agente è un tipo di User e ne prende campi e metodi", "Agente implementa l'interfaccia User", "Agente contiene un oggetto User", "User è una sottoclasse di Agente"], e: "extends = ereditarietà, in UML la freccia con il triangolo vuoto verso User." },
-  { c: "java", q: "A cosa serve super(email) nel costruttore di una sottoclasse?", o: ["A chiamare il costruttore della superclasse", "A creare un nuovo oggetto della superclasse a parte", "A rendere pubblico il campo email", "A chiamare un metodo dell'interfaccia"], e: "super(...) delega al costruttore del padre l'inizializzazione dei campi ereditati." },
-  { c: "java", q: "Cos'è un'interfaccia in Java?", o: ["Una lista di metodi senza corpo: un contratto", "Una classe con tutto il codice già scritto", "La parte grafica del programma", "Una classe che non si può estendere"], e: "Chi implementa l'interfaccia promette di scrivere quei metodi." },
-  { c: "java", q: "Differenza tra extends e implements?", o: ["extends eredita da una classe (anche il codice), implements firma un'interfaccia", "Sono sinonimi", "implements eredita il codice, extends solo l'obbligo dei metodi", "extends si usa solo con le interfacce"], e: "extends prende il codice del padre; implements prende solo l'obbligo di scrivere i metodi." },
-  { c: "java", q: "Puoi fare new Shape() se Shape è abstract?", o: ["No, serve solo come padre", "Sì, sempre", "Sì, ma solo dentro la stessa classe", "Solo se Shape non ha metodi"], e: "Una classe astratta non si istanzia; in UML ha il nome in corsivo." },
-  { c: "java", q: "In UML, come si riconosce una classe astratta?", o: ["Il nome è in corsivo", "Il nome è sottolineato", "Ha lo stereotipo «entity»", "Ha il bordo tratteggiato"], e: "Corsivo = astratto; sottolineato = istanza (o membro statico)." },
-  { c: "java", q: "Cosa indica this?", o: ["Questo oggetto qui, quello su cui si sta eseguendo il metodo", "La superclasse da cui la classe corrente eredita", "L'ultimo oggetto creato con new nel programma", "Il metodo che si sta eseguendo in quel momento"], e: "In this.email = email, this.email è il campo, email il parametro." },
-  { c: "java", q: "Differenza tra List e Set?", o: ["List ha un ordine; Set no e non ammette doppioni", "Set ha un ordine; List no", "Sono uguali, cambia solo il nome", "List non ammette doppioni"], e: "Ricorda: Set = insieme matematico, senza ordine e senza duplicati." },
-  { c: "java", q: "throw new Exception(“…”) serve a…", o: ["Segnalare un problema e interrompere il metodo", "Stampare un messaggio sulla console", "Catturare un errore già lanciato", "Terminare sempre il programma"], e: "L'eccezione si lancia con throw e si cattura più in alto con try/catch." },
-  { c: "java", q: "Con quale costrutto si cattura un'eccezione?", o: ["try { … } catch (…) { … }", "throw new …", "if (…) else …", "extends Exception"], e: "throw lancia, try/catch cattura." },
-  { c: "java", q: "Nel ponte UML ↔ Java, un'associazione diventa…", o: ["Un campo che punta all'altro oggetto", "Un'interfaccia implementata da entrambe le classi", "Un metodo statico che collega le due classi", "Una sottoclasse comune alle due classi"], e: "Associazione → riferimento; generalizzazione → extends; attributo → campo private + get/set." },
-  { c: "java", q: "Nel ponte UML ↔ Java, un attributo diventa…", o: ["Un campo private con metodi get/set", "Un parametro del costruttore e basta", "Una costante pubblica", "Una classe a parte"], e: "È la regola del forward engineering del capitolo 11." },
-  { c: "java", q: "Per quali capitoli serve il Java minimo?", o: ["Riuso, design pattern e mapping (09–11)", "Requisiti, casi d'uso e scrittura dei requisiti", "Scrum, ciclo di vita e riunioni di progetto", "Solo il black-box e il category-partition"], e: "Nel corso il codice non è il protagonista: serve per leggere gli esempi di object design." },
-  { c: "java", q: "class X implements Comparator obbliga X a…", o: ["Scrivere il corpo del metodo compare", "Ereditare il codice di Comparator", "Non avere altri metodi", "Essere una classe astratta"], e: "Implementare un'interfaccia = firmare il contratto." },
-  { c: "java", q: "Un campo in Java corrisponde in UML a…", o: ["Un attributo", "Un'operazione", "Un'associazione riflessiva", "Uno stereotipo"], e: "Campo = attributo; metodo = operazione." },
-  { c: "java", q: "Un metodo in Java corrisponde in UML a…", o: ["Un'operazione", "Un attributo", "Un attore", "Una molteplicità"], e: "Le operazioni stanno nel terzo compartimento del rettangolo." },
-  { c: "java", q: "ArrayList e HashSet sono…", o: ["Implementazioni concrete di List e Set", "Interfacce senza codice, come Comparator", "Classi astratte da cui ereditare per forza", "Eccezioni lanciate dalle collezioni Java"], e: "List/Set sono le interfacce, ArrayList/HashSet le classi concrete." },
-  { c: "java", q: "Un campo private è visibile…", o: ["Solo dentro la classe stessa", "Da tutte le classi", "Dalle sottoclassi e dal package", "Solo dalle sottoclassi"], e: "private = solo la classe; protected = sottoclassi (e package); public = tutti." },
-  { c: "java", q: "Quale dichiarazione Java corrisponde a una generalizzazione UML?", o: ["class Libro extends Documento", "class Libro implements Prestabile", "private Documento d;", "void usa(Documento d)"], e: "Triangolo con linea continua = extends; con linea tratteggiata = implements." },
-  { c: "java", q: "Quale dichiarazione Java corrisponde a una realizzazione UML?", o: ["class ArchivioSQL implements Repository", "class ArchivioSQL extends Repository", "private Repository r;", "Repository r = new ArchivioSQL();"], e: "Realizzazione = la classe implementa un'interfaccia." },
-  { c: "java", q: "Un attributo statico (static) in UML si scrive…", o: ["Sottolineato", "In corsivo", "Tra parentesi graffe", "Con la barra /"], e: "Sottolineato = statico; corsivo = astratto; / = derivato." },
-  { c: "java", q: "Un'interfaccia può avere campi di stato?", o: ["No, solo costanti", "Sì, come una classe normale", "Sì, ma solo privati", "Solo se è astratta"], e: "Lo stato (campi) sta nelle classi; l'interfaccia è solo un contratto." },
-  { c: "java", q: "Da quante classi può ereditare una classe Java con extends?", o: ["Da una sola", "Da quante vuole", "Da due al massimo", "Da nessuna: si usa solo implements"], e: "Una sola superclasse, ma molte interfacce." },
-  { c: "java", q: "Quante interfacce può implementare una classe Java?", o: ["Molte", "Una sola", "Nessuna se ha già extends", "Al massimo due"], e: "È proprio la differenza con la classe astratta: un solo genitore, molti contratti." },
-  { c: "java", q: "Cosa succede al metodo quando viene eseguito throw?", o: ["Si interrompe e l'eccezione risale a chi lo ha chiamato", "Continua l'esecuzione e stampa un avviso sulla console", "Riparte dall'inizio con gli stessi parametri", "Termina restituendo null al chiamante"], e: "È così che nel capitolo 11 si controllano le precondizioni." },
+  // ——— Domande sui capitoli aggiunti al quiz (09–16) e sui contenuti nuovi ———
+
 
   // 09 · Riuso: ereditarietà e delega
   { c: "riuso", q: "Qual è lo scopo dell'object design?", o: ["Colmare il buco tra il modello di analisi e la macchina reale", "Raccogliere e validare i requisiti insieme al cliente", "Testare il sistema finito rispetto ai casi d'uso", "Pianificare gli sprint e stimare gli story point"], e: "Il modo più economico per farlo è riusare classi e soluzioni già pronte." },
@@ -930,10 +899,10 @@ function chapterRun(cid) {
   const st = loadStats(), last = (st._ultimo || {})[cid] || [];
   return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
 }
-/* Due simulazioni: "sim" = prima prova (20 domande, almeno 2 per capitolo della prova),
+/* Due simulazioni: "sim" = prova intercorso (20 domande, almeno 2 per capitolo della prova),
    "simtutto" = tutto il corso (30 domande, almeno 1 per capitolo). */
 const SIMS = {
-  sim: { title: "Simulazione della prima prova", tot: 20, min: 2, chaps: () => CHAPTERS.filter(c => c.p) },
+  sim: { title: "Simulazione prova intercorso", tot: 20, min: 2, chaps: () => CHAPTERS.filter(c => c.p) },
   simtutto: { title: "Simulazione su tutto il corso", tot: 30, min: 1, chaps: () => CHAPTERS }
 };
 function simRun(key) {
@@ -967,14 +936,14 @@ function home() {
     const k = all.filter(q => known(st, q.id)).length, rip = all.filter(q => { const x = st[q.id]; return x && x.w > 0 && x.s < SAPUTA; }).length;
     const pct = s ? Math.round(100 * s.best / s.total) : null;
     const best = s ? `migliore <b class="${pct >= 80 ? "" : "mid"}">${s.best}/${s.total}</b>` : "non ancora fatto";
-    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span>${c.p ? `<span class="s pp">prima prova</span>` : ""}<span class="s">${PER_GIRO} a giro su ${n} · ${best}</span><span class="s">ne sai <b class="${k === n ? "" : "mid"}">${k}/${n}</b>${rip ? ` · ${rip} da recuperare` : ""}</span><span class="m"><i style="width:${100 * k / n}%"></i></span></button>`;
+    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span>${c.p ? `<span class="s pp">prova intercorso</span>` : ""}<span class="s">${PER_GIRO} a giro su ${n} · ${best}</span><span class="s">ne sai <b class="${k === n ? "" : "mid"}">${k}/${n}</b>${rip ? ` · ${rip} da recuperare` : ""}</span><span class="m"><i style="width:${100 * k / n}%"></i></span></button>`;
   }).join("");
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione</h2>
-      <p>20 domande miste sui capitoli della prima prova (01–08 e 17), almeno 2 per capitolo, diverse a ogni giro. Oppure 30 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
+      <p>20 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08), almeno 2 per capitolo, diverse a ogni giro. Oppure 30 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
-      <div class="actions"><button class="btn" type="button" id="go-sim">Prima prova →</button>
+      <div class="actions"><button class="btn" type="button" id="go-sim">Prova intercorso →</button>
       <button class="btn" type="button" id="go-simtutto">Tutto il corso (30) →</button></div>
     </section>
     <p class="label">Un capitolo alla volta</p>
