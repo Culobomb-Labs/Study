@@ -134,3 +134,19 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .contact-line a{color:var(--accent);text-underline-offset:2px}
 @media(max-width:420px){.c2-line{grid-template-columns:minmax(0,1fr) 42px}.c2-line select{grid-column:1/-1}}
 .hint[hidden]{display:none}
+
+/* limite giornaliero */
+.quota{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.quota[hidden]{display:none}
+.quota-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px}
+.quota-lbl{font-weight:600}
+.quota-num{font:500 12px/1 var(--font-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.quota-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px}
+.quota-bar i{height:6px;border-radius:99px;background:var(--soft);border:1px solid var(--line);transition:background .2s,border-color .2s}
+.quota-bar i.on{background:var(--muted);border-color:var(--muted)}
+.quota[data-state=low] .quota-bar i.on{background:#d98a2b;border-color:#d98a2b}
+.quota[data-state=full] .quota-bar i.on{background:var(--accent);border-color:var(--accent)}
+.quota-msg{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.quota[data-state=full] .quota-msg{color:var(--ink)}
+.quota-cd{font:600 14px/1 var(--font-mono);color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+@media(prefers-reduced-motion:reduce){.quota-bar i{transition:none}}

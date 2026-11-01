@@ -41,9 +41,46 @@ function paintCounter(){const t=$('#form').elements.text, n=t.value.length, c=$(
   c.textContent=`${n} / ${MAX_TEXT}`; const st=n>=MAX_TEXT?'full':n>=MAX_TEXT*0.9?'near':'';
   c.dataset.state=st; if(bar){bar.style.width=Math.min(100,100*n/MAX_TEXT)+'%';bar.dataset.state=st;}}
 $('#form').elements.text.addEventListener('input',paintCounter); paintCounter();
+
+/* Limite giornaliero: barra delle segnalazioni usate oggi (giorno di Roma, come nelle regole) e conto alla rovescia */
+const QUOTA_MAX=5;
+let quotaUnsub=null, quotaData=null, quotaFull=false;
+function nextRomeMidnight(){
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  const hm=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+  for(const off of [1,2]){const t=Date.UTC(+p.year,+p.month-1,+p.day+1,0,0)-off*36e5; if(hm.format(new Date(t))==='00:00')return t;}
+  return Date.now()+864e5;
+}
+const pad=n=>String(n).padStart(2,'0');
+function usedToday(){const t=quotaData?.updatedAt?.toDate?.(); return t && romeDay(t)===romeDay(new Date()) ? Math.max(0,Math.min(QUOTA_MAX,quotaData.count|0)) : 0;}
+function canSend(){return !!user && readyUser===user && !sending && !quotaFull;}
+function paintQuota(){
+  const box=$('#quota'); if(!box)return;
+  if(!user || readyUser!==user){box.hidden=true; quotaFull=false; return;}
+  const used=usedToday(), left=QUOTA_MAX-used;
+  quotaFull=left<=0; box.hidden=false; box.dataset.state=quotaFull?'full':left<=1?'low':'';
+  $('#quota-num').textContent=`${used} / ${QUOTA_MAX}`;
+  [...$('#quota-bar').children].forEach((i,k)=>i.classList.toggle('on',k<used));
+  $('#quota-bar').setAttribute('aria-label',`${used} segnalazioni usate oggi su ${QUOTA_MAX}`);
+  if(quotaFull){
+    const s=Math.max(0,Math.round((nextRomeMidnight()-Date.now())/1000));
+    $('#quota-msg').innerHTML='';
+    const strong=document.createElement('b'); strong.className='quota-cd'; strong.textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;
+    $('#quota-msg').append('Hai usato tutte le segnalazioni di oggi. Potrai inviarne di nuove tra ',strong,'.');
+  } else $('#quota-msg').textContent=left===1?'Ti resta 1 segnalazione per oggi.':`Te ne restano ${left} per oggi.`;
+  $('#send').disabled=!canSend();
+}
+setInterval(()=>{ if(user && readyUser===user && !$('#quota').hidden) paintQuota(); },1000);
+function watchQuota(u){
+  if(quotaUnsub){quotaUnsub();quotaUnsub=null;}
+  quotaData=null; paintQuota();
+  if(!u)return;
+  quotaUnsub=onSnapshot(doc(db,'reportQuota',u.uid),snap=>{quotaData=snap.exists()?snap.data({serverTimestamps:'estimate'}):null; paintQuota();},()=>{$('#quota').hidden=true;});
+}
 onAuthStateChanged(auth,async u=>{
   const version=++authVersion;
   if(unsubscribe){unsubscribe();unsubscribe=null;}
+  if(quotaUnsub){quotaUnsub();quotaUnsub=null;} quotaData=null; quotaFull=false;
   $('#list').replaceChildren(); $('#list-message').textContent=u?'Verifica dell’account…':'Accedi per vedere le segnalazioni.';
   drafts.clear(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
   $('#identity').textContent=u?(u.displayName||u.email):''; $('#send').disabled=true;
@@ -64,7 +101,8 @@ onAuthStateChanged(auth,async u=>{
   }
   if(version!==authVersion || auth.currentUser!==u)return;
   readyUser=u;
-  $('#send').disabled=!u || sending;
+  watchQuota(u);
+  $('#send').disabled=!canSend();
   $('#list-title').textContent=isAdmin()?'Tutte le segnalazioni':'Le tue segnalazioni';
   $('#admin-tools').hidden=!isAdmin();
   $('#report-notices').replaceChildren();
@@ -140,6 +178,7 @@ function reportNotice(heading,title,body,createdAt){
 $('#form').onsubmit=async e=>{
   e.preventDefault();
   if(!user || readyUser!==user || sending)return;
+  if(quotaFull){msg('Hai raggiunto il limite di 5 segnalazioni per oggi.');return}
   const sender=user, form=e.currentTarget, title=form.elements.title.value.trim(), text=form.elements.text.value.trim(), contactRes=window.UAContact?window.UAContact.read():{value:''}, contact=contactRes.value||'';
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
   if(text.length>MAX_TEXT){msg(`Il testo può essere lungo al massimo ${MAX_TEXT} caratteri.`);return}
@@ -159,6 +198,6 @@ $('#form').onsubmit=async e=>{
     if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata.');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
-  } finally {sending=false;$('#send').disabled=!user || readyUser!==user;}
+  } finally {sending=false;$('#send').disabled=!canSend();}
 };
 
