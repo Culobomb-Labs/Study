@@ -157,3 +157,28 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 :root{--ok:#1f7a45;--ok-dot:#1f7a45}
 :root[data-theme=dark]{--ok:#5fd18f;--ok-dot:#2a9d5c}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--ok:#5fd18f;--ok-dot:#2a9d5c}}
+
+/* stato (vista amministratore): pulsanti colorati */
+.status-pick{margin-top:16px}
+.status-pick-lbl{display:block;font-weight:600;font-size:14px;margin-bottom:8px}
+.status-pick-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.status-opt{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font:600 12.5px/1.15 var(--font-body);cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.status-opt::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.55}
+.status-opt:hover{border-color:var(--muted);color:var(--ink)}
+.status-opt[aria-checked=true]::before{opacity:1}
+.status-opt.new[aria-checked=true]{color:#164a98;background:#e4efff;border-color:#9dbdf0}
+.status-opt.in_progress[aria-checked=true]{color:#865008;background:#fbefdc;border-color:#e6c08a}
+.status-opt.resolved[aria-checked=true]{color:#21663c;background:#e4f2e9;border-color:#9ccfae}
+.status-opt.rejected[aria-checked=true]{color:#9b3030;background:#fbe5e5;border-color:#e3a5a5}
+:root[data-theme=dark] .status-opt.new[aria-checked=true]{color:#9cc2ff;background:#16243a;border-color:#2c4a78}
+:root[data-theme=dark] .status-opt.in_progress[aria-checked=true]{color:#f2c27a;background:#2e2414;border-color:#5e4720}
+:root[data-theme=dark] .status-opt.resolved[aria-checked=true]{color:#8fdcae;background:#15291e;border-color:#2b5a3d}
+:root[data-theme=dark] .status-opt.rejected[aria-checked=true]{color:#ff9d9d;background:#331a1a;border-color:#6a3030}
+@media (prefers-color-scheme:dark){
+:root:not([data-theme=light]) .status-opt.new[aria-checked=true]{color:#9cc2ff;background:#16243a;border-color:#2c4a78}
+:root:not([data-theme=light]) .status-opt.in_progress[aria-checked=true]{color:#f2c27a;background:#2e2414;border-color:#5e4720}
+:root:not([data-theme=light]) .status-opt.resolved[aria-checked=true]{color:#8fdcae;background:#15291e;border-color:#2b5a3d}
+:root:not([data-theme=light]) .status-opt.rejected[aria-checked=true]{color:#ff9d9d;background:#331a1a;border-color:#6a3030}}
+.status-opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status-opt:disabled{cursor:wait;opacity:.7}
+.entry label .optional{display:block;margin:3px 0 0;font:400 12px/1.3 var(--font-body);text-transform:none}

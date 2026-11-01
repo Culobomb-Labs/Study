@@ -133,14 +133,22 @@ onAuthStateChanged(auth,async u=>{
       else if(isAdmin()){const c=document.createElement('p');c.className='contact-line';c.textContent='Contatto: risposta qui sul sito';card.append(c)}
       if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
       if(isAdmin()){
-        const label=document.createElement('label'), select=document.createElement('select');
-        label.textContent='Stato';
-        for(const [value,name] of Object.entries(statuses)){const option=document.createElement('option');option.value=value;option.textContent=name;select.append(option)}
-        select.value=d.status;
-        select.onchange=async()=>{select.disabled=true;try{await updateDoc(doc(db,'reports',item.id),{status:select.value,updatedAt:serverTimestamp()})}catch(e){select.value=d.status;$('#list-message').textContent='Impossibile aggiornare lo stato.'}finally{select.disabled=false}};
-        label.append(select);card.append(label);
+        /* stato: quattro pulsanti colorati al posto del menu a tendina */
+        const group=document.createElement('div'), gl=document.createElement('span'), row=document.createElement('div');
+        group.className='status-pick'; gl.className='status-pick-lbl'; gl.id='st-'+item.id; gl.textContent='Stato';
+        row.className='status-pick-row'; row.setAttribute('role','radiogroup'); row.setAttribute('aria-labelledby',gl.id);
+        const btns=[];
+        const paintPick=v=>btns.forEach(b=>{const on=b.dataset.v===v;b.setAttribute('aria-checked',on?'true':'false');b.tabIndex=on?0:-1;});
+        for(const [value,name] of Object.entries(statuses)){
+          const b=document.createElement('button'); b.type='button'; b.className='status-opt '+value; b.dataset.v=value; b.setAttribute('role','radio'); b.textContent=name;
+          b.onclick=async()=>{ if(b.getAttribute('aria-checked')==='true')return; const prev=d.status; paintPick(value); btns.forEach(x=>x.disabled=true);
+            try{await updateDoc(doc(db,'reports',item.id),{status:value,updatedAt:serverTimestamp()})}catch(e){paintPick(prev);$('#list-message').textContent='Impossibile aggiornare lo stato.'}finally{btns.forEach(x=>x.disabled=false)} };
+          b.onkeydown=e=>{const k=btns.indexOf(b), n=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0; if(n){e.preventDefault();btns[(k+n+btns.length)%btns.length].focus();}};
+          btns.push(b); row.append(b);
+        }
+        paintPick(d.status); group.append(gl,row); card.append(group);
         const commentLabel=document.createElement('label'), input=document.createElement('textarea'), save=document.createElement('button'), result=document.createElement('p');
-        commentLabel.textContent='Risposta per l’utente (facoltativa)'; input.rows=3; input.maxLength=1500; input.value=drafts.has(item.id)?drafts.get(item.id):(d.adminComment||'');input.oninput=()=>drafts.set(item.id,input.value);input.placeholder='Scrivi una risposta…';
+        commentLabel.innerHTML='Risposta all’utente <span class="optional">la vede solo chi ha inviato la segnalazione</span>'; input.rows=3; input.maxLength=1500; input.value=drafts.has(item.id)?drafts.get(item.id):(d.adminComment||'');input.oninput=()=>drafts.set(item.id,input.value);input.placeholder='Scrivi una risposta…';
         save.type='button';save.className='save-comment';save.textContent='Salva risposta';result.setAttribute('role','status');
         save.onclick=async()=>{save.disabled=true;result.textContent='Salvataggio…';try{const value=input.value.trim();await updateDoc(doc(db,'reports',item.id),{adminComment:value,updatedAt:serverTimestamp()});if(drafts.get(item.id)?.trim()===value)drafts.delete(item.id);result.textContent='Risposta salvata.'}catch(e){result.textContent='Impossibile salvare la risposta.'}finally{save.disabled=false}};
         commentLabel.append(input);card.append(commentLabel,save,result);
@@ -195,7 +203,7 @@ $('#form').onsubmit=async e=>{
       tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
       tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
-    if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata.','ok');}
+    if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata','ok');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!canSend();}
