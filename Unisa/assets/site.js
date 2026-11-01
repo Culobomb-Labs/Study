@@ -31,6 +31,7 @@
     bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
+    chev: '<svg class="ua-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
     logout: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
@@ -315,35 +316,50 @@
   function loadQrLib() {
     if (window.qrcode) return Promise.resolve(window.qrcode);
     return new Promise((ok, ko) => {
-      const s = el("script", { src: "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" });
+      const s = el("script", { src: ROOT + "assets/qrcode.min.js" });
       s.onload = () => ok(window.qrcode); s.onerror = ko; document.head.append(s);
     });
   }
 
-  function openExport() {
-    const data = collectProgress();
-    const n = countChecks(data);
-    const link = new URL(ROOT + "index.html", location.href).href + "#sync=" + b64(JSON.stringify(data));
-    showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Sposta i progressi</h2>
-      <p class="ua-sync-p">${n ? `Su questo dispositivo hai <b>${n}</b> ${n === 1 ? "spunta" : "spunte"} (piano di studio e capitoli fatti).` : "Su questo dispositivo non hai ancora spunte da spostare."}
-      Inquadra il codice con la fotocamera del telefono, oppure copia il link e aprilo sull'altro dispositivo.</p>
-      <div class="ua-qr" aria-label="Codice QR con i tuoi progressi"><span class="ua-qr-wait">Preparo il codice…</span></div>
+  /* Il link/QR porta solo le spunte (le chiavi progressKey di corsi.js), e solo quelle messe:
+     { chiave: ["id1","id2",…] }. Così resta abbastanza corto per un QR.
+     I link vecchi (tutto il contenuto del browser) si possono ancora importare. */
+  function exportData() {
+    const out = {};
+    PROGRESS_KEYS.forEach(k => {
+      try {
+        const o = JSON.parse(localStorage.getItem(k) || "null");
+        if (o && typeof o === "object") { const on = Object.keys(o).filter(x => o[x] === true); if (on.length) out[k] = on; }
+      } catch (e) {}
+    });
+    return out;
+  }
+  const exportCount = d => Object.values(d).reduce((n, v) => n + (Array.isArray(v) ? v.length : 0), 0);
+  function exportLink() {
+    const d = exportData();
+    return { n: exportCount(d), link: new URL(ROOT + "index.html", location.href).href + "#sync=" + b64(JSON.stringify({ v: 2, s: d })) };
+  }
+  function fillExport(box) {
+    const { n, link } = exportLink();
+    box.innerHTML = `<p class="ua-ap-p">${n ? `Su questo dispositivo hai <b>${n}</b> ${n === 1 ? "spunta" : "spunte"} (piano di studio e capitoli fatti).` : "Su questo dispositivo non hai ancora spunte da spostare."}
+        Inquadra il codice con la fotocamera dell'altro dispositivo, oppure copia il link e aprilo lì.</p>
+      <div class="ua-qr ua-ap-qr" aria-label="Codice QR con le tue spunte"><span class="ua-qr-wait">Preparo il codice…</span></div>
       <div class="ua-sync-row">
-        <input class="ua-sync-link" id="ua-sync-link" readonly value="${esc(link)}" aria-label="Link con i progressi">
-        <button type="button" class="ua-btn ua-sync-copy" data-focus>Copia link</button>
+        <input class="ua-sync-link" readonly value="${esc(link)}" aria-label="Link con le spunte">
+        <button type="button" class="ua-btn ua-sync-copy">Copia link</button>
       </div>
-      <p class="ua-sync-note">Sull'altro dispositivo le spunte vengono <b>sostituite</b> con queste. Il link contiene solo le spunte, niente dati personali.</p>
-      <div class="ua-sync-actions"><button type="button" class="ua-btn" data-close>Chiudi</button></div>`);
-    const copy = sync.querySelector(".ua-sync-copy"), inp = sync.querySelector(".ua-sync-link");
+      <p class="ua-ap-note">Sull'altro dispositivo le spunte vengono <b>sostituite</b> con queste. Il link contiene solo le spunte, niente dati personali.</p>`;
+    const copy = box.querySelector(".ua-sync-copy"), inp = box.querySelector(".ua-sync-link");
     copy.addEventListener("click", () => {
       const done = () => { copy.textContent = "Copiato ✓"; setTimeout(() => (copy.textContent = "Copia link"), 1800); };
       (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(done).catch(() => { inp.select(); try { document.execCommand("copy"); done(); } catch (e) {} });
     });
     inp.addEventListener("focus", () => inp.select());
+    const q = box.querySelector(".ua-qr");
     loadQrLib().then(qrcode => {
       const qr = qrcode(0, "L"); qr.addData(link); qr.make();
-      sync.querySelector(".ua-qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
-    }).catch(() => { sync.querySelector(".ua-qr").innerHTML = '<span class="ua-qr-wait">QR non disponibile: usa “Copia link”.</span>'; });
+      q.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+    }).catch(() => { q.innerHTML = '<span class="ua-qr-wait">Troppe spunte per un QR: usa “Copia link”.</span>'; });
   }
 
   function checkImport() {
@@ -355,6 +371,11 @@
     if (!data || typeof data !== "object") {
       showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Link non valido</h2><p class="ua-sync-p">Il link dei progressi è incompleto. Rigeneralo dall'altro dispositivo e riprova.</p><div class="ua-sync-actions"><button type="button" class="ua-btn" data-close data-focus>Chiudi</button></div>`);
       return;
+    }
+    if (data.v === 2 && data.s && typeof data.s === "object") { // formato nuovo: { chiave: [id spuntati] }
+      const conv = {};
+      for (const k in data.s) if (Array.isArray(data.s[k])) { const o = {}; data.s[k].forEach(id => (o[id] = true)); conv[k] = JSON.stringify(o); }
+      data = conv;
     }
     const n = countChecks(data), here = countChecks(collectProgress());
     showSync(`<h2 class="ua-sync-t" id="ua-sync-t">Importare i progressi?</h2>
@@ -655,7 +676,8 @@
       <div class="ua-np-head"><h2>I tuoi progressi</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
       <div class="ua-ap-body">${top}</div>
       <ul class="ua-ap-menu">
-        ${item("ua-do-export", ICON.sync, "Sposta le spunte", u ? "Con un link o un QR" : "Senza account, con un link o un QR")}
+        <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
+          <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
         ${item("ua-ap-report", ICON.bug, "Segnala un problema", "Qualcosa non va negli appunti o nel sito?", `${ROOT}segnalazioni.html`)}
       </ul>
       ${u ? `<button type="button" class="ua-np-all ua-do-logout">${ICON.logout}<span>Esci</span></button>` : ""}`;
@@ -664,7 +686,13 @@
     if (login) login.addEventListener("click", () => signIn(login, ap.querySelector(".ua-acct-err")));
     const out = ap.querySelector(".ua-do-logout");
     if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
-    ap.querySelector(".ua-do-export").addEventListener("click", () => { closeAccount(true); openExport(); });
+    const exp = ap.querySelector(".ua-do-export"), move = ap.querySelector(".ua-ap-move");
+    exp.addEventListener("click", () => {
+      const open = exp.getAttribute("aria-expanded") !== "true";
+      exp.setAttribute("aria-expanded", String(open));
+      move.hidden = !open;
+      if (open) { fillExport(move); if (!phone()) placeBox(ap.querySelector(".ua-np-box"), apTrigger); move.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+    });
   }
   function openAccount(trigger) {
     if (!cloudUser) fbAuth().catch(() => {}); // la libreria arriva mentre leggi: il tocco su "Accedi" apre subito Google
