@@ -392,7 +392,11 @@ function generate(cfg) {
     if (need > have) {
       const r = have * 0.95 / need;
       blocks.forEach(b => { b.items.forEach(i => i.m = Math.max(5, i.m * r)); b.m = b.items.reduce((a, i) => a + i.m, 0); });
-      warnings.push(`Il tempo è poco: servirebbero circa ${fmtMin(needAll)} e ne hai ${fmtMin(have)}. Ho tolto alcuni esercizi e accorciato le letture: dai la precedenza a class diagram, casi d'uso e sequence.`);
+      const tot = have + (lastDay ? cap : 0), nd = days.length + (lastDay ? 1 : 0);
+      const hai = lastDay
+        ? `Hai ${fmtMin(tot)} in tutto (${nd} giorni × ${fmtMin(cap)}), ma l'ultimo giorno è riservato a ripasso e simulazione: per studiare restano ${fmtMin(have)}.`
+        : `Hai ${fmtMin(have)} in tutto (${nd} giorni × ${fmtMin(cap)}).`;
+      warnings.push(`Il tempo è poco. Per fare tutto con il livello che hai indicato servirebbero circa ${fmtMin(needAll)}. ${hai} Ho tolto alcuni esercizi e accorciato le letture: dai la precedenza a class diagram, casi d'uso e sequence.${lastDay ? " Se vuoi più tempo per studiare, togli la spunta “Il giorno prima della prova solo ripasso”." : ""}`);
     } else warnings.push("Il tempo è giusto giusto: ho tolto alcuni esercizi sugli argomenti meno importanti.");
   }
 
