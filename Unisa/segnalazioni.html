@@ -74,7 +74,7 @@
         <button id="send" type="submit" disabled><span>Invia segnalazione</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         <p id="message" role="status" aria-live="polite"></p>
         <div class="quota" id="quota" hidden>
-          <div class="quota-top"><span class="quota-lbl">Segnalazioni di oggi</span><span class="quota-num" id="quota-num"></span></div>
+          <div class="quota-top"><span class="quota-lbl">Segnalazioni usate</span><span class="quota-num" id="quota-num"></span></div>
           <div class="quota-bar" id="quota-bar" role="img" aria-label=""><i></i><i></i><i></i><i></i><i></i></div>
           <p class="quota-msg" id="quota-msg" aria-live="polite"></p>
         </div>
@@ -100,6 +100,6 @@ function paint(){var n=t.value.length,st=n>=max?'full':n>=max*0.9?'near':'';c.te
 t.addEventListener('input',paint);paint();})();
 </script>
 <script src="assets/segnalazioni-contatto.js?v=2"></script>
-<script type="module">import("./assets/segnalazioni-auth-v3.js?v=10").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
+<script type="module">import("./assets/segnalazioni-auth-v3.js?v=11").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
 </body>
 </html>

@@ -19,21 +19,6 @@ service cloud.firestore {
         && request.auth.token.email == 'gpeluso03@gmail.com';
     }
 
-    // The EU clock changes at 01:00 UTC on the last Sundays
-    // of March and October.
-    function lastSunday(year, month) {
-      let end = timestamp.date(year, month, 31);
-      return end - duration.value(end.dayOfWeek() % 7, 'd');
-    }
-
-    function romeDate(t) {
-      let start = lastSunday(t.year(), 3) + duration.value(1, 'h');
-      let end = lastSunday(t.year(), 10) + duration.value(1, 'h');
-      let hours = t >= start && t < end ? 2 : 1;
-
-      return (t + duration.value(hours, 'h')).date();
-    }
-
     match /utenti/{uid} {
       allow read, write: if signedIn()
         && request.auth.uid == uid;
@@ -62,9 +47,11 @@ service cloud.firestore {
         )
           ? request.resource.data.count == 1
           : (
-              romeDate(resource.data.updatedAt) == romeDate(request.time)
-                ? request.resource.data.count == resource.data.count + 1
-                : request.resource.data.count == 1
+              // 24 ore dopo l'ultima segnalazione il conteggio riparte da 1:
+              // chi le finisce tutte e 5 aspetta 24 ore dalla quinta.
+              request.time >= resource.data.updatedAt + duration.value(24, 'h')
+                ? request.resource.data.count == 1
+                : request.resource.data.count == resource.data.count + 1
             );
       }
 

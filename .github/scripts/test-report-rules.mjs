@@ -34,6 +34,32 @@ try {
   });
   await assertSucceeds(submit(user,'reader',1));
   for(let i=0;i<3;i++) await assertSucceeds(submit(user));
+  // blocco di 24 ore dalla quinta segnalazione (non a mezzanotte)
+  const thirdClaims={...claims,email:'third@example.com'};
+  const third=env.authenticatedContext('third',thirdClaims).firestore();
+  const submitThird=count=>{
+    const quota=doc(third,'reportQuota','third'), report=doc(collection(third,'reports'));
+    return runTransaction(third, async tx => {
+      await tx.get(quota);
+      tx.set(quota,{count,lastReportId:report.id,updatedAt:serverTimestamp()});
+      tx.set(report,{...payload(),userId:'third',authorEmail:thirdClaims.email});
+    });
+  };
+  const setThird=(count,hoursAgo)=>env.withSecurityRulesDisabled(async ctx => {
+    await setDoc(doc(ctx.firestore(),'reportQuota','third'),{count,lastReportId:'old-'+count+'-'+hoursAgo,updatedAt:new Date(Date.now()-hoursAgo*3600000)});
+  });
+  await setThird(5,23);
+  await assertFails(submitThird(1));
+  await assertFails(submitThird(6));
+  await setThird(5,25);
+  await assertFails(submitThird(6));
+  await assertSucceeds(submitThird(1));
+  await setThird(2,2);
+  await assertFails(submitThird(1));
+  await assertSucceeds(submitThird(3));
+  await setThird(3,30);
+  await assertFails(submitThird(4));
+  await assertSucceeds(submitThird(1));
   const parallel=await Promise.allSettled([submit(user),submit(user)]);
   if(parallel.filter(x=>x.status==='fulfilled').length!==1) throw new Error('Concurrent submissions exceeded quota');
   const fake=env.authenticatedContext('fake',{...claims,email_verified:false}).firestore();

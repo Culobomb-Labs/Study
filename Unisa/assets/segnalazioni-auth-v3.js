@@ -45,14 +45,10 @@ $('#form').elements.text.addEventListener('input',paintCounter); paintCounter();
 /* Limite giornaliero: barra delle segnalazioni usate oggi (giorno di Roma, come nelle regole) e conto alla rovescia */
 const QUOTA_MAX=5;
 let quotaUnsub=null, quotaData=null, quotaFull=false;
-function nextRomeMidnight(){
-  const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
-  const hm=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
-  for(const off of [1,2]){const t=Date.UTC(+p.year,+p.month-1,+p.day+1,0,0)-off*36e5; if(hm.format(new Date(t))==='00:00')return t;}
-  return Date.now()+864e5;
-}
 const pad=n=>String(n).padStart(2,'0');
-function usedToday(){const t=quotaData?.updatedAt?.toDate?.(); return t && romeDay(t)===romeDay(new Date()) ? Math.max(0,Math.min(QUOTA_MAX,quotaData.count|0)) : 0;}
+const QUOTA_WINDOW=24*36e5; // 24 ore dall'ultima segnalazione, come nelle regole
+function quotaUntil(){const t=quotaData?.updatedAt?.toDate?.(); return t ? t.getTime()+QUOTA_WINDOW : 0;}
+function usedToday(){return Date.now()<quotaUntil() ? Math.max(0,Math.min(QUOTA_MAX,quotaData.count|0)) : 0;}
 function canSend(){return !!user && readyUser===user && !sending && !quotaFull;}
 function paintQuota(){
   const box=$('#quota'); if(!box)return;
@@ -61,13 +57,13 @@ function paintQuota(){
   quotaFull=left<=0; box.hidden=false; box.dataset.state=quotaFull?'full':left<=1?'low':'';
   $('#quota-num').textContent=`${used} / ${QUOTA_MAX}`;
   [...$('#quota-bar').children].forEach((i,k)=>i.classList.toggle('on',k<used));
-  $('#quota-bar').setAttribute('aria-label',`${used} segnalazioni usate oggi su ${QUOTA_MAX}`);
+  $('#quota-bar').setAttribute('aria-label',`${used} segnalazioni usate su ${QUOTA_MAX}`);
   if(quotaFull){
-    const s=Math.max(0,Math.round((nextRomeMidnight()-Date.now())/1000));
+    const s=Math.max(0,Math.round((quotaUntil()-Date.now())/1000));
     $('#quota-msg').innerHTML='';
     const strong=document.createElement('b'); strong.className='quota-cd'; strong.textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;
-    $('#quota-msg').append('Hai usato tutte le segnalazioni di oggi. Potrai inviarne di nuove tra ',strong,'.');
-  } else $('#quota-msg').textContent=left===1?'Ti resta 1 segnalazione per oggi.':`Te ne restano ${left} per oggi.`;
+    $('#quota-msg').append('Hai usato tutte e 5 le segnalazioni. Potrai inviarne altre 5 tra ',strong,'.');
+  } else $('#quota-msg').textContent=(left===1?'Ti resta 1 segnalazione.':`Te ne restano ${left}.`)+(used?' Finite tutte e 5, dovrai aspettare 24 ore.':'');
   $('#send').disabled=!canSend();
 }
 setInterval(()=>{ if(user && readyUser===user && !$('#quota').hidden) paintQuota(); },1000);
@@ -187,7 +183,7 @@ function reportNotice(heading,title,body,createdAt){
 $('#form').onsubmit=async e=>{
   e.preventDefault();
   if(!user || readyUser!==user || sending)return;
-  if(quotaFull){msg('Hai raggiunto il limite di 5 segnalazioni per oggi.');return}
+  if(quotaFull){msg('Hai usato tutte e 5 le segnalazioni: aspetta che finisca il conto alla rovescia.');return}
   const sender=user, form=e.currentTarget, title=form.elements.title.value.trim(), text=form.elements.text.value.trim(), contactRes=window.UAContact?window.UAContact.read():{value:''}, contact=contactRes.value||'';
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
   if(text.length>MAX_TEXT){msg(`Il testo può essere lungo al massimo ${MAX_TEXT} caratteri.`);return}
@@ -198,15 +194,15 @@ $('#form').onsubmit=async e=>{
     await runTransaction(db,async tx=>{
       const quotaRef=doc(db,'reportQuota',sender.uid), reportRef=doc(collection(db,'reports'));
       const quota=await tx.get(quotaRef), old=quota.exists()?quota.data():null;
-      const sameDay=old?.updatedAt && romeDay(old.updatedAt.toDate())===romeDay(new Date());
-      const count=sameDay?old.count+1:1;
+      const last=old?.updatedAt?.toMillis?.();
+      const count=last && Date.now()<last+QUOTA_WINDOW ? old.count+1 : 1;
       if(count>5)throw new Error('daily-limit');
       tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
       tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
     if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata','ok');}
   } catch(e) {
-    if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai raggiunto il limite di 5 segnalazioni al giorno.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
+    if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai usato tutte e 5 le segnalazioni: riprova 24 ore dopo la quinta.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!canSend();}
 };
 
