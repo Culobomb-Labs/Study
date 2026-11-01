@@ -162,6 +162,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 
   <nav class="tabs no-print" aria-label="In questa pagina">
     <a href="#piano" data-t="piano" class="on">Il tuo piano</a>
+    <a class="ext" href="Quiz%20MP.html">Quiz →</a>
     <a class="ext" href="Quaderno%20di%20Android.html">Quaderno →</a>
   </nav>
 
@@ -194,7 +195,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <legend>Come vuoi studiare</legend>
       <div class="checks">
         <label><input type="checkbox" id="optDraw" checked><span>Esercizi pratici: scrivere ed eseguire il codice in Android Studio (consigliato)</span></label>
-        <label hidden><input type="checkbox" id="optQuiz"><span>Un quiz del capitolo dopo ogni argomento</span></label>
+        <label><input type="checkbox" id="optQuiz" checked><span>Un quiz del capitolo dopo ogni argomento</span></label>
         <label><input type="checkbox" id="optOpen" checked><span>Domande aperte scritte (definizione, esempio, confronto)</span></label>
         <label><input type="checkbox" id="optLast" checked><span>Il giorno prima della prova solo ripasso leggero e simulazione</span></label>
         <label hidden><input type="checkbox" id="optGenai" checked><span>Includi la parte "Modellare nell'era GenAI" (se il tempo è poco puoi toglierla)</span></label>
@@ -213,7 +214,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 /* Dati della prova */
 const EXAM_DEFAULT = "";
 const Q = "Quaderno%20di%20Android.html";
-const QUIZ = null;
+const QUIZ = "Quiz%20MP.html";
 const DRAW_T = "Esercizio pratico";
 const KEY = "piano-esame-mp"; // anche in corsi.js come progressKey: così si sincronizza
 const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
@@ -248,7 +249,7 @@ const TOPICS = [
 ];
 const SCOPES = {
   completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
-    sim: {"t": "Simulazione d'esame", "s": "Prendi 3 capitoli a caso e rispondi a voce, a tempo, alle loro domande lampo. Poi rileggi dove hai esitato."},
+    sim: {"t": "Simulazione d'esame", "s": "Nel quiz: simulazione della prova. Poi rivedi gli errori."},
     focus: "ciclo di vita, intent, layout, salvataggio dei dati e service",
     recap: "Callback del ciclo di vita, parti di un Intent, px/dp/sp, i 4 passi dell'Adapter, permessi a runtime, dove salvare i dati, tipi di service" }
 };

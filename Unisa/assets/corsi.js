@@ -32,7 +32,8 @@ window.CORSI =
     "color": "mp",
     "docs": [
       { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" }
+      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" },
+      { "name": "Quiz, capitoli 01–21", "kind": "Quiz", "path": "Mobile Programming/Quiz MP.html" }
     ]
   },
   {

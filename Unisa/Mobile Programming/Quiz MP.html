@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz di Mobile Programming</title>
+<meta name="description" content="Domande a risposta multipla sui capitoli 01–21 del quaderno di Android (Mobile Programming), con simulazione d'esame.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una colonna di lettura. Scelta del capitolo → una domanda alla volta → risultato con gli errori da rivedere.
+   Colore del corso (viola) per l'avanzamento, verde/rosso solo per giusto/sbagliato. */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --ink:#111418; --muted:#5d636b; --line:#dcdddb; --soft:#efefec;
+  --c:var(--ua-c-mp,#2f7d52); --c-soft:#e3f1e8;
+  --ok:#22744a; --ok-bg:#e3f2e9; --ko:#b3261e; --ko-bg:#fbe9e7;
+  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#251f38; --ok:#6fd398; --ok-bg:#15291e; --ko:#ff8a80; --ko-bg:#33191a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#251f38; --ok:#6fd398; --ok-bg:#15291e; --ko:#ff8a80; --ko-bg:#33191a; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+a{color:inherit}
+.wrap{max-width:780px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--c);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,6vw,48px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 28px;max-width:60ch}
+button{font:inherit;color:inherit}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--muted)}
+.btn:focus-visible,.opt:focus-visible,.chap:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.btn.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.solid:hover{opacity:.88}
+.btn[disabled]{opacity:.4;cursor:default}
+.label{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 10px}
+
+/* scelta */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:center;padding:20px;border-radius:10px;
+  background:var(--ink);color:var(--bg);margin-bottom:30px}
+.sim h2{font-family:var(--f-display);font-size:22px;margin:0}
+.sim p{margin:0;opacity:.75;font-size:14.5px}
+.sim .tot{font-family:var(--f-mono);font-size:12.5px;opacity:.65}
+.sim .tot b{font-weight:600}
+.sim .btn{grid-row:1 / span 3;grid-column:2;background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.chaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.chap{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;cursor:pointer;
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;transition:border-color .15s,transform .15s}
+.chap:hover{border-color:var(--c);transform:translateY(-1px)}
+.chap .n{grid-row:1 / span 4;font-family:var(--f-mono);font-weight:500;color:var(--c);font-size:14px;padding-top:2px}
+.chap .t{font-weight:600;line-height:1.3}
+.chap .t,.chap .s{grid-column:2}
+.chap .s{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.chap .s b{font-weight:500;color:var(--ok)}
+.chap .s b.mid{color:var(--c)}
+.chap .s.pp{color:var(--c);text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+.sim .actions{grid-row:1 / span 3;grid-column:2;flex-direction:column;align-items:stretch}
+.sim .actions .btn{grid-row:auto;grid-column:auto;justify-content:center}
+.chap .m{grid-column:2;height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
+.chap .m i{display:block;height:100%;background:var(--ok);border-radius:2px}
+.note{margin-top:22px;color:var(--muted);font-size:14px}
+
+/* domanda */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.qhead a{color:var(--muted)}
+.backq{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:13px;color:var(--c);text-decoration:none;margin:0 0 14px;padding:6px 10px 6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.backq:hover{border-color:var(--c)}
+.backq:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-bottom:26px}
+.bar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:12px;color:var(--c);background:var(--c-soft);border-radius:999px;padding:3px 10px;margin-bottom:12px}
+.q{font-family:var(--f-display);font-weight:700;font-size:clamp(20px,3.6vw,25px);line-height:1.3;margin:0 0 20px;text-wrap:pretty}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{appearance:none;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:13px 16px;cursor:pointer;
+  display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;transition:border-color .15s,background .15s}
+.opt:hover:not([disabled]){border-color:var(--muted)}
+.opt .k{font-family:var(--f-mono);font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:6px;text-align:center;line-height:22px;height:24px}
+.opt[disabled]{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.right .k{border-color:var(--ok);color:var(--ok)}
+.opt.wrong{border-color:var(--ko);background:var(--ko-bg)}
+.opt.wrong .k{border-color:var(--ko);color:var(--ko)}
+.opt.dim{opacity:.55}
+.fb{margin-top:18px;padding:14px 16px;border-radius:10px;border-left:3px solid var(--c);background:var(--surface)}
+.fb b.ok{color:var(--ok)} .fb b.ko{color:var(--ko)}
+.fb p{margin:4px 0 0}
+.fb a{font-size:14px;color:var(--c);text-underline-offset:3px}
+.next{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.hint{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:14px;text-align:right}
+
+/* risultato */
+.score{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.score b{font-family:var(--f-display);font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.score span{color:var(--muted)}
+.verdict{margin:0 0 24px;font-size:17px}
+.byc{list-style:none;margin:0 0 28px;padding:0;border-top:1px solid var(--line)}
+.byc li{display:grid;grid-template-columns:minmax(0,1fr) 120px 52px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.byc .m{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.byc .m i{display:block;height:100%;background:var(--c)}
+.byc .v{font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.errs{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.err{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface)}
+.err .eq{font-weight:600;margin:0 0 6px}
+.err p{margin:4px 0 0;font-size:14.5px;color:var(--muted)}
+.err p b{color:var(--ink);font-weight:600}
+.err .yours{color:var(--ko)}
+.err a{font-size:14px;color:var(--c)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+body.running .lede{display:none}
+@media (hover:none),(max-width:640px){.hint{display:none}}
+@media (max-width:560px){.sim{grid-template-columns:1fr}.sim .btn{grid-row:auto;grid-column:1;justify-self:start;margin-top:8px}.sim .actions{grid-row:auto;grid-column:1;align-items:flex-start}.byc li{grid-template-columns:minmax(0,1fr) 70px 46px}}
+@media (prefers-reduced-motion:reduce){.chap,.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Mobile Programming · capitoli 01–21</div>
+  <h1>Quiz di Mobile Programming</h1>
+  <p class="lede">Domande a risposta multipla su tutti i capitoli del quaderno di Android, con la stessa numerazione (01–21). Per organizzare lo studio c'è anche il <a href="Piano%20di%20studio%20MP.html">piano di studio</a>. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<script>
+/* Domande: c = capitolo (id della sezione nel quaderno), q = domanda, o = opzioni (la PRIMA è quella giusta,
+   vengono mescolate a ogni giro), e = spiegazione. Tutto preso dal Quaderno di Android (Mobile Programming). */
+const CHAPTERS = [
+  { id: "piattaforma", n: "01", t: "La piattaforma Android" },
+  { id: "versioni", n: "02", t: "Versioni e livelli API" },
+  { id: "strumenti", n: "03", t: "Android Studio e strumenti" },
+  { id: "layout", n: "04", t: "Layout e misure" },
+  { id: "listview", n: "05", t: "ListView e Adapter" },
+  { id: "ciclo", n: "06", t: "Ciclo di vita dell'Activity" },
+  { id: "intent", n: "07", t: "Intent" },
+  { id: "permessi", n: "08", t: "Permessi" },
+  { id: "thread", n: "09", t: "Thread e AsyncTask" },
+  { id: "frammenti", n: "10", t: "Frammenti (Fragments)" },
+  { id: "rete", n: "11", t: "Networking" },
+  { id: "storage", n: "12", t: "Salvare i dati" },
+  { id: "grafica", n: "13", t: "Grafica e custom view" },
+  { id: "touch", n: "14", t: "Multitouch e gesti" },
+  { id: "media", n: "15", t: "MediaPlayer e audio focus" },
+  { id: "sensori", n: "16", t: "Sensori" },
+  { id: "notifiche", n: "17", t: "Notifiche" },
+  { id: "alarms", n: "18", t: "Alarms" },
+  { id: "broadcast", n: "19", t: "Broadcast" },
+  { id: "provider", n: "20", t: "Content Provider" },
+  { id: "service", n: "21", t: "Service" }
+];
+const Q = [
+  // 01 · La piattaforma Android
+  { c: "piattaforma", q: "Cos'è Android?", o: ["Un sistema software completo: sistema operativo, librerie, framework per le app e app di base", "Solo un linguaggio di programmazione per telefoni", "Solo il kernel Linux modificato per i telefoni", "Un ambiente di sviluppo come Android Studio"], e: "Android comprende tutto lo stack, dal kernel alle app di base." },
+  { c: "piattaforma", q: "Cosa contiene l'SDK di Android?", o: ["Librerie, strumenti e documentazione per sviluppare", "Solo l'emulatore", "Solo le app di sistema", "Solo il kernel Linux"], e: "SDK = Software Development Kit." },
+  { c: "piattaforma", q: "Qual è lo strato più basso dell'architettura Android?", o: ["Il kernel Linux", "L'HAL", "Le librerie native", "L'application framework"], e: "Dal basso: kernel Linux, HAL, librerie native + runtime, application framework, applicazioni." },
+  { c: "piattaforma", q: "Qual è lo strato più alto dell'architettura Android?", o: ["Le applicazioni (Home, Contatti, le nostre app)", "L'application framework", "L'HAL", "Il runtime ART"], e: "Ogni strato usa quello sotto; in cima ci sono le app." },
+  { c: "piattaforma", q: "A cosa serve l'HAL (Hardware Abstraction Layer)?", o: ["Offre interfacce standard verso l'hardware, nascondendo le differenze tra i modelli", "Compila il codice Java in bytecode", "Gestisce il ciclo di vita delle activity", "Installa le app sul dispositivo"], e: "Il livello sopra chiede “la fotocamera” senza sapere quale modello è." },
+  { c: "piattaforma", q: "Quale componente dell'application framework gestisce il ciclo di vita delle app?", o: ["Activity Manager", "Package Manager", "View System", "Content Providers"], e: "Package Manager installa le app; Content Providers danno accesso ai dati di altre app." },
+  { c: "piattaforma", q: "Quale componente dell'application framework installa le app?", o: ["Package Manager", "Activity Manager", "View System", "HAL"], e: "Activity Manager invece gestisce il ciclo di vita." },
+  { c: "piattaforma", q: "A cosa servono i Content Providers dell'application framework?", o: ["A dare accesso ai dati di altre app, per esempio la rubrica", "A disegnare le view", "A installare gli aggiornamenti", "A gestire la batteria"], e: "Ne riparliamo nel capitolo 20." },
+  { c: "piattaforma", q: "Oltre ai servizi base, cosa aggiunge il kernel Linux di Android?", o: ["Gestione batteria, low memory killer, comunicazione tra processi", "Il compilatore Java", "L'interfaccia grafica delle app", "Il Play Store"], e: "Sono le parti specifiche di Android nel kernel." },
+  { c: "piattaforma", q: "Cosa fa lo strumento DX?", o: ["Trasforma il bytecode Java in un unico file classes.dex", "Esegue l'app sull'emulatore", "Firma l'APK", "Disegna i layout"], e: "DEX = Dalvik EXecutable." },
+  { c: "piattaforma", q: "Cosa contiene classes.dex?", o: ["Tutto il bytecode dell'app nel formato Dalvik, più i dati necessari", "Solo le immagini dell'app", "Il manifesto dell'app", "Le stringhe tradotte"], e: "È ciò che la macchina virtuale esegue." },
+  { c: "piattaforma", q: "Come compila Dalvik?", o: ["Durante l'esecuzione (Just-In-Time)", "All'installazione (Ahead-Of-Time)", "Sul PC dello sviluppatore", "Non compila, interpreta solo XML"], e: "ART invece compila prima, di solito all'installazione." },
+  { c: "piattaforma", q: "Come compila ART?", o: ["Prima, di solito all'installazione (Ahead-Of-Time)", "Durante l'esecuzione (Just-In-Time)", "Solo quando l'app va in crash", "Sul server di Google"], e: "Coppia da ricordare: Dalvik JIT, ART AOT." },
+  { c: "piattaforma", q: "Da quale livello API ART sostituisce Dalvik?", o: ["API 21 (Android 5.0)", "API 23 (Android 6.0)", "API 26 (Android 8.0)", "API 19 (Android 4.4)"], e: "Dalvik vale per API < 21." },
+  { c: "piattaforma", q: "Quale vantaggio ha ART rispetto a Dalvik?", o: ["Meno memoria e meno batteria, garbage collection più efficiente", "Compila durante l'esecuzione", "Funziona solo sugli emulatori", "Non ha garbage collection"], e: "Dalvik a volte bloccava l'app durante la garbage collection." },
+  { c: "piattaforma", q: "Perché serve una macchina virtuale apposita per Android?", o: ["Un telefono ha CPU più lenta, meno RAM e batteria limitata rispetto a un PC", "Perché Java non funziona su Linux", "Per impedire le app di terze parti", "Per poter usare solo Kotlin"], e: "La VM è progettata per le risorse limitate dei dispositivi mobili." },
+  { c: "piattaforma", q: "Un'app che va bene su ART va bene anche su Dalvik?", o: ["Sì, ma non è vero il contrario", "No, mai", "Solo se scritta in Kotlin", "Solo sugli emulatori"], e: "Lo dice la frase chiave del capitolo." },
+  { c: "piattaforma", q: "In che linguaggi si possono scrivere le app Android del corso?", o: ["Java (nelle slide) ma anche Kotlin", "Solo C++", "Solo Swift", "Solo JavaScript"], e: "Il codice viene comunque compilato in bytecode e poi in .dex." },
+  { c: "piattaforma", q: "WebKit, libc e OpenGL ES appartengono a quale strato?", o: ["Librerie native", "Kernel Linux", "Application framework", "Applicazioni"], e: "Le librerie native stanno insieme al runtime ART." },
+  { c: "piattaforma", q: "Driver, memoria, processi e file system sono gestiti da…", o: ["Il kernel Linux", "L'application framework", "ART", "Il Package Manager"], e: "Sono i servizi base di un sistema operativo." },
+
+  // 02 · Versioni e livelli API
+  { c: "versioni", q: "Da quale API i permessi pericolosi si chiedono a runtime?", o: ["API 23 (Android 6.0 Marshmallow)", "API 21 (Android 5.0)", "API 26 (Android 8.0)", "API 30 (Android 11)"], e: "Prima di API 23 si accettavano tutti all'installazione." },
+  { c: "versioni", q: "Da quale API ogni notifica deve avere un canale?", o: ["API 26 (Android 8.0 Oreo)", "API 21 (Android 5.0)", "API 23 (Android 6.0)", "API 33 (Android 13)"], e: "Senza canale la notifica non compare." },
+  { c: "versioni", q: "Da quale API le connessioni http in chiaro sono bloccate di default?", o: ["API 28 (Android 9 Pie)", "API 26 (Android 8.0)", "API 23 (Android 6.0)", "API 31 (Android 12)"], e: "L'errore tipico è “Cleartext not permitted”." },
+  { c: "versioni", q: "Con quale API nasce lo storage “sandboxed” e MediaStore?", o: ["API 29 (Android 10)", "API 26 (Android 8.0)", "API 33 (Android 13)", "API 21 (Android 5.0)"], e: "Da Android 10 le app sono isolate anche fuori dallo spazio privato." },
+  { c: "versioni", q: "Da quale API c'è il permesso “solo questa volta”?", o: ["API 30 (Android 11)", "API 23 (Android 6.0)", "API 28 (Android 9)", "API 33 (Android 13)"], e: "Android 11 introduce anche <queries> per i Content Provider." },
+  { c: "versioni", q: "Da quale API gli alarm esatti richiedono un permesso?", o: ["API 31 (Android 12)", "API 26 (Android 8.0)", "API 29 (Android 10)", "API 23 (Android 6.0)"], e: "Da Android 12 anche gli alarm imprecisi partono entro un'ora." },
+  { c: "versioni", q: "Da quale API serve il permesso POST_NOTIFICATIONS?", o: ["API 33 (Android 13)", "API 26 (Android 8.0)", "API 30 (Android 11)", "API 21 (Android 5.0)"], e: "Android 13 introduce anche READ_MEDIA_*." },
+  { c: "versioni", q: "Da quale API le app sono edge-to-edge con gli insets?", o: ["API 35 (Android 15)", "API 33 (Android 13)", "API 29 (Android 10)", "API 31 (Android 12)"], e: "Le app occupano tutto lo schermo." },
+  { c: "versioni", q: "Quale novità porta Android 5.0 (API 21)?", o: ["ART al posto di Dalvik e notifiche heads-up", "Canali di notifica obbligatori", "Permessi a runtime", "Storage sandboxed"], e: "Heads-up = notifiche a comparsa per quelle urgenti." },
+  { c: "versioni", q: "Da quale API gli alarm non riportano più l'app in primo piano da soli?", o: ["API 29 (Android 10)", "API 26 (Android 8.0)", "API 21 (Android 5.0)", "API 35 (Android 15)"], e: "Si mostra una notifica e sarà l'utente a toccarla." },
+  { c: "versioni", q: "Con quale API diventano pochi i broadcast di sistema registrabili nel manifesto?", o: ["API 26 (Android 8.0)", "API 23 (Android 6.0)", "API 30 (Android 11)", "API 21 (Android 5.0)"], e: "Da Oreo il manifesto accetta solo broadcast custom e pochi di sistema." },
+  { c: "versioni", q: "Con quale API si dichiarano i Content Provider usati dentro <queries>?", o: ["API 30 (Android 11)", "API 26 (Android 8.0)", "API 29 (Android 10)", "API 33 (Android 13)"], e: "Il client deve dichiarare nel suo manifesto i provider a cui accede." },
+  { c: "versioni", q: "Come sono chiamate le versioni di Android?", o: ["Con un nome di dolce in ordine alfabetico e un livello API", "Solo con un numero di build", "Con il nome di una città", "Con il nome dello sviluppatore"], e: "Lollipop, Marshmallow, Oreo, Pie…" },
+  { c: "versioni", q: "Android 6.0 si chiama…", o: ["Marshmallow", "Lollipop", "Oreo", "Pie"], e: "API 23: permessi pericolosi a runtime." },
+  { c: "versioni", q: "Android 8.0 si chiama…", o: ["Oreo", "Pie", "Marshmallow", "Lollipop"], e: "API 26: canali di notifica obbligatori." },
+
+  // 03 · Android Studio e strumenti
+  { c: "strumenti", q: "Cos'è il manifesto (AndroidManifest.xml)?", o: ["La carta d'identità dell'app: permessi, activity, icona, service, receiver, provider", "Il file con tutte le stringhe tradotte", "Il file che contiene il codice Java", "Il file di configurazione dell'emulatore"], e: "Tutto ciò che il sistema deve sapere dell'app sta lì." },
+  { c: "strumenti", q: "Cosa c'è nella cartella res/?", o: ["Le risorse: layout, valori (stringhe, colori), drawable, mipmap, menu", "Il codice sorgente Java", "Le librerie native", "I log dell'app"], e: "java/ contiene il codice sorgente." },
+  { c: "strumenti", q: "A cosa serve Gradle?", o: ["È il sistema di build: dipendenze dalle librerie e come compilare", "È l'emulatore di Android", "È il debugger", "È il database dell'app"], e: "Le dipendenze stanno anche in libs.versions.toml." },
+  { c: "strumenti", q: "Dove stanno le icone dell'app?", o: ["Nella cartella mipmap", "Nella cartella layout", "Nella cartella values", "Nella cartella java"], e: "drawable per le immagini, mipmap per le icone." },
+  { c: "strumenti", q: "Differenza tra Activity e AppCompatActivity?", o: ["AppCompatActivity estende Activity e aggiunge retrocompatibilità (Toolbar, Material, temi)", "Activity è più recente di AppCompatActivity", "AppCompatActivity non ha ciclo di vita", "Sono la stessa classe con due nomi"], e: "Nel dubbio si usa AppCompatActivity." },
+  { c: "strumenti", q: "Da quale libreria viene AppCompatActivity?", o: ["AndroidX", "JSoup", "Gradle", "SQLite"], e: "AndroidX porta le funzioni nuove anche sulle versioni vecchie." },
+  { c: "strumenti", q: "Cosa sono gli insets?", o: ["Le zone coperte da status bar, barra di navigazione e tastiera", "Le immagini dell'app", "I margini dei layout XML", "Le notifiche a comparsa"], e: "Con setPadding si sposta il contenuto per non finirci sotto." },
+  { c: "strumenti", q: "Come si attiva la modalità sviluppatore su un telefono?", o: ["Toccando 7 volte “Versione build”, poi attivando Debug USB", "Installando Android Studio sul telefono", "Riavviando in modalità provvisoria", "Con il comando adb devices"], e: "Serve per usare un telefono reale con Android Studio." },
+  { c: "strumenti", q: "Quale vantaggio ha l'emulatore rispetto al telefono reale?", o: ["È facile simulare situazioni come batteria scarica o SMS in arrivo", "È più veloce", "Non ha mai bug", "Non serve configurarlo"], e: "Il telefono reale invece è più veloce e fedele." },
+  { c: "strumenti", q: "Con quali “numeri” comunicano due emulatori?", o: ["5554 e 5556", "10.0.2.2 e 10.0.2.3", "8080 e 8081", "127.0.0.1 e 127.0.0.2"], e: "Servono due AVD diversi." },
+  { c: "strumenti", q: "Cos'è adb?", o: ["Android Debug Bridge, uno strumento a riga di comando per parlare con dispositivi ed emulatori", "Un'app per scaricare APK", "Il compilatore di Kotlin", "Un layout per le liste"], e: "Sta nella cartella platform-tools dell'SDK." },
+  { c: "strumenti", q: "Cosa fa adb devices?", o: ["Elenca dispositivi ed emulatori collegati", "Installa un'app", "Cancella tutte le app", "Apre Android Studio"], e: "adb shell pm list packages elenca i package installati." },
+  { c: "strumenti", q: "Quale comando adb copia un apk dal telefono al PC?", o: ["adb pull", "adb push", "adb devices", "adb shell pm list packages"], e: "Prima trovi il percorso con adb shell pm path <package>." },
+  { c: "strumenti", q: "A cosa serve un breakpoint?", o: ["A fermare l'app su una riga per guardare variabili e stack", "A chiudere l'app", "A registrare un log", "A misurare la memoria"], e: "Poi puoi eseguire passo-passo." },
+  { c: "strumenti", q: "Log.e(TAG, \"…\") scrive un log di livello…", o: ["Errore", "Debug", "Info", "Verbose"], e: "d debug, e errore, i info, w warning, v verbose." },
+  { c: "strumenti", q: "Dove si leggono i log e lo stack trace di un crash?", o: ["Nel Logcat", "Nel manifesto", "In Gradle", "Nel Profiler"], e: "Lo stack trace indica la riga che ha causato l'errore." },
+  { c: "strumenti", q: "A cosa serve il Profiler?", o: ["A guardare uso di memoria, CPU, rete e GPU, per esempio per trovare memory leak", "A tradurre le stringhe", "A firmare l'app", "A creare layout"], e: "Il Logcat invece mostra i log." },
+  { c: "strumenti", q: "Quale modello di progetto si usa per partire nel corso?", o: ["Empty Views Activity", "Game Activity", "Native C++", "Wear OS"], e: "File → New → New Project → Empty Views Activity." },
+  { c: "strumenti", q: "Quale livello di log indica un warning?", o: ["w", "v", "d", "i"], e: "w = warning." },
+  // 04 · Layout e misure
+  { c: "layout", q: "Quale vantaggio ha scrivere il layout in XML?", o: ["È facile e separa la grafica dal codice", "È dinamico e si adatta a runtime", "Non serve il manifesto", "È più veloce da eseguire del codice"], e: "Il layout programmatico invece è dinamico ma va gestito tutto nel codice." },
+  { c: "layout", q: "Quale vantaggio ha il layout programmatico (nel codice)?", o: ["È dinamico e si adatta a runtime", "Separa la grafica dal codice", "Non richiede di scrivere Java", "È sempre più semplice dell'XML"], e: "Si possono anche combinare i due modi." },
+  { c: "layout", q: "Quanti elementi radice può avere un file di layout XML?", o: ["Uno solo", "Due", "Quanti ne vuoi", "Nessuno"], e: "Per esempio un LinearLayout che contiene gli altri." },
+  { c: "layout", q: "Differenza tra @+id/testo e @id/testo?", o: ["Con il + crei un nuovo ID, senza ti riferisci a uno esistente", "Sono identici", "Senza + crei un nuovo ID", "Il + rende l'ID pubblico"], e: "Senza @ il valore è letterale." },
+  { c: "layout", q: "Gli attributi layout_qualcosa sono…", o: ["Parametri per il contenitore padre", "Proprietà del testo", "Permessi della view", "Animazioni"], e: "layout_width e layout_height sono obbligatori per tutti." },
+  { c: "layout", q: "Quali attributi sono obbligatori per ogni view?", o: ["layout_width e layout_height", "id e text", "padding e margin", "orientation e weight"], e: "Senza dimensioni la view non si può misurare." },
+  { c: "layout", q: "match_parent significa…", o: ["Grande come il padre", "Grande quanto serve al contenuto", "Grande 0 dp", "Grande come lo schermo intero sempre"], e: "wrap_content = grande quanto serve al contenuto." },
+  { c: "layout", q: "wrap_content significa…", o: ["Grande quanto serve al contenuto", "Grande come il padre", "Grande come l'immagine di sfondo", "Larghezza fissa di 48 dp"], e: "Coppia da ricordare con match_parent." },
+  { c: "layout", q: "Differenza tra padding e margin?", o: ["Padding è lo spazio dentro il bordo, margin quello fuori", "Padding è fuori dal bordo, margin dentro", "Sono la stessa cosa", "Padding vale solo per il testo"], e: "Padding = imbottitura interna." },
+  { c: "layout", q: "Perché i px sono da evitare per le dimensioni?", o: ["Su uno schermo più denso la stessa grafica appare più piccola", "Non sono supportati da Android", "Valgono solo per i testi", "Consumano più memoria"], e: "Si usano dp per le dimensioni e sp per i testi." },
+  { c: "layout", q: "1 dp corrisponde a 1 px su uno schermo da…", o: ["160 dpi", "320 dpi", "72 dpi", "480 dpi"], e: "Formula: px = dp × (dpi / 160)." },
+  { c: "layout", q: "Quando si usa sp invece di dp?", o: ["Per i testi, così seguono la dimensione del font scelta dall'utente", "Per le immagini", "Per i margini", "Mai, sp è deprecato"], e: "sp = scale-independent pixel." },
+  { c: "layout", q: "Quanti px sono 100 dp su uno schermo a 320 dpi?", o: ["200 px", "100 px", "320 px", "50 px"], e: "100 × 320 / 160 = 200." },
+  { c: "layout", q: "Quanti px sono 160 dp a densità 2,5?", o: ["400 px", "160 px", "320 px", "64 px"], e: "Densità 2,5 = 400 dpi: 160 × 400 / 160 = 400." },
+  { c: "layout", q: "Quale formula lega dp e px?", o: ["px = dp × (dpi / 160)", "px = dp / dpi", "px = dp × 160 / dpi", "px = dp + dpi"], e: "A 160 dpi 1 dp = 1 px." },
+  { c: "layout", q: "Quale layout dispone gli elementi uno sopra l'altro?", o: ["FrameLayout", "LinearLayout", "TableLayout", "GridLayout"], e: "Per esempio un testo sopra un'immagine." },
+  { c: "layout", q: "Quale layout dispone gli elementi in fila, verticale o orizzontale?", o: ["LinearLayout", "FrameLayout", "RelativeLayout", "ConstraintLayout"], e: "layout_weight decide quanto spazio prende ognuno." },
+  { c: "layout", q: "Quale layout posiziona gli elementi rispetto al padre o ad altri elementi (layout_below…)?", o: ["RelativeLayout", "FrameLayout", "TableLayout", "LinearLayout"], e: "ConstraintLayout usa invece vincoli." },
+  { c: "layout", q: "Perché preferire ConstraintLayout a tanti layout annidati?", o: ["Una gerarchia profonda è più lenta da disegnare; con i vincoli resta piatta", "Perché è l'unico che supporta i testi", "Perché non richiede layout_width", "Perché funziona solo su tablet"], e: "È anche quello dell'editor grafico." },
+  { c: "layout", q: "Come dividi lo spazio in parti uguali in un LinearLayout?", o: ["width (o height) = 0dp e layout_weight = 1 a tutti i figli", "match_parent a tutti i figli", "wrap_content e padding uguale", "Usando un FrameLayout dentro"], e: "È il trucco del capitolo." },
+  { c: "layout", q: "Quale layout organizza in righe (TableRow) e colonne?", o: ["TableLayout", "GridView", "FrameLayout", "ConstraintLayout"], e: "GridLayout usa columnCount e rowCount." },
+  { c: "layout", q: "Cosa sono i listener dei widget?", o: ["Metodi che “ascoltano” un evento, come onClick per un pulsante", "File XML con le stringhe", "Permessi per usare un widget", "Animazioni predefinite"], e: "Esempio: setOnClickListener su un Button." },
+  { c: "layout", q: "In quale cartella si mettono le icone in più versioni per densità?", o: ["mipmap", "layout", "values", "raw"], e: "Le immagini vanno fornite in più versioni (36, 48, 72, 96 px)." },
+  { c: "layout", q: "Quale di questi NON è un widget comune?", o: ["Cursor", "TextView", "EditText", "CheckBox"], e: "Cursor serve per leggere i risultati di un database." },
+  { c: "layout", q: "ListView e GridView sono riempite da…", o: ["Un Adapter", "Un Intent", "Un Service", "Un Broadcast"], e: "Vedi capitolo 05." },
+
+  // 05 · ListView e Adapter
+  { c: "listview", q: "Quali elementi mostra una ListView?", o: ["Solo quelli che entrano nello schermo; gli altri si vedono scorrendo", "Tutti gli elementi insieme, anche se escono dallo schermo", "Solo il primo elemento", "Solo elementi di tipo immagine"], e: "Per questo serve un Adapter che crea le righe man mano." },
+  { c: "listview", q: "A cosa serve l'Adapter?", o: ["Fa da ponte tra i dati e la ListView, creando le righe mentre l'utente scorre", "Salva i dati nel database", "Gestisce i permessi della lista", "Disegna le icone dell'app"], e: "Prende i dati, per esempio da un array." },
+  { c: "listview", q: "Qual è il primo dei 4 passi per una lista?", o: ["Preparare i dati (es. un array di stringhe)", "Chiamare setAdapter", "Creare il listener del click", "Dichiarare la lista nel manifesto"], e: "Poi l'adapter, poi il widget, poi collegarli." },
+  { c: "listview", q: "Con quale metodo colleghi l'adapter alla ListView?", o: ["listView.setAdapter(ad)", "listView.addView(ad)", "ad.attach(listView)", "listView.inflate(ad)"], e: "È il quarto passo." },
+  { c: "listview", q: "Quale adapter si usa per una lista semplice di stringhe?", o: ["ArrayAdapter<String>", "CursorAdapter<Bitmap>", "FragmentAdapter", "IntentAdapter"], e: "new ArrayAdapter<>(this, layout, idTextView, nomi)." },
+  { c: "listview", q: "Come reagisci al click su una riga?", o: ["Con setOnItemClickListener", "Con onBackPressed", "Con onReceive", "Con onCreateView"], e: "Il listener riceve anche la posizione." },
+  { c: "listview", q: "Come leggi l'elemento cliccato in posizione position?", o: ["listView.getItemAtPosition(position)", "listView.getChildCount()", "ad.getCount()", "listView.findViewById(position)"], e: "Poi puoi chiamare toString()." },
+  { c: "listview", q: "Cosa serve per una lista personalizzata (nome, foto, telefono)?", o: ["Un CustomAdapter con il layout della riga", "Solo un ArrayAdapter di stringhe", "Un ContentProvider", "Un Service"], e: "Ogni riga ha il suo layout." },
+  { c: "listview", q: "Con il click multiplo su parti di una riga, qual è il problema?", o: ["Non sai più su quale riga sei", "La lista non scorre più", "L'adapter si svuota", "L'app perde i permessi"], e: "Ogni pezzo ha il suo listener." },
+  { c: "listview", q: "Come risolvi il problema della posizione nel click multiplo?", o: ["Con setTag(posizione) sulla view e getTag() nel listener", "Con un secondo Adapter", "Ricaricando la lista a ogni click", "Usando un Intent esplicito"], e: "Il tag porta con sé la posizione." },
+  { c: "listview", q: "Qual è il terzo passo per una lista?", o: ["Recuperare il widget con findViewById", "Preparare i dati", "Creare l'adapter", "Registrare il receiver"], e: "1 dati, 2 adapter, 3 widget, 4 collegamento." },
+  { c: "listview", q: "Cosa passi al costruttore di ArrayAdapter nell'esempio?", o: ["Context, layout della riga, id della TextView, array dei dati", "Solo l'array dei dati", "Un Intent e un Bundle", "Un Cursor e una query"], e: "new ArrayAdapter<>(this, R.layout.list_element, R.id.textViewList, nomi)." },
+  { c: "listview", q: "Perché la ListView usa un Adapter invece di creare subito tutte le righe?", o: ["Per creare solo le righe visibili, man mano che si scorre", "Perché le liste non possono avere più di 10 righe", "Perché le righe vanno salvate su file", "Per chiedere i permessi"], e: "Così anche liste lunghe restano leggere." },
+  { c: "listview", q: "In una lista semplice ogni riga è…", o: ["Una stringa", "Un frammento", "Un'activity", "Un service"], e: "Per righe complesse serve un CustomAdapter." },
+  // 06 · Ciclo di vita dell'Activity
+  { c: "ciclo", q: "Cos'è un'Activity?", o: ["Una schermata dell'app", "Un thread in background", "Un file di risorse XML", "Un messaggio tra app"], e: "Android chiama i suoi metodi in un ordine preciso mentre nasce, viene usata e muore." },
+  { c: "ciclo", q: "Qual è la catena completa del ciclo di vita?", o: ["onCreate → onStart → onResume → in esecuzione → onPause → onStop → onDestroy", "onStart → onCreate → onResume → onStop → onPause → onDestroy", "onCreate → onResume → onStart → onPause → onDestroy → onStop", "onResume → onCreate → onStart → onStop → onPause → onDestroy"], e: "Da saper ridisegnare a memoria." },
+  { c: "ciclo", q: "Quali metodi vengono chiamati quando premi Home?", o: ["onPause → onStop", "onDestroy", "onPause → onStop → onDestroy", "Nessuno"], e: "L'activity non viene distrutta." },
+  { c: "ciclo", q: "Quali metodi vengono chiamati quando torni all'app dopo Home?", o: ["onRestart → onStart → onResume", "onCreate → onStart → onResume", "onResume soltanto", "onStart → onRestart → onResume"], e: "onRestart perché l'activity era solo fermata." },
+  { c: "ciclo", q: "Quali metodi vengono chiamati quando ruoti lo schermo?", o: ["onPause → onStop → onDestroy, poi onCreate → onStart → onResume", "onPause → onResume", "onStop → onRestart → onStart", "Nessuno, la rotazione non tocca l'activity"], e: "L'activity viene distrutta e ricreata." },
+  { c: "ciclo", q: "Perché ruotando lo schermo si perdono i dati?", o: ["Perché l'activity viene distrutta (onDestroy) e ricreata da zero (onCreate)", "Perché la memoria del telefono si svuota", "Perché l'app perde i permessi", "Perché il layout cambia file"], e: "È l'errore della Calcolatrice e del Quiz." },
+  { c: "ciclo", q: "Nell'app Quiz del corso, quale difetto causa la rotazione?", o: ["Si può barare ruotando, perché lo stato si perde", "L'app va in crash", "Le domande cambiano lingua", "Il punteggio raddoppia"], e: "È uno degli esercizi proposti: correggerlo." },
+  { c: "ciclo", q: "In quale metodo salvi lo stato con il metodo classico?", o: ["onSaveInstanceState, scrivendo nel Bundle", "onDestroy, scrivendo su file", "onStart, nelle SharedPreferences", "onCreateView"], e: "Es. out.putInt(\"CONTATORE\", counter)." },
+  { c: "ciclo", q: "Come recuperi lo stato salvato in onCreate?", o: ["if (saved != null) counter = saved.getInt(\"CONTATORE\")", "counter = getIntent().getInt(\"CONTATORE\")", "counter = Log.d(\"CONTATORE\")", "Non si può recuperare"], e: "Il Bundle è null al primo avvio." },
+  { c: "ciclo", q: "Il Bundle contiene i dati come…", o: ["Coppie chiave-valore", "Righe di una tabella SQL", "File binari", "Intent impliciti"], e: "putInt / getInt con la stessa chiave." },
+  { c: "ciclo", q: "Cosa sono i ViewModel?", o: ["Oggetti che sopravvivono alla distruzione e restano disponibili nella nuova activity", "Layout XML riutilizzabili", "Thread per la rete", "Permessi di sistema"], e: "Alternativa a onSaveInstanceState." },
+  { c: "ciclo", q: "Cosa succede con android:configChanges=\"orientation\" nel manifesto?", o: ["L'activity non viene distrutta e viene chiamato onConfigurationChanged()", "La rotazione viene bloccata", "L'activity viene distrutta due volte", "Viene chiamato onSaveInstanceState"], e: "Google lo sconsiglia: solo se le altre strade non bastano." },
+  { c: "ciclo", q: "Cosa pensa Google di configChanges?", o: ["Lo sconsiglia, va usato solo se le altre strade non bastano", "È il metodo consigliato", "È obbligatorio da API 23", "È deprecato e non funziona più"], e: "Meglio Bundle o ViewModel." },
+  { c: "ciclo", q: "Quale di questi NON è un cambio di configurazione?", o: ["Un SMS in arrivo", "La dimensione dello schermo", "La tastiera", "La direzione del testo"], e: "Sono cambi di configurazione anche la modalità (auto, TV, orologio…)." },
+  { c: "ciclo", q: "Cos'è il backstack?", o: ["Una pila in cui va l'activity corrente quando ne lanci una nuova", "La lista dei service attivi", "La cache delle immagini", "La coda dei broadcast"], e: "Back toglie quella in cima e torna alla precedente." },
+  { c: "ciclo", q: "Cosa fa il tasto Back?", o: ["Toglie l'activity in cima al backstack e mostra la precedente", "Mette in pausa tutte le activity", "Chiude sempre l'app intera", "Ricrea l'activity corrente"], e: "Fino ad arrivare all'Home." },
+  { c: "ciclo", q: "Cos'è un task?", o: ["L'insieme di activity con cui l'utente sta interagendo", "Un singolo thread", "Un AsyncTask", "Un alarm"], e: "Le activity del task stanno nel backstack." },
+  { c: "ciclo", q: "Quale intent-filter ha l'activity principale nel manifesto?", o: ["MAIN + LAUNCHER", "VIEW + BROWSABLE", "PICK + DEFAULT", "BOOT_COMPLETED"], e: "Così parte quando tocchi l'icona." },
+  { c: "ciclo", q: "Perché un'app ha di solito più activity?", o: ["Ognuna ha un compito, es. nella posta lista, lettura e scrittura", "Perché un'activity non può avere più di un pulsante", "Perché il manifesto lo richiede", "Per usare più thread"], e: "Si passa dall'una all'altra con gli intent." },
+  { c: "ciclo", q: "Quale callback viene chiamato subito dopo onPause premendo Home?", o: ["onStop", "onDestroy", "onResume", "onRestart"], e: "Home: onPause → onStop." },
+
+  // 07 · Intent
+  { c: "intent", q: "Cosa descrive un Intent?", o: ["Un'operazione da fare", "Una schermata", "Un layout", "Un database"], e: "È il “messaggio” per chiedere di fare qualcosa." },
+  { c: "intent", q: "A cosa servono gli Intent?", o: ["A lanciare activity (startActivity), mandare broadcast (sendBroadcast), parlare con servizi (startService, bindService)", "Solo a lanciare activity", "Solo a salvare dati", "A disegnare le view"], e: "Sono il collante tra componenti." },
+  { c: "intent", q: "Quale parte dell'Intent indica l'azione da fare?", o: ["Action (es. ACTION_VIEW, ACTION_DIAL, ACTION_PICK)", "Extras", "Flags", "Type"], e: "Data invece contiene i dati come URI." },
+  { c: "intent", q: "Quale parte dell'Intent contiene i dati come URI (tel:…, geo:…)?", o: ["Data", "Action", "Category", "Component"], e: "Es. content://contacts/people/1." },
+  { c: "intent", q: "Quale parte dell'Intent indica il tipo MIME dei dati?", o: ["Type", "Category", "Flags", "Action"], e: "Di solito viene dedotto, es. image/png." },
+  { c: "intent", q: "Quale parte dell'Intent indica l'activity precisa da lanciare?", o: ["Component", "Action", "Data", "Category"], e: "Es. new Intent(this, Seconda.class)." },
+  { c: "intent", q: "Quale parte dell'Intent contiene dati aggiuntivi chiave-valore?", o: ["Extras", "Flags", "Type", "Data"], e: "Es. putExtra(\"CONTATORE\", c)." },
+  { c: "intent", q: "FLAG_ACTIVITY_NO_HISTORY è un esempio di…", o: ["Flags: come trattare l'intent", "Category", "Action", "Extras"], e: "I flag dicono come gestire l'intent." },
+  { c: "intent", q: "CATEGORY_BROWSABLE è un esempio di…", o: ["Category: info in più sull'azione", "Action", "Type", "Component"], e: "Category aggiunge informazioni all'azione." },
+  { c: "intent", q: "Differenza tra intent esplicito e implicito?", o: ["Esplicito: indichi l'activity precisa (Component); implicito: indichi cosa vuoi fare e Android trova chi può farlo", "Esplicito: indichi l'azione; implicito: la classe", "L'implicito porta extra, l'esplicito no", "Non c'è differenza"], e: "Implicito = niente Component." },
+  { c: "intent", q: "In base a cosa Android sceglie l'activity per un intent implicito?", o: ["Action, type, URI e category, confrontati con gli intent-filter dei manifesti", "Il nome della classe", "L'ordine di installazione delle app", "Il colore dell'icona"], e: "Gli intent-filter dicono cosa accetta ogni activity." },
+  { c: "intent", q: "Con quale metodo chiedi un risultato a un'altra activity?", o: ["startActivityForResult(i, REQUEST_CODE)", "startActivity(i)", "sendBroadcast(i)", "bindService(i)"], e: "Es. “scegli un contatto e dimmi quale”." },
+  { c: "intent", q: "Dove ricevi il risultato?", o: ["In onActivityResult(req, res, data)", "In onCreate", "In onReceive", "In onBind"], e: "Controlli req == REQUEST_CODE e res == RESULT_OK." },
+  { c: "intent", q: "A cosa serve REQUEST_CODE?", o: ["A riconoscere, in onActivityResult, a quale richiesta corrisponde il risultato", "A chiedere un permesso", "A firmare l'intent", "A scegliere il canale della notifica"], e: "Si passa a startActivityForResult." },
+  { c: "intent", q: "Cosa controlli in onActivityResult per sapere che è andata bene?", o: ["res == Activity.RESULT_OK", "res == PERMISSION_GRANTED", "data == null", "req == 0"], e: "Insieme a req == REQUEST_CODE." },
+  { c: "intent", q: "Come passi un numero a un'altra activity?", o: ["intent.putExtra(\"CHIAVE\", valore) prima di lanciarla; dall'altra parte lo leggi dagli extras", "Con una variabile globale statica obbligatoria", "Con onSaveInstanceState", "Con un broadcast di sistema"], e: "Gli extras viaggiano con l'intent." },
+  { c: "intent", q: "Quale action si usa per scegliere un contatto dalla rubrica?", o: ["ACTION_PICK con ContactsContract.Contacts.CONTENT_URI", "ACTION_DIAL", "ACTION_MAIN", "ACTION_VIEW con un URL http"], e: "È l'esempio del capitolo." },
+  { c: "intent", q: "Cosa fa l'app VisualizzaMappa?", o: ["Prende un indirizzo dalla rubrica e lo apre in Google Maps, usando activity di altre app", "Disegna una mappa con il Canvas", "Legge il GPS in background", "Scarica mappe offline"], e: "Serve il permesso per leggere la rubrica." },
+
+  // 08 · Permessi
+  { c: "permessi", q: "Cosa proteggono i permessi?", o: ["Dati dell'utente, servizi che costano (SMS, chiamate, Internet) e risorse di sistema (fotocamera, GPS)", "Solo i file dell'app", "Solo la batteria", "Solo il codice sorgente"], e: "Sono stringhe tipo android.permission.CAMERA." },
+  { c: "permessi", q: "Come si dichiara un permesso nel manifesto?", o: ["<uses-permission android:name=\"android.permission.CAMERA\" />", "<permission-request name=\"CAMERA\" />", "<activity android:permission=\"CAMERA\" />", "Non si dichiara, si chiede solo nel codice"], e: "I permessi vanno sempre dichiarati nel manifesto." },
+  { c: "permessi", q: "Differenza tra permessi normali e pericolosi?", o: ["I normali sono concessi in automatico, i pericolosi li deve approvare l'utente", "I pericolosi sono concessi in automatico", "I normali si chiedono a runtime", "Non c'è differenza da API 23"], e: "Entrambi vanno nel manifesto." },
+  { c: "permessi", q: "Quale di questi è un permesso normale?", o: ["VIBRATE", "CAMERA", "READ_CONTACTS", "RECORD_AUDIO"], e: "Normali: INTERNET, VIBRATE, BLUETOOTH, WAKE_LOCK, SET_ALARM." },
+  { c: "permessi", q: "Quale di questi è un permesso pericoloso?", o: ["ACCESS_FINE_LOCATION", "INTERNET", "WAKE_LOCK", "SET_ALARM"], e: "Pericolosi: CAMERA, READ_CONTACTS, ACCESS_FINE_LOCATION, SEND_SMS, RECORD_AUDIO." },
+  { c: "permessi", q: "INTERNET è normale o pericoloso?", o: ["Normale: va nel manifesto ma viene concesso senza chiedere", "Pericoloso: va chiesto a runtime", "Non serve dichiararlo", "Esiste solo da API 30"], e: "Domanda lampo del capitolo." },
+  { c: "permessi", q: "Con API < 23 i permessi pericolosi…", o: ["Si accettano all'installazione", "Si chiedono mentre l'app gira", "Non esistono", "Sono sempre negati"], e: "Da API 23 si chiedono a runtime." },
+  { c: "permessi", q: "Con API ≥ 23, cosa può fare l'utente alla seconda richiesta?", o: ["Rendere la risposta definitiva", "Concedere il permesso a tutte le app", "Disinstallare il permesso", "Nulla di diverso dalla prima"], e: "Per questo conviene spiegare prima perché serve." },
+  { c: "permessi", q: "Cosa si può fare da API 30?", o: ["Dare il permesso “solo questa volta”", "Chiedere i permessi a runtime per la prima volta", "Evitare di dichiarare i permessi", "Concedere permessi normali a mano"], e: "Android 11." },
+  { c: "permessi", q: "Come funzionano i gruppi di permessi (CONTACTS, LOCATION, SMS…)?", o: ["Se hai già un permesso di un gruppo, gli altri dello stesso gruppo vengono concessi senza chiedere", "Ogni permesso del gruppo va chiesto separatamente due volte", "Un gruppo si concede solo all'installazione", "I gruppi valgono solo per i permessi normali"], e: "Vale per i pericolosi." },
+  { c: "permessi", q: "Perché nel codice si controlla SEMPRE il permesso prima di usarlo?", o: ["Perché l'utente può toglierlo dalle Impostazioni quando vuole", "Perché il permesso scade ogni ora", "Perché il manifesto può cambiare", "Per risparmiare batteria"], e: "Anche se lo avevi già ottenuto." },
+  { c: "permessi", q: "Nello schema, qual è il primo controllo?", o: ["ContextCompat.checkSelfPermission(...) == PERMISSION_GRANTED", "shouldShowRequestPermissionRationale(...)", "requestPermissionLauncher.launch(...)", "startActivityForResult(...)"], e: "Se ce l'hai, procedi." },
+  { c: "permessi", q: "Nello schema, quando chiami shouldShowRequestPermissionRationale?", o: ["Se non hai il permesso: per capire se spiegare all'utente a cosa serve", "Prima di dichiararlo nel manifesto", "Dopo aver usato la fotocamera", "Mai, è deprecato"], e: "Passo 2: spiego perché." },
+  { c: "permessi", q: "Nello schema, come chiedi il permesso?", o: ["requestPermissionLauncher.launch(Manifest.permission.CAMERA)", "checkSelfPermission(CAMERA)", "sendBroadcast(CAMERA)", "putExtra(CAMERA)"], e: "Passo 3: lo chiedo." },
+  { c: "permessi", q: "Basta dichiarare un permesso pericoloso nel manifesto?", o: ["No: da API 23 va anche chiesto a runtime e controllato con checkSelfPermission", "Sì, sempre", "Sì, ma solo su emulatore", "No, non va dichiarato affatto"], e: "Domanda lampo del capitolo." },
+
+  // 09 · Thread e AsyncTask
+  { c: "thread", q: "Cos'è un thread?", o: ["Un flusso di esecuzione parallelo dentro un processo", "Un processo separato con memoria propria", "Una schermata dell'app", "Un file .dex"], e: "Ha program counter e stack propri, condivide la memoria (heap)." },
+  { c: "thread", q: "Cosa condividono i thread di un processo?", o: ["La memoria (heap)", "Il program counter", "Lo stack", "Niente"], e: "Program counter e stack sono propri di ogni thread." },
+  { c: "thread", q: "Come si avvia un thread?", o: ["Si crea un Thread con dentro un Runnable e si chiama start(), che esegue run()", "Si chiama direttamente run() sul main thread", "Con startActivity", "Con sendBroadcast"], e: "start() lancia il nuovo flusso." },
+  { c: "thread", q: "Quale metodo ha un Runnable?", o: ["run()", "start()", "execute()", "onReceive()"], e: "start() del Thread esegue run()." },
+  { c: "thread", q: "Quali sono altri metodi dei thread citati?", o: ["sleep(ms), wait(), notify()", "onCreate(), onStart()", "commit(), apply()", "inflate(), setAdapter()"], e: "Servono per sospendere e sincronizzare." },
+  { c: "thread", q: "Qual è la regola d'oro dei thread in Android?", o: ["Solo il main thread (UI thread) può toccare l'interfaccia", "Solo i thread in background toccano l'interfaccia", "Tutti i thread possono toccare l'interfaccia", "Il main thread non può toccare l'interfaccia"], e: "È la differenza tra le app ThreadNo e ThreadSi." },
+  { c: "thread", q: "Come aggiorna la UI un thread in background?", o: ["Con runOnUiThread(Runnable) oppure view.post(Runnable)", "Chiamando setText direttamente", "Con un altro thread", "Con unregisterListener"], e: "Passa dal main thread." },
+  { c: "thread", q: "Un thread in background può cambiare il testo di una TextView?", o: ["Non direttamente: deve passare dal main thread con runOnUiThread() o view.post()", "Sì, sempre", "Sì, ma solo con AsyncTask.execute", "No, mai, nemmeno indirettamente"], e: "Domanda lampo del capitolo." },
+  { c: "thread", q: "Cosa indicano i tre tipi generici di AsyncTask<Params, Progress, Result>?", o: ["Tipo dell'input, tipo dell'avanzamento, tipo del risultato", "Thread, priorità, tempo", "Activity, layout, view", "Chiave, valore, tabella"], e: "È una classe generica." },
+  { c: "thread", q: "Quale metodo dell'AsyncTask gira in background?", o: ["Solo doInBackground()", "onPreExecute()", "onPostExecute()", "Tutti e quattro"], e: "Gli altri tre girano nel main thread." },
+  { c: "thread", q: "Dove gira onPreExecute() e quando?", o: ["Nel main thread, prima di iniziare (setup)", "In background, alla fine", "In background, prima di iniziare", "Nel main thread, dopo ogni publishProgress"], e: "Prepara il lavoro." },
+  { c: "thread", q: "Quando viene chiamato onProgressUpdate()?", o: ["Dopo ogni publishProgress, nel main thread (es. aggiorna la barra)", "Prima di doInBackground", "Solo alla fine", "In background, ogni secondo"], e: "doInBackground chiama publishProgress." },
+  { c: "thread", q: "Cosa riceve onPostExecute(Result)?", o: ["Il risultato restituito da doInBackground, alla fine, nel main thread", "I parametri iniziali", "Il progresso", "Il Bundle dell'activity"], e: "Qui puoi aggiornare la UI con il risultato." },
+  { c: "thread", q: "Da quale metodo si chiama publishProgress()?", o: ["doInBackground()", "onPostExecute()", "onPreExecute()", "onCreate()"], e: "Fa eseguire onProgressUpdate sul main thread." },
+  { c: "thread", q: "AsyncTask oggi è…", o: ["Deprecato da Google (da API 30), ma va saputo per l'esame", "Il metodo consigliato da Google", "Eliminato da API 21", "Obbligatorio per la rete"], e: "È nelle slide." },
+  // 10 · Frammenti
+  { c: "frammenti", q: "Cos'è un frammento?", o: ["Una porzione di interfaccia, una specie di sotto-activity", "Un'activity indipendente", "Un thread in background", "Un tipo di service"], e: "Vive sempre dentro un'activity." },
+  { c: "frammenti", q: "Come è legato il ciclo di vita del frammento a quello dell'activity?", o: ["Se l'activity va in pausa, ci vanno anche i frammenti", "Sono del tutto indipendenti", "Il frammento sopravvive sempre all'activity", "Il frammento non ha ciclo di vita"], e: "Il frammento vive dentro l'activity." },
+  { c: "frammenti", q: "Perché esistono i frammenti?", o: ["Per adattarsi allo schermo, es. lista e articolo affiancati su tablet, uno alla volta sul telefono", "Per fare operazioni di rete", "Per salvare dati", "Per ricevere broadcast"], e: "Esempio dell'app di notizie." },
+  { c: "frammenti", q: "Cosa si fa in onCreate() del frammento?", o: ["Inizializzazione, ma non il layout", "Si crea il layout", "Si salvano le modifiche", "Si distrugge il frammento"], e: "Il layout si crea in onCreateView." },
+  { c: "frammenti", q: "In quale metodo del frammento si crea il layout?", o: ["onCreateView(), con inflater.inflate(...) restituendo la View", "onCreate()", "onPause()", "onStart()"], e: "È l'equivalente di setContentView." },
+  { c: "frammenti", q: "onCreateView() del frammento è l'equivalente di…", o: ["setContentView dell'activity", "onDestroy", "startActivity", "commit"], e: "Restituisce la View del frammento." },
+  { c: "frammenti", q: "Qual è il primo metodo chiamato quando il frammento se ne va?", o: ["onPause(): qui salvi le modifiche", "onDestroy()", "onCreateView()", "onStop()"], e: "Va implementato." },
+  { c: "frammenti", q: "Come si inserisce un frammento in modo statico?", o: ["Con il tag <fragment> nel layout XML", "Con una FragmentTransaction", "Con un Intent", "Nel manifesto"], e: "Il dinamico invece usa una transazione a runtime." },
+  { c: "frammenti", q: "Come si inserisce un frammento in modo dinamico?", o: ["A runtime con una FragmentTransaction: add/remove/replace e commit()", "Con il tag <fragment> nel layout", "Nel manifesto con <fragment>", "Con setAdapter"], e: "getFragmentManager().beginTransaction()." },
+  { c: "frammenti", q: "Quale metodo conclude una FragmentTransaction?", o: ["commit()", "apply()", "execute()", "finish()"], e: "Senza commit la transazione non viene eseguita." },
+  { c: "frammenti", q: "Quali operazioni offre una FragmentTransaction?", o: ["add, remove, replace", "insert, update, delete", "start, stop, bind", "measure, layout, draw"], e: "Poi addToBackStack facoltativo e commit." },
+  { c: "frammenti", q: "Cosa succede se non chiami addToBackStack()?", o: ["Premendo Back si “saltano” i cambi fatti con i frammenti", "L'app va in crash", "Il frammento non viene mostrato", "Il frammento non può essere rimosso"], e: "Il backstack gestisce da solo solo le activity." },
+  { c: "frammenti", q: "Il backstack gestisce da solo…", o: ["Solo le activity", "Solo i frammenti", "Activity e frammenti sempre", "Solo i service"], e: "Per i frammenti serve addToBackStack()." },
+  { c: "frammenti", q: "Perché due frammenti non devono parlare direttamente tra loro?", o: ["Si perde riusabilità", "Non hanno accesso alla memoria", "Il sistema lo impedisce con un'eccezione", "Perché girano su thread diversi"], e: "Si passa per l'activity." },
+  { c: "frammenti", q: "Come comunicano due frammenti?", o: ["Il frammento A definisce un'interfaccia, l'activity la implementa e passa il dato al frammento B", "Con un broadcast di sistema", "Chiamandosi direttamente i metodi", "Con le SharedPreferences"], e: "In verticale l'activity può aprire una nuova activity." },
+  { c: "frammenti", q: "Nell'esempio, cosa fa l'activity in verticale quando il frammento lista comunica una scelta?", o: ["Apre una nuova activity", "Passa il dato al frammento B affiancato", "Ignora la scelta", "Ruota lo schermo"], e: "In orizzontale passa il dato al frammento B." },
+
+  // 11 · Networking
+  { c: "rete", q: "A cosa serve InetAddress?", o: ["A gestire gli indirizzi IP, es. InetAddress.getByName(\"www.server.com\")", "A leggere l'HTML", "A salvare file", "Ad aprire una pagina web"], e: "Il Socket è invece il canale." },
+  { c: "rete", q: "Cos'è un Socket?", o: ["Il canale con il server: new Socket(indirizzo, porta)", "Un indirizzo IP", "Una libreria per l'HTML", "Un tipo di permesso"], e: "Si scrive con PrintWriter, si legge con BufferedReader." },
+  { c: "rete", q: "Con un Socket, cosa usi per scrivere?", o: ["Un PrintWriter sull'output stream", "Un BufferedReader sull'input stream", "Un Cursor", "Un Bundle"], e: "Per leggere: BufferedReader con readLine()." },
+  { c: "rete", q: "Con un Socket, cosa usi per leggere?", o: ["Un BufferedReader sull'input stream, con readLine()", "Un PrintWriter sull'output stream", "Un ContentValues", "Un Editor"], e: "Per scrivere: PrintWriter." },
+  { c: "rete", q: "Quale classe si usa per le pagine web?", o: ["HttpURLConnection: openConnection(), poi getInputStream()", "InetAddress", "SQLiteOpenHelper", "MediaPlayer"], e: "Poi si legge come con il socket." },
+  { c: "rete", q: "Cos'è JSoup?", o: ["Una libreria esterna per leggere l'HTML ed estrarne pezzi", "Una classe di sistema per i socket", "Un database", "Un emulatore"], e: "Jsoup.connect(url).get(), getElementById, select." },
+  { c: "rete", q: "Come si aggiunge JSoup al progetto?", o: ["Il .jar va nella cartella libs e si aggiunge la dipendenza in build.gradle", "Si dichiara nel manifesto", "È già incluso in Android", "Si scarica con adb pull"], e: "È una libreria esterna." },
+  { c: "rete", q: "Che indirizzo usa l'emulatore per raggiungere il localhost del PC?", o: ["10.0.2.2", "127.0.0.1", "192.168.0.1", "5554"], e: "127.0.0.1 sarebbe l'emulatore stesso." },
+  { c: "rete", q: "Cosa significa l'errore “Cleartext not permitted”?", o: ["Che da API 28 le connessioni http non cifrate sono disabilitate di default", "Che manca il permesso INTERNET", "Che il server è spento", "Che il testo è troppo lungo"], e: "Usa https o abilitale nella configurazione di sicurezza." },
+  { c: "rete", q: "Come risolvi il blocco delle connessioni http in chiaro?", o: ["Usi https oppure le abiliti nella configurazione di sicurezza", "Chiedi il permesso CAMERA", "Usi un AsyncTask", "Abbassi la targetSdk a 21 obbligatoriamente"], e: "Da API 28." },
+  { c: "rete", q: "Su quale thread vanno fatte le operazioni di rete?", o: ["Su un thread separato, perché sono lunghe", "Sul main thread", "Nel manifesto", "Nel Logcat"], e: "Vedi capitolo 09." },
+  { c: "rete", q: "Quale permesso serve per la rete?", o: ["INTERNET", "READ_CONTACTS", "CAMERA", "POST_NOTIFICATIONS"], e: "È un permesso normale." },
+  { c: "rete", q: "Quali metodi di JSoup estraggono pezzi della pagina?", o: ["getElementById e select", "moveToFirst e moveToNext", "putExtra e getExtra", "measure e layout"], e: "Dopo Jsoup.connect(url).get()." },
+  { c: "rete", q: "Con HttpURLConnection, da dove leggi la risposta?", o: ["Da getInputStream()", "Da getOutputStream() soltanto", "Da getIntent()", "Dal Bundle"], e: "Dopo openConnection()." },
+
+  // 12 · Salvare i dati
+  { c: "storage", q: "Cos'è lo spazio privato di un'app?", o: ["Una cartella accessibile solo all'app, cancellata se la disinstalli", "La SD card", "Lo spazio condiviso con le altre app", "La cache del browser"], e: "Lo spazio pubblico contiene file condivisi." },
+  { c: "storage", q: "“External storage” vuol dire SD card?", o: ["No: vuol dire fuori dallo spazio privato dell'app, memoria interna o SD", "Sì, sempre", "Sì, ma solo da API 29", "No, vuol dire cloud"], e: "Può stare in /storage/emulated/0/." },
+  { c: "storage", q: "Cosa restituisce getFilesDir()?", o: ["/data/user/0/<package>/files/", "/data/user/0/<package>/cache/", "/storage/emulated/0/Android/data/<package>/files/", "/data/user/0/<package>/databases/"], e: "Spazio privato." },
+  { c: "storage", q: "Cosa restituisce getExternalFilesDir()?", o: ["/storage/emulated/0/Android/data/<package>/files/", "/data/user/0/<package>/files/", "/data/user/0/<package>/cache/", "/sdcard/DCIM/"], e: "Fuori dallo spazio privato." },
+  { c: "storage", q: "Cosa indica lo 0 nei percorsi /data/user/0/…?", o: ["L'ID dell'utente principale", "La versione dell'app", "Il numero della SD", "Il livello API"], e: "Anche in /storage/emulated/0/." },
+  { c: "storage", q: "Con API ≤ 28, cosa danno READ_/WRITE_EXTERNAL_STORAGE?", o: ["Accesso a tutto", "Accesso solo alle foto", "Nulla, sono ignorati", "Accesso solo alla cache"], e: "Da API 29 le app sono sandboxed." },
+  { c: "storage", q: "Da API 29, per i media condivisi si usa…", o: ["MediaStore", "SharedPreferences", "Il Socket", "Il Bundle"], e: "Per gli altri file SAF." },
+  { c: "storage", q: "Cos'è MediaStore?", o: ["Un Content Provider con un database SQL di indici dei media", "Un'app per la musica", "Una cartella della SD", "Un permesso"], e: "Nasce con API 29." },
+  { c: "storage", q: "Da API 30, cosa succede a WRITE_EXTERNAL_STORAGE?", o: ["Viene ignorato; per file manager e backup c'è MANAGE_EXTERNAL_STORAGE", "Diventa obbligatorio", "Diventa un permesso normale", "Dà accesso a tutto"], e: "MANAGE va giustificato su Google Play." },
+  { c: "storage", q: "Quali permessi introduce API 33 per i media?", o: ["READ_MEDIA_IMAGES, _VIDEO, _AUDIO", "MANAGE_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "READ_CONTACTS"], e: "Android 13." },
+  { c: "storage", q: "A cosa servono le SharedPreferences?", o: ["A salvare piccoli dati in coppie chiave-valore, es. impostazioni", "A salvare video", "A creare tabelle SQL", "A condividere dati con altre app"], e: "Si scrive con un Editor." },
+  { c: "storage", q: "Cosa succede se dopo putBoolean non chiami commit()?", o: ["Non salva", "Salva lo stesso", "L'app va in crash", "Salva su SD"], e: "“Senza commit non salva!”" },
+  { c: "storage", q: "Come salvi un booleano nelle SharedPreferences?", o: ["edit() per l'Editor, putBoolean(chiave, valore), poi commit()", "getBoolean(chiave, valore)", "db.insert(chiave, valore)", "putExtra(chiave, valore)"], e: "Per leggere: getBoolean(chiave, default)." },
+  { c: "storage", q: "Come si scrive un file nello spazio privato?", o: ["openFileOutput(nome, MODE_PRIVATE), write, close", "openRawResource, write", "getCacheDir().delete()", "db.execSQL"], e: "Per leggere: openFileInput, read, close." },
+  { c: "storage", q: "Quali modi di apertura file sono citati?", o: ["MODE_PRIVATE e MODE_APPEND", "MODE_PUBLIC e MODE_SHARED", "MODE_READ e MODE_WRITE", "MODE_SD e MODE_CLOUD"], e: "APPEND aggiunge in fondo." },
+  { c: "storage", q: "Dove si mette un file statico da leggere?", o: ["In res/raw, letto con openRawResource(R.raw.nome)", "In res/layout", "Nella cache", "Nel manifesto"], e: "È incluso nell'app." },
+  { c: "storage", q: "Quanto è il massimo consigliato per la cache?", o: ["1 MB; Android la svuota se serve spazio", "1 GB", "100 KB senza mai svuotarla", "Non c'è limite"], e: "Per i file temporanei." },
+  { c: "storage", q: "Cosa fa UPDATE senza WHERE?", o: ["Cambia tutte le righe", "Non fa nulla", "Cancella la tabella", "Dà errore sempre"], e: "WHERE sceglie quali righe." },
+  { c: "storage", q: "Cos'è la chiave primaria?", o: ["La colonna che identifica in modo unico ogni riga", "La prima colonna sempre", "La password del database", "Il nome della tabella"], e: "Nei Content Provider corrisponde all'id dell'URI." },
+  { c: "storage", q: "Quale comando SQL legge righe?", o: ["SELECT", "INSERT", "ALTER", "DROP"], e: "Es. SELECT NAME FROM CUSTOMERS WHERE SALARY > 5000 ORDER BY NAME." },
+  { c: "storage", q: "Cosa si fa in onCreate() di SQLiteOpenHelper?", o: ["Si esegue la CREATE TABLE con db.execSQL()", "Si apre la connessione di rete", "Si legge il Cursor", "Si chiama commit()"], e: "Va riscritto anche onUpgrade()." },
+  { c: "storage", q: "Oltre a onCreate, quale metodo di SQLiteOpenHelper va riscritto?", o: ["onUpgrade()", "onResume()", "onReceive()", "onBind()"], e: "Serve per i cambi di versione del database." },
+  { c: "storage", q: "Come ottieni il database da scrivere?", o: ["helper.getWritableDatabase()", "getFilesDir()", "openFileOutput()", "getSharedPreferences()"], e: "Poi insert, update, delete, query." },
+  { c: "storage", q: "Come inserisci una riga in SQLite?", o: ["Metti i valori in un ContentValues e chiami db.insert(tabella, null, valori)", "Con putExtra", "Con un Bundle e commit()", "Con openFileOutput"], e: "Ci sono anche update e delete." },
+  { c: "storage", q: "Cosa restituisce db.query()?", o: ["Un Cursor, da scorrere con moveToFirst/moveToNext", "Un array di stringhe", "Un ContentValues", "Un Intent"], e: "Leggi con getInt/getString + getColumnIndex." },
+  { c: "storage", q: "Con un Cursor, come leggi una colonna?", o: ["getInt()/getString() con getColumnIndex()", "getExtra()", "getTag()", "findViewById()"], e: "Dopo moveToFirst / moveToNext." },
+
+  // 13 · Grafica e custom view
+  { c: "grafica", q: "Quando si disegna in un Canvas invece che in una View?", o: ["Per grafica complessa, aggiornata spesso", "Per grafica semplice e statica", "Solo per i testi", "Mai"], e: "La View va bene per grafica semplice." },
+  { c: "grafica", q: "Cos'è un Drawable?", o: ["Qualcosa che si può disegnare: forma, immagine, colore", "Un tipo di layout", "Un thread grafico", "Un file .dex"], e: "ShapeDrawable, BitmapDrawable, ColorDrawable." },
+  { c: "grafica", q: "Quale Drawable rappresenta un'immagine?", o: ["BitmapDrawable", "ShapeDrawable", "ColorDrawable", "TextDrawable"], e: "ShapeDrawable = forma, ColorDrawable = colore." },
+  { c: "grafica", q: "Come si mette un Drawable in una view dal codice?", o: ["setImageDrawable()", "setContentView()", "setAdapter()", "setTag()"], e: "Oppure da XML." },
+  { c: "grafica", q: "Quali animazioni si possono definire in XML?", o: ["Rotazione, traslazione, ridimensionamento, trasparenza", "Solo rotazione", "Solo cambi di colore", "Solo animazioni 3D"], e: "La classe Animation le applica a un'ImageView." },
+  { c: "grafica", q: "Quali sono le tre fasi con cui Android disegna le view?", o: ["Measure → Layout → Draw", "Draw → Layout → Measure", "Create → Start → Resume", "Inflate → Bind → Commit"], e: "L'albero viene visitato tre volte dall'alto in basso." },
+  { c: "grafica", q: "Cosa succede in onMeasure?", o: ["Il padre chiede ai figli quanto vorrebbero essere grandi e comunica i vincoli con MeasureSpec", "Ogni view si disegna con Paint", "Il padre decide la posizione finale", "Si caricano le immagini"], e: "Alla fine ogni view chiama setMeasuredDimension()." },
+  { c: "grafica", q: "Cosa deve aver fatto ogni view alla fine della misura?", o: ["Chiamato setMeasuredDimension()", "Chiamato invalidate()", "Chiamato commit()", "Chiamato onDraw()"], e: "Fissa la dimensione misurata." },
+  { c: "grafica", q: "Cosa succede in onLayout?", o: ["Il padre decide posizione e dimensione reali di ogni figlio", "Ogni view si disegna", "Si misura il testo", "Si registra un listener"], e: "È la seconda fase." },
+  { c: "grafica", q: "Cosa succede in onDraw(Canvas)?", o: ["Ogni view si disegna usando un Paint e i metodi del Canvas", "Il padre misura i figli", "Si ricrea l'activity", "Si salva lo stato"], e: "È la terza fase." },
+  { c: "grafica", q: "MeasureSpec EXACTLY significa…", o: ["“Sarai grande esattamente così”", "“Quanto spazio vorresti?”", "“Al massimo così”", "“Non sarai disegnata”"], e: "UNSPECIFIED e AT_MOST sono gli altri due." },
+  { c: "grafica", q: "MeasureSpec AT_MOST significa…", o: ["“Al massimo così”", "“Sarai grande esattamente così”", "“Quanto spazio vorresti?”", "“Almeno così”"], e: "Il padre pone un limite massimo." },
+  { c: "grafica", q: "MeasureSpec UNSPECIFIED significa…", o: ["“Quanto spazio vorresti?”", "“Al massimo così”", "“Sarai grande esattamente così”", "“Sei invisibile”"], e: "Nessun vincolo." },
+  { c: "grafica", q: "Differenza tra invalidate() e requestLayout()?", o: ["invalidate() ridisegna solo quella view (onDraw); requestLayout() rifà measure, layout e draw sull'albero", "Sono identici", "invalidate() rifà tutto, requestLayout() solo onDraw", "requestLayout() cancella la view"], e: "Da non confondere." },
+  { c: "grafica", q: "Se cambia solo il colore di una view, cosa chiami?", o: ["invalidate(): la dimensione non cambia", "requestLayout()", "setMeasuredDimension()", "commit()"], e: "Basta ridisegnare." },
+  { c: "grafica", q: "Quali valori può avere un LayoutParams in onMeasure?", o: ["Un numero, MATCH_PARENT o WRAP_CONTENT", "Solo MATCH_PARENT", "EXACTLY, AT_MOST, UNSPECIFIED", "Solo valori in px"], e: "I MeasureSpec invece sono i vincoli del padre." },
+  // 14 · Multitouch e gesti
+  { c: "touch", q: "Come si rappresenta un tocco?", o: ["Con un MotionEvent", "Con un Intent", "Con un Bundle", "Con un SensorEvent"], e: "Ogni dito è un pointer." },
+  { c: "touch", q: "Differenza tra ID e indice di un pointer?", o: ["L'ID resta uguale finché il dito è giù; l'indice può cambiare da un evento all'altro", "L'indice resta uguale, l'ID cambia", "Sono la stessa cosa", "L'ID vale solo per il primo dito"], e: "Non confonderli." },
+  { c: "touch", q: "Quale action indica che il primo dito tocca?", o: ["ACTION_DOWN", "ACTION_POINTER_DOWN", "ACTION_MOVE", "ACTION_UP"], e: "Il secondo dito genera ACTION_POINTER_DOWN." },
+  { c: "touch", q: "Secondo dito che tocca: che action?", o: ["ACTION_POINTER_DOWN", "ACTION_DOWN", "ACTION_MOVE", "ACTION_POINTER_UP"], e: "Domanda lampo del capitolo." },
+  { c: "touch", q: "Quale action indica che si alza un dito ma ne restano altri?", o: ["ACTION_POINTER_UP", "ACTION_UP", "ACTION_DOWN", "ACTION_CANCEL"], e: "ACTION_UP è per l'ultimo dito." },
+  { c: "touch", q: "Quale action indica che si alza l'ultimo dito?", o: ["ACTION_UP", "ACTION_POINTER_UP", "ACTION_MOVE", "ACTION_POINTER_DOWN"], e: "Fine del gesto." },
+  { c: "touch", q: "Quale action indica che un dito si muove?", o: ["ACTION_MOVE", "ACTION_DOWN", "ACTION_UP", "ACTION_POINTER_DOWN"], e: "Arriva molte volte durante il gesto." },
+  { c: "touch", q: "Quale metodo restituisce quante dita sono sullo schermo?", o: ["getPointerCount()", "getActionIndex()", "getPointerId(i)", "getX(i)"], e: "Altri: getActionMasked, findPointerIndex(id)." },
+  { c: "touch", q: "Come trovi l'indice di un pointer conoscendo il suo ID?", o: ["findPointerIndex(id)", "getPointerId(i)", "getActionMasked()", "getPointerCount()"], e: "getPointerId(i) fa il contrario." },
+  { c: "touch", q: "Dove riceve l'evento la view?", o: ["In onTouchEvent()", "In onReceive()", "In onSensorChanged()", "In onBind()"], e: "Un listener esterno riceve onTouch()." },
+  { c: "touch", q: "Chi riceve per primo l'evento tra onTouch() di un listener e onTouchEvent() della view?", o: ["onTouch() del listener esterno (setOnTouchListener)", "onTouchEvent() della view", "Arrivano insieme", "Nessuno dei due"], e: "Il listener viene prima della view." },
+  { c: "touch", q: "Cosa significa restituire true da onTouch/onTouchEvent?", o: ["Che l'evento è consumato", "Che l'evento va ignorato", "Che il gesto è finito", "Che serve un permesso"], e: "Entrambi restituiscono un booleano." },
+  { c: "touch", q: "Cosa succede se onTouch restituisce false su ACTION_DOWN?", o: ["Non riceverai più gli eventi successivi (MOVE, UP) di quel gesto", "Riceverai gli eventi due volte", "L'app va in crash", "Niente di diverso"], e: "Dici che non ti interessa." },
+  { c: "touch", q: "Cosa riconosce GestureDetector?", o: ["Gesti già pronti: tocco singolo, doppio tocco, fling", "Solo i sensori", "Solo l'audio focus", "I broadcast di sistema"], e: "Fling = scorrimento veloce." },
+  { c: "touch", q: "Cos'è un fling?", o: ["Uno scorrimento veloce", "Un doppio tocco", "Un tocco lungo con due dita", "Una rotazione dello schermo"], e: "Riconosciuto da GestureDetector." },
+  { c: "touch", q: "Cosa fa ViewFlipper?", o: ["Mostra una view alla volta con animazione: showNext(), showPrevious()", "Ruota lo schermo", "Inverte i colori", "Registra i gesti su file"], e: "È sottoclasse di ViewAnimator." },
+  { c: "touch", q: "Di quale classe è sottoclasse ViewFlipper?", o: ["ViewAnimator", "ListView", "Canvas", "FrameLayout"], e: "Mostra una view alla volta." },
+
+  // 15 · MediaPlayer e audio focus
+  { c: "media", q: "Serve chiamare prepare() dopo MediaPlayer.create()?", o: ["No, create() lo fa già", "Sì, sempre", "Sì, ma solo per i video", "No, perché si chiama start() due volte"], e: "Domanda lampo del capitolo." },
+  { c: "media", q: "Cosa si fa quando il MediaPlayer non serve più?", o: ["mp.release(); mp = null; per liberare la risorsa", "Niente, si libera da solo", "mp.start() di nuovo", "Si chiama finish()"], e: "Libera la risorsa!" },
+  { c: "media", q: "Quale sequenza si usa per suonare da URL?", o: ["new MediaPlayer(), setDataSource(url), prepare(), start()", "MediaPlayer.create(url), prepare(), prepare()", "start(), setDataSource(url)", "release(), start()"], e: "Per URL esterni meglio prepareAsync()." },
+  { c: "media", q: "Perché per URL esterni è meglio prepareAsync()?", o: ["Perché il caricamento può essere lungo; si fa partire in onPrepared()", "Perché prepare() non esiste per gli URL", "Per usare meno permessi", "Perché suona più forte"], e: "Non blocca il main thread." },
+  { c: "media", q: "Con prepareAsync(), dove fai partire la riproduzione?", o: ["In onPrepared()", "In onCreate()", "Subito dopo setDataSource", "In onDestroy()"], e: "Quando il player è pronto." },
+  { c: "media", q: "A cosa serve AudioManager?", o: ["Controlla sorgenti e volume", "Disegna la forma d'onda", "Legge i sensori", "Gestisce le notifiche"], e: "Coinvolto nell'audio focus." },
+  { c: "media", q: "Perché esiste l'audio focus?", o: ["L'uscita audio è una sola: le app non devono sovrapporsi", "Per alzare il volume", "Per registrare audio", "Per scaricare musica"], e: "Es. musica che copre il suono di un messaggio." },
+  { c: "media", q: "Con cosa si chiede l'audio focus?", o: ["Con un AudioFocusRequest (tipo di audio + listener)", "Con un permesso nel manifesto", "Con un broadcast", "Con startService"], e: "Prima di suonare." },
+  { c: "media", q: "Quale richiesta indica un uso breve?", o: ["GAIN_TRANSIENT", "GAIN", "…_EXCLUSIVE", "LOSS"], e: "GAIN è la normale." },
+  { c: "media", q: "Cosa significa una richiesta …_MAY_DUCK?", o: ["Gli altri continuano a volume basso", "Silenzio per gli altri", "Uso normale", "Pausa per tutti"], e: "…_EXCLUSIVE = silenzio per gli altri." },
+  { c: "media", q: "Cosa significa una richiesta …_EXCLUSIVE?", o: ["Silenzio per gli altri", "Gli altri a volume basso", "Uso breve", "Riprendi"], e: "Nessun altro suona." },
+  { c: "media", q: "Cosa fa un'app quando riceve LOSS?", o: ["Si ferma", "Abbassa il volume", "Va in pausa per poco", "Riprende"], e: "Ha perso il focus." },
+  { c: "media", q: "Cosa fa un'app quando riceve LOSS_TRANSIENT?", o: ["Va in pausa", "Si ferma del tutto", "Abbassa il volume", "Alza il volume"], e: "Perdita temporanea." },
+  { c: "media", q: "Cosa fa un'app quando riceve AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK?", o: ["Abbassa il volume e continua", "Si ferma", "Va in pausa", "Rilascia il MediaPlayer"], e: "Domanda lampo del capitolo." },
+  { c: "media", q: "Cosa fa un'app quando riceve di nuovo GAIN?", o: ["Riprende", "Si ferma", "Abbassa il volume", "Chiude l'app"], e: "Ha riottenuto il focus." },
+  { c: "media", q: "Quali metodi controllano la riproduzione?", o: ["start(), pause(), stop()", "play(), wait(), end()", "open(), close()", "run(), sleep()"], e: "E release() alla fine." },
+
+  // 16 · Sensori
+  { c: "sensori", q: "Quali sono le tre famiglie di sensori?", o: ["Movimento, ambiente, posizione", "Audio, video, rete", "Interni, esterni, cloud", "Touch, tastiera, mouse"], e: "Accelerometro, temperatura, magnetometro…" },
+  { c: "sensori", q: "Il giroscopio è un sensore di…", o: ["Movimento", "Ambiente", "Posizione", "Rete"], e: "Movimento: accelerometro, giroscopio." },
+  { c: "sensori", q: "Il sensore di luce è un sensore di…", o: ["Ambiente", "Movimento", "Posizione", "Audio"], e: "Ambiente: temperatura, pressione, umidità, luce." },
+  { c: "sensori", q: "Il magnetometro è un sensore di…", o: ["Posizione", "Ambiente", "Movimento", "Luce"], e: "Posizione: magnetometro." },
+  { c: "sensori", q: "Cosa sono i sensori software?", o: ["Sensori calcolati da altri sensori", "Sensori che funzionano solo sull'emulatore", "App che simulano i sensori", "Sensori a pagamento"], e: "Altri sono hardware." },
+  { c: "sensori", q: "Come sono gli assi x, y, z?", o: ["Fissi rispetto al dispositivo: se lo ruoti cambiano i valori letti", "Fissi rispetto alla Terra", "Cambiano con l'orientamento dello schermo", "Esistono solo per il GPS"], e: "Seguono il telefono." },
+  { c: "sensori", q: "In che unità misura l'accelerometro?", o: ["m/s², gravità inclusa", "Gradi", "Lux", "km/h"], e: "Include la gravità." },
+  { c: "sensori", q: "Come ottieni il SensorManager?", o: ["getSystemService(SENSOR_SERVICE)", "new SensorManager()", "getIntent()", "findViewById()"], e: "Si fa in onCreate." },
+  { c: "sensori", q: "Come sai se il telefono ha un certo sensore?", o: ["getDefaultSensor(tipo) restituisce null se non c'è", "Lancia un'eccezione", "Lo dice il manifesto", "Con adb devices"], e: "Domanda lampo del capitolo." },
+  { c: "sensori", q: "Dove registri il listener del sensore?", o: ["In onResume", "In onCreate", "In onDestroy", "In onSaveInstanceState"], e: "E lo togli in onPause." },
+  { c: "sensori", q: "Perché unregisterListener in onPause?", o: ["Per non consumare batteria quando l'activity non è visibile", "Perché il sensore si rompe", "Per salvare lo stato", "Perché lo chiede il manifesto"], e: "Altrimenti resta acceso." },
+  { c: "sensori", q: "In quale callback arrivano i nuovi valori?", o: ["onSensorChanged(SensorEvent e)", "onAccuracyChanged", "onReceive", "onTouchEvent"], e: "Es. float lux = e.values[0]." },
+  { c: "sensori", q: "Quale interfaccia implementa l'activity per i sensori?", o: ["SensorEventListener", "OnTouchListener", "BroadcastReceiver", "Runnable"], e: "Con onSensorChanged e onAccuracyChanged." },
+  { c: "sensori", q: "Qual è la velocità di lettura più rapida?", o: ["FASTEST (0 s)", "GAME (0,02 s)", "UI (0,06 s)", "NORMAL (0,2 s)"], e: "NORMAL è la più lenta delle quattro." },
+  { c: "sensori", q: "Quanto vale SENSOR_DELAY_NORMAL?", o: ["0,2 s", "0,06 s", "0,02 s", "0 s"], e: "UI 0,06, GAME 0,02, FASTEST 0." },
+  { c: "sensori", q: "Quanto vale SENSOR_DELAY_GAME?", o: ["0,02 s", "0,2 s", "0,06 s", "1 s"], e: "Per i giochi." },
+  { c: "sensori", q: "Come leggi il valore del sensore di luce?", o: ["e.values[0] in onSensorChanged", "e.getLux()", "sm.read()", "getIntent().getFloat()"], e: "values è un array di float." },
+
+  // 17 · Notifiche
+  { c: "notifiche", q: "Cos'è un Toast?", o: ["Un messaggio breve che scompare da solo", "Una finestra che chiede un'interazione", "Un'icona nella barra di stato", "Un alarm"], e: "Il Dialog invece chiede un'interazione." },
+  { c: "notifiche", q: "Cos'è un Dialog?", o: ["Una finestra che chiede un'interazione", "Un messaggio che scompare da solo", "Un canale di notifica", "Un broadcast"], e: "Il Toast scompare da solo." },
+  { c: "notifiche", q: "Dove compare una notifica?", o: ["Icona nella barra di stato, pallino sull'icona dell'app, testo nel cassetto", "Solo dentro l'app", "Solo nel Logcat", "Solo sulla schermata di blocco"], e: "Resta finché l'utente la cancella o l'app la revoca." },
+  { c: "notifiche", q: "Fino a quando resta una notifica?", o: ["Finché l'utente la cancella o l'app la revoca", "Pochi secondi", "Fino al riavvio dell'app", "Un'ora"], e: "Diversamente dal Toast." },
+  { c: "notifiche", q: "Da quale API ci sono le notifiche heads-up?", o: ["API 21", "API 26", "API 33", "API 23"], e: "Notifiche a comparsa per quelle urgenti." },
+  { c: "notifiche", q: "Perché una notifica potrebbe non comparire su Android 8+?", o: ["Perché non è assegnata a un canale", "Perché manca il permesso INTERNET", "Perché l'icona è colorata", "Perché il Toast è attivo"], e: "Da API 26 ogni notifica deve stare in un canale." },
+  { c: "notifiche", q: "Cosa può fare l'utente con i canali?", o: ["Disattivare singoli canali", "Creare nuovi canali per l'app", "Cambiare il codice dell'app", "Nulla"], e: "Per questo si dividono le notifiche per tipo." },
+  { c: "notifiche", q: "Cosa serve in più su Android 13?", o: ["Il permesso POST_NOTIFICATIONS, nel manifesto e a runtime", "Un canale per ogni notifica", "Il permesso INTERNET", "Un service in primo piano"], e: "API 33." },
+  { c: "notifiche", q: "Come crei un canale?", o: ["new NotificationChannel(id, nome, importanza) e createNotificationChannel(ch)", "new Toast(id)", "sendBroadcast(canale)", "Nel layout XML"], e: "Poi il builder usa lo stesso id." },
+  { c: "notifiche", q: "Quale classe costruisce la notifica?", o: ["NotificationCompat.Builder", "AlertDialog", "FragmentTransaction", "ContentValues"], e: "Con setSmallIcon e setContentIntent." },
+  { c: "notifiche", q: "A cosa serve setContentIntent(pendingIntent)?", o: ["A decidere cosa si apre al tocco della notifica", "A impostare l'icona", "A creare il canale", "A cancellare la notifica"], e: "Usa un PendingIntent." },
+  { c: "notifiche", q: "Con quale metodo si mostra la notifica?", o: ["notificationManager.notify(id, nb.build())", "nb.show()", "Toast.makeText().show()", "startActivity(nb)"], e: "build() crea la notifica dal builder." },
+  { c: "notifiche", q: "Da API 26, come deve essere l'icona piccola della notifica?", o: ["Sfondo trasparente e un solo colore, se no esce un quadrato bianco", "A colori con sfondo bianco", "Una foto", "Animata"], e: "Imposta con setSmallIcon." },
+  { c: "notifiche", q: "Quale metodo del builder imposta l'icona?", o: ["setSmallIcon()", "setContentIntent()", "setChannel()", "setImageDrawable()"], e: "Es. R.drawable.ancora." },
+  // 18 · Alarms
+  { c: "alarms", q: "Cosa fa un alarm?", o: ["Lancia un intent in un momento stabilito, anche se l'app è chiusa o il telefono dorme", "Mostra un Toast ogni minuto", "Tiene sempre acceso lo schermo", "Avvia un thread sul main thread"], e: "Si usa l'AlarmManager." },
+  { c: "alarms", q: "Fino a quando resta attivo un alarm?", o: ["Finché non viene cancellato o il telefono si spegne", "Solo finché l'app è aperta", "Un giorno", "Fino al prossimo riavvio dell'app"], e: "Non sopravvive allo spegnimento." },
+  { c: "alarms", q: "Quale classe gestisce gli alarm?", o: ["AlarmManager", "NotificationManager", "SensorManager", "AudioManager"], e: "Imprecisi o precisi." },
+  { c: "alarms", q: "Cosa sono gli alarm imprecisi (inexact)?", o: ["Alarm che il sistema può spostare per risparmiare batteria", "Alarm che partono sempre all'ora esatta", "Alarm che non partono mai", "Alarm solo per l'emulatore"], e: "Da API 31 partono entro un'ora." },
+  { c: "alarms", q: "Da API 31, quando partono gli alarm imprecisi?", o: ["Entro un'ora", "All'ora esatta", "Entro un giorno", "Solo con lo schermo acceso"], e: "Android 12." },
+  { c: "alarms", q: "Quale di questi metodi crea un alarm impreciso?", o: ["setInexactRepeating()", "setExact()", "setAlarmClock()", "setExactAndAllowWhileIdle()"], e: "Imprecisi: set(), setInexactRepeating(), setAndAllowWhileIdle()." },
+  { c: "alarms", q: "Quale di questi metodi crea un alarm preciso?", o: ["setExact()", "set()", "setInexactRepeating()", "setAndAllowWhileIdle()"], e: "Precisi: setExact(), setExactAndAllowWhileIdle(), setAlarmClock()." },
+  { c: "alarms", q: "Da API 31 cosa serve per gli alarm esatti?", o: ["SCHEDULE_EXACT_ALARM o USE_EXACT_ALARM", "POST_NOTIFICATIONS", "WAKE_LOCK soltanto", "Nessun permesso"], e: "Android 12." },
+  { c: "alarms", q: "Quale metodo garantisce sempre l'orario?", o: ["setAlarmClock()", "set()", "setInexactRepeating()", "setAndAllowWhileIdle()"], e: "Domanda lampo del capitolo." },
+  { c: "alarms", q: "Cos'è la Doze mode?", o: ["Uno stato di risparmio batteria (schermo spento, non in carica, fermo) in cui alarm e rete in background vengono ritardati", "Una modalità di debug", "Il blocco dello schermo con PIN", "La modalità aereo"], e: "Domanda lampo del capitolo." },
+  { c: "alarms", q: "Quale di queste NON è una condizione della Doze mode?", o: ["Telefono in carica", "Schermo spento", "Telefono fermo", "Niente in esecuzione"], e: "In Doze il telefono non è in carica." },
+  { c: "alarms", q: "Cosa succede alla rete in background in Doze mode?", o: ["È bloccata", "Diventa più veloce", "Resta normale", "Passa al Wi-Fi"], e: "E gli alarm vengono ritardati." },
+  { c: "alarms", q: "Cos'è l'App standby?", o: ["Uno stato per le app non usate da tempo: attività in background sospese, alarm ritardati", "La schermata di caricamento dell'app", "La modalità sviluppatore", "Un tipo di notifica"], e: "Diverso dalla Doze, che riguarda tutto il telefono." },
+  { c: "alarms", q: "Da API 29, cosa non può più fare un alarm?", o: ["Riportare l'app in primo piano da solo: si mostra una notifica che l'utente tocca", "Partire a telefono spento", "Usare l'AlarmManager", "Lanciare un intent"], e: "Android 10." },
+  { c: "alarms", q: "setExactAndAllowWhileIdle() è un alarm…", o: ["Preciso", "Impreciso", "Ripetuto impreciso", "Di sistema"], e: "Parte anche in idle." },
+
+  // 19 · Broadcast
+  { c: "broadcast", q: "Quali sono le 4 componenti fondamentali di Android?", o: ["Activity, Broadcast, Content Provider, Service", "Activity, Fragment, Layout, View", "Intent, Bundle, Cursor, Thread", "Manifest, Gradle, res, java"], e: "Le ultime tre servono in casi particolari." },
+  { c: "broadcast", q: "Cos'è un broadcast?", o: ["Un messaggio globale (un Intent) che chiunque sia interessato può ricevere", "Una notifica nella barra di stato", "Un thread speciale", "Un tipo di layout"], e: "Si manda con sendBroadcast()." },
+  { c: "broadcast", q: "Quale metodo implementa un BroadcastReceiver?", o: ["onReceive(Context, Intent)", "onCreate(Bundle)", "onBind(Intent)", "onSensorChanged(SensorEvent)"], e: "Domanda lampo del capitolo." },
+  { c: "broadcast", q: "Con quale metodo si manda un broadcast?", o: ["sendBroadcast()", "startActivity()", "notify()", "bindService()"], e: "Chi lo riceve è un BroadcastReceiver." },
+  { c: "broadcast", q: "Quale di questi è un broadcast di sistema?", o: ["BOOT_COMPLETED", "BROADCAST_PERSONALIZZATO", "ACTION_PICK", "MAIN"], e: "Altri: AIRPLANE_MODE, BATTERY_LOW, TIME_TICK, SMS_RECEIVED." },
+  { c: "broadcast", q: "Ogni quanto arriva TIME_TICK?", o: ["Ogni minuto", "Ogni secondo", "Ogni ora", "A ogni avvio"], e: "È un broadcast di sistema." },
+  { c: "broadcast", q: "Differenza tra broadcast custom impliciti ed espliciti?", o: ["Impliciti: indicano un'azione; espliciti: hanno il component e li riceve solo quel receiver", "Impliciti hanno il component, espliciti un'azione", "Gli espliciti sono di sistema", "Non c'è differenza"], e: "Come per gli Intent." },
+  { c: "broadcast", q: "Differenza tra receiver statico e dinamico?", o: ["Statico: nel manifesto, registrato all'installazione/boot; dinamico: nel codice con registerReceiver()", "Statico: nel codice; dinamico: nel manifesto", "Statico vale solo per i custom", "Non c'è differenza"], e: "Domanda lampo del capitolo." },
+  { c: "broadcast", q: "Per un receiver statico, quale attributo è obbligatorio?", o: ["android:exported", "android:configChanges", "android:authorities", "android:orientation"], e: "Dentro <receiver> con <intent-filter>." },
+  { c: "broadcast", q: "Da API 26, quali broadcast si possono registrare nel manifesto?", o: ["Solo i custom e pochi di sistema (BOOT_COMPLETED, POWER_CONNECTED…)", "Tutti", "Nessuno", "Solo quelli di sistema"], e: "Gli altri vanno registrati nel codice." },
+  { c: "broadcast", q: "Come si toglie un receiver dinamico?", o: ["Con unregisterReceiver()", "Con finish()", "Con stopService()", "Non si toglie"], e: "Va fatto in coppie coerenti." },
+  { c: "broadcast", q: "Quali coppie di callback si usano per registrare/togliere un receiver dinamico?", o: ["onCreate/onDestroy oppure onResume/onPause", "onCreate/onPause", "onResume/onDestroy", "onStart/onSaveInstanceState"], e: "Coppie coerenti." },
+  { c: "broadcast", q: "Perché non togliere il receiver in onSaveInstanceState?", o: ["Con il tasto Back non viene chiamato", "Perché è deprecato", "Perché viene chiamato due volte", "Perché manca il Context"], e: "Il receiver resterebbe registrato." },
+  { c: "broadcast", q: "Cosa fa sendBroadcast(intent, permesso)?", o: ["Il broadcast arriva solo a chi ha quel permesso", "Chiede il permesso all'utente", "Manda il broadcast a tutti ignorando il permesso", "Concede il permesso ai receiver"], e: "Protegge chi può riceverlo." },
+  { c: "broadcast", q: "Cosa si usa oggi al posto di LocalBroadcastManager?", o: ["ViewModel, LiveData, WorkManager", "AsyncTask", "Toast", "JSoup"], e: "I broadcast locali sono obsoleti." },
+  { c: "broadcast", q: "Le ultime tre delle 4 componenti fondamentali servono…", o: ["In casi particolari", "In ogni app", "Solo nei giochi", "Solo su tablet"], e: "L'Activity c'è quasi sempre." },
+
+  // 20 · Content Provider
+  { c: "provider", q: "Cosa fa un Content Provider?", o: ["Espone i dati di un database ad altre app", "Disegna le view", "Gestisce l'audio focus", "Avvia le activity"], e: "Esempi: rubrica, registro chiamate, cronologia browser, file multimediali." },
+  { c: "provider", q: "Con cosa si accede a un Content Provider?", o: ["Un ContentResolver, con comandi simili a SQL", "Un BroadcastReceiver", "Un Socket", "Un MediaPlayer"], e: "query, insert, update, delete + notifiche sui cambiamenti." },
+  { c: "provider", q: "Com'è fatto l'URI di un Content Provider?", o: ["content://authority/path/id", "http://path/authority", "file://id/path", "provider://id"], e: "authority = provider, path = tabella, id = record." },
+  { c: "provider", q: "Cosa indicano authority e path in un URI?", o: ["Authority il provider, path la tabella", "Authority la tabella, path il provider", "Authority il record, path il permesso", "Entrambi il record"], e: "Domanda lampo del capitolo." },
+  { c: "provider", q: "Cosa indica l'id nell'URI?", o: ["Quale record (chiave primaria)", "Quale provider", "Quale tabella", "Quale utente"], e: "Senza id indichi tutta la tabella." },
+  { c: "provider", q: "Cosa indica content://com.android.contacts/contacts/?", o: ["Tutta la tabella dei contatti", "Un solo contatto", "Il provider delle foto", "Il registro chiamate"], e: "Senza id: tutta la tabella." },
+  { c: "provider", q: "Quale classe estendi per creare un provider?", o: ["ContentProvider", "ContentResolver", "SQLiteOpenHelper", "BroadcastReceiver"], e: "Implementando query(...)." },
+  { c: "provider", q: "Cosa restituisce query(uri, projection, selection, args, sortOrder)?", o: ["Un Cursor", "Un Bundle", "Un Intent", "Una stringa JSON"], e: "Come db.query." },
+  { c: "provider", q: "Come si dichiara l'authority del provider?", o: ["Nel manifesto con <provider android:authorities=\"…\" android:exported=\"true\"/>", "Nel layout XML", "In build.gradle", "Con putExtra"], e: "exported per renderlo accessibile." },
+  { c: "provider", q: "Cosa cambia per il client da API 30?", o: ["Deve dichiarare nel manifesto, in <queries>, i Content Provider a cui accede", "Non può più usare i provider", "Deve usare un Socket", "Deve chiedere POST_NOTIFICATIONS"], e: "Domanda lampo del capitolo." },
+  { c: "provider", q: "Quale permesso serve per leggere la rubrica?", o: ["READ_CONTACTS", "INTERNET", "CAMERA", "SET_ALARM"], e: "È un permesso pericoloso." },
+  { c: "provider", q: "Quale di questi NON è un Content Provider già pronto citato?", o: ["Il Logcat", "La rubrica", "Il registro chiamate", "La cronologia del browser"], e: "Anche i file multimediali (MediaStore)." },
+
+  // 21 · Service
+  { c: "service", q: "Cosa fa un Service?", o: ["Operazioni lunghe senza interfaccia: scaricare, sincronizzare, suonare musica", "Mostra una schermata", "Disegna grafica", "Gestisce il backstack"], e: "Può girare a lungo, ma il sistema può fermarlo." },
+  { c: "service", q: "Un service gira in un thread separato?", o: ["No, per default gira nel main thread, a meno che non lo specifichi tu", "Sì, sempre", "Sì, in un processo separato", "Dipende dal permesso INTERNET"], e: "Trabocchetto classico!" },
+  { c: "service", q: "Il sistema può fermare un service?", o: ["Sì, se servono risorse", "No, mai", "Solo se l'utente lo disinstalla", "Solo in modalità aereo"], e: "Anche se può girare a lungo." },
+  { c: "service", q: "Come si avvia un service unbound?", o: ["startService() (e si ferma con stopService())", "bindService()", "startActivity()", "sendBroadcast()"], e: "Callback: onStartCommand()." },
+  { c: "service", q: "Quale callback ha un service unbound?", o: ["onStartCommand()", "onBind()", "onReceive()", "onCreateView()"], e: "Il bound usa onBind()." },
+  { c: "service", q: "Un service unbound, se chi l'ha lanciato termina…", o: ["Continua a vivere da solo", "Muore subito", "Diventa bound", "Va in pausa"], e: "Vive da solo." },
+  { c: "service", q: "Come si aggancia un service bound?", o: ["bindService()", "startService()", "registerReceiver()", "commit()"], e: "Le componenti diventano client." },
+  { c: "service", q: "Quale callback ha un service bound?", o: ["onBind()", "onStartCommand()", "onPostExecute()", "onReceive()"], e: "Restituisce il canale di comunicazione ai client." },
+  { c: "service", q: "Quando muore un service bound?", o: ["Quando non ci sono più client agganciati", "Quando l'app va in pausa", "Dopo un minuto", "Mai"], e: "Domanda lampo del capitolo." },
+  { c: "service", q: "Uno stesso service può essere sia unbound che bound?", o: ["Sì, può funzionare in entrambi i modi", "No, mai", "Solo da API 30", "Solo se non è nel manifesto"], e: "Lo dice il capitolo." },
+  { c: "service", q: "Come si dichiara un service?", o: ["Nel manifesto con <service android:name=\".MyService\"/>", "Nel layout XML", "Con un intent-filter MAIN", "Non va dichiarato"], e: "Come activity, receiver e provider." },
+  { c: "service", q: "Con il service bound, le componenti che lo usano diventano…", o: ["Client che ci comunicano", "Receiver", "Frammenti", "Provider"], e: "Vive finché c'è almeno un client." }
+];
+
+const STORE = "quiz-mp";
+const QUADERNO = "Quaderno%20di%20Android.html";
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const chap = id => CHAPTERS.find(c => c.id === id);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } };
+const store = d => { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) {} };
+
+/* Quiz dinamico: ogni giro di un capitolo pesca PER_GIRO domande dal capitolo intero.
+   Per ogni domanda si ricorda: v = volte vista, w = volte sbagliata, s = risposte giuste di fila.
+   Escono prima quelle sbagliate e non ancora recuperate, poi quelle mai viste; quelle già sapute escono di rado.
+   Le domande dell'ultimo giro dello stesso capitolo vengono evitate, così i giri si somigliano poco. */
+const STATS = "quiz-mp-domande";
+const PER_GIRO = 10;
+const SAPUTA = 2; // giuste di fila per considerarla saputa
+const qid = q => { let h = 5381; const t = q.c + "|" + q.q; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+Q.forEach(q => { q.id = qid(q); });
+const loadStats = () => { try { return JSON.parse(localStorage.getItem(STATS)) || {}; } catch (e) { return {}; } };
+const saveStats = d => { try { localStorage.setItem(STATS, JSON.stringify(d)); } catch (e) {} };
+const known = (st, id) => { const x = st[id]; return !!x && x.s >= SAPUTA; };
+function weight(x) {
+  if (!x) return 3;                         // mai vista
+  if (x.w > 0 && x.s < SAPUTA) return 6;    // sbagliata, da recuperare
+  if (x.s >= SAPUTA + 1) return 0.35;       // la sai bene
+  if (x.s >= SAPUTA) return 0.7;            // la sai
+  return 1.5;
+}
+// estrazione pesata senza ripetizioni (chiave = random^(1/peso))
+function pick(pool, n, avoid) {
+  const st = loadStats(), skip = new Set(avoid || []);
+  const scored = pool.map(q => {
+    let w = weight(st[q.id]);
+    if (skip.has(q.id) && w < 6) w *= 0.15;
+    return { q, k: Math.pow(Math.random(), 1 / w) };
+  });
+  return scored.sort((a, b) => b.k - a.k).slice(0, n).map(x => x.q);
+}
+function chapterRun(cid) {
+  const st = loadStats(), last = (st._ultimo || {})[cid] || [];
+  return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
+}
+/* Simulazione d'esame: 30 domande su tutto il corso, almeno 1 per capitolo. */
+const SIMS = {
+  sim: { title: "Simulazione d'esame", tot: 30, min: 1, chaps: () => CHAPTERS }
+};
+function simRun(key) {
+  key = key || "sim";
+  const S = SIMS[key], st = loadStats(), last = (st._ultimo || {})[key] || [];
+  const ids = new Set(S.chaps().map(c => c.id)), pool = Q.filter(q => ids.has(q.c));
+  let out = [];
+  S.chaps().forEach(c => { out = out.concat(pick(pool.filter(q => q.c === c.id), S.min, last)); });
+  const used = new Set(out.map(q => q.id));
+  out = out.concat(pick(pool.filter(q => !used.has(q.id)), S.tot - out.length, last));
+  return shuffle(out);
+}
+function rememberRun(key, items) {
+  const st = loadStats(); st._ultimo = st._ultimo || {}; st._ultimo[key] = items.map(it => it.q.id); saveStats(st);
+}
+function record(q, ok) {
+  const st = loadStats(), x = st[q.id] || { v: 0, w: 0, s: 0 };
+  x.v++; if (ok) x.s++; else { x.w++; x.s = 0; }
+  st[q.id] = x; saveStats(st);
+}
+
+let run = null; // { title, items: [{q, opts, right}], i, answers: [] }
+
+function home() {
+  run = null;
+  document.body.classList.remove("running");
+  const saved = load(), st = loadStats();
+  const totKnown = Q.filter(q => known(st, q.id)).length;
+  const chips = CHAPTERS.map(c => {
+    const all = Q.filter(q => q.c === c.id), n = all.length, s = saved[c.id];
+    const k = all.filter(q => known(st, q.id)).length, rip = all.filter(q => { const x = st[q.id]; return x && x.w > 0 && x.s < SAPUTA; }).length;
+    const pct = s ? Math.round(100 * s.best / s.total) : null;
+    const best = s ? `migliore <b class="${pct >= 80 ? "" : "mid"}">${s.best}/${s.total}</b>` : "non ancora fatto";
+    return `<button class="chap" type="button" data-c="${c.id}"><span class="n">${c.n}</span><span class="t">${esc(c.t)}</span><span class="s">${PER_GIRO} a giro su ${n} · ${best}</span><span class="s">ne sai <b class="${k === n ? "" : "mid"}">${k}/${n}</b>${rip ? ` · ${rip} da recuperare` : ""}</span><span class="m"><i style="width:${100 * k / n}%"></i></span></button>`;
+  }).join("");
+  app.innerHTML = `
+    <section class="sim">
+      <h2>Simulazione</h2>
+      <p>30 domande miste su tutto il corso, almeno una per capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
+      <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
+      <div class="actions"><button class="btn" type="button" id="go-sim">Simulazione d'esame (30) →</button></div>
+    </section>
+    <p class="label">Un capitolo alla volta</p>
+    <div class="chaps">${chips}</div>
+    <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione nei giorni prima dello scritto. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
+  app.querySelector("#go-sim").onclick = () => start(SIMS.sim.title, simRun("sim"), null, "sim");
+  app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
+    const c = chap(b.dataset.c);
+    start(`${c.n} · ${c.t}`, chapterRun(c.id), c.id, c.id);
+  });
+  window.scrollTo({ top: 0 });
+}
+
+function start(title, questions, chapterId, key, from) {
+  run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => {
+    const opts = shuffle(q.o.map((t, k) => ({ t, ok: k === 0 })));
+    return { q, opts };
+  }) };
+  if (key) rememberRun(key, run.items);
+  if (!(history.state && history.state.quiz)) { try { history.pushState({ quiz: 1 }, ""); } catch (e) {} }
+  ask();
+}
+
+function ask() {
+  document.body.classList.add("running");
+  const it = run.items[run.i], c = chap(it.q.c), n = run.items.length;
+  app.innerHTML = `
+    <a href="#" class="backq" id="quit">← Tutti i quiz</a>
+    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n}</span></div>
+    <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
+    <span class="tag">${c.n} · ${esc(c.t)}</span>
+    <h2 class="q">${esc(it.q.q)}</h2>
+    <div class="opts" role="group" aria-label="Risposte">${it.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}"><span class="k">${"ABCD"[k]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>
+    <div id="after"></div>
+    <p class="hint">Tasti: 1–4 o A–D per rispondere · Invio per andare avanti</p>`;
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(+b.dataset.k));
+  const first = app.querySelector(".opt"); if (first) first.focus({ preventScroll: true });
+  window.scrollTo({ top: 0 });
+}
+
+function answer(k) {
+  const it = run.items[run.i];
+  if (run.answers[run.i] !== undefined) return;
+  const ok = it.opts[k].ok;
+  run.answers[run.i] = { k, ok };
+  record(it.q, ok);
+  app.querySelectorAll(".opt").forEach((b, j) => {
+    b.disabled = true;
+    if (it.opts[j].ok) b.classList.add("right");
+    else if (j === k) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+  const last = run.i === run.items.length - 1;
+  app.querySelector("#after").innerHTML = `
+    <div class="fb"><b class="${ok ? "ok" : "ko"}">${ok ? "Giusto." : "Non è questa."}</b><p>${esc(it.q.e)}</p>
+      <p><a href="${QUADERNO}#${it.q.c}">Rivedi il capitolo ${chap(it.q.c).n} nel quaderno →</a></p></div>
+    <div class="next"><button class="btn solid" type="button" id="next">${last ? "Vedi il risultato" : "Avanti →"}</button></div>`;
+  const nx = app.querySelector("#next");
+  nx.onclick = () => { if (last) result(); else { run.i++; ask(); } };
+  nx.focus({ preventScroll: true });
+}
+
+function result() {
+  const n = run.items.length, good = run.answers.filter(a => a && a.ok).length, pct = Math.round(100 * good / n);
+  if (run.chapterId) {
+    const saved = load(), prev = saved[run.chapterId];
+    saved[run.chapterId] = { best: Math.max(good, prev ? prev.best : 0), last: good, total: n };
+    store(saved);
+  }
+  const by = {};
+  run.items.forEach((it, i) => { const c = it.q.c; by[c] = by[c] || { ok: 0, n: 0 }; by[c].n++; if (run.answers[i] && run.answers[i].ok) by[c].ok++; });
+  const rows = CHAPTERS.filter(c => by[c.id]).map(c => `<li><span>${c.n} · ${esc(c.t)}</span><span class="m"><i style="width:${100 * by[c.id].ok / by[c.id].n}%"></i></span><span class="v">${by[c.id].ok}/${by[c.id].n}</span></li>`).join("");
+  const wrong = run.items.map((it, i) => ({ it, a: run.answers[i] })).filter(x => !x.a.ok);
+  const errs = wrong.map(({ it, a }) => `<div class="err"><p class="eq">${esc(it.q.q)}</p>
+      <p class="yours">La tua risposta: ${esc(it.opts[a.k].t)}</p>
+      <p><b>Giusta:</b> ${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
+      <p><a href="${QUADERNO}#${it.q.c}">Capitolo ${chap(it.q.c).n} nel quaderno →</a></p></div>`).join("");
+  const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
+  const verdict = pct >= 90 ? "Ottimo, questa parte la sai." : pct >= 70 ? "Buono. Ripassa gli errori qui sotto e rifallo." : pct >= 50 ? "Ci sei quasi: rileggi i capitoli segnati e riprova domani." : "Da ripassare: riprendi il quaderno e poi rifai il quiz.";
+  app.innerHTML = `
+    <a href="#" class="backq" id="quit">← Tutti i quiz</a>
+    <p class="label">${esc(run.title)}</p>
+    <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
+    <p class="verdict">${verdict}</p>
+    ${from && from.cid ? (() => { const st = loadStats(), all = Q.filter(q => q.c === from.cid), k = all.filter(q => known(st, q.id)).length; return `<p class="label">Capitolo ${chap(from.cid).n}: ne sai ${k} su ${all.length}</p><div class="bar"><i style="width:${100 * k / all.length}%"></i></div>`; })() : ""}
+    ${Object.keys(by).length > 1 ? `<p class="label">Per capitolo</p><ul class="byc">${rows}</ul>` : ""}
+    ${wrong.length ? `<p class="label">Da rivedere (${wrong.length})</p><div class="errs">${errs}</div>` : ""}
+    <div class="actions">
+      ${wrong.length ? `<button class="btn solid" type="button" id="redo">Rifai solo gli errori</button>` : ""}
+      ${from ? `<button class="btn" type="button" id="again">${from.cid ? `Altre ${PER_GIRO} domande` : "Nuova simulazione"}</button>` : ""}
+      <button class="btn" type="button" id="back">Torna a tutti i quiz</button>
+    </div>`;
+  const redo = app.querySelector("#redo");
+  if (redo) redo.onclick = () => { start((from ? from.title : run.title) + " · errori", shuffle(wrong.map(w => w.it.q)), null, null, from); };
+  const again = app.querySelector("#again");
+  if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : simRun(from.key), from.cid, from.key);
+  app.querySelector("#back").onclick = backToList;
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
+  window.scrollTo({ top: 0 });
+}
+
+document.addEventListener("keydown", e => {
+  if (!run || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (document.querySelector(".ua-pal:not([hidden])")) return;
+  const key = e.key.toLowerCase();
+  const idx = "1234".indexOf(key) !== -1 ? "1234".indexOf(key) : "abcd".indexOf(key);
+  if (idx !== -1 && run.answers[run.i] === undefined && run.items[run.i] && idx < run.items[run.i].opts.length) { e.preventDefault(); answer(idx); }
+  else if (e.key === "Enter" && run.answers[run.i] !== undefined) { const nx = document.getElementById("next"); if (nx && document.activeElement !== nx) { e.preventDefault(); nx.click(); } }
+});
+
+/* Indietro: dal quiz si torna all'elenco dei quiz, non alla home.
+   Avviando un quiz si aggiunge una voce alla cronologia: il tasto indietro del browser (o il gesto sul telefono)
+   riporta all'elenco; il pulsante "Tutti i quiz" fa la stessa cosa. */
+function backToList() {
+  if (history.state && history.state.quiz) history.back(); else home();
+}
+window.addEventListener("popstate", () => { if (run && !(history.state && history.state.quiz)) home(); });
+if (history.state && history.state.quiz) { try { history.replaceState(null, ""); } catch (e) {} }
+home();
+</script>
+</body>
+</html>
