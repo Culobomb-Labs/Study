@@ -84,6 +84,7 @@ onAuthStateChanged(auth,async u=>{
   $('#list').replaceChildren(); $('#list-message').textContent=u?'Verifica dell’account…':'Accedi per vedere le segnalazioni.';
   drafts.clear(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
   $('#identity').textContent=u?(u.displayName||u.email):''; $('#send').disabled=true;
+  if(window.UAContact)window.UAContact.setUser(u&&u.emailVerified!==false?u.email:null);
   $('#list-title').textContent='Le tue segnalazioni';
   if($('#auth-message').textContent==='Verifica dell’account…') authMsg('');
   if(u){
@@ -129,7 +130,7 @@ onAuthStateChanged(auth,async u=>{
       if(sentAt)card.append(sentAt);
       card.append(text);
       if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
-      if(d.contact){const c=document.createElement('p');c.className='contact-line';c.append('Contatto: ');if(window.UAContact)c.append(window.UAContact.render(d.contact));else c.append(String(d.contact));card.append(c)}
+      if(d.contact){const c=document.createElement('p');c.className='contact-line';c.append('Contatto: ');if(window.UAContact)c.append(window.UAContact.render(d.contact,document,d.authorEmail));else c.append(String(d.contact));card.append(c)}
       else if(isAdmin()){const c=document.createElement('p');c.className='contact-line';c.textContent='Contatto: risposta qui sul sito';card.append(c)}
       if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
       if(isAdmin()){

@@ -182,3 +182,11 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .status-opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .status-opt:disabled{cursor:wait;opacity:.7}
 .entry label .optional{display:block;margin:3px 0 0;font:400 12px/1.3 var(--font-body);text-transform:none}
+
+/* Email Google: niente da scrivere, si mostra l'email dell'account */
+.google-note{margin:10px 0 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.google-note b{color:var(--ink);font-weight:600}
+.google-note[data-state=warn]{color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.google-note[hidden],#form input[hidden],.hint[hidden]{display:none}
+.c2-line.no-input{grid-template-columns:minmax(0,1fr) 42px}
+#contact2 .google-note{margin-top:8px}

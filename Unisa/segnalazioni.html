@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/segnalazioni.css?v=11">
+<link rel="stylesheet" href="assets/segnalazioni.css?v=12">
 </head>
 <body>
 <main class="reports-page">
@@ -48,7 +48,7 @@
             <label class="ch"><input type="radio" name="ch1" value="telegram"><span>Telegram</span></label>
             <label class="ch"><input type="radio" name="ch1" value="instagram"><span>Instagram</span></label>
             <label class="ch"><input type="radio" name="ch1" value="discord"><span>Discord</span></label>
-            <label class="ch"><input type="radio" name="ch1" value="email"><span>Email</span></label>
+            <label class="ch"><input type="radio" name="ch1" value="google"><span>Email Google</span></label>
           </div>
           <p class="hint" id="site-hint">La risposta comparirà sotto la tua segnalazione, in “Le tue segnalazioni”. Se preferisci essere avvisato altrove, scegli un canale.</p>
           <div id="contact1" class="contact-row" hidden>
@@ -56,16 +56,18 @@
             <input id="report-c1" name="c1" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c1-hint">
             <p class="hint" id="c1-hint"></p>
           </div>
+          <p class="google-note" id="google1" hidden></p>
           <button type="button" class="add-contact" id="add-contact2" hidden>+ Aggiungi un secondo contatto <span class="optional">facoltativo</span></button>
           <div id="contact2" class="contact-row contact-row-2" hidden>
             <div class="c2-line">
               <label for="report-ch2" class="sr-only">Tipo del secondo contatto</label>
-              <select id="report-ch2" name="ch2"><option value="telegram">Telegram</option><option value="instagram">Instagram</option><option value="discord">Discord</option><option value="email">Email</option></select>
+              <select id="report-ch2" name="ch2"><option value="telegram">Telegram</option><option value="instagram">Instagram</option><option value="discord">Discord</option><option value="google">Email Google</option></select>
               <label for="report-c2" class="sr-only">Secondo recapito</label>
               <input id="report-c2" name="c2" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c2-hint">
               <button type="button" class="rm-contact" id="rm-contact2" aria-label="Togli il secondo contatto">×</button>
             </div>
             <p class="hint" id="c2-hint"></p>
+            <p class="google-note" id="google2" hidden></p>
           </div>
           <input type="hidden" name="contact" value="">
         </fieldset>
@@ -97,7 +99,7 @@
 function paint(){var n=t.value.length,st=n>=max?'full':n>=max*0.9?'near':'';c.textContent=n+' / '+max;c.dataset.state=st;bar.style.width=Math.min(100,100*n/max)+'%';bar.dataset.state=st;}
 t.addEventListener('input',paint);paint();})();
 </script>
-<script src="assets/segnalazioni-contatto.js?v=1"></script>
-<script type="module">import("./assets/segnalazioni-auth-v3.js?v=9").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
+<script src="assets/segnalazioni-contatto.js?v=2"></script>
+<script type="module">import("./assets/segnalazioni-auth-v3.js?v=10").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
 </body>
 </html>
