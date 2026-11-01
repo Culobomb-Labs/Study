@@ -49,6 +49,14 @@ const pad=n=>String(n).padStart(2,'0');
 const QUOTA_WINDOW=24*36e5; // 24 ore dall'ultima segnalazione, come nelle regole
 function quotaUntil(){const t=quotaData?.updatedAt?.toDate?.(); return t ? t.getTime()+QUOTA_WINDOW : 0;}
 function usedToday(){return Date.now()<quotaUntil() ? Math.max(0,Math.min(QUOTA_MAX,quotaData.count|0)) : 0;}
+/* "oggi alle 18:30", "domani alle 11:09" oppure "lunedì 3 novembre alle 9:00" (ora del dispositivo) */
+function resetLabel(ms){
+  const d=new Date(ms), now=new Date(), day=x=>new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime();
+  const diff=Math.round((day(d)-day(now))/864e5);
+  const time=d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  const when=diff===0?'oggi':diff===1?'domani':d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+  return `${when} alle ${time}`;
+}
 function canSend(){return !!user && readyUser===user && !sending && !quotaFull;}
 function paintQuota(){
   const box=$('#quota'); if(!box)return;
@@ -62,7 +70,8 @@ function paintQuota(){
     const s=Math.max(0,Math.round((quotaUntil()-Date.now())/1000));
     $('#quota-msg').innerHTML='';
     const strong=document.createElement('b'); strong.className='quota-cd'; strong.textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;
-    $('#quota-msg').append('Hai usato tutte e 5 le segnalazioni. Potrai inviarne altre 5 tra ',strong,'.');
+    const at=document.createElement('b'); at.className='quota-at'; at.textContent=resetLabel(quotaUntil());
+    $('#quota-msg').append('Hai usato tutte e 5 le segnalazioni. Potrai inviarne altre 5 ',at,', tra ',strong,'.');
   } else $('#quota-msg').textContent=(left===1?'Ti resta 1 segnalazione.':`Te ne restano ${left}.`)+(used?' Finite tutte e 5, dovrai aspettare 24 ore.':'');
   $('#send').disabled=!canSend();
 }
