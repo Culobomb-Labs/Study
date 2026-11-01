@@ -121,6 +121,14 @@ output{font-family:var(--f-mono);color:var(--ink)}
 .dcard.exam-day .dh{border-bottom:0}
 .dcard.exam-day .dt,.dcard.exam-day .dt b{color:var(--bg)}
 .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;margin:0 0 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs a{font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--surface)}
+.tabs a:hover{border-color:var(--c);color:var(--c)}
+.tabs a.on{background:var(--c);border-color:var(--c);color:#fff}
+.tabs a.ext{margin-left:auto;color:var(--c)}
+.tabs a.ext + a.ext{margin-left:0}
+#argomenti,#piano,#planBox,#cfg{scroll-margin-top:64px}
+@media (max-width:560px){.tabs a.ext{margin-left:0}}
 @media (max-width:560px){
   .exam{grid-template-columns:auto 1fr}.exam .cd{grid-column:1/-1;text-align:left}
   .lv{grid-template-columns:1fr}.seg{justify-self:start}
@@ -137,6 +145,13 @@ output{font-family:var(--f-mono);color:var(--ink)}
   <div class="eyebrow">Ingegneria del Software · prova intercorso</div>
   <h1>Prova intercorso</h1>
   <p class="lede">Gli argomenti indicati dalla prof. Ferrucci, i capitoli del quaderno dove li trovi e un piano di studio fatto su misura per te.</p>
+
+  <nav class="tabs no-print" aria-label="In questa pagina">
+    <a href="#argomenti" data-t="argomenti">Argomenti</a>
+    <a href="#piano" data-t="piano">Piano di studio</a>
+    <a class="ext" href="Quiz%20IS.html">Quiz →</a>
+    <a class="ext" href="Quaderno%20di%20Ingegneria%20del%20Software.html">Quaderno →</a>
+  </nav>
 
   <div class="exam">
     <div class="day">ven<b>6</b>nov</div>
@@ -481,13 +496,23 @@ $("#cfg").addEventListener("submit", e => {
   save({ cfg, plan, done: {} });
   msg.textContent = "";
   render();
-  $("#planBox").scrollIntoView({ behavior: "smooth", block: "start" });
+  // aggiunge una voce alla cronologia: "indietro" riporta alla configurazione, non alla home
+  if (location.hash === "#planBox") $("#planBox").scrollIntoView({ block: "start" }); else location.hash = "planBox";
 });
 
 buildForm(load().cfg || {});
 render();
 /* se un altro dispositivo aggiorna le spunte (sincronizzazione), ridisegna */
 window.addEventListener("storage", e => { if (e.key === KEY) render(); });
+/* scheda evidenziata in base alla parte di pagina visibile */
+(function () {
+  const tabs = [...document.querySelectorAll(".tabs a[data-t]")];
+  const mark = () => {
+    const y = window.scrollY + 90, piano = document.getElementById("piano").getBoundingClientRect().top + window.scrollY;
+    tabs.forEach(a => a.classList.toggle("on", (a.dataset.t === "piano") === (y >= piano)));
+  };
+  window.addEventListener("scroll", mark, { passive: true }); mark();
+})();
 </script>
 </body>
 </html>

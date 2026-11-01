@@ -72,6 +72,9 @@ button{font:inherit;color:inherit}
 /* domanda */
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
 .qhead a{color:var(--muted)}
+.backq{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:13px;color:var(--c);text-decoration:none;margin:0 0 14px;padding:6px 10px 6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.backq:hover{border-color:var(--c)}
+.backq:focus-visible{outline:2px solid var(--c);outline-offset:2px}
 .bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-bottom:26px}
 .bar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
 .tag{display:inline-block;font-family:var(--f-mono);font-size:12px;color:var(--c);background:var(--c-soft);border-radius:999px;padding:3px 10px;margin-bottom:12px}
@@ -964,6 +967,7 @@ function start(title, questions, chapterId, key, from) {
     return { q, opts };
   }) };
   if (key) rememberRun(key, run.items);
+  if (!(history.state && history.state.quiz)) { try { history.pushState({ quiz: 1 }, ""); } catch (e) {} }
   ask();
 }
 
@@ -971,14 +975,15 @@ function ask() {
   document.body.classList.add("running");
   const it = run.items[run.i], c = chap(it.q.c), n = run.items.length;
   app.innerHTML = `
-    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n} · <a href="#" id="quit">esci</a></span></div>
+    <a href="#" class="backq" id="quit">← Tutti i quiz</a>
+    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n}</span></div>
     <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
     <span class="tag">${c.n} · ${esc(c.t)}</span>
     <h2 class="q">${esc(it.q.q)}</h2>
     <div class="opts" role="group" aria-label="Risposte">${it.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}"><span class="k">${"ABCD"[k]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>
     <div id="after"></div>
     <p class="hint">Tasti: 1–4 o A–D per rispondere · Invio per andare avanti</p>`;
-  app.querySelector("#quit").onclick = e => { e.preventDefault(); home(); };
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   app.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(+b.dataset.k));
   const first = app.querySelector(".opt"); if (first) first.focus({ preventScroll: true });
   window.scrollTo({ top: 0 });
@@ -1024,6 +1029,7 @@ function result() {
   const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
   const verdict = pct >= 90 ? "Ottimo, questa parte la sai." : pct >= 70 ? "Buono. Ripassa gli errori qui sotto e rifallo." : pct >= 50 ? "Ci sei quasi: rileggi i capitoli segnati e riprova domani." : "Da ripassare: riprendi il quaderno e poi rifai il quiz.";
   app.innerHTML = `
+    <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <p class="label">${esc(run.title)}</p>
     <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
     <p class="verdict">${verdict}</p>
@@ -1033,13 +1039,14 @@ function result() {
     <div class="actions">
       ${wrong.length ? `<button class="btn solid" type="button" id="redo">Rifai solo gli errori</button>` : ""}
       ${from ? `<button class="btn" type="button" id="again">${from.cid ? `Altre ${PER_GIRO} domande` : "Nuova simulazione"}</button>` : ""}
-      <button class="btn" type="button" id="back">Torna ai capitoli</button>
+      <button class="btn" type="button" id="back">Torna a tutti i quiz</button>
     </div>`;
   const redo = app.querySelector("#redo");
   if (redo) redo.onclick = () => { start((from ? from.title : run.title) + " · errori", shuffle(wrong.map(w => w.it.q)), null, null, from); };
   const again = app.querySelector("#again");
   if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : simRun(from.key), from.cid, from.key);
-  app.querySelector("#back").onclick = home;
+  app.querySelector("#back").onclick = backToList;
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   window.scrollTo({ top: 0 });
 }
 
@@ -1052,6 +1059,14 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Enter" && run.answers[run.i] !== undefined) { const nx = document.getElementById("next"); if (nx && document.activeElement !== nx) { e.preventDefault(); nx.click(); } }
 });
 
+/* Indietro: dal quiz si torna all'elenco dei quiz, non alla home.
+   Avviando un quiz si aggiunge una voce alla cronologia: il tasto indietro del browser (o il gesto sul telefono)
+   riporta all'elenco; il pulsante "Tutti i quiz" fa la stessa cosa. */
+function backToList() {
+  if (history.state && history.state.quiz) history.back(); else home();
+}
+window.addEventListener("popstate", () => { if (run && !(history.state && history.state.quiz)) home(); });
+if (history.state && history.state.quiz) { try { history.replaceState(null, ""); } catch (e) {} }
 home();
 </script>
 </body>
