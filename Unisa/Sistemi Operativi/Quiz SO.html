@@ -88,6 +88,7 @@ button{font:inherit;color:inherit}
 .opt.wrong{border-color:var(--ko);background:var(--ko-bg)}
 .opt.wrong .k{border-color:var(--ko);color:var(--ko)}
 .opt.dim{opacity:.55}
+.tag.kind{margin-left:6px;color:var(--muted);background:var(--soft)}
 .fb{margin-top:18px;padding:14px 16px;border-radius:10px;border-left:3px solid var(--c);background:var(--surface)}
 .fb b.ok{color:var(--ok)} .fb b.ko{color:var(--ko)}
 .fb p{margin:4px 0 0}
@@ -124,12 +125,14 @@ body.running .lede{display:none}
 <div class="wrap">
   <div class="eyebrow">Sistemi Operativi · capitoli 03–15</div>
   <h1>Quiz di Sistemi Operativi</h1>
-  <p class="lede">Domande a risposta aperta sui capitoli 03–15, con la stessa numerazione del quaderno. Scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
+  <p class="lede">Soprattutto domande a risposta aperta, come all’esame, più alcune a risposta multipla per fissare definizioni e confronti. Capitoli 03–15, con la stessa numerazione del quaderno. Per le aperte scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata; ci sono anche esercizi di calcolo (scheduling, paginazione, dischi).</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
 <script>
-/* Domande: capitoli 03–15 di Sistemi Operativi (numerazione del quaderno; 01 e 02 introduttivi esclusi). La prima opzione è corretta; a ogni giro le opzioni vengono mescolate. */
+/* Domande: capitoli 03–15 di Sistemi Operativi (numerazione del quaderno; 01 e 02 introduttivi esclusi).
+   o con UNA voce = domanda aperta (o[0] è la soluzione da confrontare);
+   o con QUATTRO voci = risposta multipla (la prima è quella giusta, vengono mescolate). Tutto preso dal quaderno. */
 const CHAPTERS = [
   { id: "processi", n: "03", t: "Processi" },
   { id: "thread", n: "04", t: "Thread e concorrenza" },
@@ -190,7 +193,210 @@ const Q = [
   {"c": "dettagli", "q": "Differenza tra hard link e link simbolico?", "o": ["L'hard link riferisce lo stesso inode (lo stesso oggetto); il link simbolico contiene un percorso che va risolto"], "e": "Se il file originale viene spostato, il link simbolico può restare 'rotto', l'hard link no."},
   {"c": "dettagli", "q": "Perché un client NFS può leggere dati vecchi (stale)?", "o": ["Perché la sua cache locale può non aver ancora rilevato o ricevuto un aggiornamento fatto sul server"], "e": "Timeout, ritrasmissioni e cache stale sono problemi tipici dei file system remoti."},
   {"c": "dettagli", "q": "Cosa dice la session semantics sulla visibilità delle scritture?", "o": ["Le modifiche a un file diventano visibili agli altri solo quando chi scrive chiude il file"], "e": "Nella semantica Unix tradizionale invece le modifiche tendono a essere visibili subito, grazie a cache coerenti."},
-  {"c": "dettagli", "q": "Perché un file system di rete non è 'solo un disco più lento'?", "o": ["Perché cambiano i modi di guasto, l'autenticazione, la cache, la coerenza e la visibilità delle scritture"], "e": "Server e rete possono guastarsi in modo indipendente dal client."}
+  {"c": "dettagli", "q": "Perché un file system di rete non è 'solo un disco più lento'?", "o": ["Perché cambiano i modi di guasto, l'autenticazione, la cache, la coerenza e la visibilità delle scritture"], "e": "Server e rete possono guastarsi in modo indipendente dal client."},
+  // 03 · Processi
+  { c: "processi", q: "Che differenza c'è tra programma e processo?", o: ["Il programma è un oggetto passivo (un file); il processo è la sua istanza attiva, con stato, contesto, risorse e flusso di esecuzione."], e: "Domanda lampo: non sono la stessa cosa." },
+  { c: "processi", q: "Elenca gli stati classici di un processo e spiega quando si passa da uno all'altro.", o: ["Nuovo, pronto (attende la CPU), in esecuzione, in attesa (di un evento o di I/O), terminato. Un'interruzione o la prelazione riportano il processo dalla CPU alla coda dei pronti; una richiesta di I/O lo mette in attesa fino al completamento, poi torna pronto."], e: "Ridisegna a mano il diagramma di transizione (figura 3.2)." },
+  { c: "processi", q: "Cosa contiene il PCB (Process Control Block)?", o: ["PID, stato, program counter, registri, informazioni di scheduling, di memoria, di accounting e i file/dispositivi di I/O aperti."], e: "È tutto ciò che serve al kernel per sospendere e riprendere il processo." },
+  { c: "processi", q: "Cosa succede durante un context switch e perché è un costo?", o: ["Il kernel salva il contesto del processo uscente (nel suo PCB) e ripristina quello del processo entrante. È lavoro necessario ma non produce lavoro applicativo: è overhead."], e: "Più context switch = più tempo perso." },
+  { c: "processi", q: "Che cosa fanno fork(), exec() e wait() nei sistemi Unix?", o: ["fork() crea un processo figlio (spesso con copy-on-write); exec() sostituisce l'immagine del processo con un nuovo programma; wait() fa attendere il padre e raccoglie lo stato di uscita del figlio."], e: "Sono le tre chiamate base della creazione dei processi." },
+  { c: "processi", q: "Che cos'è un processo zombie e che cos'è un processo orfano?", o: ["Zombie: un figlio terminato il cui stato di uscita non è ancora stato raccolto dal padre con wait(). Orfano: un processo il cui padre è terminato; viene adottato da un processo di sistema."], e: "Coppia da non confondere." },
+  { c: "processi", q: "Confronta memoria condivisa e scambio di messaggi come forme di IPC.", o: ["Memoria condivisa: i processi condividono dati, la comunicazione è rapida dopo la configurazione, ma la sincronizzazione è a carico dei processi. Scambio di messaggi: send/receive mediati dal sistema operativo; isola meglio ed è adatto ai sistemi distribuiti, ma comporta gestione e possibili copie."], e: "La memoria condivisa richiede sincronizzazione esplicita." },
+  { c: "processi", q: "Quale forma di IPC richiede sincronizzazione esplicita dei dati?", o: ["La memoria condivisa", "Lo scambio di messaggi", "Le pipe anonime", "RPC"], e: "Con la memoria condivisa la sincronizzazione è a carico dei processi." },
+  { c: "processi", q: "Che differenza c'è tra pipe anonima e named pipe?", o: ["La pipe anonima collega tipicamente processi correlati (es. padre e figlio); la named pipe può collegare anche processi indipendenti."], e: "La named pipe ha un nome nel file system." },
+  { c: "processi", q: "Cos'è un socket?", o: ["Un endpoint di comunicazione identificato da indirizzo e porta."], e: "Due socket formano un canale tra processi, anche su macchine diverse." },
+  { c: "processi", q: "Come funziona una RPC e quali problemi restano?", o: ["La RPC nasconde la chiamata remota dietro uno stub e il marshalling dei parametri, così sembra una chiamata locale. Però ritardi e guasti di rete restano possibili."], e: "Sembra locale, ma non lo è." },
+  { c: "processi", q: "Una system call implica sempre un context switch? Spiega la differenza tra mode switch e context switch.", o: ["No. La system call passa da user mode a kernel mode (mode switch: cambia il privilegio), ma non implica sempre il passaggio a un altro processo. Il context switch cambia il processo schedulato."], e: "Tranello classico." },
+  { c: "processi", q: "Cosa significa che fork() usa spesso il copy-on-write?", o: ["Padre e figlio condividono inizialmente le stesse pagine; una pagina viene copiata solo quando uno dei due la scrive. Così si risparmia lavoro, soprattutto se subito dopo il figlio chiama exec()."], e: "Il copy-on-write torna nel capitolo 10." },
+  { c: "processi", q: "Un processo che fa una richiesta di I/O passa nello stato…", o: ["In attesa", "Pronto", "Terminato", "Nuovo"], e: "Torna pronto quando l'I/O è completato." },
+  { c: "processi", q: "Un processo prelazionato (scade il quanto) passa nello stato…", o: ["Pronto", "In attesa", "Terminato", "Zombie"], e: "Torna nella coda dei pronti." },
+
+  // 04 · Thread e concorrenza
+  { c: "thread", q: "Che cosa ha di proprio un thread e che cosa condivide con gli altri thread del processo?", o: ["Proprio: ID, program counter, registri e stack. Condiviso: codice, dati, heap e risorse del processo (es. file aperti)."], e: "Domanda lampo del capitolo." },
+  { c: "thread", q: "Perché la memoria condivisa tra thread è un vantaggio ma anche un rischio?", o: ["Vantaggio: i thread comunicano facilmente e costano meno dei processi. Rischio: gli accessi concorrenti alle stesse variabili introducono race condition, quindi serve sincronizzazione. Una variabile condivisa non è automaticamente sicura."], e: "Idea chiave del capitolo." },
+  { c: "thread", q: "Qual è la differenza tra concorrenza e parallelismo?", o: ["Concorrenza: più attività avanzano nello stesso intervallo di tempo, anche alternandosi su un solo core. Parallelismo: esecuzione davvero simultanea su più unità di calcolo."], e: "Ci può essere concorrenza senza parallelismo." },
+  { c: "thread", q: "Descrivi il modello molti-a-uno e il suo limite principale.", o: ["Molti thread utente sono mappati su un solo thread kernel. Una chiamata bloccante di un thread blocca tutti e non c'è parallelismo multicore."], e: "Il kernel vede un solo flusso." },
+  { c: "thread", q: "Descrivi il modello uno-a-uno: vantaggio e limite.", o: ["Ogni thread utente corrisponde a un thread kernel. Vantaggio: parallelismo reale. Limite: costo per thread, il numero di thread può essere limitato."], e: "Usato dai sistemi moderni più comuni." },
+  { c: "thread", q: "Quale modello di mapping offre parallelismo reale ma può limitare il numero di thread?", o: ["Uno-a-uno", "Molti-a-uno", "Molti-a-molti", "Nessuno"], e: "Molti-a-molti è flessibile ma più complesso." },
+  { c: "thread", q: "Differenza tra data parallelism e task parallelism?", o: ["Data parallelism distribuisce porzioni dei dati tra i thread (stessa operazione su parti diverse); task parallelism distribuisce attività diverse."], e: "Esempio: sommare metà array per thread vs thread che fanno compiti differenti." },
+  { c: "thread", q: "A cosa servono thread pool e fork-join?", o: ["Il thread pool riusa thread già creati invece di crearne di nuovi a ogni richiesta. Fork-join divide un lavoro in attività più piccole e poi ne ricompone i risultati."], e: "Due tecniche di threading implicito." },
+  { c: "thread", q: "Se un processo multithread chiama fork() in POSIX, quali thread ha il figlio? E cosa fa exec()?", o: ["Il figlio ha solo il thread che ha chiamato fork(). exec() sostituisce l'intero processo con il nuovo programma."], e: "Uno dei problemi del multithreading." },
+  { c: "thread", q: "Come vengono consegnati i segnali in un processo multithread?", o: ["Bisogna decidere quale thread li gestisce; i segnali sincroni vanno al thread che li ha causati."], e: "Quelli asincroni possono andare a thread diversi secondo le regole del sistema." },
+  { c: "thread", q: "Differenza tra cancellazione asincrona e differita di un thread?", o: ["Asincrona: il thread viene terminato subito, e può lasciare lock e invarianti incoerenti. Differita: il thread viene interrotto solo in punti sicuri, quando controlla se deve terminare."], e: "La differita è più sicura." },
+  { c: "thread", q: "Cos'è il thread-local storage?", o: ["Dati privati per ciascun thread, non condivisi con gli altri thread del processo."], e: "Diverso dalle variabili locali: dura per tutta la vita del thread." },
+  { c: "thread", q: "Spiega la frase: “il processo è un contenitore di risorse, i thread sono unità di esecuzione”.", o: ["Il processo possiede spazio di indirizzi, file aperti e altre risorse; i thread sono i flussi che eseguono il codice dentro quel contenitore, condividendone le risorse ma ciascuno con il proprio stato di esecuzione."], e: "Idea chiave del capitolo." },
+  { c: "thread", q: "Nel modello molti-a-uno, cosa succede se un thread fa una chiamata bloccante?", o: ["Si bloccano tutti i thread del processo", "Si blocca solo quel thread", "Il processo viene terminato", "Il thread migra su un altro core"], e: "C'è un solo thread kernel." },
+
+  // 05 · Scheduling della CPU
+  { c: "scheduling", q: "Distingui scheduler a lungo, medio e breve termine.", o: ["Lungo termine: ammette i processi nel sistema. Breve termine: sceglie il prossimo processo pronto a cui dare la CPU. Medio termine: può sospendere e riammettere processi (es. swap)."], e: "Il breve termine interviene molto spesso." },
+  { c: "scheduling", q: "Che cosa fa il dispatcher e cos'è la latenza di dispatch?", o: ["Il dispatcher effettua il context switch, passa a user mode e riprende il processo scelto dall'istruzione corretta. La latenza di dispatch è il tempo che impiega a farlo."], e: "Scheduler sceglie, dispatcher esegue il cambio." },
+  { c: "scheduling", q: "Cos'è l'effetto convoglio e con quale algoritmo si presenta?", o: ["Con FCFS (ordine d'arrivo, non preemptive) un job lungo arrivato prima fa aspettare tutti i job brevi dietro di lui, aumentando l'attesa media."], e: "FCFS è semplice ma soffre l'effetto convoglio." },
+  { c: "scheduling", q: "Confronta SJF e SRTF. Perché in pratica si stima il burst?", o: ["SJF sceglie il processo con il burst di CPU più corto; SRTF è la versione preemptive (se arriva un processo con tempo residuo minore, prende la CPU). Danno l'attesa media minima se le durate sono note, ma in realtà non si conoscono: vanno stimate."], e: "Ottimo teorico con durate note." },
+  { c: "scheduling", q: "Che problema ha lo scheduling a priorità e come si risolve?", o: ["Starvation: i processi a bassa priorità possono attendere indefinitamente. Si risolve con l'aging, che aumenta la priorità di chi attende da tempo."], e: "Aging = invecchiamento." },
+  { c: "scheduling", q: "Che effetto ha la scelta del quanto q in Round Robin?", o: ["Un quanto troppo piccolo aumenta i context switch e il loro overhead; un quanto molto grande fa comportare Round Robin come FCFS."], e: "Domanda lampo del capitolo." },
+  { c: "scheduling", q: "Il quanto di Round Robin limita il tempo totale per completare un processo?", o: ["No: limita un singolo turno, non il tempo totale di completamento", "Sì: un processo deve finire entro un quanto", "Sì, se il processo è breve", "Dipende dalla priorità"], e: "Tranello del capitolo." },
+  { c: "scheduling", q: "Differenza tra code multilivello e code multilivello con feedback?", o: ["Code multilivello: i processi sono divisi in classi, ognuna con la sua coda e anche politiche diverse, e restano nella loro coda. Con feedback: i processi possono migrare tra le code, così la priorità si adatta al comportamento; la configurazione è più complessa."], e: "Il feedback adatta la priorità." },
+  { c: "scheduling", q: "Quali metriche si vogliono massimizzare e quali minimizzare nello scheduling?", o: ["Massimizzare utilizzo della CPU e throughput; minimizzare turnaround (arrivo → fine), tempo di attesa in coda e tempo di risposta (arrivo → prima risposta)."], e: "La policy migliore dipende dalla metrica." },
+  { c: "scheduling", q: "Come si calcolano turnaround e tempo di attesa?", o: ["Turnaround = tempo di fine − tempo di arrivo (comprende attesa e CPU). Se non ci sono altre attese (es. I/O), attesa = turnaround − tempo di CPU."], e: "Formule degli esercizi con il Gantt." },
+  { c: "scheduling", q: "Esercizio: un processo arriva a t=2, usa 5 ms di CPU e finisce a t=15, senza I/O. Calcola turnaround e attesa.", o: ["Turnaround = 15 − 2 = 13 ms. Attesa = 13 − 5 = 8 ms."], e: "turnaround = fine − arrivo; attesa = turnaround − CPU." },
+  { c: "scheduling", q: "In Round Robin ci sono 3 processi davanti a me e il quanto è 4 ms. Quanto attendo al massimo prima del mio turno, se tutti usano l'intero quanto?", o: ["Circa 12 ms (3 × 4 ms), senza contare I/O e costi di dispatch."], e: "È la stima illustrativa del quaderno." },
+  { c: "scheduling", q: "Come funzionano Rate Monotonic ed EDF nello scheduling real-time?", o: ["Rate Monotonic: priorità fissa, inversamente proporzionale al periodo (periodo più breve = priorità più alta). EDF (Earliest Deadline First): ha precedenza il processo con la deadline più vicina."], e: "RM statico, EDF dinamico." },
+  { c: "scheduling", q: "Cosa conta nello scheduling su multicore?", o: ["Bilanciamento del carico tra i core, affinità del processo al core (cache locality), costo delle migrazioni e differenze tra i core."], e: "Migrare un processo fa perdere la cache." },
+  { c: "scheduling", q: "Quale algoritmo è non preemptive e soffre l'effetto convoglio?", o: ["FCFS", "SRTF", "Round Robin", "EDF"], e: "Ordine d'arrivo." },
+  { c: "scheduling", q: "Quale algoritmo dà l'attesa media minima se le durate dei burst sono note?", o: ["SJF / SRTF", "FCFS", "Round Robin con quanto grande", "Priorità senza aging"], e: "In pratica si stima il burst." },
+  { c: "scheduling", q: "Esercizio: tre processi arrivano a t=0 con burst P1=24, P2=3, P3=3 ms. Calcola l'attesa media con FCFS (ordine P1, P2, P3) e con SJF.", o: ["FCFS: attese 0, 24, 27 → media 17 ms. SJF (P2, P3, P1): attese 0, 3, 6 → media 3 ms."], e: "Mostra l'effetto convoglio: il job lungo davanti fa crescere l'attesa media." },
+  // 06 · Strumenti di sincronizzazione
+  { c: "sincronizzazione", q: "Quali proprietà deve garantire una soluzione al problema della sezione critica? Spiegale.", o: ["Mutua esclusione: un solo processo alla volta nella sezione critica. Progresso: se nessuno è nella sezione critica, la scelta di chi entra non può essere rimandata all'infinito. Attesa limitata: c'è un limite al numero di volte che altri entrano prima di un processo che ha chiesto di entrare."], e: "Domanda lampo del capitolo." },
+  { c: "sincronizzazione", q: "Definisci race condition e fai un esempio.", o: ["Il risultato dipende dall'ordine (interleaving) con cui processi o thread accedono a dati condivisi. Esempio: due thread incrementano lo stesso contatore senza lock e un incremento va perso."], e: "Si evita proteggendo la sezione critica." },
+  { c: "sincronizzazione", q: "Che differenza c'è tra wait e signal su un semaforo?", o: ["wait (P) decrementa il contatore e, se non ci sono risorse, blocca il chiamante; signal (V) lo incrementa e può risvegliare un processo in attesa."], e: "Le operazioni sono atomiche." },
+  { c: "sincronizzazione", q: "Differenza tra semaforo counting e binario, e tra semaforo e mutex?", o: ["Counting: il contatore conta risorse multiple; binario: vale 0/1, per sincronizzazione binaria. Il mutex è un lock binario che protegge un invariante, con ownership: normalmente lo rilascia chi lo ha acquisito."], e: "Il semaforo non ha ownership." },
+  { c: "sincronizzazione", q: "Cos'è un monitor e a cosa servono le condition?", o: ["Un monitor incapsula dati e procedure eseguite in mutua esclusione. Le condition permettono a un thread di attendere che un predicato diventi vero (wait) e di essere risvegliato (signal)."], e: "Costrutto di alto livello." },
+  { c: "sincronizzazione", q: "Perché dopo un risveglio su una condition si ricontrolla il predicato con un while e non con un if?", o: ["Perché quando il thread riprende il predicato potrebbe non essere più vero (un altro thread può averlo cambiato nel frattempo): con il while lo si ricontrolla e, se serve, si torna ad attendere."], e: "Regola del capitolo." },
+  { c: "sincronizzazione", q: "Cos'è il busy wait e quale strumento lo usa?", o: ["Attesa attiva: il thread continua a controllare in ciclo se il lock è libero, consumando CPU. Lo usano gli spinlock costruiti con istruzioni atomiche come compare-and-swap."], e: "Va bene solo per sezioni critiche brevi." },
+  { c: "sincronizzazione", q: "A cosa servono istruzioni atomiche come compare-and-swap?", o: ["A costruire lock: leggono, confrontano e scrivono una variabile in un'unica operazione indivisibile."], e: "Base hardware della sincronizzazione." },
+  { c: "sincronizzazione", q: "A cosa servono le barriere di memoria?", o: ["A imporre un ordine tra gli accessi in memoria fatti da core diversi."], e: "Senza, l'hardware può riordinare gli accessi." },
+  { c: "sincronizzazione", q: "Cos'è l'inversione di priorità e come la risolve la priority inheritance?", o: ["Un thread ad alta priorità attende un lock detenuto da uno a bassa priorità, che a sua volta non riesce a girare. Con la priority inheritance chi detiene il lock eredita temporaneamente la priorità più alta, così finisce e lo rilascia."], e: "Problema di liveness." },
+  { c: "sincronizzazione", q: "Quali problemi possono compromettere la liveness?", o: ["Deadlock, starvation e inversione di priorità."], e: "La liveness = il sistema continua a fare progresso." },
+  { c: "sincronizzazione", q: "Quali errori tipici rompono la sincronizzazione?", o: ["Uscite eccezionali che non rilasciano un lock, signal duplicati e wait mancanti."], e: "Errore da evitare del capitolo." },
+  { c: "sincronizzazione", q: "Scrivi lo schema per proteggere una sezione critica con un semaforo mutex.", o: ["wait(mutex); /* sezione critica: modifica lo stato condiviso */ signal(mutex);"], e: "Acquisisci prima, rilascia dopo." },
+  { c: "sincronizzazione", q: "Quale operazione su un semaforo può bloccare il chiamante?", o: ["wait (P)", "signal (V)", "Entrambe sempre", "Nessuna"], e: "signal incrementa e può risvegliare." },
+  { c: "sincronizzazione", q: "Quale proprietà della sezione critica garantisce che un processo non aspetti all'infinito mentre gli altri entrano?", o: ["Attesa limitata", "Mutua esclusione", "Progresso", "Atomicità"], e: "Le tre proprietà: mutua esclusione, progresso, attesa limitata." },
+
+  // 07 · Esempi di sincronizzazione
+  { c: "problemi", q: "Produttore-consumatore con buffer di N slot: quali semafori servono e con quali valori iniziali?", o: ["mutex = 1 (accesso esclusivo al buffer), empty = N (slot liberi), full = 0 (slot pieni)."], e: "Schema classico." },
+  { c: "problemi", q: "Descrivi le operazioni del produttore nel problema produttore-consumatore.", o: ["wait(empty) per aspettare uno slot libero; wait(mutex); inserisce l'elemento; signal(mutex); signal(full) per segnalare un elemento in più. Il consumatore fa il simmetrico: wait(full), wait(mutex), preleva, signal(mutex), signal(empty)."], e: "Ordine importante." },
+  { c: "problemi", q: "Perché produttore e consumatore attendono empty o full prima di acquisire il mutex?", o: ["Così non si addormentano tenendo il mutex che serve all'altro per cambiare lo stato del buffer: altrimenti si avrebbe un deadlock."], e: "Domanda lampo del capitolo." },
+  { c: "problemi", q: "Nel problema lettori-scrittori, quali sono i vincoli e quale rischio ha una soluzione che privilegia i lettori?", o: ["Più lettori possono leggere insieme; uno scrittore richiede accesso esclusivo. Se si privilegiano i lettori e ne continuano ad arrivare, gli scrittori possono andare in starvation: la policy di equità va esplicitata."], e: "Lettori insieme, scrittore da solo." },
+  { c: "problemi", q: "Nel problema dei cinque filosofi, perché può verificarsi un deadlock?", o: ["Ogni filosofo ha bisogno di due forchette condivise. Se tutti prendono prima la forchetta sinistra, ognuno tiene una forchetta e aspetta quella del vicino: attesa circolare."], e: "Modello di competizione per risorse." },
+  { c: "problemi", q: "Come si evita l'attesa circolare dei filosofi? Indica almeno due soluzioni.", o: ["Imporre un ordine globale alle forchette; ammettere al massimo quattro filosofi a tavola; usare un monitor che assegna entrambe le forchette insieme."], e: "Poi verifica assenza di deadlock e starvation." },
+  { c: "problemi", q: "Nello schema con lock e condition variable, cosa fa wait(cv, m)?", o: ["Rilascia il mutex m mentre il thread attende sulla condition, e lo riacquisisce prima di tornare."], e: "lock(m); while(!condizione) wait(cv, m); usa_risorsa(); unlock(m);" },
+  { c: "problemi", q: "Cosa richiedono sempre mutex, semafori e condition in POSIX e Java, al di là delle API diverse?", o: ["Invarianti chiari e un ordine consistente di acquisizione dei lock."], e: "Le API cambiano, i principi no." },
+  { c: "problemi", q: "Memoria transazionale e linguaggi funzionali eliminano automaticamente ogni errore concorrente?", o: ["No: sono alternative, non garanzie automatiche contro ogni errore concorrente."], e: "Il quaderno lo sottolinea." },
+  { c: "problemi", q: "Nel produttore-consumatore, quanto vale inizialmente il semaforo full?", o: ["0", "N", "1", "N − 1"], e: "Il buffer all'inizio è vuoto." },
+  { c: "problemi", q: "Nel produttore-consumatore, su quale semaforo fa wait il consumatore per primo?", o: ["full", "empty", "mutex", "Nessuno"], e: "Aspetta che ci sia almeno un elemento." },
+  { c: "problemi", q: "Nel problema lettori-scrittori, chi può accedere insieme?", o: ["Più lettori", "Più scrittori", "Un lettore e uno scrittore", "Nessuno"], e: "Lo scrittore vuole accesso esclusivo." },
+
+  // 08 · Stallo dei processi
+  { c: "deadlock", q: "Definisci il deadlock.", o: ["Ogni processo di un insieme attende un evento che può essere prodotto solo da un altro processo dello stesso insieme: nessuno avanza."], e: "Definizione del capitolo." },
+  { c: "deadlock", q: "Quali sono le quattro condizioni necessarie per il deadlock? Spiegale brevemente.", o: ["Mutua esclusione (risorsa non condivisibile); possesso e attesa (si trattengono risorse chiedendone altre); assenza di prelazione (le risorse non si tolgono forzatamente); attesa circolare (ciclo di processi in attesa)."], e: "Domanda lampo del capitolo." },
+  { c: "deadlock", q: "Cosa significa prevenire il deadlock e quale svantaggio ha?", o: ["Negare almeno una delle quattro condizioni, vincolando le richieste: ordine globale delle risorse, richiesta simultanea di tutto, o prelazione possibile. È sicura contro il deadlock ma può ridurre il parallelismo."], e: "Diversa dall'evitamento." },
+  { c: "deadlock", q: "Differenza tra prevenzione ed evitamento del deadlock?", o: ["La prevenzione impone vincoli alle richieste così che una condizione non possa mai valere. L'evitamento conosce il fabbisogno massimo dei processi e concede una risorsa solo se lo stato resta sicuro (es. algoritmo del banchiere)."], e: "Evitamento = decisione a ogni richiesta." },
+  { c: "deadlock", q: "Quando uno stato è sicuro?", o: ["Quando esiste una sequenza in cui ogni processo può ottenere il fabbisogno residuo, terminare e restituire le risorse, permettendo agli altri di fare lo stesso."], e: "È ciò che verifica il banchiere." },
+  { c: "deadlock", q: "Uno stato non sicuro implica che il deadlock sia già avvenuto?", o: ["No: significa che non è garantibile una sequenza sicura; il deadlock può non essersi ancora verificato."], e: "Domanda lampo del capitolo." },
+  { c: "deadlock", q: "Un ciclo nel grafo di allocazione delle risorse implica sempre deadlock?", o: ["Solo se ogni tipo di risorsa ha una sola istanza. Con istanze multiple il ciclo è solo un indizio, non una prova."], e: "Distinzione importante." },
+  { c: "deadlock", q: "Con istanze multiple per tipo di risorsa, un ciclo nel grafo…", o: ["È solo un indizio, non implica deadlock", "Implica sempre deadlock", "Non può esistere", "Indica starvation"], e: "Con una sola istanza per tipo, invece, ciclo = deadlock." },
+  { c: "deadlock", q: "Come si recupera da un deadlock rilevato e cosa influisce sulla scelta?", o: ["Terminando tutti i processi coinvolti o una vittima alla volta, oppure prelevando risorse e facendo rollback. Influiscono costo, priorità, lavoro già svolto e rischio di starvation (non scegliere sempre la stessa vittima)."], e: "Rilevamento periodico o quando ci sono sintomi." },
+  { c: "deadlock", q: "Distingui deadlock, starvation e livelock.", o: ["Deadlock: il gruppo di processi non avanza. Starvation: una policy fa attendere un processo indefinitamente. Livelock: i processi cambiano stato ma non fanno progresso utile."], e: "Distinzione d'esame." },
+  { c: "deadlock", q: "Quale tecnica conosce il fabbisogno massimo dei processi e concede risorse solo se lo stato resta sicuro?", o: ["Evitamento (algoritmo del banchiere)", "Prevenzione", "Rilevamento e recupero", "Aging"], e: "Il banchiere verifica sequenze sicure." },
+  { c: "deadlock", q: "Imporre un ordine globale di richiesta delle risorse nega quale condizione?", o: ["Attesa circolare", "Mutua esclusione", "Assenza di prelazione", "Possesso e attesa"], e: "Con un ordine fisso non si può formare un ciclo." },
+  { c: "deadlock", q: "Richiedere tutte le risorse insieme all'inizio nega quale condizione?", o: ["Possesso e attesa", "Attesa circolare", "Mutua esclusione", "Assenza di prelazione"], e: "Non si trattiene nulla mentre si aspetta." },
+  // 09 · Memoria centrale
+  { c: "centrale", q: "Quando può avvenire l'associazione (binding) degli indirizzi?", o: ["A tempo di compilazione, di caricamento o di esecuzione."], e: "Con binding a esecuzione serve la MMU." },
+  { c: "centrale", q: "Come funziona la rilocazione dinamica con registro base e limite?", o: ["La MMU somma il registro base all'indirizzo logico generato dalla CPU per ottenere l'indirizzo fisico; il registro limite impedisce accessi fuori dallo spazio del processo."], e: "La CPU genera indirizzi logici, la RAM usa indirizzi fisici." },
+  { c: "centrale", q: "Che differenza c'è tra indirizzo logico e fisico?", o: ["L'indirizzo logico è quello generato dalla CPU (spazio del processo); quello fisico è l'indirizzo reale nella RAM, ottenuto dalla traduzione della MMU."], e: "Base della paginazione." },
+  { c: "centrale", q: "Che differenza c'è tra pagina e frame?", o: ["La pagina è un blocco dello spazio logico del processo; il frame è un blocco della stessa dimensione nella memoria fisica. La tabella delle pagine mappa pagina → frame."], e: "Domanda lampo del capitolo." },
+  { c: "centrale", q: "Quale frammentazione elimina la paginazione e quale resta?", o: ["Elimina la frammentazione esterna, ma può lasciare frammentazione interna, soprattutto nell'ultima pagina."], e: "Domanda lampo del capitolo." },
+  { c: "centrale", q: "Che problema ha l'allocazione contigua a partizioni variabili e quale rimedio, con quale costo?", o: ["Crea frammentazione esterna (spazio libero diviso in buchi). Si può compattare la memoria, ma è costoso."], e: "La paginazione evita il problema." },
+  { c: "centrale", q: "Esercizio: pagine da 4 KiB e indirizzo virtuale a 32 bit. Quanti bit per offset e quanti per numero di pagina?", o: ["4 KiB = 2^12 byte → offset di 12 bit; restano 32 − 12 = 20 bit per il numero di pagina."], e: "Per pagine da 2^n byte l'offset occupa n bit." },
+  { c: "centrale", q: "Esercizio: pagine da 1 KiB, indirizzo logico 3000. Qual è il numero di pagina e l'offset?", o: ["1 KiB = 1024 byte. Pagina = 3000 div 1024 = 2; offset = 3000 − 2·1024 = 952."], e: "Pagina = indirizzo / dimensione pagina; offset = resto." },
+  { c: "centrale", q: "Cos'è il TLB e cosa succede in caso di hit e di miss?", o: ["Una cache associativa delle traduzioni pagina → frame. Hit: la traduzione è nel TLB e si evita l'accesso alla tabella delle pagine in RAM. Miss: bisogna fare il lookup nella tabella in memoria (e poi aggiornare il TLB)."], e: "Accelera la traduzione." },
+  { c: "centrale", q: "A cosa serve l'ASID nel TLB?", o: ["Distingue le traduzioni di processi diversi, così il TLB può contenere voci di più processi."], e: "Address-Space IDentifier." },
+  { c: "centrale", q: "Perché si usano tabelle delle pagine gerarchiche, hash o invertite?", o: ["Per ridurre il costo in memoria della tabella quando lo spazio virtuale è grande e sparso."], e: "Una tabella lineare sarebbe enorme." },
+  { c: "centrale", q: "Come si proteggono gli accessi in memoria con la paginazione?", o: ["Con il bit di validità e i bit dei permessi associati a ogni voce della tabella delle pagine."], e: "Un accesso non valido genera una trap." },
+  { c: "centrale", q: "Cos'è lo swapping e perché costa?", o: ["Il trasferimento di pagine o processi tra RAM e storage; è molto più lento perché coinvolge il dispositivo di memoria di massa."], e: "Torna nella memoria virtuale." },
+  { c: "centrale", q: "Con pagine da 2^n byte, quanti bit occupa l'offset?", o: ["n bit", "2n bit", "32 − n bit", "n/2 bit"], e: "Il resto dell'indirizzo è il numero di pagina." },
+  { c: "centrale", q: "Chi somma il registro base all'indirizzo logico nella rilocazione dinamica?", o: ["La MMU", "Il compilatore", "Il dispatcher", "Il controller del disco"], e: "Memory Management Unit." },
+
+  // 10 · Memoria virtuale
+  { c: "virtuale", q: "Cosa permette la memoria virtuale?", o: ["Disaccoppia lo spazio di indirizzi del processo dalla RAM disponibile: un processo può avere uno spazio più grande della memoria fisica, perché non tutte le pagine devono stare in RAM."], e: "Base della paginazione su richiesta." },
+  { c: "virtuale", q: "Cos'è la paginazione su richiesta (demand paging)?", o: ["Una pagina viene caricata in memoria solo al primo accesso, non all'avvio del processo."], e: "Le altre restano sullo storage." },
+  { c: "virtuale", q: "Descrivi i passi della gestione di un page fault valido.", o: ["Il kernel verifica che l'indirizzo sia valido, trova un frame libero (o ne libera uno), carica la pagina dallo storage, aggiorna la tabella delle pagine e le strutture di traduzione, poi riprende l'istruzione interrotta."], e: "Domanda lampo del capitolo." },
+  { c: "virtuale", q: "Scrivi la formula dell'EAT con probabilità di page fault p e spiega perché anche un p piccolo pesa.", o: ["EAT ≈ (1 − p)·accesso_ram + p·costo_fault. Anche un p piccolo pesa perché il costo del fault include I/O su storage, molto più lento dell'accesso alla RAM."], e: "EAT = Effective Access Time." },
+  { c: "virtuale", q: "Come funziona il copy-on-write e perché aiuta dopo fork()?", o: ["Padre e figlio condividono inizialmente le stesse pagine; la copia di una pagina avviene solo alla prima scrittura. Dopo fork() si risparmia il lavoro di copiare tutto lo spazio, specie se il figlio fa subito exec()."], e: "Copiare solo ciò che viene scritto." },
+  { c: "virtuale", q: "Come funziona FIFO nella sostituzione delle pagine e che anomalia può avere?", o: ["Sostituisce la pagina caricata da più tempo. È semplice ma può soffrire l'anomalia di Belady: aumentando i frame, i page fault possono aumentare."], e: "Più frame non significa sempre meno fault." },
+  { c: "virtuale", q: "Perché l'algoritmo ottimo non è usabile direttamente?", o: ["Sostituisce la pagina che sarà usata più lontano nel futuro, ma il sistema non conosce in anticipo gli accessi futuri. Serve come riferimento teorico (numero minimo di fault)."], e: "Domanda lampo del capitolo." },
+  { c: "virtuale", q: "Su cosa si basa LRU e che costo ha? Come lo approssima il clock (second chance)?", o: ["LRU sostituisce la pagina usata meno di recente, sfruttando la località temporale; il costo è tenere traccia della recenza a ogni accesso. Second chance/clock è un FIFO con bit di riferimento: se il bit è 1 la pagina ha una seconda possibilità; approssima LRU a basso costo."], e: "Confronto tra algoritmi." },
+  { c: "virtuale", q: "Differenza tra sostituzione globale e locale?", o: ["Globale: il frame da liberare può essere preso da tutto il sistema, anche da altri processi. Locale: la scelta è limitata ai frame del processo stesso."], e: "La globale può danneggiare altri processi." },
+  { c: "virtuale", q: "Cos'è il thrashing, perché rallenta il sistema e come si controlla?", o: ["Il sistema passa più tempo a caricare pagine (I/O) che a eseguire lavoro utile, perché i processi non hanno abbastanza frame. Si controlla stimando i frame necessari con il working set o con la page-fault frequency."], e: "Troppi page fault." },
+  { c: "virtuale", q: "Esercizio: con 3 frame e la sequenza 7, 0, 1, 2, 0, 3, 0, 4, quanti page fault fa FIFO?", o: ["7 fault: 7, 0, 1 (fault, frame pieni); 2 sostituisce 7 (fault); 0 hit; 3 sostituisce 0 (fault); 0 sostituisce 1 (fault); 4 sostituisce 2 (fault). Totale 7."], e: "Simula in tabella e marca ogni fault." },
+  { c: "virtuale", q: "Esercizio: con 3 frame e la sequenza 7, 0, 1, 2, 0, 3, 0, 4, quanti page fault fa LRU?", o: ["6 fault: 7, 0, 1 (fault); 2 sostituisce 7 (fault); 0 hit; 3 sostituisce 1, la meno recente (fault); 0 hit; 4 sostituisce 2 (fault). Totale 6."], e: "Per LRU aggiorna la recenza a ogni riferimento." },
+  { c: "virtuale", q: "Quale algoritmo di sostituzione può soffrire l'anomalia di Belady?", o: ["FIFO", "LRU", "Ottimo", "Nessuno"], e: "Più frame, più fault: solo con FIFO tra questi." },
+  { c: "virtuale", q: "Gli algoritmi a conteggio LFU/MFU predicono sempre bene il futuro?", o: ["No: le frequenze passate non sempre predicono il futuro", "Sì, sono ottimi", "Sì, se i frame sono pochi", "Sono identici a LRU"], e: "Osservazione del quaderno." },
+
+  // 11 · Memoria di massa
+  { c: "massa", q: "Da quali componenti dipende il tempo di accesso di un HDD? Spiegali.", o: ["Seek time (spostamento della testina sulla traccia), latenza rotazionale (attesa che il settore passi sotto la testina) e tempo di trasferimento dei dati."], e: "Domanda lampo del capitolo." },
+  { c: "massa", q: "Descrivi la struttura di un disco magnetico (piatti, tracce, settori, cilindri).", o: ["I piatti ruotano; le loro superfici sono divise in tracce e le tracce in settori. Le testine si muovono insieme su un braccio; le tracce alla stessa distanza su tutti i piatti formano un cilindro. Il controller presenta blocchi logici e nasconde la geometria fisica."], e: "Figura 11.1." },
+  { c: "massa", q: "Quali caratteristiche ha la NAND flash (NVM/SSD) rispetto all'HDD?", o: ["Non ha parti mobili e ha latenza più bassa, ma i cicli di scrittura/cancellazione sono limitati. Si legge e programma a pagine e si cancella a blocchi più grandi, quindi aggiornare richiede di scrivere altrove, invalidare la vecchia pagina e fare garbage collection."], e: "Niente seek." },
+  { c: "massa", q: "Cosa gestisce il controller di un SSD e cos'è TRIM?", o: ["Wear leveling (distribuisce l'usura), blocchi difettosi e overprovisioning. TRIM comunica all'SSD i blocchi logici non più utilizzati."], e: "Aiuta la garbage collection." },
+  { c: "massa", q: "Confronta FCFS, SCAN e C-SCAN nello scheduling del disco.", o: ["FCFS: serve le richieste in ordine d'arrivo, equo e semplice ma con molti spostamenti. SCAN: la testina spazza in una direzione servendo le richieste e poi inverte (ascensore). C-SCAN: serve in una sola direzione e poi torna all'inizio senza servire richieste, dando attesa più uniforme."], e: "Tabella del capitolo." },
+  { c: "massa", q: "Esercizio: coda 98, 183, 37, 122, 14, 124, 65, 67, testina a 53. Calcola lo spostamento totale con FCFS.", o: ["|98−53| + |183−98| + |37−183| + |122−37| + |14−122| + |124−14| + |65−124| + |67−65| = 45 + 85 + 146 + 85 + 108 + 110 + 59 + 2 = 640 tracce."], e: "Somma |traccia successiva − traccia corrente|." },
+  { c: "massa", q: "Esercizio: coda 98, 183, 37, 122, 14, 124, 65, 67, testina a 53, direzione crescente, disco con tracce 0–199. Qual è l'ordine di servizio con SCAN che arriva all'estremo, e lo spostamento totale?", o: ["Ordine: 65, 67, 98, 122, 124, 183, poi fino a 199, poi indietro 37, 14. Spostamento: (199 − 53) + (199 − 14) = 146 + 185 = 331 tracce."], e: "Per SCAN esplicita se raggiunge l'estremo." },
+  { c: "massa", q: "Perché lo scheduling classico del disco è meno rilevante per le NVM?", o: ["Perché non c'è seek della testina; restano però fairness e gestione delle code."], e: "Riga NVM della tabella." },
+  { c: "massa", q: "Distingui formattazione fisica, partizionamento e formattazione logica.", o: ["Formattazione fisica: prepara i settori. Partizionamento: divide il dispositivo in parti. Formattazione logica: crea il file system in una partizione."], e: "Tre passi distinti." },
+  { c: "massa", q: "Spiega striping, mirroring e parità nei RAID.", o: ["Striping: distribuisce i dati su più dischi per parallelizzare. Mirroring: mantiene copie identiche. Parità: informazione ridondante che permette di ricostruire i dati di un disco guasto."], e: "Mattoni dei livelli RAID." },
+  { c: "massa", q: "Che differenza c'è tra RAID 0, 1, 5, 6 e 10?", o: ["RAID 0: striping senza ridondanza, nessun guasto tollerato. RAID 1: mirroring, capacità utile circa dimezzata. RAID 5: parità distribuita, tollera un disco guasto. RAID 6: doppia parità, tollera due guasti. RAID 10: striping su mirror, prestazioni e resilienza, tollera guasti multipli se in mirror diversi."], e: "Tabella del capitolo." },
+  { c: "massa", q: "Perché RAID non è un backup?", o: ["Perché non protegge da cancellazioni, ransomware, errori applicativi o disastri che colpiscono tutte le copie: replica anche l'errore."], e: "Frase da ricordare." },
+  { c: "massa", q: "Distingui DAS, NAS e SAN.", o: ["DAS: storage collegato direttamente all'host. NAS: storage esposto come file tramite la rete. SAN: rete dedicata di storage che fornisce accesso a blocchi."], e: "Lo storage cloud aggiunge latenza e dipendenza dalla rete." },
+  { c: "massa", q: "Quale livello RAID mantiene copie speculari e dimezza circa la capacità utile?", o: ["RAID 1", "RAID 0", "RAID 5", "RAID 6"], e: "Mirroring." },
+  { c: "massa", q: "Quale RAID tollera un solo disco guasto grazie alla parità distribuita?", o: ["RAID 5", "RAID 0", "RAID 6", "RAID 1 con un solo disco"], e: "RAID 6 tollera due guasti." },
+  // 12 · Sistemi di I/O
+  { c: "io", q: "Che cosa distingue polling, interrupt e DMA?", o: ["Polling: la CPU controlla ripetutamente lo stato del dispositivo (semplice, ma può sprecare cicli). Interrupt: è il dispositivo ad avvisare la CPU quando ha finito. DMA: il controller trasferisce blocchi direttamente tra dispositivo e RAM, riducendo il lavoro di copia della CPU."], e: "Domanda lampo del capitolo." },
+  { c: "io", q: "Quali registri espone un controller e cos'è il memory-mapped I/O?", o: ["Registri dati, stato e controllo. Nel memory-mapped I/O i registri del dispositivo e la memoria condividono lo stesso spazio degli indirizzi, quindi si accede ai registri con normali istruzioni di memoria."], e: "Alternativa alle istruzioni di I/O dedicate." },
+  { c: "io", q: "Descrivi il flusso di una richiesta di I/O con interrupt.", o: ["Il driver prepara buffer e comando; il controller avvia l'operazione; la CPU intanto prosegue con altro; a fine trasferimento il dispositivo genera un interrupt; il driver verifica lo stato e risveglia il processo in attesa."], e: "Figura 12.14." },
+  { c: "io", q: "Il DMA elimina del tutto il lavoro della CPU? Spiega come funziona.", o: ["No. La CPU configura il trasferimento; il DMA trasferisce direttamente tra dispositivo e RAM; un interrupt segnala il completamento. Setup e gestione richiedono comunque la CPU."], e: "Riduce, non elimina." },
+  { c: "io", q: "Differenza tra dispositivi a blocchi e a caratteri?", o: ["A blocchi: blocchi indirizzabili, spesso con accesso casuale (es. dischi). A caratteri: flusso di byte, spesso sequenziale (es. tastiera)."], e: "Ci sono anche rete (pacchetti) e timer." },
+  { c: "io", q: "Distingui I/O bloccante, non bloccante e asincrono.", o: ["Bloccante: sospende il chiamante fino al completamento. Non bloccante: ritorna subito con i dati disponibili in quel momento. Asincrono: restituisce subito il controllo e notifica più tardi il completamento."], e: "Domanda lampo del capitolo." },
+  { c: "io", q: "Cos'è l'I/O vettorizzato (scatter/gather)?", o: ["Un'operazione che trasferisce più buffer con una sola richiesta."], e: "Riduce il numero di chiamate." },
+  { c: "io", q: "Quali servizi fornisce il sottosistema di I/O del kernel?", o: ["Scheduling dell'I/O, buffering, caching, spooling, riservazione dei dispositivi, protezione e gestione degli errori."], e: "Il kernel incapsula i dettagli dei dispositivi." },
+  { c: "io", q: "Distingui buffering, caching e spooling.", o: ["Buffering: area temporanea che compensa differenze di velocità (o di dimensione) tra produttore e consumatore dei dati. Caching: conserva copie dei dati per accedervi più in fretta. Spooling: mette in coda le richieste per un dispositivo dedicato (es. stampante)."], e: "Sono concetti distinti." },
+  { c: "io", q: "Perché il polling può sprecare cicli di CPU?", o: ["Perché la CPU continua a controllare il registro di stato anche quando il dispositivo non ha ancora finito, invece di fare lavoro utile."], e: "Con l'interrupt è il dispositivo ad avvisare." },
+  { c: "io", q: "Quale tecnica trasferisce blocchi tra dispositivo e RAM senza che la CPU copi ogni dato?", o: ["DMA", "Polling", "Spooling", "Memory-mapped I/O"], e: "La CPU configura, il DMA trasferisce." },
+  { c: "io", q: "Quale modalità di I/O restituisce subito il controllo e segnala il completamento più tardi?", o: ["Asincrona", "Bloccante", "Polling", "Spooling"], e: "La non bloccante invece restituisce subito ciò che c'è." },
+  { c: "io", q: "Mettere in coda le stampe per una stampante condivisa è un esempio di…", o: ["Spooling", "Caching", "DMA", "Scatter/gather"], e: "Coda per un dispositivo dedicato." },
+
+  // 13 · Interfaccia del file system
+  { c: "file", q: "Cos'è un file e quali attributi ha?", o: ["Informazione persistente con un nome. Attributi: nome, ID, tipo, posizione, dimensione, protezione, timestamp e proprietario."], e: "Il nome è distinto dall'identità del file." },
+  { c: "file", q: "Quali operazioni si possono fare su un file?", o: ["create, open, read, write, seek, close, delete, truncate e gestione degli attributi."], e: "Elenco del capitolo." },
+  { c: "file", q: "Che cosa rappresenta un file descriptor e cosa contiene la tabella open-file?", o: ["Il file descriptor è il riferimento con cui il processo opera su un file aperto. La tabella open-file mantiene lo stato dell'apertura, come la posizione corrente e la modalità di apertura."], e: "Domanda lampo del capitolo." },
+  { c: "file", q: "Differenza tra accesso sequenziale e diretto?", o: ["Sequenziale: si legge/scrive in ordine e un puntatore avanza; adatto a stream e scansioni. Diretto: si accede al record n o a un offset qualsiasi, con salti rapidi se il supporto lo consente."], e: "Metodi d'accesso." },
+  { c: "file", q: "Confronta directory a un livello, a due livelli e ad albero.", o: ["Un livello: semplice ma crea conflitti tra nomi. Due livelli: separa gli utenti. Albero: supporta gerarchie e percorsi assoluti e relativi."], e: "Evoluzione delle strutture di directory." },
+  { c: "file", q: "Cosa permette la directory a grafo aciclico e che problemi creano i cicli?", o: ["Il grafo aciclico permette la condivisione di file e directory (più percorsi verso lo stesso oggetto). I cicli richiedono di gestire i percorsi (visite infinite) e il recupero dello spazio, oppure vanno vietati."], e: "Condivisione tramite link." },
+  { c: "file", q: "Che differenza c'è tra percorso assoluto e relativo?", o: ["L'assoluto parte dalla radice del namespace; il relativo viene risolto a partire dalla directory corrente."], e: "Domanda lampo del capitolo." },
+  { c: "file", q: "Come funziona la protezione dei file con owner/group/others e con ACL?", o: ["Si associano permessi di lettura, scrittura ed esecuzione al proprietario, al gruppo e agli altri, oppure si usano ACL (liste di controllo degli accessi). Il controllo considera l'identità di chi accede e la modalità di apertura."], e: "rwx per tre classi di utenti." },
+  { c: "file", q: "Cos'è un memory-mapped file?", o: ["Una regione dello spazio virtuale del processo che rappresenta il file; gli accessi sono gestiti dalla paginazione e la mappatura può facilitare la condivisione tra processi."], e: "Si legge il file come se fosse memoria." },
+  { c: "file", q: "Quali livelli distinti vanno tenuti separati quando si parla di file?", o: ["Nome, identità del file, attributi, directory, metodo di accesso e memorizzazione fisica. Ad esempio più hard link (nomi diversi) possono puntare allo stesso oggetto."], e: "Chiave del capitolo." },
+  { c: "file", q: "Un percorso che parte dalla directory corrente è…", o: ["Relativo", "Assoluto", "Simbolico", "Radice"], e: "L'assoluto parte dalla radice." },
+  { c: "file", q: "Quale struttura di directory crea conflitti tra nomi di utenti diversi?", o: ["Directory a un livello", "Directory a due livelli", "Albero", "Grafo aciclico"], e: "Tutti i file in un'unica directory." },
+
+  // 14 · Realizzazione del file system
+  { c: "implementazione", q: "Cosa contengono boot control block e volume control block?", o: ["Il boot control block contiene le informazioni per l'avvio del sistema da quel volume; il volume control block descrive il volume (es. numero di blocchi, dimensione, blocchi liberi)."], e: "Strutture su disco." },
+  { c: "implementazione", q: "Quali strutture del file system si tengono in memoria?", o: ["La tabella dei volumi montati, le directory usate di recente e le tabelle dei file aperti."], e: "Per velocizzare gli accessi." },
+  { c: "implementazione", q: "Confronta directory lineare e directory con tabella hash.", o: ["Lineare: semplice, ma la ricerca è O(n). Hash: ricerca più veloce in media, ma bisogna gestire le collisioni."], e: "Implementazione delle directory." },
+  { c: "implementazione", q: "Qual è il vantaggio e il limite dell'allocazione contigua?", o: ["Offre ottime prestazioni sequenziali e accesso diretto, ma causa frammentazione esterna e rende difficile far crescere il file."], e: "Domanda lampo del capitolo." },
+  { c: "implementazione", q: "Vantaggi e limiti dell'allocazione concatenata?", o: ["Niente frammentazione esterna e crescita facile del file; però l'accesso casuale è lento (bisogna seguire la catena), i puntatori occupano spazio e la catena è fragile se un puntatore si rovina."], e: "Ogni blocco punta al successivo." },
+  { c: "implementazione", q: "Cos'è la FAT e che vantaggio ha rispetto alla concatenata semplice?", o: ["Una tabella che centralizza la catena dei blocchi di tutti i file; rende i salti più agevoli, soprattutto se tenuta in cache. Svantaggio: la tabella è grande."], e: "File Allocation Table." },
+  { c: "implementazione", q: "Come funziona l'allocazione indicizzata e cosa serve per i file grandi?", o: ["Ogni file ha un blocco indice con i riferimenti ai suoi blocchi: consente accesso diretto senza contiguità. Ha overhead per gli indici; per i file grandi servono livelli indiretti."], e: "Simile all'inode Unix." },
+  { c: "implementazione", q: "Quali tecniche si usano per gestire lo spazio libero?", o: ["Bitmap (un bit per blocco), lista concatenata dei blocchi liberi, grouping e counting (comprimono intervalli di blocchi liberi)."], e: "TRIM segnala agli SSD i blocchi non più usati." },
+  { c: "implementazione", q: "Cache, read-ahead e delayed write migliorano le prestazioni: quale rischio introducono?", o: ["I dati non ancora scritti sul disco sono vulnerabili in caso di crash: possono andare persi."], e: "Prestazioni contro persistenza." },
+  { c: "implementazione", q: "Come funziona il journaling e cosa garantisce un journal dei soli metadati?", o: ["Il journal registra le modifiche prima di applicarle al file system; al riavvio dopo un crash si ripetono o annullano le operazioni incomplete. Un journal dei metadati mantiene coerenti le strutture, ma non garantisce che i dati applicativi siano persistiti."], e: "Coerenza, non backup." },
+  { c: "implementazione", q: "Journaling e backup hanno lo stesso scopo?", o: ["No. Il journal aiuta a mantenere la coerenza del file system dopo un crash; il backup consente di recuperare dati persi o danneggiati, o un dispositivo guasto."], e: "Domanda lampo del capitolo." },
+  { c: "implementazione", q: "Cosa fa un checker di coerenza dopo un crash?", o: ["Confronta le strutture del file system (directory, metadati) con i blocchi effettivamente allocati, cercando e correggendo incoerenze."], e: "Alternativa più lenta al journal." },
+  { c: "implementazione", q: "Quali criteri usi per confrontare i metodi di allocazione all'esame?", o: ["Accesso sequenziale e diretto, crescita del file, frammentazione, overhead dei metadati e recuperabilità. Nessun metodo è migliore in ogni metrica."], e: "Confronto d'esame." },
+  { c: "implementazione", q: "Quale metodo di allocazione causa frammentazione esterna?", o: ["Contigua", "Concatenata", "Indicizzata", "FAT"], e: "I file occupano blocchi consecutivi." },
+  { c: "implementazione", q: "Quale metodo di allocazione rende lento l'accesso casuale perché bisogna seguire i puntatori?", o: ["Concatenata", "Contigua", "Indicizzata", "Bitmap"], e: "La FAT attenua il problema." },
+
+  // 15 · Dettagli interni del file system
+  { c: "dettagli", q: "Che differenza c'è tra partizione e volume?", o: ["Una partizione è una parte di un dispositivo e può contenere un file system o dati grezzi; un volume può aggregare più dispositivi."], e: "Prima del mount." },
+  { c: "dettagli", q: "A cosa serve la tabella dei mount?", o: ["A instradare i percorsi verso il file system giusto, in base al mount point attraversato."], e: "L'utente vede un namespace comune." },
+  { c: "dettagli", q: "Cosa serve per condividere file tra utenti e cosa hanno di particolare i file descriptor ereditati?", o: ["Identità e permessi coerenti. I file descriptor ereditati (es. dopo fork) condividono l'offset, quindi hanno una semantica specifica: le letture/scritture di uno spostano la posizione anche per l'altro."], e: "Condivisione." },
+  { c: "dettagli", q: "Quali problemi introduce un file system remoto client-server?", o: ["Le richieste viaggiano in rete, quindi ci sono ritardi e possibili guasti del server o della rete, indipendenti dal client."], e: "Failure mode diversi." },
+  { c: "dettagli", q: "Cosa definisce la semantica di coerenza? Confronta Unix, session semantics e file immutabili.", o: ["Definisce quando gli aggiornamenti diventano visibili agli altri. Unix tradizionale: le modifiche tendono a essere visibili subito, grazie a cache coerenti. Session semantics: visibili solo alla chiusura del file. File immutabili: semplificano la coerenza ma non si possono modificare."], e: "Tre modelli." },
+  { c: "dettagli", q: "Come funziona NFS a grandi linee?", o: ["Monta directory remote nel namespace del client; usa file handle e operazioni RPC. Il client traduce i percorsi e può tenere in cache attributi e dati."], e: "Network File System." },
+  { c: "dettagli", q: "Cosa deve gestire un client NFS?", o: ["Timeout, ritrasmissioni, richieste duplicate e cache stale."], e: "Problemi tipici dei file system remoti." },
+  { c: "dettagli", q: "Si possono estendere i dettagli di una versione di NFS a tutte le versioni?", o: ["No: versioni diverse hanno modelli di stato differenti."], e: "Avvertenza del quaderno." },
+  { c: "dettagli", q: "Con la session semantics, quando un altro utente vede le mie modifiche?", o: ["Quando chiudo il file", "Subito, a ogni write", "Mai", "Al riavvio del server"], e: "Unix tradizionale le rende visibili subito." },
+  { c: "dettagli", q: "Se sposti il file originale, quale link può restare “rotto”?", o: ["Il link simbolico", "L'hard link", "Entrambi", "Nessuno dei due"], e: "Il symlink contiene un percorso, l'hard link riferisce l'inode." },
+  { c: "dettagli", q: "Quale componente offre un'interfaccia comune e inoltra le operazioni al file system concreto?", o: ["Il VFS", "La tabella dei mount", "Il file handle", "Il journal"], e: "Virtual File System." }
 ];
 
 const STORE = "quiz-so-1-15";
@@ -207,7 +413,7 @@ const store = d => { try { localStorage.setItem(STORE, JSON.stringify(d)); } cat
    Escono prima quelle sbagliate e non ancora recuperate, poi quelle mai viste; quelle già sapute escono di rado.
    Le domande dell'ultimo giro dello stesso capitolo vengono evitate, così i giri si somigliano poco. */
 const STATS = "quiz-so-1-15-domande";
-const PER_GIRO = 3;
+const PER_GIRO = 10;
 const SAPUTA = 2; // giuste di fila per considerarla saputa
 const qid = q => { let h = 5381; const t = q.c + "|" + q.q; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
 Q.forEach(q => { q.id = qid(q); });
@@ -267,7 +473,7 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione della prova</h2>
-      <p>26 domande miste, 2 per ogni capitolo, diverse a ogni giro. Alla fine vedi il punteggio per capitolo.</p>
+      <p>26 domande miste, 2 per ogni capitolo, diverse a ogni giro: per lo più aperte, come all’esame. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <button class="btn" type="button" id="go-sim">Inizia →</button>
     </section>
@@ -292,6 +498,7 @@ function start(title, questions, chapterId, key, from) {
 function ask() {
   document.body.classList.add("running");
   const it = run.items[run.i], c = chap(it.q.c), n = run.items.length;
+  if (it.q.o.length > 1) return askChoice(it, c, n);
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n}</span></div>
@@ -320,6 +527,45 @@ function ask() {
     after.querySelector("#mark-wrong").focus({ preventScroll: true });
   };
   window.scrollTo({ top: 0 });
+}
+
+function askChoice(it, c, n) {
+  it.opts = it.opts || shuffle(it.q.o.map((t, k) => ({ t, ok: k === 0 })));
+  app.innerHTML = `
+    <a href="#" class="backq" id="quit">← Tutti i quiz</a>
+    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n}</span></div>
+    <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
+    <span class="tag">${c.n} · ${esc(c.t)}</span><span class="tag kind">risposta multipla</span>
+    <h2 class="q">${esc(it.q.q)}</h2>
+    <div class="opts" role="group" aria-label="Risposte">${it.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}"><span class="k">${"ABCD"[k]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>
+    <div id="after"></div>
+    <p class="hint">Tasti: 1–4 o A–D per rispondere · Invio per andare avanti</p>`;
+  app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => answerChoice(+b.dataset.k));
+  const first = app.querySelector(".opt"); if (first) first.focus({ preventScroll: true });
+  window.scrollTo({ top: 0 });
+}
+
+function answerChoice(k) {
+  const it = run.items[run.i];
+  if (run.answers[run.i] !== undefined || !it.opts || !it.opts[k]) return;
+  const ok = it.opts[k].ok;
+  run.answers[run.i] = { ok, response: it.opts[k].t };
+  record(it.q, ok);
+  app.querySelectorAll(".opt").forEach((b, j) => {
+    b.disabled = true;
+    if (it.opts[j].ok) b.classList.add("right");
+    else if (j === k) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+  const last = run.i === run.items.length - 1;
+  app.querySelector("#after").innerHTML = `
+    <div class="fb"><b class="${ok ? "ok" : "ko"}">${ok ? "Giusto." : "Non è questa."}</b><p>${esc(it.q.e)}</p>
+      <p><a href="${QUADERNO}#${it.q.c}">Rivedi il capitolo ${chap(it.q.c).n} nel quaderno →</a></p></div>
+    <div class="next"><button class="btn solid" type="button" id="next">${last ? "Vedi il risultato" : "Avanti →"}</button></div>`;
+  const nx = app.querySelector("#next");
+  nx.onclick = () => { if (last) result(); else { run.i++; ask(); } };
+  nx.focus({ preventScroll: true });
 }
 
 function answer(ok, response) {
@@ -375,7 +621,14 @@ function result() {
 }
 
 document.addEventListener("keydown", e => {
-  if (!run || e.metaKey || e.ctrlKey || e.altKey || e.key !== "Enter") return;
+  if (!run || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key !== "Enter") {
+    const it = run.items[run.i];
+    if (!it || it.q.o.length < 2 || run.answers[run.i] !== undefined || document.activeElement && document.activeElement.tagName === "TEXTAREA") return;
+    const k = "1234".indexOf(e.key) >= 0 ? "1234".indexOf(e.key) : "abcd".indexOf(e.key.toLowerCase());
+    if (k >= 0 && e.key.length === 1) { e.preventDefault(); answerChoice(k); }
+    return;
+  }
   if (document.querySelector(".ua-pal:not([hidden])")) return;
   if (run.answers[run.i] !== undefined) {
     const nx = document.getElementById("next");
