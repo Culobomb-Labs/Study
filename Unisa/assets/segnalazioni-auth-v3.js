@@ -91,7 +91,8 @@ onAuthStateChanged(auth,async u=>{
       if(sentAt)card.append(sentAt);
       card.append(text);
       if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
-      if(d.contact){const c=document.createElement('p');c.textContent='Contatto: '+d.contact;card.append(c)}
+      if(d.contact){const c=document.createElement('p');c.className='contact-line';c.append('Contatto: ');if(window.UAContact)c.append(window.UAContact.render(d.contact));else c.append(String(d.contact));card.append(c)}
+      else if(isAdmin()){const c=document.createElement('p');c.className='contact-line';c.textContent='Contatto: risposta qui sul sito';card.append(c)}
       if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
       if(isAdmin()){
         const label=document.createElement('label'), select=document.createElement('select');
@@ -139,9 +140,11 @@ function reportNotice(heading,title,body,createdAt){
 $('#form').onsubmit=async e=>{
   e.preventDefault();
   if(!user || readyUser!==user || sending)return;
-  const sender=user, form=e.currentTarget, title=form.elements.title.value.trim(), text=form.elements.text.value.trim(), contact=form.elements.contact.value.trim();
+  const sender=user, form=e.currentTarget, title=form.elements.title.value.trim(), text=form.elements.text.value.trim(), contactRes=window.UAContact?window.UAContact.read():{value:''}, contact=contactRes.value||'';
   if(title.length<3 || text.length<10){msg('Il titolo deve contenere almeno 3 caratteri e il testo almeno 10.');return}
   if(text.length>MAX_TEXT){msg(`Il testo può essere lungo al massimo ${MAX_TEXT} caratteri.`);return}
+  if(contactRes.error){msg(contactRes.error);if(contactRes.field)window.UAContact.mark(contactRes.field);return}
+  if(contact.length>200){msg('Il contatto è troppo lungo.');return}
   sending=true; $('#send').disabled=true; msg('Invio in corso…');
   try {
     await runTransaction(db,async tx=>{

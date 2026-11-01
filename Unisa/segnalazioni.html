@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/segnalazioni.css?v=5">
+<link rel="stylesheet" href="assets/segnalazioni.css?v=6">
 </head>
 <body>
 <main class="reports-page">
@@ -41,11 +41,37 @@
         <textarea id="report-text" name="text" minlength="10" maxlength="550" required placeholder="In quale pagina o capitolo? Cosa ti aspettavi e cosa è successo invece? Se puoi, come riprodurlo." aria-describedby="counter text-hint"></textarea>
         <div class="meter" aria-hidden="true"><i id="counter-bar"></i></div>
         <p class="hint" id="text-hint">Massimo 550 caratteri.</p>
-        <label for="report-contact">Contatto per la risposta <span class="optional">facoltativo</span></label>
-        <input id="report-contact" name="contact" maxlength="200" placeholder="Email, Telegram o altro" autocomplete="email">
+        <fieldset class="contact">
+          <legend>Dove vuoi la risposta</legend>
+          <div class="ch-chips" role="radiogroup" aria-label="Canale per la risposta">
+            <label class="ch"><input type="radio" name="ch1" value="site" checked><span>Qui sul sito</span></label>
+            <label class="ch"><input type="radio" name="ch1" value="telegram"><span>Telegram</span></label>
+            <label class="ch"><input type="radio" name="ch1" value="instagram"><span>Instagram</span></label>
+            <label class="ch"><input type="radio" name="ch1" value="discord"><span>Discord</span></label>
+            <label class="ch"><input type="radio" name="ch1" value="email"><span>Email</span></label>
+          </div>
+          <p class="hint" id="site-hint">La risposta comparirà sotto la tua segnalazione, in “Le tue segnalazioni”. Se preferisci essere avvisato altrove, scegli un canale.</p>
+          <div id="contact1" class="contact-row" hidden>
+            <label for="report-c1" class="sr-only">Recapito <span id="c1-label"></span></label>
+            <input id="report-c1" name="c1" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c1-hint">
+            <p class="hint" id="c1-hint"></p>
+          </div>
+          <button type="button" class="add-contact" id="add-contact2" hidden>+ Aggiungi un secondo contatto <span class="optional">facoltativo</span></button>
+          <div id="contact2" class="contact-row contact-row-2" hidden>
+            <div class="c2-line">
+              <label for="report-ch2" class="sr-only">Tipo del secondo contatto</label>
+              <select id="report-ch2" name="ch2"><option value="telegram">Telegram</option><option value="instagram">Instagram</option><option value="discord">Discord</option><option value="email">Email</option></select>
+              <label for="report-c2" class="sr-only">Secondo recapito</label>
+              <input id="report-c2" name="c2" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c2-hint">
+              <button type="button" class="rm-contact" id="rm-contact2" aria-label="Togli il secondo contatto">×</button>
+            </div>
+            <p class="hint" id="c2-hint"></p>
+          </div>
+          <input type="hidden" name="contact" value="">
+        </fieldset>
         <button id="send" type="submit" disabled><span>Invia segnalazione</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         <p id="message" role="status" aria-live="polite"></p>
-        <p class="privacy-note">Puoi inviare fino a 5 segnalazioni al giorno. L’email del tuo account Google è visibile agli amministratori insieme alla segnalazione. Non inserire password o dati sensibili.</p>
+        <p class="privacy-note">Puoi inviare fino a 5 segnalazioni al giorno. Segnalazione e contatti li vedete solo tu e gli amministratori, insieme all’email del tuo account Google. Non inserire password, numeri di telefono o altri dati sensibili.</p>
       </form>
     </section>
     <section class="report-panel list-panel" aria-labelledby="list-title">
@@ -67,6 +93,7 @@
 function paint(){var n=t.value.length,st=n>=max?'full':n>=max*0.9?'near':'';c.textContent=n+' / '+max;c.dataset.state=st;bar.style.width=Math.min(100,100*n/max)+'%';bar.dataset.state=st;}
 t.addEventListener('input',paint);paint();})();
 </script>
-<script type="module">import("./assets/segnalazioni-auth-v3.js?v=5").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
+<script src="assets/segnalazioni-contatto.js?v=1"></script>
+<script type="module">import("./assets/segnalazioni-auth-v3.js?v=6").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
 </body>
 </html>

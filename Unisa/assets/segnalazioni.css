@@ -109,3 +109,28 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 @media(max-width:560px){.reports-hero{padding:32px 0 22px}.report-panel{padding:18px;border-radius:14px}.intro{font-size:16px}.steps li{font-size:13px}#form textarea{height:clamp(140px,26vh,200px)}}
 @media(max-width:420px){#login{width:100%}.reports-page{padding-bottom:40px}}
 @media(prefers-reduced-motion:reduce){#form input,#form textarea,.entry select,#send,#login,#send svg,.meter i{transition:none}}
+
+/* contatto per la risposta */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.contact{border:0;margin:18px 0 0;padding:0;min-width:0}
+.contact legend{font-weight:600;font-size:14px;margin:0 0 8px;padding:0}
+.ch-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ch{position:relative;margin:0!important}
+.ch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.ch span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:500;background:var(--bg);color:var(--ink);cursor:pointer;user-select:none;transition:border-color .15s,background .15s}
+.ch:hover span{border-color:var(--muted)}
+.ch input:checked + span{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.ch input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.contact-row{margin-top:10px}
+.contact-row[hidden],.add-contact[hidden]{display:none}
+.c2-line{display:grid;grid-template-columns:minmax(110px,auto) minmax(0,1fr) 42px;gap:8px;align-items:stretch}
+#form .c2-line select{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--font-body);padding:10px 10px;min-width:0}
+.rm-contact{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--muted);font-size:20px;line-height:1;cursor:pointer}
+.rm-contact:hover{border-color:var(--accent);color:var(--accent)}
+.add-contact{margin-top:10px;border:1px dashed var(--line);border-radius:10px;background:transparent;color:var(--accent);font:600 14px/1.2 var(--font-body);padding:10px 12px;cursor:pointer;width:100%;text-align:left}
+.add-contact:hover{border-color:var(--accent);background:var(--accent-soft)}
+#form input[aria-invalid=true]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.contact-line .contact-part b{font-weight:600}
+.contact-line a{color:var(--accent);text-underline-offset:2px}
+@media(max-width:420px){.c2-line{grid-template-columns:minmax(0,1fr) 42px}.c2-line select{grid-column:1/-1}}
+.hint[hidden]{display:none}
