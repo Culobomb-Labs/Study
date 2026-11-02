@@ -62,7 +62,7 @@
     if (!bar) { bar = el("div", { id: "ua-bar" }); document.body.prepend(bar); }
     bar.className = "ua-bar";
     bar.setAttribute("role", "banner");
-    let crumbs = `<a class="ua-brand" href="${ROOT}index.html"><span class="ua-logo" aria-hidden="true"></span>Appunti Unisa</a>`;
+    let crumbs = `<a class="ua-brand" href="${ROOT}index.html"><svg class="ua-logo" viewBox="0 0 22 22" aria-hidden="true"><rect x="3" y="2" width="14" height="18" rx="2.5" class="ua-logo-c"/><rect x="6" y="2" width="1.6" height="18" class="ua-logo-p" opacity=".35"/><path d="M14 2h3v9l-1.5-1.3L14 11z" class="ua-logo-s"/><rect x="9.2" y="13.5" width="5.5" height="1.6" rx=".8" class="ua-logo-p"/><rect x="9.2" y="16" width="3.6" height="1.6" rx=".8" class="ua-logo-p" opacity=".6"/></svg>Appunti Unisa</a>`;
     if (here) {
       crumbs += `<span class="ua-sep" aria-hidden="true">/</span><a class="ua-crumb" href="${ROOT}index.html#${esc(here.c.code.toLowerCase())}">${esc(here.c.name)}</a>`;
       crumbs += `<span class="ua-sep" aria-hidden="true">/</span><span class="ua-dot" style="--c:var(--ua-c-${esc(here.c.color)})" aria-hidden="true"></span><span class="ua-crumb ua-here" aria-current="page">${esc(here.d.name)}</span>`;
