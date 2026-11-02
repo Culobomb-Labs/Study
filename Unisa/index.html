@@ -120,6 +120,21 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,9vw,84px);l
 footer{border-top:1px solid var(--line)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
 footer a{text-underline-offset:3px}
+
+/* cartelle Drive nel piè di pagina */
+.drives{display:flex;flex-direction:column;gap:8px;width:min(380px,100%)}
+.drives-k{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px}
+.drive{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1px 12px;align-items:center;padding:11px 14px;border:1px solid var(--line);
+  border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .2s,background-color .2s,transform .2s var(--ua-ease)}
+.drive:hover{border-color:var(--muted);background:var(--hover)}
+.drive:active{transform:scale(.99)}
+.drive:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.drive-ic{grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--hover);color:var(--ink)}
+.drive:hover .drive-ic{background:var(--surface)}
+.drive-t{grid-column:2;font-weight:600;font-size:15px;line-height:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drive-s{grid-column:2;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);line-height:1.3}
+.drive-go{grid-row:1 / span 2;grid-column:3;color:var(--muted);font-size:16px;transition:transform .2s var(--ua-ease),color .2s}
+.drive:hover .drive-go{transform:translate(2px,-2px);color:var(--ink)}
 .build-meta{display:flex;flex-direction:column;gap:2px}
 .build-meta #version{align-self:flex-end}
 
@@ -131,7 +146,7 @@ footer a{text-underline-offset:3px}
   .code::before{margin:0;width:18px}
   .course:hover .code::before{width:18px}
 }
-@media (prefers-reduced-motion:reduce){body,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
+@media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
 </style>
 </head>
 <body>
@@ -162,7 +177,21 @@ footer a{text-underline-offset:3px}
   </main>
 
   <footer><div class="wrap">
-    <span><a href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x">UNI Files</a></span>
+    <nav class="drives" aria-label="Cartelle Google Drive">
+      <span class="drives-k">Cartelle Google Drive</span>
+      <a class="drive" href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x" target="_blank" rel="noopener">
+        <span class="drive-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></span>
+        <span class="drive-t">UNI Files</span>
+        <span class="drive-s">Google Drive · materiale dei corsi</span>
+        <span class="drive-go" aria-hidden="true">↗</span>
+      </a>
+      <a class="drive" href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3" target="_blank" rel="noopener">
+        <span class="drive-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></span>
+        <span class="drive-t">3° anno Drive Coscienze</span>
+        <span class="drive-s">Google Drive · materiale del 3° anno</span>
+        <span class="drive-go" aria-hidden="true">↗</span>
+      </a>
+    </nav>
     <div class="build-meta"><span id="built"></span><span id="version"></span></div>
   </div></footer>
 
