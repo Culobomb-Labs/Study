@@ -33,7 +33,5 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
-          echo '{"firestore":{"rules":"firestore.rules"}}' > firebase.json
-          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx firebase deploy --only firestore:rules --project appunti-unisa --non-interactive
-          rm -f "$RUNNER_TEMP/sa.json"
+          npm install --prefix .github/scripts --no-save --no-audit --no-fund firebase-admin@14
+          node .github/scripts/pubblica_regole.mjs
