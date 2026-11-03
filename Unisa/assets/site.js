@@ -37,6 +37,7 @@
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
     chev: '<svg class="ua-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
+    swap: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 10.5-4"/><path d="M15 14h7M19 11l3 3-3 3"/></svg>',
     logout: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
     auto: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></svg>'
   };
@@ -512,7 +513,7 @@
     return out;
   }
 
-  async function linkAccount(user) {
+  async function linkAccount(user, switched) {
     const { fs, db } = await fbLoad();
     cloudRef = fs.doc(db, "utenti", user.uid);
     if (rawGet(CLOUD_UID) !== user.uid) {
@@ -531,6 +532,11 @@
       await fs.setDoc(cloudRef, { progressi: out, aggiornato: fs.serverTimestamp() }, { merge: true });
       rawSet(CLOUD_UID, user.uid);
       rawSet(CLOUD_DIRTY, "[]");
+      if (switched) { // la pagina mostra ancora le spunte dell'altro account: ricarico con quelle nuove
+        try { sessionStorage.setItem(CLOUD_MSG, "Ora sei entrato con " + (user.email || "l'altro account") + ": vedi le sue spunte."); } catch (e) {}
+        location.reload();
+        return;
+      }
       if (touched) {
         try { sessionStorage.setItem(CLOUD_MSG, "Accesso fatto: le spunte sono state unite con quelle del tuo account."); } catch (e) {}
         location.reload();
@@ -575,18 +581,57 @@
   document.addEventListener("visibilitychange", () => { if (!document.hidden && reloadOnShow) location.reload(); });
 
   function onUser(user) {
+    const prev = cloudUser;
+    const switched = !!(prev && user && prev.uid !== user.uid);
+    if (switched) {
+      // cambio di account senza uscire: questo dispositivo non riceve più le notifiche dell'account di prima
+      const t = lsGet(PUSH_TOKEN, null);
+      if (t) fbLoad().then(c => c.fs.setDoc(c.fs.doc(c.db, "utenti", prev.uid), { dispositivi: { [t]: c.fs.deleteField() } }, { merge: true })).catch(() => {});
+      try { localStorage.removeItem(PUSH_LINK); } catch (e) {}
+      // le spunte del browser sono già nell'account di prima: le tolgo, così il nuovo account parte dalle sue
+      // (nessuna spunta passa da un account all'altro)
+      localSyncedKeys().forEach(rawDel);
+      rawSet(CLOUD_DIRTY, "[]");
+      rawDel(CLOUD_UID);
+    }
     cloudUser = user || null;
     if (cloudUnsub) { cloudUnsub(); cloudUnsub = null; }
     if (user) {
       rawSet(CLOUD_ON, "1");
       setTimeout(() => pushLinkUser().catch(() => {}), 1500);
-      linkAccount(user).catch(() => toast("Non riesco a raggiungere il tuo account. Le spunte restano salvate qui e si inviano appena torna la rete."));
+      linkAccount(user, switched).catch(() => toast("Non riesco a raggiungere il tuo account. Le spunte restano salvate qui e si inviano appena torna la rete."));
     } else {
       cloudRef = null;
       [CLOUD_ON, CLOUD_UID, CLOUD_DIRTY].forEach(rawDel);
     }
     paintAccount();
     if (ap && !ap.hidden) renderAccount();
+  }
+
+  // Google mostra sempre la scelta dell'account, invece di entrare da solo con l'ultimo usato
+  const googleProvider = A => { const p = new A.au.GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" }); return p; };
+
+  /* "Accedi con un altro account": si sceglie un altro account Google senza uscire prima.
+     Le spunte di questo browser sono già salvate nell'account di prima: per non mescolarle con quelle del nuovo
+     account, se l'account cambia davvero le spunte del browser lasciano il posto a quelle del nuovo (vedi onUser).
+     Se si annulla o si sceglie lo stesso account, non cambia niente. */
+  async function switchAccount(btn, err) {
+    const say = m => { if (err) { err.innerHTML = m; err.hidden = !m; } };
+    say("");
+    if (btn) { btn.disabled = true; }
+    try {
+      await pushDirty();
+      if (dirtyList().length) { say("Alcune spunte non sono ancora salvate nel tuo account (manca la rete?). Riprova quando sei online."); return; }
+      const A = fbNow || await fbAuth();
+      await A.au.signInWithPopup(A.auth, googleProvider(A));
+    } catch (e) {
+      const code = (e && e.code) || "";
+      if (!/popup-closed-by-user|cancelled-popup-request|user-cancelled/.test(code))
+        say(/popup-blocked/.test(code) ? "Il browser ha bloccato la finestra di Google: consenti i popup per questo sito e riprova."
+          : /network/.test(code) ? "Serve la connessione a internet. Riprova quando sei online." : "Cambio account non riuscito. Riprova tra poco.");
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   }
 
   async function signIn(btn, err) {
@@ -597,12 +642,12 @@
     let A = fbNow;
     try {
       if (!A) A = await fbAuth();
-      await A.au.signInWithPopup(A.auth, new A.au.GoogleAuthProvider());
+      await A.au.signInWithPopup(A.auth, googleProvider(A));
     } catch (e) {
       const code = (e && e.code) || "";
       if (A && /popup-blocked|operation-not-supported/.test(code)) { // finestra bloccata: si passa dalla pagina di Google
         rawSet(CLOUD_ON, "1");
-        try { await A.au.signInWithRedirect(A.auth, new A.au.GoogleAuthProvider()); return; } catch (e2) {}
+        try { await A.au.signInWithRedirect(A.auth, googleProvider(A)); return; } catch (e2) {}
       }
       reset();
       if (/popup-closed-by-user|cancelled-popup-request|user-cancelled/.test(code)) return;
@@ -684,12 +729,19 @@
       <ul class="ua-ap-menu">
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
+        ${u ? item("ua-ap-switch ua-do-switch", ICON.swap, "Accedi con un altro account", "Scegli un altro account Google") : ""}
         ${item("ua-ap-report", ICON.bug, "Segnala un problema", "Qualcosa non va negli appunti o nel sito?", `${ROOT}segnalazioni.html`)}
       </ul>
       ${u ? `<button type="button" class="ua-np-all ua-do-logout">${ICON.logout}<span>Esci</span></button>` : ""}`;
     installAvatarFallbacks(ap);
     const login = ap.querySelector(".ua-do-login");
     if (login) login.addEventListener("click", () => signIn(login, ap.querySelector(".ua-acct-err")));
+    const sw = ap.querySelector(".ua-do-switch");
+    if (sw) {
+      const swErr = el("p", { class: "ua-ap-p ua-acct-err", role: "alert", hidden: "" });
+      sw.closest("li").append(swErr);
+      sw.addEventListener("click", () => switchAccount(sw, swErr));
+    }
     const out = ap.querySelector(".ua-do-logout");
     if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
     const exp = ap.querySelector(".ua-do-export"), move = ap.querySelector(".ua-ap-move");
@@ -1239,5 +1291,5 @@
   });
   if (IS_HOME) homeEffects();
 
-  window.UA = { openSearch, closeSearch, cycleTheme, findPassage };
+  window.UA = { openSearch, closeSearch, cycleTheme, findPassage, switchAccount };
 })();

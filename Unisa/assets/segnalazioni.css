@@ -199,3 +199,10 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .report-push > p b{color:inherit;color:var(--ua-ink,#111418)}
 .report-push .ua-np-nt-card{margin:0}
 .report-push .ua-np-nt-card:empty{display:none}
+
+/* "Cambia account" accanto al nome */
+.switch-account{border:1px solid var(--line,var(--ua-line));border-radius:10px;background:transparent;color:inherit;
+  font:600 14px/1.2 var(--font-body);padding:9px 13px;white-space:nowrap;cursor:pointer;transition:background-color .15s}
+.switch-account:hover{background:var(--soft,var(--ua-soft))}
+.switch-account:disabled{opacity:.6;cursor:default}
+@media(max-width:420px){.switch-account{width:100%}}

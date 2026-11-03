@@ -25,9 +25,18 @@ const msg=(s,kind='')=>{const m=$('#message'); m.textContent=s; m.dataset.state=
 const authMsg=(s)=>$('#auth-message').textContent=s;
 auth.languageCode='it';
 getRedirectResult(auth).catch(e=>authMsg(e.code==='auth/unauthorized-domain' ? 'Questo indirizzo non è autorizzato per l’accesso Google.' : 'Accesso Google non riuscito. Riprova.'));
+/* "Cambia account": usa la stessa funzione del menu dell'account (assets/site.js), che salva prima le spunte */
+if($('#switch-account'))$('#switch-account').onclick=async()=>{
+  const b=$('#switch-account'); authMsg('');
+  if(window.UA && window.UA.switchAccount){ await window.UA.switchAccount(b,null); return; }
+  b.disabled=true;
+  try { const provider=new GoogleAuthProvider(); provider.setCustomParameters({prompt:'select_account'}); await signInWithPopup(auth,provider); }
+  catch(e) { if(!/popup-closed|cancelled/.test(e?.code||'')) authMsg('Cambio account non riuscito. Riprova.'); }
+  finally { b.disabled=false; }
+};
 $('#login').onclick=async()=>{
   const button=$('#login'); button.disabled=true; authMsg('Apertura di Google…');
-  try { await signInWithPopup(auth,new GoogleAuthProvider()); authMsg(''); }
+  try { const provider=new GoogleAuthProvider(); provider.setCustomParameters({prompt:'select_account'}); await signInWithPopup(auth,provider); authMsg(''); }
   catch(e) {
     const code=e?.code || '';
     authMsg(code==='auth/unauthorized-domain' ? 'Questo indirizzo non è autorizzato per l’accesso Google.'
@@ -88,6 +97,7 @@ onAuthStateChanged(auth,async u=>{
   if(quotaUnsub){quotaUnsub();quotaUnsub=null;} quotaData=null; quotaFull=false;
   $('#list').replaceChildren(); $('#list-message').textContent=u?'Verifica dell’account…':'Accedi per vedere le segnalazioni.';
   drafts.clear(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
+  if($('#switch-account'))$('#switch-account').hidden=!u;
   $('#identity').textContent=u?(u.displayName||u.email):''; $('#send').disabled=true;
   if(window.UAContact)window.UAContact.setUser(u&&u.emailVerified!==false?u.email:null);
   $('#list-title').textContent='Le tue segnalazioni';
