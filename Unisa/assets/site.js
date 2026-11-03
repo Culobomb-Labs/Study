@@ -579,6 +579,7 @@
     if (cloudUnsub) { cloudUnsub(); cloudUnsub = null; }
     if (user) {
       rawSet(CLOUD_ON, "1");
+      setTimeout(() => pushLinkUser().catch(() => {}), 1500);
       linkAccount(user).catch(() => toast("Non riesco a raggiungere il tuo account. Le spunte restano salvate qui e si inviano appena torna la rete."));
     } else {
       cloudRef = null;
@@ -611,7 +612,7 @@
     }
   }
   async function signOutNow() {
-    try { await pushDirty(); const A = fbNow || await fbAuth(); await A.au.signOut(A.auth); } catch (e) {}
+    try { await pushDirty(); await pushUnlinkUser(lsGet(PUSH_TOKEN, null)).catch(() => {}); const A = fbNow || await fbAuth(); await A.au.signOut(A.auth); } catch (e) {}
     onUser(null);
   }
 
@@ -869,12 +870,36 @@
     await c.fs.setDoc(c.fs.doc(c.db, "notifiche", token), { token, aggiornato: c.fs.serverTimestamp() });
     if (old && old !== token) c.fs.deleteDoc(c.fs.doc(c.db, "notifiche", old)).catch(() => {});
     lsSet(PUSH_TOKEN, token); lsSet(PUSH_AT, Date.now());
+    if (old && old !== token) pushUnlinkUser(old).catch(() => {});
+    pushLinkUser().catch(() => {});
     return true;
+  }
+
+  /* notifiche personali (segnalazioni): con l'accesso fatto, il codice del dispositivo si salva anche nel
+     documento dell'account (utenti/<id>, campo "dispositivi"). Così l'azione di GitHub che controlla le
+     segnalazioni sa a quali dispositivi mandare "stato aggiornato" o, all'amministratore, "nuova segnalazione". */
+  const PUSH_LINK = "news-token-account";
+  async function pushLinkUser() {
+    const token = lsGet(PUSH_TOKEN, null), u = cloudUser;
+    if (!token || !u || !lsGet(NEWS_ON, false)) return;
+    const mark = u.uid + "|" + token;
+    if (lsGet(PUSH_LINK, "") === mark) return; // già collegato: niente scritture a ogni pagina
+    const c = await fbLoad();
+    await c.fs.setDoc(c.fs.doc(c.db, "utenti", u.uid), { dispositivi: { [token]: c.fs.serverTimestamp() } }, { merge: true });
+    lsSet(PUSH_LINK, mark);
+  }
+  async function pushUnlinkUser(token) {
+    const u = cloudUser;
+    try { localStorage.removeItem(PUSH_LINK); } catch (e) {}
+    if (!token || !u) return;
+    const c = await fbLoad();
+    await c.fs.setDoc(c.fs.doc(c.db, "utenti", u.uid), { dispositivi: { [token]: c.fs.deleteField() } }, { merge: true });
   }
   async function pushUnsubscribe() {
     const old = lsGet(PUSH_TOKEN, null);
     try { localStorage.removeItem(PUSH_TOKEN); localStorage.removeItem(PUSH_AT); } catch (e) {}
     if (!old) return;
+    await pushUnlinkUser(old).catch(() => {});
     try {
       const c = await fbLoad();
       const m = await import(FB_URL("messaging"));
@@ -902,7 +927,7 @@
       return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche bloccate</b><span>Le hai bloccate per questo sito: riattivale dalle impostazioni del browser, poi torna qui.</span></div></div>`;
     }
     const on = Notification.permission === "granted" && lsGet(NEWS_ON, false);
-    return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche</b><span>${on ? "Ti avvisiamo quando arriva una notizia nuova." : "Ricevi un avviso quando arriva una notizia nuova."}</span></div>
+    return `<div class="ua-nt">${head}<div class="ua-nt-txt"><b>Notifiche</b><span>${on ? "Ti avvisiamo per le notizie nuove e, con l'accesso fatto, per le tue segnalazioni." : "Ricevi un avviso per le notizie nuove e, con l'accesso fatto, per le tue segnalazioni."}</span></div>
       <button type="button" class="ua-switch" role="switch" aria-checked="${on}" aria-label="Notifiche delle news" data-news-switch><i></i></button></div>`;
   }
   function refreshNotifControls() {
@@ -1202,6 +1227,7 @@
   paintAccount();
   startCloud();
   pushRefresh();
+  refreshNotifControls();
   checkImport();
   trackLast();
   quizTarget();

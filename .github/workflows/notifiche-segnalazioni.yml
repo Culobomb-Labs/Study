@@ -1,0 +1,29 @@
+name: Notifiche segnalazioni
+# Ogni 5 minuti controlla le segnalazioni e manda le notifiche:
+# all'amministratore per quelle nuove, a chi le ha inviate quando cambia lo stato o arriva una risposta.
+# (GitHub può ritardare un po' gli avvii programmati: di solito la notifica arriva entro 5–15 minuti.)
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: notifiche-segnalazioni
+  cancel-in-progress: false
+jobs:
+  notifiche:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix .github/scripts --no-save --no-audit --no-fund firebase-admin@14
+      - name: Manda le notifiche delle segnalazioni
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/notifiche_segnalazioni.mjs

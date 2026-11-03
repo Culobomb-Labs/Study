@@ -24,6 +24,7 @@ while (true) {
       const value = current.data();
       if (!closed.has(value.status) || !(value.updatedAt instanceof Timestamp) || value.updatedAt.toMillis() > cutoff.toMillis()) return false;
       tx.delete(candidate.ref);
+      tx.delete(db.collection("reportNotify").doc(candidate.id)); // promemoria delle notifiche già inviate
       return true;
     });
     if (deleted) removed++;

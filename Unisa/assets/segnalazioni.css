@@ -192,3 +192,10 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 #contact2 .google-note{margin-top:8px}
 
 .quota-at{color:var(--ink);font-weight:600}
+
+/* avvisi delle segnalazioni: l'interruttore delle notifiche */
+.report-push{margin:0 0 22px}
+.report-push > p{margin:0 0 10px;color:var(--ua-muted,#5d636b);font-size:14.5px;line-height:1.5}
+.report-push > p b{color:inherit;color:var(--ua-ink,#111418)}
+.report-push .ua-np-nt-card{margin:0}
+.report-push .ua-np-nt-card:empty{display:none}
