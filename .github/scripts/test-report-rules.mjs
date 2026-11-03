@@ -70,5 +70,37 @@ try {
   batch.set(qa,{count:1,lastReportId:r1.id,updatedAt:serverTimestamp()});
   batch.set(r1,anotherPayload());batch.set(r2,anotherPayload());
   await assertFails(batch.commit());
+  // conversazione: risposte dell'utente e dell'amministratore
+  const reply = (db, reportRef, testo) => {
+    const r = doc(db, 'reports', reportRef.id), m = doc(collection(r, 'messaggi'));
+    const b = writeBatch(db);
+    b.set(m, { da: 'utente', uid: 'reader', testo, createdAt: serverTimestamp() });
+    b.update(r, { userReplyAt: serverTimestamp(), lastReplyId: m.id, updatedAt: serverTimestamp() });
+    return b.commit();
+  };
+  await assertSucceeds(reply(user, first, 'Ecco il link del drive'));
+  await assertFails(reply(user, first, 'subito un altro'));                       // meno di 30 secondi
+  await assertFails(reply(another, first, 'non è mia'));                          // non è sua
+  await assertFails(reply(user, first, 'x'.repeat(551)));                         // troppo lunga
+  {                                                                               // messaggio senza aggiornare la segnalazione
+    const m = doc(collection(doc(user, 'reports', first.id), 'messaggi'));
+    await assertFails(setDoc(m, { da: 'utente', uid: 'reader', testo: 'ciao', createdAt: serverTimestamp() }));
+  }
+  {                                                                               // utente che si spaccia per l'amministratore
+    const r = doc(user, 'reports', first.id), m = doc(collection(r, 'messaggi')); const b = writeBatch(user);
+    b.set(m, { da: 'admin', uid: 'reader', testo: 'finto', createdAt: serverTimestamp() });
+    b.update(r, { userReplyAt: serverTimestamp(), lastReplyId: m.id, updatedAt: serverTimestamp() });
+    await assertFails(b.commit());
+  }
+  await assertFails(updateDoc(doc(user, 'reports', first.id), { status: 'resolved', updatedAt: serverTimestamp() }));
+  {                                                                               // l'amministratore risponde
+    const r = doc(admin, 'reports', first.id), m = doc(collection(r, 'messaggi')); const b = writeBatch(admin);
+    b.set(m, { da: 'admin', uid: 'admin', testo: 'Grazie, aggiunto!', createdAt: serverTimestamp() });
+    b.update(r, { lastAdminMsgId: m.id, updatedAt: serverTimestamp() });
+    await assertSucceeds(b.commit());
+  }
+  const { getDocs } = await import('firebase/firestore');
+  await assertSucceeds(getDocs(collection(doc(user, 'reports', first.id), 'messaggi')));
+  await assertFails(getDocs(collection(doc(another, 'reports', first.id), 'messaggi')));
   console.log('Report security tests passed.');
 } finally { await env.cleanup(); }

@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, getRedirectResult, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
-import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
+import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp, writeBatch } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
 const app = getApps().find(a => a.name === '[DEFAULT]') || initializeApp({apiKey:'AIzaSyAI8QZjC3qSNq33bNBk7Ls19bjanc4-QnQ',authDomain:'appunti-unisa.firebaseapp.com',projectId:'appunti-unisa',storageBucket:'appunti-unisa.firebasestorage.app',messagingSenderId:'682409351930',appId:'1:682409351930:web:728a3ba5a1d23ffe0a0743'});
 const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
@@ -18,6 +18,10 @@ function reportDateElement(timestamp){
   return time;
 }
 let admin=false;
+/* Conversazioni: reports/<id>/messaggi. Un ascolto per segnalazione, tenuto finché la segnalazione è in elenco. */
+const threads=new Map(); // id -> {docs, unsub, seen:Set, first:boolean}
+function stopThreads(){threads.forEach(t=>t.unsub&&t.unsub());threads.clear();}
+const MAX_REPLY_USER=550, MAX_REPLY_ADMIN=1500;
 const isAdmin=()=>admin;
 let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
 for(const id of ['report-search','report-filter','report-sort']) document.getElementById(id).addEventListener('input',()=>renderReports());
@@ -96,7 +100,7 @@ onAuthStateChanged(auth,async u=>{
   if(unsubscribe){unsubscribe();unsubscribe=null;}
   if(quotaUnsub){quotaUnsub();quotaUnsub=null;} quotaData=null; quotaFull=false;
   $('#list').replaceChildren(); $('#list-message').textContent=u?'Verifica dell’account…':'Accedi per vedere le segnalazioni.';
-  drafts.clear(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
+  drafts.clear(); stopThreads(); admin=false; user=u; readyUser=null; msg(''); $('#login').hidden=!!u; $('#login').disabled=false;
   if($('#switch-account'))$('#switch-account').hidden=!u;
   $('#identity').textContent=u?(u.displayName||u.email):''; $('#send').disabled=true;
   if(window.UAContact)window.UAContact.setUser(u&&u.emailVerified!==false?u.email:null);
@@ -129,6 +133,8 @@ onAuthStateChanged(auth,async u=>{
   const seenKey='ua-report-seen-v1:'+u.uid;
   try {const saved=JSON.parse(localStorage.getItem(seenKey)||'{}');known=new Map(Object.entries(saved));} catch(e) {known=new Map();}
   renderReports=()=>{
+    // se stavi scrivendo una risposta, dopo l'aggiornamento della lista il cursore resta lì
+    const ae=document.activeElement, refocus=ae&&ae.dataset&&ae.dataset.replyFor?{id:ae.dataset.replyFor,a:ae.selectionStart,b:ae.selectionEnd}:null;
     $('#list').replaceChildren();
     const term=isAdmin()?$('#report-search').value.trim().toLocaleLowerCase('it'):'';
     const filter=isAdmin()?$('#report-filter').value:'all';
@@ -147,7 +153,7 @@ onAuthStateChanged(auth,async u=>{
       if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
       if(d.contact){const c=document.createElement('p');c.className='contact-line';c.append('Contatto: ');if(window.UAContact)c.append(window.UAContact.render(d.contact,document,d.authorEmail));else c.append(String(d.contact));card.append(c)}
       else if(isAdmin()){const c=document.createElement('p');c.className='contact-line';c.textContent='Contatto: risposta qui sul sito';card.append(c)}
-      if(d.adminComment){const response=document.createElement('div'), heading=document.createElement('strong'), body=document.createElement('p');response.className='admin-response';heading.textContent='Risposta dell’amministratore';body.textContent=d.adminComment;response.append(heading,body);card.append(response)}
+      card.append(threadEl(item,d));
       if(isAdmin()){
         /* stato: quattro pulsanti colorati al posto del menu a tendina */
         const group=document.createElement('div'), gl=document.createElement('span'), row=document.createElement('div');
@@ -163,14 +169,11 @@ onAuthStateChanged(auth,async u=>{
           btns.push(b); row.append(b);
         }
         paintPick(d.status); group.append(gl,row); card.append(group);
-        const commentLabel=document.createElement('label'), input=document.createElement('textarea'), save=document.createElement('button'), result=document.createElement('p');
-        commentLabel.innerHTML='Risposta all’utente <span class="optional">la vede solo chi ha inviato la segnalazione</span>'; input.rows=3; input.maxLength=1500; input.value=drafts.has(item.id)?drafts.get(item.id):(d.adminComment||'');input.oninput=()=>drafts.set(item.id,input.value);input.placeholder='Scrivi una risposta…';
-        save.type='button';save.className='save-comment';save.textContent='Salva risposta';result.setAttribute('role','status');
-        save.onclick=async()=>{save.disabled=true;result.textContent='Salvataggio…';try{const value=input.value.trim();await updateDoc(doc(db,'reports',item.id),{adminComment:value,updatedAt:serverTimestamp()});if(drafts.get(item.id)?.trim()===value)drafts.delete(item.id);result.textContent='Risposta salvata.'}catch(e){result.textContent='Impossibile salvare la risposta.'}finally{save.disabled=false}};
-        commentLabel.append(input);card.append(commentLabel,save,result);
       }
+      card.append(composerEl(item,d));
       $('#list').append(card);
     }
+    if(refocus){const t=document.querySelector(`textarea[data-reply-for="${refocus.id}"]`);if(t){t.focus({preventScroll:true});try{t.setSelectionRange(refocus.a,refocus.b);}catch(e){}}}
   };
   unsubscribe=onSnapshot(isAdmin()?ref:query(ref,where('userId','==',u.uid)),snap=>{
     if(version!==authVersion)return;
@@ -187,9 +190,88 @@ onAuthStateChanged(auth,async u=>{
     }
     known=current; initial=false;
     if(!snap.metadata.fromCache && !snap.metadata.hasPendingWrites){try{localStorage.setItem(seenKey,JSON.stringify(Object.fromEntries(current)));}catch(e){}}
-    latestDocs=snap.docs.slice(); renderReports();
+    latestDocs=snap.docs.slice(); watchThreads(latestDocs,version); renderReports();
   },()=>$('#list-message').textContent='Impossibile caricare le segnalazioni. Riprova più tardi.');
 });
+function watchThreads(docs,version){
+  const ids=new Set(docs.map(x=>x.id));
+  threads.forEach((t,id)=>{if(!ids.has(id)){t.unsub&&t.unsub();threads.delete(id);}});
+  for(const item of docs){
+    if(threads.has(item.id))continue;
+    const t={docs:[],unsub:null,seen:new Set(),first:true};
+    threads.set(item.id,t);
+    t.unsub=onSnapshot(collection(db,'reports',item.id,'messaggi'),snap=>{
+      if(version!==authVersion)return;
+      t.docs=snap.docs.slice();
+      for(const m of snap.docs){
+        if(t.seen.has(m.id))continue; t.seen.add(m.id);
+        const x=m.data();
+        // avviso in pagina per i messaggi nuovi dell'altra persona (non al primo caricamento)
+        if(!t.first && !m.metadata.hasPendingWrites && x.uid!==user?.uid){
+          const d=latestDocs.find(r=>r.id===item.id)?.data()||{};
+          reportNotice(x.da==='admin'?'Nuova risposta dell’amministratore':'Nuova risposta dall’utente',d.title,x.testo,x.createdAt);
+        }
+      }
+      t.first=false;
+      renderReports();
+    },()=>{});
+  }
+}
+const msgTime=ts=>{const dt=ts?.toDate?.();return dt instanceof Date&&!Number.isNaN(dt.getTime())?reportDateFormat.format(dt).replace(',', ' ·'):'';};
+function threadEl(item,d){
+  const t=threads.get(item.id), msgs=(t?t.docs:[]).map(m=>m.data({serverTimestamps:'estimate'}));
+  msgs.sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));
+  // la risposta scritta prima delle conversazioni (campo adminComment) resta come primo messaggio
+  if(d.adminComment) msgs.unshift({da:'admin',testo:d.adminComment});
+  const box=document.createElement('div'); box.className='thread';
+  if(!msgs.length){box.hidden=true;return box;}
+  const h=document.createElement('strong'); h.className='thread-h'; h.textContent='Conversazione'; box.append(h);
+  for(const m of msgs){
+    const mine=isAdmin()?m.da==='admin':m.da==='utente';
+    const el=document.createElement('div'); el.className='msg '+(m.da==='admin'?'msg-admin':'msg-utente')+(mine?' msg-mine':'');
+    const who=document.createElement('span'); who.className='msg-who';
+    who.textContent=(mine?'Tu':m.da==='admin'?'Amministratore':'Utente')+(msgTime(m.createdAt)?' · '+msgTime(m.createdAt):'');
+    const body=document.createElement('p');
+    // i link (http/https) diventano cliccabili; il resto resta testo semplice
+    String(m.testo||'').split(/(https?:\/\/[^\s<>"]+)/g).forEach((part,k)=>{
+      if(k%2){const a=document.createElement('a');a.href=part;a.textContent=part;a.target='_blank';a.rel='noopener noreferrer';body.append(a);}
+      else if(part)body.append(part);
+    });
+    el.append(who,body); box.append(el);
+  }
+  return box;
+}
+function composerEl(item,d){
+  const max=isAdmin()?MAX_REPLY_ADMIN:MAX_REPLY_USER, key='reply:'+item.id;
+  const wrap=document.createElement('div'); wrap.className='composer';
+  const label=document.createElement('label'), input=document.createElement('textarea'), send=document.createElement('button'), result=document.createElement('p');
+  label.innerHTML=isAdmin()?'Scrivi all’utente <span class="optional">lo vede solo chi ha inviato la segnalazione; gli arriva una notifica</span>':'Rispondi all’amministratore <span class="optional">ad esempio il link o le informazioni che ti ha chiesto</span>';
+  input.rows=3; input.maxLength=max; input.dataset.replyFor=item.id; input.placeholder=isAdmin()?'Scrivi una risposta…':'Scrivi la tua risposta…';
+  input.value=drafts.get(key)||''; input.oninput=()=>{drafts.set(key,input.value);send.disabled=!input.value.trim();};
+  send.type='button'; send.className='save-comment send-reply'; send.textContent='Invia'; send.disabled=!input.value.trim();
+  result.setAttribute('role','status'); result.className='composer-msg';
+  send.onclick=async()=>{
+    const testo=input.value.trim(); if(!testo)return;
+    send.disabled=true; result.textContent='Invio…';
+    try{
+      const r=doc(db,'reports',item.id), m=doc(collection(r,'messaggi')), b=writeBatch(db);
+      if(isAdmin()){
+        b.set(m,{da:'admin',uid:user.uid,testo,createdAt:serverTimestamp()});
+        b.update(r,{lastAdminMsgId:m.id,updatedAt:serverTimestamp()}); // la vecchia risposta (adminComment) resta com'è
+      } else {
+        b.set(m,{da:'utente',uid:user.uid,testo,createdAt:serverTimestamp()});
+        b.update(r,{userReplyAt:serverTimestamp(),lastReplyId:m.id,updatedAt:serverTimestamp()});
+      }
+      await b.commit();
+      drafts.delete(key); input.value=''; result.textContent='Inviata.';
+    }catch(e){
+      result.textContent=isAdmin()?'Invio non riuscito. Riprova.':'Invio non riuscito. Aspetta qualche secondo tra una risposta e l’altra e controlla la connessione.';
+      send.disabled=false;
+    }
+  };
+  label.append(input); wrap.append(label,send,result);
+  return wrap;
+}
 function reportNotice(heading,title,body,createdAt){
   const box=document.createElement('article'), strong=document.createElement('strong'), subject=document.createElement('p'), text=document.createElement('p'), close=document.createElement('button');
   box.className='report-notice';strong.textContent=heading;subject.textContent=title||'';text.textContent=body||'';

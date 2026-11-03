@@ -1,6 +1,7 @@
 // Notifiche delle segnalazioni (Firebase Cloud Messaging), lanciato da GitHub ogni 5 minuti.
 //   - all'amministratore: "Nuova segnalazione" per ogni segnalazione arrivata;
-//   - a chi l'ha inviata: quando cambia lo stato o arriva (o cambia) la risposta dell'amministratore.
+//   - a chi l'ha inviata: quando cambia lo stato o arriva un messaggio dell'amministratore;
+//   - all'amministratore: quando chi l'ha inviata risponde nella conversazione (reports/<id>/messaggi).
 // Il piano gratuito di Firebase non ha Cloud Functions: per questo il controllo lo fa GitHub, a intervalli.
 //
 // Dove sono i dati (Firestore):
@@ -97,10 +98,10 @@ for (const r of changed.docs) {
   const d = r.data();
   const noteRef = db.collection("reportNotify").doc(r.id);
   const noteSnap = await noteRef.get();
-  const note = noteSnap.exists ? noteSnap.data() : { admin: false, status: "new", comment: "" };
+  const note = noteSnap.exists ? noteSnap.data() : { admin: false, status: "new", comment: "", reply: "", adminMsg: "" };
   const status = STATUS[d.status] ? d.status : "new";
   const comment = typeof d.adminComment === "string" ? d.adminComment.trim() : "";
-  const next = { admin: note.admin, status: note.status, comment: note.comment, aggiornato: FieldValue.serverTimestamp() };
+  const next = { admin: note.admin, status: note.status, comment: note.comment || "", reply: note.reply || "", adminMsg: note.adminMsg || "", aggiornato: FieldValue.serverTimestamp() };
 
   // 1. all'amministratore: segnalazione nuova
   if (!note.admin) {
@@ -115,18 +116,39 @@ for (const r of changed.docs) {
     next.admin = true;
   }
 
-  // 2. a chi l'ha inviata: stato cambiato e/o risposta nuova (in un'unica notifica)
+  // 2. a chi l'ha inviata: stato cambiato e/o messaggio nuovo dell'amministratore (in un'unica notifica).
+  //    Il messaggio è l'ultimo della conversazione (lastAdminMsgId) oppure la vecchia risposta unica (adminComment).
   const statusChanged = status !== note.status;
-  const commentChanged = comment !== (note.comment || "") && comment !== "";
+  let adminText = "";
+  if (d.lastAdminMsgId && d.lastAdminMsgId !== (note.adminMsg || "")) {
+    const m = await r.ref.collection("messaggi").doc(d.lastAdminMsgId).get();
+    adminText = m.exists ? String(m.data().testo || "").trim() : "";
+    next.adminMsg = d.lastAdminMsgId;
+  } else if (comment !== (note.comment || "") && comment !== "") adminText = comment;
+  const commentChanged = adminText !== "";
   if ((statusChanged || commentChanged) && d.userId && d.userId !== adminUid) {
     const tokens = await deviceTokens(d.userId);
     const titolo = statusChanged ? STATUS_TITLE[status] : "Nuova risposta alla tua segnalazione";
     const parts = [`“${clip(d.title, 70)}”`];
     if (statusChanged) parts.push(`Stato: ${STATUS[status]}`);
-    if (commentChanged) parts.push(`Risposta: ${clip(comment, 160)}`);
+    if (commentChanged) parts.push(`Risposta: ${clip(adminText, 160)}`);
     const n = await send(d.userId, tokens, { id: `seg-${r.id}-${Date.now()}`, titolo, testo: parts.join(" · ") });
     console.log(`  ${r.id}: ${statusChanged ? "stato " + status : ""}${statusChanged && commentChanged ? " + " : ""}${commentChanged ? "risposta" : ""} → autore (${n}/${tokens.length} dispositivi)`);
     sent += n;
+  }
+  // 3. all'amministratore: chi ha segnalato ha risposto (lastReplyId = il suo ultimo messaggio)
+  if (d.lastReplyId && d.lastReplyId !== (note.reply || "")) {
+    const m = await r.ref.collection("messaggi").doc(d.lastReplyId).get();
+    const testo = m.exists ? m.data().testo : "";
+    const tokens = await adminTokens();
+    const n = await send(adminUid, tokens, {
+      id: `seg-${r.id}-r-${d.lastReplyId}`,
+      titolo: `Risposta a “${clip(d.title, 60)}”`,
+      testo: clip(testo || "Ha risposto alla segnalazione.", 200),
+    });
+    console.log(`  ${r.id}: risposta dell'utente → amministratore (${n}/${tokens.length} dispositivi)`);
+    sent += n;
+    next.reply = d.lastReplyId;
   }
   next.status = status;
   if (comment) next.comment = comment;

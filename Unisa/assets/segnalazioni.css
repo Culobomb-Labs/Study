@@ -206,3 +206,17 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .switch-account:hover{background:var(--soft,var(--ua-soft))}
 .switch-account:disabled{opacity:.6;cursor:default}
 @media(max-width:420px){.switch-account{width:100%}}
+
+/* conversazione della segnalazione */
+.thread{margin-top:14px;display:grid;gap:8px}
+.thread-h{font-size:13px;font-weight:600;color:var(--muted)}
+.msg{padding:10px 13px;border-radius:12px;max-width:92%;border:1px solid var(--line)}
+.msg p{margin:4px 0 0}
+.msg-who{display:block;font:500 12px/1.3 var(--font-mono);color:var(--muted)}
+.msg-admin{background:var(--accent-soft);border-color:var(--accent-line,var(--line));border-left:3px solid var(--accent);justify-self:start}
+.msg-utente{background:var(--surface);justify-self:start}
+.msg-mine{justify-self:end}
+.composer{margin-top:4px}
+.composer-msg{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.composer-msg:empty{display:none}
+.msg a{color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-all}

@@ -27,7 +27,7 @@ while (true) {
       tx.delete(db.collection("reportNotify").doc(candidate.id)); // promemoria delle notifiche già inviate
       return true;
     });
-    if (deleted) removed++;
+    if (deleted) { removed++; await db.recursiveDelete(candidate.ref.collection("messaggi")); } // anche la conversazione
   }
   cursor = page.docs[page.docs.length - 1];
   if (page.size < 200) break;

@@ -132,12 +132,29 @@ service cloud.firestore {
           || resource.data.userId == request.auth.uid
         );
 
+      // chi ha inviato la segnalazione può solo segnare che ha risposto (insieme al messaggio, vedi "messaggi"):
+      // ultima risposta adesso, id del messaggio appena scritto, al massimo una risposta ogni 30 secondi
+      allow update: if googleUser()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data)
+          .affectedKeys()
+          .hasOnly(['userReplyAt', 'lastReplyId', 'updatedAt'])
+        && request.resource.data.userReplyAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.lastReplyId is string
+        && existsAfter(/databases/$(database)/documents/reports/$(reportId)/messaggi/$(request.resource.data.lastReplyId))
+        && (
+          !('userReplyAt' in resource.data)
+          || request.time > resource.data.userReplyAt + duration.value(30, 's')
+        );
+
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data)
           .affectedKeys()
           .hasOnly([
             'status',
             'adminComment',
+            'lastAdminMsgId',
             'updatedAt'
           ])
         && request.resource.data.status in [
@@ -158,6 +175,40 @@ service cloud.firestore {
         && request.resource.data.updatedAt == request.time;
 
       allow delete: if false;
+
+      /* Conversazione della segnalazione: messaggi dell'amministratore e di chi l'ha inviata.
+         La leggono solo loro due. Nessuno modifica o cancella i messaggi (li toglie la pulizia dopo 30 giorni). */
+      match /messaggi/{msgId} {
+        function report() {
+          return get(/databases/$(database)/documents/reports/$(reportId)).data;
+        }
+        function validMessage(who) {
+          return request.resource.data.keys().hasOnly(['da', 'uid', 'testo', 'createdAt'])
+            && request.resource.data.keys().hasAll(['da', 'uid', 'testo', 'createdAt'])
+            && request.resource.data.da == who
+            && request.resource.data.uid == request.auth.uid
+            && request.resource.data.testo is string
+            && request.resource.data.testo.size() >= 1
+            && request.resource.data.createdAt == request.time;
+        }
+
+        allow read: if signedIn()
+          && (isAdmin() || report().userId == request.auth.uid);
+
+        allow create: if isAdmin()
+          && validMessage('admin')
+          && request.resource.data.testo.size() <= 1500;
+
+        // l'utente scrive il messaggio e, nella stessa operazione, aggiorna la segnalazione (userReplyAt, lastReplyId)
+        allow create: if googleUser()
+          && report().userId == request.auth.uid
+          && validMessage('utente')
+          && request.resource.data.testo.size() <= 550
+          && getAfter(/databases/$(database)/documents/reports/$(reportId)).data.lastReplyId == msgId
+          && getAfter(/databases/$(database)/documents/reports/$(reportId)).data.userReplyAt == request.time;
+
+        allow update, delete: if false;
+      }
     }
 
     match /{document=**} {
