@@ -1024,6 +1024,87 @@
     }, { passive: true });
   }
 
+  /* ---------------- dal quiz al punto giusto del quaderno ----------------
+     I link "nel quaderno" dei quiz hanno la forma
+       Quaderno.html?trova=<domanda>&risp=<risposta giusta>&perche=<spiegazione>&da=quiz#<capitolo>
+     Dentro il capitolo si cerca il blocco (paragrafo, voce di elenco, riga di tabella, riquadro…) che ha più parole
+     in comune con domanda, risposta e spiegazione (le parole rare nel capitolo contano di più), lo si porta al centro
+     dello schermo e lo si evidenzia. Se qualcosa non torna resta il salto al capitolo, come prima. */
+  const STOPWORDS = new Set(("il lo la i gli le un una uno del dello della dei degli delle al allo alla ai agli alle dal dallo dalla dai dagli dalle " +
+    "nel nello nella nei negli nelle sul sullo sulla sui sugli sulle di da in con su per tra fra a e o ed od ma se non che chi cui come cosa quale quali " +
+    "quanto quanti quando dove perche è sono essere ha hanno ho fa fanno puo possono deve devono viene vengono si ne ci vi mi ti sempre solo anche piu meno " +
+    "molto tutto tutti tutte ogni questo questa questi queste quello quella quelli quelle suo sua suoi sue loro altro altra altri altre stesso stessa " +
+    "cioe ossia oppure invece mentre prima dopo poi gia ancora niente nessuno qualcosa indica significa serve servono vero falso giusta giusto " +
+    "the and for with").split(" "));
+  const stem = t => (t.length > 5 ? t.slice(0, 5) : t);
+  const words = s => (norm(s).match(/[a-z0-9]+/g) || []).filter(t => (t.length > 2 || /\d/.test(t)) && !STOPWORDS.has(t)).map(stem);
+
+  function findPassage(sec, query) {
+    const SEL = "p, li, tr, dt, dd, pre, figcaption, blockquote, summary, h3, h4, .def, .note, .exam, .levels > div, .vs > div, .flow > *";
+    let blocks = [...sec.querySelectorAll(SEL)].filter(b => !b.closest(".ch-head"));
+    blocks = blocks.filter(b => !blocks.some(o => o !== b && b.contains(o) && o.textContent.trim().length > 20)); // solo i più interni
+    if (!blocks.length) return null;
+    // titolo (h3/h4) più vicino sopra ogni blocco: dà un po' di contesto
+    const heads = [...sec.querySelectorAll("h3, h4")];
+    const headOf = b => { let h = null; for (const x of heads) { if (x === b) break; if (x.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) h = x; } return h; };
+    const info = blocks.map(b => ({ b, set: new Set(words(b.textContent)), text: norm(b.textContent).replace(/\s+/g, " ") }));
+    const df = new Map();
+    info.forEach(x => x.set.forEach(t => df.set(t, (df.get(t) || 0) + 1)));
+    const N = info.length, idf = t => Math.log(1 + N / (df.get(t) || 0.5));
+    const want = new Map();
+    query.forEach(([s, w]) => words(s).forEach(t => want.set(t, Math.max(want.get(t) || 0, w))));
+    const score = set => { let v = 0; want.forEach((w, t) => { if (set.has(t)) v += w * idf(t); }); return v; };
+    const phrase = norm(query[1][0]).replace(/\s+/g, " ").trim();
+    let best = null;
+    info.forEach(x => {
+      let v = score(x.set);
+      if (!v) return;
+      const h = headOf(x.b);
+      if (h && h !== x.b) v += 0.3 * score(new Set(words(h.textContent)));
+      if (phrase.length > 3 && phrase.length < 60 && x.text.includes(phrase)) v += 4;
+      v /= 1 + 0.12 * Math.log(1 + x.set.size / 10); // i blocchi lunghi non vincono solo perché lunghi
+      if (x.b.closest(".quiz")) v *= 0.6;             // meglio la spiegazione che le "domande lampo"
+      if (!best || v > best.v) best = { b: x.b, v };
+    });
+    return best && best.v > 1.5 ? best.b : null;
+  }
+
+  function quizTarget() {
+    const qs = new URLSearchParams(location.search);
+    const q = qs.get("trova");
+    if (q === null || !location.hash) return;
+    const sec = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!sec) return;
+    let hit = null;
+    try { hit = findPassage(sec, [[q, 1], [qs.get("risp") || "", 1.6], [qs.get("perche") || "", 0.8]]); } catch (e) {}
+    const target = hit || sec;
+    const hits = [];
+    if (hit) {
+      const d = hit.closest("details"); if (d) d.open = true;
+      hits.push(hit.tagName === "TR" ? hit : hit.closest(".levels > div, .vs > div") || hit);
+      // "…tre proprietà:" seguito dall'elenco: evidenzia anche l'elenco
+      const next = hit.nextElementSibling;
+      if (/^(P|H3|H4)$/.test(hit.tagName) && next && /:\s*$/.test(hit.textContent) && /^(UL|OL|DIV|TABLE|DL)$/.test(next.tagName)) hits.push(next);
+      hits.forEach(h => h.classList.add("ua-spot"));
+    }
+    let userMoved = false;
+    const place = () => { if (!userMoved) target.scrollIntoView({ block: hit ? "center" : "start" }); };
+    place();
+    ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, () => { userMoved = true; }, { once: true, passive: true }));
+    // le immagini caricano dopo e spostano la pagina: si riposiziona finché l'utente non scorre da solo
+    addEventListener("load", place, { once: true });
+    setTimeout(place, 400); setTimeout(place, 1200);
+    setTimeout(() => hits.forEach(h => h.classList.add("ua-spot-fade")), 6000);
+    const fromQuiz = qs.get("da") === "quiz";
+    const msg = hit ? "Ecco il punto da ripassare." : "Non ho trovato il punto preciso: ecco l'inizio del capitolo.";
+    if (fromQuiz) toast(msg, "Torna al quiz", () => {
+      // aperto in una nuova scheda: chiuderla riporta al quiz così com'era
+      try { window.close(); } catch (e) {}
+      setTimeout(() => { if (history.length > 1) history.back(); else if (document.referrer) location.href = document.referrer; }, 250);
+    });
+    else toast(msg);
+  }
+
   /* ---------------- avvio ---------------- */
   buildBar();
   buildCopyright();
@@ -1044,6 +1125,7 @@
   pushRefresh();
   checkImport();
   trackLast();
+  quizTarget();
   registerSW();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }
@@ -1051,5 +1133,5 @@
   });
   if (IS_HOME) homeEffects();
 
-  window.UA = { openSearch, closeSearch, cycleTheme };
+  window.UA = { openSearch, closeSearch, cycleTheme, findPassage };
 })();
