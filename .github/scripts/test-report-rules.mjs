@@ -34,7 +34,7 @@ try {
   });
   await assertSucceeds(submit(user,'reader',1));
   for(let i=0;i<3;i++) await assertSucceeds(submit(user));
-  // blocco di 24 ore dalla quinta segnalazione (non a mezzanotte)
+  // blocco di 12 ore dalla quinta segnalazione (non a mezzanotte)
   const thirdClaims={...claims,email:'third@example.com'};
   const third=env.authenticatedContext('third',thirdClaims).firestore();
   const submitThird=count=>{
@@ -48,16 +48,16 @@ try {
   const setThird=(count,hoursAgo)=>env.withSecurityRulesDisabled(async ctx => {
     await setDoc(doc(ctx.firestore(),'reportQuota','third'),{count,lastReportId:'old-'+count+'-'+hoursAgo,updatedAt:new Date(Date.now()-hoursAgo*3600000)});
   });
-  await setThird(5,23);
+  await setThird(5,11);
   await assertFails(submitThird(1));
   await assertFails(submitThird(6));
-  await setThird(5,25);
+  await setThird(5,13);
   await assertFails(submitThird(6));
   await assertSucceeds(submitThird(1));
   await setThird(2,2);
   await assertFails(submitThird(1));
   await assertSucceeds(submitThird(3));
-  await setThird(3,30);
+  await setThird(3,15);
   await assertFails(submitThird(4));
   await assertSucceeds(submitThird(1));
   const parallel=await Promise.allSettled([submit(user),submit(user)]);

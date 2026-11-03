@@ -47,9 +47,9 @@ service cloud.firestore {
         )
           ? request.resource.data.count == 1
           : (
-              // 24 ore dopo l'ultima segnalazione il conteggio riparte da 1:
-              // chi le finisce tutte e 5 aspetta 24 ore dalla quinta.
-              request.time >= resource.data.updatedAt + duration.value(24, 'h')
+              // 12 ore dopo l'ultima segnalazione il conteggio riparte da 1:
+              // chi le finisce tutte e 5 aspetta 12 ore dalla quinta.
+              request.time >= resource.data.updatedAt + duration.value(12, 'h')
                 ? request.resource.data.count == 1
                 : request.resource.data.count == resource.data.count + 1
             );

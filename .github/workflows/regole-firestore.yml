@@ -1,0 +1,39 @@
+name: Pubblica le regole di Firestore
+# Quando cambia firestore.rules: prima le prova sull'emulatore (test-report-rules.mjs), poi le pubblica
+# sul progetto Firebase con il segreto FIREBASE_SERVICE_ACCOUNT. Così non serve incollarle nella console.
+on:
+  push:
+    branches: [main]
+    paths: ['firestore.rules']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: regole-firestore
+  cancel-in-progress: false
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-audit --no-fund firebase firebase-tools @firebase/rules-unit-testing
+      - name: Prova le regole sull'emulatore
+        run: |
+          echo '{"emulators":{"firestore":{"port":8080},"ui":{"enabled":false}}}' > firebase.json
+          npx firebase emulators:exec --only firestore --project demo-report-rules "node .github/scripts/test-report-rules.mjs"
+      - name: Pubblica le regole su Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+          echo '{"firestore":{"rules":"firestore.rules"}}' > firebase.json
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx firebase deploy --only firestore:rules --project appunti-unisa --non-interactive
+          rm -f "$RUNNER_TEMP/sa.json"

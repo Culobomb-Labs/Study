@@ -51,11 +51,11 @@ function paintCounter(){const t=$('#form').elements.text, n=t.value.length, c=$(
   c.dataset.state=st; if(bar){bar.style.width=Math.min(100,100*n/MAX_TEXT)+'%';bar.dataset.state=st;}}
 $('#form').elements.text.addEventListener('input',paintCounter); paintCounter();
 
-/* Limite giornaliero: barra delle segnalazioni usate oggi (giorno di Roma, come nelle regole) e conto alla rovescia */
+/* Limite: 5 segnalazioni, poi 12 ore di attesa dall'ultima (come nelle regole); barra delle segnalazioni usate e conto alla rovescia */
 const QUOTA_MAX=5;
 let quotaUnsub=null, quotaData=null, quotaFull=false;
 const pad=n=>String(n).padStart(2,'0');
-const QUOTA_WINDOW=24*36e5; // 24 ore dall'ultima segnalazione, come nelle regole
+const QUOTA_WINDOW=12*36e5; // 12 ore dall'ultima segnalazione, come nelle regole (firestore.rules)
 function quotaUntil(){const t=quotaData?.updatedAt?.toDate?.(); return t ? t.getTime()+QUOTA_WINDOW : 0;}
 function usedToday(){return Date.now()<quotaUntil() ? Math.max(0,Math.min(QUOTA_MAX,quotaData.count|0)) : 0;}
 /* "oggi alle 18:30", "domani alle 11:09" oppure "lunedì 3 novembre alle 9:00" (ora del dispositivo) */
@@ -81,7 +81,7 @@ function paintQuota(){
     const strong=document.createElement('b'); strong.className='quota-cd'; strong.textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;
     const at=document.createElement('b'); at.className='quota-at'; at.textContent=resetLabel(quotaUntil());
     $('#quota-msg').append('Hai usato tutte e 5 le segnalazioni. Potrai inviarne altre 5 ',at,', tra ',strong,'.');
-  } else $('#quota-msg').textContent=(left===1?'Ti resta 1 segnalazione.':`Te ne restano ${left}.`)+(used?' Finite tutte e 5, dovrai aspettare 24 ore.':'');
+  } else $('#quota-msg').textContent=(left===1?'Ti resta 1 segnalazione.':`Te ne restano ${left}.`)+(used?' Finite tutte e 5, dovrai aspettare 12 ore.':'');
   $('#send').disabled=!canSend();
 }
 setInterval(()=>{ if(user && readyUser===user && !$('#quota').hidden) paintQuota(); },1000);
@@ -221,7 +221,7 @@ $('#form').onsubmit=async e=>{
     });
     if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata','ok');}
   } catch(e) {
-    if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai usato tutte e 5 le segnalazioni: riprova 24 ore dopo la quinta.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
+    if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai usato tutte e 5 le segnalazioni: riprova 12 ore dopo la quinta.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
   } finally {sending=false;$('#send').disabled=!canSend();}
 };
 
