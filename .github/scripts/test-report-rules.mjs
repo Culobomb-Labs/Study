@@ -102,5 +102,16 @@ try {
   const { getDocs } = await import('firebase/firestore');
   await assertSucceeds(getDocs(collection(doc(user, 'reports', first.id), 'messaggi')));
   await assertFails(getDocs(collection(doc(another, 'reports', first.id), 'messaggi')));
+  // eliminazione: solo l'amministratore
+  const { deleteDoc } = await import('firebase/firestore');
+  await assertFails(deleteDoc(doc(user, 'reports', first.id)));
+  await assertFails(deleteDoc(doc(another, 'reports', first.id)));
+  {
+    const msgs = await getDocs(collection(doc(admin, 'reports', first.id), 'messaggi'));
+    const b = writeBatch(admin);
+    msgs.docs.forEach(m => b.delete(m.ref));
+    b.delete(doc(admin, 'reports', first.id));
+    await assertSucceeds(b.commit());
+  }
   console.log('Report security tests passed.');
 } finally { await env.cleanup(); }

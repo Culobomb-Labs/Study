@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, getRedirectResult, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
-import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp, writeBatch } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
+import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp, writeBatch, getDocs } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
 const app = getApps().find(a => a.name === '[DEFAULT]') || initializeApp({apiKey:'AIzaSyAI8QZjC3qSNq33bNBk7Ls19bjanc4-QnQ',authDomain:'appunti-unisa.firebaseapp.com',projectId:'appunti-unisa',storageBucket:'appunti-unisa.firebasestorage.app',messagingSenderId:'682409351930',appId:'1:682409351930:web:728a3ba5a1d23ffe0a0743'});
 const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
@@ -169,7 +169,10 @@ onAuthStateChanged(auth,async u=>{
           btns.push(b); row.append(b);
         }
         paintPick(d.status); group.append(gl,row); card.append(group);
+        card.append(deleteEl(item));
       }
+      if(!isAdmin() && d.status==='rejected'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni rifiutate vengono eliminate 7 giorni dopo l’ultima modifica.';card.append(n)}
+      else if(!isAdmin() && d.status==='resolved'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni risolte vengono eliminate 30 giorni dopo l’ultima modifica.';card.append(n)}
       card.append(composerEl(item,d));
       $('#list').append(card);
     }
@@ -271,6 +274,27 @@ function composerEl(item,d){
   };
   label.append(input); wrap.append(label,send,result);
   return wrap;
+}
+/* Elimina (solo amministratore): due passaggi, "Elimina" e poi "Sì, elimina", per non cancellare per sbaglio.
+   Toglie la segnalazione e tutta la sua conversazione; chi l'ha inviata non riceve notifiche. */
+const confirmDelete=new Set();
+function deleteEl(item){
+  const wrap=document.createElement('div'); wrap.className='delete-row';
+  const b=document.createElement('button'); b.type='button'; b.className='delete-report';
+  const cancel=document.createElement('button'); cancel.type='button'; cancel.className='save-comment'; cancel.textContent='Annulla';
+  const out=document.createElement('span'); out.className='composer-msg'; out.setAttribute('role','status');
+  const paint=()=>{const on=confirmDelete.has(item.id); b.textContent=on?'Sì, elimina per sempre':'Elimina'; b.dataset.confirm=on?'1':''; cancel.hidden=!on;};
+  b.onclick=async()=>{
+    if(!confirmDelete.has(item.id)){confirmDelete.add(item.id);paint();return;}
+    b.disabled=true; cancel.hidden=true; out.textContent='Eliminazione…';
+    try{
+      const r=doc(db,'reports',item.id), msgs=await getDocs(collection(r,'messaggi')), batch=writeBatch(db);
+      msgs.docs.forEach(m=>batch.delete(m.ref)); batch.delete(r);
+      await batch.commit(); confirmDelete.delete(item.id);
+    }catch(e){out.textContent='Eliminazione non riuscita. Riprova.'; b.disabled=false; paint();}
+  };
+  cancel.onclick=()=>{confirmDelete.delete(item.id);paint();};
+  paint(); wrap.append(b,cancel,out); return wrap;
 }
 function reportNotice(heading,title,body,createdAt){
   const box=document.createElement('article'), strong=document.createElement('strong'), subject=document.createElement('p'), text=document.createElement('p'), close=document.createElement('button');

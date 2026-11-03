@@ -174,7 +174,8 @@ service cloud.firestore {
         )
         && request.resource.data.updatedAt == request.time;
 
-      allow delete: if false;
+      // solo l'amministratore elimina a mano (es. spam); le altre le toglie la pulizia notturna
+      allow delete: if isAdmin();
 
       /* Conversazione della segnalazione: messaggi dell'amministratore e di chi l'ha inviata.
          La leggono solo loro due. Nessuno modifica o cancella i messaggi (li toglie la pulizia dopo 30 giorni). */
@@ -207,7 +208,8 @@ service cloud.firestore {
           && getAfter(/databases/$(database)/documents/reports/$(reportId)).data.lastReplyId == msgId
           && getAfter(/databases/$(database)/documents/reports/$(reportId)).data.userReplyAt == request.time;
 
-        allow update, delete: if false;
+        allow update: if false;
+        allow delete: if isAdmin(); // insieme alla segnalazione
       }
     }
 

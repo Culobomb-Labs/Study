@@ -220,3 +220,12 @@ button:focus-visible,.entry select:focus-visible{outline:2px solid var(--accent)
 .composer-msg{margin:6px 0 0;font-size:13px;color:var(--muted)}
 .composer-msg:empty{display:none}
 .msg a{color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+
+/* eliminazione (amministratore) e avviso di scadenza (utente) */
+.delete-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.delete-row .save-comment{margin-top:0}
+.delete-report{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);font:600 13px var(--font-body);cursor:pointer}
+.delete-report:hover{color:#e5484d;border-color:#e5484d}
+.delete-report[data-confirm="1"]{background:#e5484d;border-color:#e5484d;color:#fff}
+.delete-report:disabled{opacity:.6;cursor:default}
+.expire-note{font-size:13px !important;color:var(--muted) !important}
