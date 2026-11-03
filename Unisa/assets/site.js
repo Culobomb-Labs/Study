@@ -9,6 +9,8 @@
   "use strict";
 
   const me = document.currentScript;
+  // pagina aperta nel pannello "Rivedi questo punto" di un quiz
+  const EMBED = window.self !== window.top && /[?&]da=quiz\b/.test(location.search);
   const ROOT = (me && me.dataset.root) || "./";
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
@@ -1088,7 +1090,13 @@
       hits.forEach(h => h.classList.add("ua-spot"));
     }
     let userMoved = false;
-    const place = () => { if (!userMoved) target.scrollIntoView({ block: hit ? "center" : "start" }); };
+    // scorre solo questa pagina (scrollIntoView, dentro il pannello del quiz, sposterebbe anche il quiz sotto)
+    const place = () => {
+      if (userMoved) return;
+      const r = (hits[0] || target).getBoundingClientRect(), last = hits.length ? hits[hits.length - 1].getBoundingClientRect() : r;
+      const h = last.bottom - r.top, gap = hit && h < innerHeight - 140 ? (innerHeight - h) / 2 : 80;
+      window.scrollTo(0, Math.max(0, r.top + scrollY - gap));
+    };
     place();
     ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, () => { userMoved = true; }, { once: true, passive: true }));
     // le immagini caricano dopo e spostano la pagina: si riposiziona finché l'utente non scorre da solo
@@ -1096,6 +1104,7 @@
     setTimeout(place, 400); setTimeout(place, 1200);
     setTimeout(() => hits.forEach(h => h.classList.add("ua-spot-fade")), 6000);
     const fromQuiz = qs.get("da") === "quiz";
+    if (EMBED) return; // nel pannello del quiz basta l'evidenziazione: per tornare c'è la × del pannello
     const msg = hit ? "Ecco il punto da ripassare." : "Non ho trovato il punto preciso: ecco l'inizio del capitolo.";
     if (fromQuiz) toast(msg, "Torna al quiz", () => {
       // aperto in una nuova scheda: chiuderla riporta al quiz così com'era
@@ -1105,7 +1114,73 @@
     else toast(msg);
   }
 
+
+  /* ---------------- pannello "Rivedi questo punto nel quaderno" (pagine dei quiz) ----------------
+     Il link si apre in un pannello sopra il quiz, nella stessa pagina: funziona uguale nel browser e nella
+     web app installata (Mac, iPhone, Android), dove una nuova scheda farebbe uscire dall'app.
+     Chiudendo il pannello (×, Esc, clic fuori, tasto indietro) il quiz è esattamente come prima.
+     Cmd/Ctrl+clic apre comunque il quaderno in una scheda a parte. */
+  let qs = null;
+  function closeQuizSheet(fromHistory) {
+    if (!qs || qs.hidden) return;
+    qs.hidden = true;
+    const f = qs.querySelector("iframe"); if (f) f.remove(); // tolto l'iframe, la cronologia torna quella del quiz
+    document.documentElement.classList.remove("ua-qs-open");
+    if (!fromHistory && history.state && history.state.uaSheet) history.back();
+    if (qs._from) try { qs._from.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function openQuizSheet(a) {
+    if (!qs) {
+      qs = el("div", { class: "ua-qs", role: "dialog", "aria-modal": "true", "aria-label": "Quaderno" });
+      qs.innerHTML = `<div class="ua-qs-box"><div class="ua-qs-head"><span class="ua-qs-t"></span>
+        <a class="ua-qs-ext" target="_blank" rel="noopener">Apri il quaderno</a>
+        <button type="button" class="ua-qs-x" aria-label="Chiudi e torna al quiz">×</button></div>
+        <div class="ua-qs-body"><p class="ua-qs-load">Cerco il punto nel quaderno…</p></div></div>`;
+      document.body.append(qs);
+      qs.addEventListener("click", e => { if (e.target === qs) closeQuizSheet(); });
+      qs.querySelector(".ua-qs-x").addEventListener("click", () => closeQuizSheet());
+      // a pannello aperto i tasti del quiz (1–4, A–D, Invio) non devono rispondere o andare avanti di nascosto
+      document.addEventListener("keydown", e => {
+        if (qs.hidden) return;
+        e.stopPropagation();
+        if (e.key === "Escape") { e.preventDefault(); closeQuizSheet(); }
+      }, true);
+      window.addEventListener("popstate", () => { if (!qs.hidden && !(history.state && history.state.uaSheet)) closeQuizSheet(true); });
+    }
+    const href = a.href, plain = href.split("?")[0] + "#" + (href.split("#")[1] || "");
+    qs._from = a;
+    qs.classList.remove("is-ready");
+    qs.querySelector(".ua-qs-t").textContent = a.dataset.cap ? "Quaderno · cap. " + a.dataset.cap : "Quaderno";
+    qs.querySelector(".ua-qs-ext").href = plain;
+    qs.hidden = false;
+    document.documentElement.classList.add("ua-qs-open");
+    // ogni volta un iframe nuovo: riusarne uno aggiungerebbe passi alla cronologia del quiz
+    const f = el("iframe", { title: "Quaderno" });
+    f.addEventListener("load", () => { if (f.src) qs.classList.add("is-ready"); });
+    f.src = href;
+    qs.querySelector(".ua-qs-body").append(f);
+    try { history.pushState(Object.assign({}, history.state || {}, { uaSheet: 1 }), ""); } catch (e) {}
+    qs.querySelector(".ua-qs-x").focus({ preventScroll: true });
+  }
+  function quizSheetLinks() {
+    document.addEventListener("click", e => {
+      const a = e.target.closest && e.target.closest("a.qlink");
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+      e.preventDefault();
+      openQuizSheet(a);
+    });
+  }
+
   /* ---------------- avvio ---------------- */
+  if (EMBED) {
+    // quaderno dentro il pannello di un quiz: solo il testo e il punto evidenziato, niente barra, pulsanti,
+    // accesso, news o "riprendi da dove eri" (quelli restano alla pagina del quiz sotto)
+    document.documentElement.classList.add("ua-embed");
+    applyTheme(getTheme());
+    quizTarget();
+    window.UA = { findPassage };
+    return;
+  }
   buildBar();
   buildCopyright();
   if (!IS_HOME && !IS_NEWS_PAGE) buildDock();
@@ -1126,6 +1201,7 @@
   checkImport();
   trackLast();
   quizTarget();
+  quizSheetLinks();
   registerSW();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }

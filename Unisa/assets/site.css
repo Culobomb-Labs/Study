@@ -287,3 +287,33 @@ tr.ua-spot > td,tr.ua-spot > th{background:var(--ua-mark) !important;transition:
 tr.ua-spot.ua-spot-fade{background:transparent !important;box-shadow:none}
 tr.ua-spot.ua-spot-fade > td,tr.ua-spot.ua-spot-fade > th{background:color-mix(in srgb,var(--ua-mark) 45%,transparent) !important}
 @media (prefers-reduced-motion:reduce){.ua-spot,tr.ua-spot > td{transition:none}}
+
+/* ---------- pannello del quaderno sopra il quiz ---------- */
+html.ua-qs-open,html.ua-qs-open body{overflow:hidden}
+.ua-qs{position:fixed;inset:0;z-index:2147483000;background:var(--ua-veil);display:flex;align-items:center;justify-content:center;
+  padding:max(24px,env(safe-area-inset-top,0px)) 24px max(24px,env(safe-area-inset-bottom,0px));animation:ua-qs-in .18s ease}
+.ua-qs[hidden]{display:none}
+.ua-qs-box{width:min(1100px,100%);height:100%;max-height:1000px;display:flex;flex-direction:column;background:var(--ua-bg);color:var(--ua-ink);
+  border:1px solid var(--ua-line);border-radius:16px;box-shadow:var(--ua-shadow);overflow:hidden}
+.ua-qs-head{display:flex;align-items:center;gap:12px;padding:8px 8px 8px 18px;border-bottom:1px solid var(--ua-line);flex:none}
+.ua-qs-t{flex:1;min-width:0;font:500 12.5px/1.3 var(--ua-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ua-muted);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ua-qs-ext{font:500 13.5px/1 var(--ua-font);color:var(--ua-muted);text-decoration:underline;text-underline-offset:3px;flex:none}
+.ua-qs-x{appearance:none;border:0;background:var(--ua-soft);color:var(--ua-ink);width:40px;height:40px;border-radius:10px;
+  font-size:24px;line-height:1;cursor:pointer;flex:none}
+.ua-qs-x:hover{background:var(--ua-line)}
+.ua-qs-body{position:relative;flex:1;min-height:0}
+.ua-qs-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--ua-bg);opacity:0;transition:opacity .2s}
+.ua-qs.is-ready iframe{opacity:1}
+.ua-qs-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;color:var(--ua-muted);font:500 14px/1.4 var(--ua-font)}
+.ua-qs.is-ready .ua-qs-load{display:none}
+@keyframes ua-qs-in{from{opacity:0}}
+@media (max-width:640px){
+  .ua-qs{padding:0;align-items:stretch}
+  .ua-qs-box{max-height:none;border:0;border-radius:0;padding-top:env(safe-area-inset-top,0px)}
+  .ua-qs-ext{display:none}
+}
+@media (prefers-reduced-motion:reduce){.ua-qs{animation:none}.ua-qs-body iframe{transition:none}}
+
+/* quaderno dentro il pannello: niente barra né pulsanti del sito */
+html.ua-embed #ua-bar,html.ua-embed .ua-bar,html.ua-embed .ua-dock,html.ua-embed .ua-copy{display:none !important}

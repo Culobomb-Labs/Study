@@ -548,9 +548,9 @@ const Q = [
 
 const STORE = "quiz-mp";
 const QUADERNO = "Quaderno%20di%20Android.html";
-/* Link al punto del quaderno: si apre in una nuova scheda, così il quiz (e l'elenco degli errori) resta com'è.
-   Il quaderno cerca nel capitolo il paragrafo che parla della domanda e lo evidenzia (vedi assets/site.js). */
-const qlink = (q, label) => `<a class="qlink" target="_blank" href="${QUADERNO}?trova=${encodeURIComponent(q.q)}&risp=${encodeURIComponent(String(q.o[0]).slice(0, 300))}&perche=${encodeURIComponent(String(q.e || "").slice(0, 300))}&da=quiz#${q.c}">${label}</a>`;
+/* Link al punto del quaderno: assets/site.js lo apre in un pannello sopra il quiz (il quiz e gli errori restano com'erano)
+   e nel quaderno cerca il paragrafo che parla della domanda per evidenziarlo. */
+const qlink = (q, label) => `<a class="qlink" target="_blank" data-cap="${esc(chap(q.c).n + " · " + chap(q.c).t)}" href="${QUADERNO}?trova=${encodeURIComponent(q.q)}&risp=${encodeURIComponent(String(q.o[0]).slice(0, 300))}&perche=${encodeURIComponent(String(q.e || "").slice(0, 300))}&da=quiz#${q.c}">${label}</a>`;
 const app = document.getElementById("app");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const chap = id => CHAPTERS.find(c => c.id === id);
@@ -689,7 +689,7 @@ function answer(k) {
   const last = run.i === run.items.length - 1;
   app.querySelector("#after").innerHTML = `
     <div class="fb"><b class="${ok ? "ok" : "ko"}">${ok ? "Giusto." : "Non è questa."}</b><p>${esc(it.q.e)}</p>
-      <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) ↗`)}</p></div>
+      <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) →`)}</p></div>
     <div class="next"><button class="btn solid" type="button" id="next">${last ? "Vedi il risultato" : "Avanti →"}</button></div>`;
   const nx = app.querySelector("#next");
   nx.onclick = () => { if (last) result(); else { run.i++; ask(); } };
@@ -710,7 +710,7 @@ function result(restored) {
   const errs = wrong.map(({ it, a }) => `<div class="err"><p class="eq">${esc(it.q.q)}</p>
       <p class="yours">La tua risposta: ${esc(it.opts[a.k].t)}</p>
       <p><b>Giusta:</b> ${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
-      <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) ↗`)}</p></div>`).join("");
+      <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) →`)}</p></div>`).join("");
   const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
   const verdict = pct >= 90 ? "Ottimo, questa parte la sai." : pct >= 70 ? "Buono. Ripassa gli errori qui sotto e rifallo." : pct >= 50 ? "Ci sei quasi: rileggi i capitoli segnati e riprova domani." : "Da ripassare: riprendi il quaderno e poi rifai il quiz.";
   app.innerHTML = `
