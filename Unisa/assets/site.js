@@ -8,6 +8,9 @@
 (function () {
   "use strict";
 
+  // alcune pagine lo includono già da sole e la pubblicazione lo aggiunge di nuovo: basta una volta
+  if (window.__uaSite) return;
+  window.__uaSite = true;
   const me = document.currentScript;
   // pagina aperta nel pannello "Rivedi questo punto" di un quiz
   const EMBED = window.self !== window.top && /[?&]da=quiz\b/.test(location.search);
@@ -1042,7 +1045,8 @@
   const words = s => (norm(s).match(/[a-z0-9]+/g) || []).filter(t => (t.length > 2 || /\d/.test(t)) && !STOPWORDS.has(t)).map(stem);
 
   function findPassage(sec, query) {
-    const SEL = "p, li, tr, dt, dd, pre, figcaption, blockquote, summary, h3, h4, .def, .note, .exam, .levels > div, .vs > div, .flow > *";
+    const SEL = "p, li, tr, dt, dd, pre, figcaption, blockquote, summary, h3, h4, .def, .note, .exam, .levels > div, .vs > div, .flow > *, " +
+      "div:not(:has(div, p, ul, ol, table, pre, h3, h4))"; // più le "schede" fatte solo di testo (es. la linea del tempo delle versioni)
     let blocks = [...sec.querySelectorAll(SEL)].filter(b => !b.closest(".ch-head"));
     blocks = blocks.filter(b => !blocks.some(o => o !== b && b.contains(o) && o.textContent.trim().length > 20)); // solo i più interni
     if (!blocks.length) return null;
@@ -1065,7 +1069,7 @@
       if (h && h !== x.b) v += 0.3 * score(new Set(words(h.textContent)));
       if (phrase.length > 3 && phrase.length < 60 && x.text.includes(phrase)) v += 4;
       v /= 1 + 0.12 * Math.log(1 + x.set.size / 10); // i blocchi lunghi non vincono solo perché lunghi
-      if (x.b.closest(".quiz")) v *= 0.6;             // meglio la spiegazione che le "domande lampo"
+      if (x.b.closest(".quiz")) v *= 0.45;            // meglio la spiegazione che le "domande lampo"
       if (!best || v > best.v) best = { b: x.b, v };
     });
     return best && best.v > 1.5 ? best.b : null;
