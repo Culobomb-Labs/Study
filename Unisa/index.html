@@ -55,8 +55,12 @@ h1 .h1-l + .h1-l{color:var(--muted)}
 /* "Unisa": solo il contorno delle lettere, sfumato dal viola all'azzurro con i colori dei corsi; il punto resta pieno */
 @supports ((-webkit-background-clip:text) or (background-clip:text)) and (-webkit-text-stroke:1px black){
   h1 .h1-l + .h1-l{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;
-    -webkit-text-stroke:clamp(2px,.035em,3.5px) transparent;-webkit-text-fill-color:var(--bg);color:var(--bg);
-    letter-spacing:.02em} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
+    -webkit-text-stroke:var(--u-stroke) transparent;-webkit-text-fill-color:var(--u-fill);color:var(--u-fill);
+    letter-spacing:var(--u-ls)} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
+  /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
+  :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 9%,var(--bg));--u-ls:.045em}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em}}
+  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em}
   h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
 }
 h1 .h1-dot{color:var(--ink)}
