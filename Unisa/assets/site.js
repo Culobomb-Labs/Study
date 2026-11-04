@@ -163,9 +163,31 @@
     return loading;
   }
 
+  /* Su PC/Mac la ricerca si apre "dentro" il pulsante Cerca della barra: il pulsante si allarga verso sinistra
+     e diventa il campo, con i risultati che scendono sotto. Su telefono (o se la barra non si vede) resta
+     la finestra al centro. */
+  function searchAnchor() {
+    if (innerWidth <= 640) return null;
+    const b = document.querySelector(".ua-bar .ua-open-search");
+    if (!b || !b.offsetWidth) return null;
+    const r = b.getBoundingClientRect();
+    return r.top >= 0 && r.bottom <= innerHeight ? r : null;
+  }
+  function placeSearch() {
+    const r = searchAnchor();
+    pal.classList.toggle("is-anchored", !!r);
+    if (!r) return;
+    const FIELD = 48;
+    pal.style.setProperty("--ay", Math.max(6, r.top + r.height / 2 - FIELD / 2) + "px");
+    pal.style.setProperty("--ar", Math.max(12, innerWidth - r.right) + "px");
+    pal.style.setProperty("--aw", r.width + "px");
+  }
+  window.addEventListener("resize", () => { if (pal && !pal.hidden) placeSearch(); });
+
   function openSearch(prefill) {
     closeNewsPanel(true);
     lastFocus = document.activeElement;
+    placeSearch();
     pal.hidden = false;
     document.documentElement.style.overflow = "hidden";
     if (typeof prefill === "string") input.value = prefill;

@@ -317,3 +317,15 @@ html.ua-qs-open,html.ua-qs-open body{overflow:hidden}
 
 /* quaderno dentro il pannello: niente barra né pulsanti del sito */
 html.ua-embed #ua-bar,html.ua-embed .ua-bar,html.ua-embed .ua-dock,html.ua-embed .ua-copy{display:none !important}
+
+/* ricerca che si apre dal pulsante "Cerca" della barra (PC/Mac): il pulsante si allarga e diventa il campo */
+.ua-pal.is-anchored{padding:0;display:block}
+.ua-pal.is-anchored .ua-veil{background:color-mix(in srgb,var(--ua-veil) 55%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ua-pal.is-anchored .ua-panel{position:absolute;top:var(--ay);right:var(--ar);width:min(600px,calc(100vw - 24px));
+  max-height:min(560px,calc(100vh - var(--ay) - 16px));border-radius:12px;transform-origin:top right;animation:ua-grow .26s var(--ua-ease) both}
+.ua-pal.is-anchored .ua-field{height:48px;padding:0 10px 0 14px;gap:10px}
+.ua-pal.is-anchored .ua-field input{font-size:15.5px}
+.ua-pal.is-anchored .ua-field svg{width:17px;height:17px}
+.ua-pal.is-anchored .ua-results,.ua-pal.is-anchored .ua-foot{animation:ua-fade .22s .08s ease both}
+@keyframes ua-grow{from{width:var(--aw);max-height:48px;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){.ua-pal.is-anchored .ua-panel,.ua-pal.is-anchored .ua-results,.ua-pal.is-anchored .ua-foot{animation:none}}
