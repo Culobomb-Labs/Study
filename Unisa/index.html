@@ -54,13 +54,14 @@ h1 .h1-l{display:block}
 h1 .h1-l + .h1-l{color:var(--muted)}
 /* "Unisa": solo il contorno delle lettere, sfumato dal viola all'azzurro con i colori dei corsi; il punto resta pieno */
 @supports ((-webkit-background-clip:text) or (background-clip:text)) and (-webkit-text-stroke:1px black){
-  h1 .h1-l + .h1-l{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;
+  h1 .h1-l + .h1-l{background:linear-gradient(90deg,var(--u-c1),var(--u-c2) 55%,var(--u-c3));-webkit-background-clip:text;background-clip:text;
     -webkit-text-stroke:var(--u-stroke) transparent;-webkit-text-fill-color:var(--u-fill);color:var(--u-fill);
     letter-spacing:var(--u-ls)} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
   /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
-  :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 9%,var(--bg));--u-ls:.045em}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em}}
-  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em}
+  :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 20%,var(--bg));--u-ls:.045em;
+    --u-c1:color-mix(in srgb,var(--ua-c-is) 80%,#000);--u-c2:color-mix(in srgb,var(--ua-c-pd) 80%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 80%,#000)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}}
+  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}
   h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
 }
 h1 .h1-dot{color:var(--ink)}
@@ -359,7 +360,8 @@ fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   for (const c of COURSES) for (const d of c.docs) if (d.path === last.p) found = { c, d };
   if (!found) return;
   const box = document.getElementById("resume");
-  box.href = last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "#" + last.i : "");
+  // ?riprendi=1: la pagina torna al paragrafo dove eri rimasto (vedi trackLast in assets/site.js)
+  box.href = last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "?riprendi=1#" + last.i : "");
   box.style.setProperty("--c", `var(--ua-c-${found.c.color})`);
   const t = document.getElementById("resume-t");
   t.textContent = found.d.name;

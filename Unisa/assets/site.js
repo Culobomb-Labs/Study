@@ -821,26 +821,76 @@
   /* ---------------- "riprendi da dove eri" ----------------
      Sulle pagine di appunti ricorda l'ultimo capitolo che stavi leggendo. La home lo mostra. */
   const LAST_KEY = "ua-last";
+  /* Oltre al capitolo si ricorda il punto preciso: il blocco (paragrafo, titolo, voce di elenco…) in cima
+     allo schermo, come posizione tra i blocchi del capitolo (b) con l'inizio del suo testo (x) per riconoscerlo,
+     e quanto del capitolo avevi già letto (f, da 0 a 1) come riserva. Il link "Riprendi" della home porta
+     ?riprendi=1#capitolo e qui si torna a quel blocco. */
+  const LAST_BLOCKS = "h2, h3, h4, p, li, pre, table, figure, blockquote, .def, .note, .vs, .levels, dt, dd";
+  const READ_LINE = () => Math.max(70, innerHeight * 0.15); // poco sotto la barra in alto
+  const blocksOf = sec => [...sec.querySelectorAll(LAST_BLOCKS)].filter(b => !b.parentElement.closest(LAST_BLOCKS) && b.offsetHeight > 0);
+  const startText = b => (b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 50);
+  function readingPoint(sec) {
+    const line = READ_LINE(), r = sec.getBoundingClientRect();
+    const out = { f: Math.min(1, Math.max(0, (line - r.top) / Math.max(1, r.height))) };
+    const bl = blocksOf(sec);
+    for (let k = 0; k < bl.length; k++) if (bl[k].getBoundingClientRect().bottom > line) { out.b = k; out.x = startText(bl[k]); break; }
+    return out;
+  }
+  function restoreReading(prev) {
+    const qs = new URLSearchParams(location.search);
+    if (!qs.has("riprendi")) return;
+    try { qs.delete("riprendi"); history.replaceState(history.state, "", location.pathname + (qs.toString() ? "?" + qs : "") + location.hash); } catch (e) {}
+    if (!prev || prev.p !== PAGE || !prev.i) return;
+    const sec = document.getElementById(prev.i);
+    if (!sec) return;
+    const target = () => {
+      const bl = blocksOf(sec);
+      let b = typeof prev.b === "number" ? bl[prev.b] : null;
+      if (prev.x && (!b || startText(b) !== prev.x)) b = bl.find(x => startText(x) === prev.x) || b; // il capitolo è cambiato: cerco il testo
+      if (b) return b.getBoundingClientRect().top + scrollY - READ_LINE() + 8;
+      const r = sec.getBoundingClientRect();
+      return r.top + scrollY + (prev.f || 0) * r.height - READ_LINE();
+    };
+    let moved = false;
+    const place = () => { if (!moved) window.scrollTo(0, Math.max(0, target())); };
+    place();
+    ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, () => { moved = true; }, { once: true, passive: true }));
+    addEventListener("load", place, { once: true });
+    // immagini e caratteri finiscono di caricare dopo e spostano il testo: mi riposiziono a ogni cambio
+    // di altezza della pagina, per qualche secondo o finché non scorri tu
+    let ro = null;
+    if ("ResizeObserver" in window) { ro = new ResizeObserver(() => place()); ro.observe(document.body); setTimeout(() => ro.disconnect(), 5000); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+    setTimeout(place, 300); setTimeout(place, 1000); setTimeout(place, 2500);
+    setTimeout(() => toast("Ripreso da dove eri rimasto."), 600);
+  }
   function trackLast() {
     if (!here) return;
-    const save = (sec) => {
-      const v = { p: PAGE, at: Date.now() };
-      if (sec) { v.i = sec.id; v.t = sec.dataset.t || (sec.querySelector("h2") || {}).textContent || ""; const n = sec.querySelector(".ch-num"); if (n) v.n = n.textContent.trim(); }
-      try { localStorage.setItem(LAST_KEY, JSON.stringify(v)); } catch (e) {}
-    };
-    const secs = [...document.querySelectorAll("section.ch[id]")];
-    if (!secs.length || !("IntersectionObserver" in window)) { save(null); return; }
-    let timer = null, current = null;
-    const io = new IntersectionObserver(entries => {
-      for (const e of entries) if (e.isIntersecting) current = e.target;
-      if (timer) return; // al massimo un salvataggio al secondo
-      timer = setTimeout(() => { timer = null; if (current) save(current); }, 1000);
-    }, { rootMargin: "-15% 0px -70% 0px" });
-    secs.forEach(s => io.observe(s));
-    window.addEventListener("pagehide", () => { if (current) save(current); });
     let prev = null;
     try { prev = JSON.parse(localStorage.getItem(LAST_KEY)); } catch (e) {}
-    if (!prev || prev.p !== PAGE) save(null); // non perdiamo il capitolo se riapri la stessa pagina dall'inizio
+    restoreReading(prev);
+    const secs = [...document.querySelectorAll("section.ch[id]")];
+    const save = (sec) => {
+      const v = { p: PAGE, at: Date.now() };
+      if (sec) {
+        v.i = sec.id; v.t = sec.dataset.t || (sec.querySelector("h2") || {}).textContent || ""; const n = sec.querySelector(".ch-num"); if (n) v.n = n.textContent.trim();
+        Object.assign(v, readingPoint(sec));
+      }
+      try { localStorage.setItem(LAST_KEY, JSON.stringify(v)); } catch (e) {}
+    };
+    if (!secs.length) { save(null); return; }
+    // il capitolo in lettura è quello che attraversa la linea di lettura
+    const current = () => { const line = READ_LINE(); return secs.find(s => { const r = s.getBoundingClientRect(); return r.top <= line && r.bottom > line; }) || null; };
+    let timer = null, started = false;
+    const onScroll = () => {
+      if (timer) return; // al massimo un salvataggio al secondo
+      timer = setTimeout(() => { timer = null; const c = current(); if (c) save(c); }, 1000);
+    };
+    // si comincia a salvare solo dopo che hai scorso tu (così aprire la pagina non cancella il punto di prima)
+    ["wheel", "touchmove", "keydown", "pointerdown"].forEach(ev => addEventListener(ev, () => { started = true; }, { passive: true }));
+    addEventListener("scroll", () => { if (started) onScroll(); }, { passive: true });
+    window.addEventListener("pagehide", () => { if (!started) return; const c = current(); if (c) save(c); });
+    if (!prev || prev.p !== PAGE) save(null); // pagina nuova: la home la mostra subito, il punto arriva scorrendo
   }
 
   /* ---------------- news e notifiche ----------------
