@@ -59,7 +59,7 @@ h1 .h1-l + .h1-l{color:var(--muted)}
     letter-spacing:var(--u-ls)} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
   /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
   :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 20%,var(--bg));--u-ls:.045em;
-    --u-c1:color-mix(in srgb,var(--ua-c-is) 80%,#000);--u-c2:color-mix(in srgb,var(--ua-c-pd) 80%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 80%,#000)}
+    --u-c1:color-mix(in srgb,var(--ua-c-is) 55%,#000);--u-c2:color-mix(in srgb,var(--ua-c-pd) 55%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 55%,#000)}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}}
   :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}
   h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
