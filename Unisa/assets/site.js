@@ -1259,10 +1259,11 @@
     const fromQuiz = qs.get("da") === "quiz";
     if (EMBED) return; // nel pannello del quiz basta l'evidenziazione: per tornare c'è la × del pannello
     const msg = hit ? "Ecco il punto da ripassare." : "Non ho trovato il punto preciso: ecco l'inizio del capitolo.";
+    // il quaderno si apre nella stessa scheda (anche nella web app): "Torna al quiz" torna indietro,
+    // e il quiz si ritrova com'era (domanda o risultato con gli errori)
     if (fromQuiz) toast(msg, "Torna al quiz", () => {
-      // aperto in una nuova scheda: chiuderla riporta al quiz così com'era
-      try { window.close(); } catch (e) {}
-      setTimeout(() => { if (history.length > 1) history.back(); else if (document.referrer) location.href = document.referrer; }, 250);
+      if (history.length > 1) history.back();
+      else if (document.referrer) location.href = document.referrer;
     });
     else toast(msg);
   }
@@ -1355,7 +1356,6 @@
   checkImport();
   trackLast();
   quizTarget();
-  quizSheetLinks();
   registerSW();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }

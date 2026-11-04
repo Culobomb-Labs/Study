@@ -269,7 +269,7 @@ button.ua-np-all{appearance:none;border:0;width:calc(100% - 16px);font-family:in
 button.ua-np-all:disabled{opacity:.6;cursor:default}
 
 /* ---------- avviso breve ---------- */
-.ua-toast{position:fixed;z-index:250;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);
+.ua-toast{position:fixed;z-index:100000;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);
   display:flex;align-items:center;gap:10px;max-width:min(520px,calc(100vw - 32px));padding:10px 8px 10px 16px;border-radius:12px;
   background:var(--ua-ink);color:var(--ua-bg);box-shadow:var(--ua-shadow);font:500 14px/1.4 var(--ua-font);
   opacity:0;pointer-events:none;transition:opacity .2s,transform .25s var(--ua-ease)}

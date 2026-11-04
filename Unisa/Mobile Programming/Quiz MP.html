@@ -548,9 +548,9 @@ const Q = [
 
 const STORE = "quiz-mp";
 const QUADERNO = "Quaderno%20di%20Android.html";
-/* Link al punto del quaderno: assets/site.js lo apre in un pannello sopra il quiz (il quiz e gli errori restano com'erano)
-   e nel quaderno cerca il paragrafo che parla della domanda per evidenziarlo. */
-const qlink = (q, label) => `<a class="qlink" target="_blank" data-cap="${esc(chap(q.c).n + " · " + chap(q.c).t)}" href="${QUADERNO}?trova=${encodeURIComponent(q.q)}&risp=${encodeURIComponent(String(q.o[0]).slice(0, 300))}&perche=${encodeURIComponent(String(q.e || "").slice(0, 300))}&da=quiz#${q.c}">${label}</a>`;
+/* Link al punto del quaderno: si apre nella stessa pagina, il quaderno cerca il paragrafo che parla della domanda,
+   lo evidenzia e mostra "Torna al quiz". Tornando, il quiz riprende dalla domanda o dal risultato (vedi saveRun). */
+const qlink = (q, label) => `<a class="qlink" data-cap="${esc(chap(q.c).n + " · " + chap(q.c).t)}" href="${QUADERNO}?trova=${encodeURIComponent(q.q)}&risp=${encodeURIComponent(String(q.o[0]).slice(0, 300))}&perche=${encodeURIComponent(String(q.e || "").slice(0, 300))}&da=quiz#${q.c}">${label}</a>`;
 const app = document.getElementById("app");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const chap = id => CHAPTERS.find(c => c.id === id);
@@ -775,7 +775,31 @@ function backToList() {
   if (history.state && history.state.quiz) history.back(); else home();
 }
 window.addEventListener("popstate", () => { if (run && !(history.state && history.state.quiz)) home(); });
-if (!(history.state && history.state.res && restoreResult())) {
+/* Quiz in corso: se esci (es. per il link al quaderno) e torni con "indietro", riprende dalla stessa domanda.
+   Di solito il browser tiene la pagina in memoria; questo serve quando la ricarica da capo. */
+const LAST_RUN = STORE + "-giro-in-corso";
+window.addEventListener("pagehide", () => {
+  try {
+    if (!run || (history.state && history.state.res)) { sessionStorage.removeItem(LAST_RUN); return; }
+    sessionStorage.setItem(LAST_RUN, JSON.stringify({ title: run.title, chapterId: run.chapterId, key: run.key, from: run.from, i: run.i,
+      answers: run.answers, items: run.items.map(it => ({ id: it.q.id, opts: it.opts })) }));
+  } catch (e) {}
+});
+function restoreRun() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(LAST_RUN)); sessionStorage.removeItem(LAST_RUN);
+    if (!s) return false;
+    const byId = new Map(Q.map(q => [q.id, q]));
+    const items = s.items.map(x => ({ q: byId.get(x.id), opts: x.opts || undefined }));
+    if (!items.length || items.some(x => !x.q)) return false;
+    run = { title: s.title, chapterId: s.chapterId, key: s.key, from: s.from, answers: (s.answers || []).map(a => a === null ? undefined : a), items, i: s.i }; // JSON trasforma i buchi in null
+    // domanda già risposta: si riparte dalla successiva (o dal risultato se era l'ultima)
+    if (run.answers[run.i] !== undefined) { if (run.i >= items.length - 1) { result(); return true; } run.i++; }
+    ask();
+    return true;
+  } catch (e) { return false; }
+}
+if (!(history.state && history.state.res && restoreResult()) && !(history.state && history.state.quiz && !history.state.res && restoreRun())) {
   if (history.state && history.state.quiz) { try { history.replaceState(null, ""); } catch (e) {} }
   home();
 }
