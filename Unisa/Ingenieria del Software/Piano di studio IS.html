@@ -242,7 +242,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
         <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 18</small></span></label>
         <label class="scope off" title="Gli argomenti non sono ancora stati comunicati"><input type="radio" name="scope" value="seconda" disabled><span><b>Seconda prova</b><small>argomenti non ancora disponibili</small></span></label>
-        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–18</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–19</small></span></label>
       </div>
     </fieldset>
     <fieldset>
@@ -384,7 +384,11 @@ const TOPICS = [
   { id: "scrum", full: true, ch: "17", cid: "scrum", pkg: "Sviluppo agile", t: "Scrum", min: 70, pri: 4,
     read: "Cap. 17: Manifesto Agile, i tre ruoli, cerimonie, artefatti, capacità e focus factor, burndown",
     draw: "Calcola la capacità di un team con il focus factor e leggi un burndown chart",
-    open: "Ruoli e cerimonie di Scrum" }
+    open: "Ruoli e cerimonie di Scrum" },
+  { id: "sd", full: true, ch: "19", cid: "sd", pkg: "System design", t: "System design", min: 60, pri: 4,
+    read: "Cap. 19: le 8 attività, design goal, sottosistemi, coesione e accoppiamento, layering e partitioning, stili architetturali, deployment diagram, flusso di controllo",
+    draw: "Deployment diagram di un sistema client/server a tre livelli, e uno schema MVC con l'Observer tra Model e View",
+    open: "Decomposizione in sottosistemi con coesione e accoppiamento (domanda aperta del deposito)" }
 ];
 /* Per quale prova: quali argomenti, che data proporre, che simulazione fare nel quiz */
 const SCOPES = {

@@ -719,6 +719,13 @@ html{scroll-behavior:smooth}
     <div><b>Sviluppo<small>il come</small></b><span>Progettare, scrivere il codice, testare, integrare.</span></div>
     <div><b>Manutenzione<small>il dopo</small></b><span>Correggere errori, adattare a nuovi ambienti, aggiungere funzioni. Spesso è la fase <mark>più lunga e costosa</mark>.</span></div>
   </div>
+  <div class="note">La <b>manutenzione</b> è ogni modifica al software <b>dopo il rilascio</b>: correttiva (togliere difetti), adattativa (nuovo ambiente, nuove leggi), perfettiva (migliorare o aggiungere funzioni), preventiva (rendere il codice più facile da modificare in futuro).</div>
+  <h3>Processo software e strumenti CASE</h3>
+  <div class="def"><b class="lbl">Processo software</b>L'insieme <b>organizzato</b> di attività, persone, metodi e strumenti con cui si sviluppa e si mantiene un prodotto software. Il ciclo di vita ne è il modello: dice quali attività e in che ordine.</div>
+  <div class="vs">
+    <div><h4>Upper-CASE</h4><p>Strumenti per le <b>prime fasi</b>: analisi dei requisiti, specifica, progettazione di alto livello (es. editor di diagrammi UML, gestione dei requisiti).</p></div>
+    <div><h4>Lower-CASE</h4><p>Strumenti per le <b>fasi finali</b>: <mark>progettazione di basso livello, codifica, debugging e testing</mark> (es. IDE, compilatori, debugger, generatori di codice, framework di test).</p></div>
+  </div>
 
   <h3>Modello a cascata (Waterfall) · Royce, anni '70</h3>
   <p>Le fasi si fanno <b>una dopo l'altra, senza tornare indietro</b>, come costruire una casa: prima il progetto, poi le fondamenta, poi i muri. Nato come reazione al "code and fix" (scrivi codice e aggiusta a caso), ispirato all'industria manifatturiera.</p>
@@ -1994,7 +2001,7 @@ static final ArchRule entityIndipendenti =
   <div class="def"><b class="lbl">In una frase</b>Nel <b>white-box</b> guardi la <b>struttura interna</b> del codice e scegli i test per eseguirne tutte le parti (istruzioni, rami, cicli, cammini).</div>
   <h3>I 4 tipi</h3>
   <div class="levels">
-    <div><b>Statement</b><span>Ogni istruzione eseguita almeno una volta.</span></div>
+    <div><b>Statement</b><span>Ogni istruzione eseguita almeno una volta. La <b>line coverage</b> è la stessa idea misurata a righe: percentuale di righe di codice eseguite dai test.</span></div>
     <div><b>Branch</b><span>Ogni uscita di ogni condizione (vero e falso) provata almeno una volta. <code>if (i == TRUE) … else …</code> → due test: i = TRUE, i = FALSE.</span></div>
     <div><b>Loop</b><span>Il ciclo va: <b>saltato</b> del tutto, eseguito <b>una volta</b>, eseguito <b>più volte</b>.</span></div>
     <div><b>Path</b><span>Ogni cammino possibile nel programma eseguito.</span></div>
@@ -2070,6 +2077,15 @@ static final ArchRule entityIndipendenti =
     <div><b>Acceptance</b><span>Il cliente valuta: <b>benchmark</b> (casi tipici preparati dal cliente), <b>competitor</b> (contro un sistema concorrente o esistente), <b>shadow</b> (nuovo e vecchio sistema in parallelo, si confrontano gli output).</span></div>
     <div><b>Installation</b><span>Nell'ambiente di utilizzo si ripetono functional e performance test. Se va bene, rilascio ufficiale.</span></div>
   </div>
+  <h3>Da dove vengono i test: impatto dei modelli sul testing</h3>
+  <div class="tbl"><table>
+    <tr><th>Modello / documento</th><th>Test che ne deriva</th></tr>
+    <tr><td>Casi d'uso e requisiti funzionali</td><td><b>Functional test</b> (system testing black-box)</td></tr>
+    <tr><td>Requisiti non funzionali</td><td><b>Performance test</b> (stress, volume, sicurezza, tempi…)</td></tr>
+    <tr><td>Decomposizione in sottosistemi (system design)</td><td><b>Integration test</b> / test strutturale</td></tr>
+    <tr><td>Object design (classi, contratti)</td><td><b>Unit test</b></td></tr>
+    <tr><td>Accordo con il cliente</td><td><b>Acceptance test</b></td></tr>
+  </table></div>
   <h3>I documenti del testing (IEEE 829)</h3>
   <div class="tbl"><table>
     <tr><th>Documento</th><th>Contenuto</th></tr>
@@ -2293,6 +2309,86 @@ static final ArchRule entityIndipendenti =
     <details><summary>Chi lavora nella fase di Preparation? E nel Rework?</summary><p>Preparation: ogni ispettore, da solo. Rework: l'autore.</p></details>
     <details><summary>Perché nella modern code review non serve il recorder?</summary><p>Perché la review è online e il tool tiene traccia di tutti i commenti.</p></details>
     <details><summary>Code inspection o modern code review: quale è asincrona?</summary><p>La modern code review (informale e basata su tool). L'inspection è formale, manuale e sincrona.</p></details>
+  </div>
+</section>
+
+
+<section class="ch" id="sd" data-t="System design" data-part="Parte 7 · System design">
+  <div class="ch-head"><span class="ch-num">19</span><h2>System design</h2><span class="ch-sub">Dal modello di analisi all'architettura: obiettivi, sottosistemi, stili, mapping</span></div>
+  <div class="def"><b class="lbl">In una frase</b>Il <b>system design</b> trasforma il modello di analisi (il <i>cosa</i>) nel modello di progettazione del sistema (il <i>come</i>, ad alto livello): fissa i <b>design goal</b>, <mark>scompone il sistema in sottosistemi</mark> e decide architettura, hardware, dati, accessi e controllo.</div>
+
+  <h3>Le 8 attività</h3>
+  <ol>
+    <li><b>Identificare i design goal</b>: le qualità su cui ottimizzare, ricavate soprattutto dai requisiti non funzionali.</li>
+    <li><b>Decomposizione in sottosistemi</b>: scelta dell'architettura (stile) e dei sottosistemi.</li>
+    <li><b>Mapping hardware/software</b>: su quali nodi gira cosa e come comunicano.</li>
+    <li><b>Gestione dei dati persistenti</b>: file o database, cosa va salvato.</li>
+    <li><b>Controllo degli accessi</b>: chi può fare cosa (matrice degli accessi), autenticazione, cifratura.</li>
+    <li><b>Flusso di controllo globale</b>: procedure-driven, event-driven o thread.</li>
+    <li><b>Condizioni limite</b>: avvio, spegnimento, gestione dei guasti (casi d'uso limite).</li>
+    <li><b>Revisione</b> del system design (corretto, completo, consistente, realistico, leggibile).</li>
+  </ol>
+
+  <h3>Design goal</h3>
+  <p>Sono le qualità che il sistema deve privilegiare. Spesso sono in <b>conflitto</b> (trade-off: es. velocità contro spazio, tempi di consegna contro funzionalità).</p>
+  <div class="levels">
+    <div><b>Performance</b><span>Tempo di risposta, throughput, memoria.</span></div>
+    <div><b>Dependability</b><span><b>Robustezza</b> (resistere a input sbagliati), affidabilità, disponibilità, tolleranza ai guasti, sicurezza (security e safety).</span></div>
+    <div><b>Costo</b><span>Sviluppo, deployment, aggiornamento, manutenzione, amministrazione.</span></div>
+    <div><b>Manutenibilità</b><span>Estensibilità, modificabilità, adattabilità, portabilità, leggibilità, tracciabilità dei requisiti.</span></div>
+    <div><b>End user</b><span>Usabilità e utilità: criteri che contano per l'utente finale.</span></div>
+  </div>
+
+  <h3>Sottosistemi, servizi, coesione e accoppiamento</h3>
+  <p>Un <b>sottosistema</b> è un insieme di classi che lavorano insieme e offrono <b>servizi</b> agli altri sottosistemi. L'insieme dei servizi esposti è l'<b>interfaccia</b> del sottosistema (in object design diventa la sua API).</p>
+  <div class="vs">
+    <div><h4>Coesione</h4><p>Quanto sono legati gli elementi <b>dentro</b> un sottosistema. Va tenuta <mark>alta</mark>: classi che collaborano sullo stesso scopo stanno insieme.</p></div>
+    <div><h4>Accoppiamento</h4><p>Quanto dipendono l'uno dall'altro <b>due</b> sottosistemi. Va tenuto <mark>basso</mark>: una modifica in uno deve toccare poco gli altri.</p></div>
+  </div>
+  <div class="vs">
+    <div><h4>Layering</h4><p>Il sistema è diviso in <b>livelli</b>: ogni livello usa i servizi di quelli sotto. <b>Architettura chiusa (opaca)</b>: un livello usa solo quello immediatamente sotto (più manutenibile). <b>Aperta (trasparente)</b>: può usare tutti quelli sotto (più efficiente).</p></div>
+    <div><h4>Partitioning</h4><p>Il sistema è diviso in sottosistemi <b>alla pari</b>, ognuno responsabile di una classe di servizi, con poche dipendenze tra loro.</p></div>
+  </div>
+
+  <h3>Stili architetturali</h3>
+  <div class="tbl"><table>
+    <tr><th>Stile</th><th>Idea</th></tr>
+    <tr><td><b>Repository</b></td><td>I sottosistemi lavorano su una struttura dati centrale e comunicano solo attraverso di essa (es. compilatori, DBMS). Il repository può diventare un collo di bottiglia.</td></tr>
+    <tr><td><b>MVC</b></td><td>Model (dati), View (presentazione), Controller (interazione). È un caso di repository: il Model è il dato centrale; le View vengono <b>avvisate dal Model</b> con il pattern <b>Observer</b>.</td></tr>
+    <tr><td><b>Client/server</b></td><td>Il server offre servizi, i client li richiedono. Gli utenti interagiscono <b>solo con il client</b>; il client conosce l'interfaccia del server, il server <b>non conosce</b> i client; i flussi di controllo sono indipendenti.</td></tr>
+    <tr><td><b>Peer-to-peer</b></td><td>Generalizzazione del client/server: ogni nodo può essere sia client sia server.</td></tr>
+    <tr><td><b>Three-tier / N-tier</b></td><td>Interfaccia, logica applicativa e dati su tre livelli distinti.</td></tr>
+    <tr><td><b>Pipe and filter</b></td><td>I filtri elaborano dati e li passano al successivo tramite pipe; un filtro non conosce gli altri (es. pipe Unix).</td></tr>
+  </table></div>
+
+  <h3>Mapping hardware/software</h3>
+  <p>Si sceglie la configurazione hardware e la piattaforma, si assegnano i componenti ai nodi e si decide la comunicazione tra i nodi.</p>
+  <div class="vs">
+    <div><h4>Deployment diagram</h4><p>Mostra la struttura <b>a run-time</b>: i <b>nodi</b> (box 3-D: computer, dispositivi, ambienti di esecuzione), i componenti che girano su ciascuno e le connessioni.</p></div>
+    <div><h4>Component diagram</h4><p>Mostra i <b>componenti</b> e le <b>dipendenze</b> tra loro attraverso le interfacce (fornite e richieste). Struttura statica, non dice dove girano.</p></div>
+  </div>
+
+  <h3>Dati persistenti, accessi, controllo</h3>
+  <ul>
+    <li><b>File</b>: economici, ma di <b>basso livello</b>: serve codice in più per astrarre i dati (lettura, scrittura, concorrenza). <b>Database</b>: gestiscono concorrenza, query, transazioni; costano di più.</li>
+    <li><b>Controllo degli accessi</b>: per ogni attore si decide a quali operazioni e dati può accedere (matrice degli accessi, liste di controllo, capability); poi autenticazione e cifratura.</li>
+  </ul>
+  <div class="levels">
+    <div><b>Procedure-driven</b><span>Il controllo sta <b>nel codice del programma</b>: le operazioni aspettano l'input quando ne hanno bisogno. Semplice, adatto ai linguaggi procedurali.</span></div>
+    <div><b>Event-driven</b><span>Un <b>main loop</b> aspetta un evento esterno e lo passa (dispatcher) all'oggetto giusto. Più flessibile, tipico delle interfacce grafiche.</span></div>
+    <div><b>Thread</b><span>Più flussi di controllo concorrenti, uno per evento o richiesta. Intuitivo ma difficile da testare e da sincronizzare.</span></div>
+  </div>
+  <div class="note">Le <b>condizioni limite</b> (avvio, spegnimento, guasti) diventano nuovi <b>casi d'uso limite</b>, gestiti di solito dall'amministratore del sistema.</div>
+
+  <div class="quiz"><h4>Domande lampo</h4>
+    <details><summary>Quale attività produce la scomposizione in sottosistemi?</summary><p>Il system design.</p></details>
+    <details><summary>Coesione e accoppiamento: come devono essere?</summary><p>Coesione alta, accoppiamento basso.</p></details>
+    <details><summary>Architettura chiusa o aperta: qual è più manutenibile?</summary><p>Chiusa (opaca): ogni livello usa solo quello immediatamente sotto.</p></details>
+    <details><summary>In MVC come vengono aggiornate le View?</summary><p>Il Model le avvisa quando cambia (pattern Observer).</p></details>
+    <details><summary>Nel client/server il server conosce i client?</summary><p>No: il client conosce l'interfaccia del server, il server non conosce i client.</p></details>
+    <details><summary>Che diagramma usi per il mapping hardware/software?</summary><p>Il deployment diagram (nodi come box 3-D).</p></details>
+    <details><summary>Dove sta il controllo nel procedure-driven?</summary><p>Nel codice del programma. Nell'event-driven sta in un main loop che smista gli eventi.</p></details>
+    <details><summary>Perché i file sono di "basso livello"?</summary><p>Perché serve codice in più per astrarre i dati e gestirne l'accesso; un database lo fa già.</p></details>
   </div>
 </section>
 
