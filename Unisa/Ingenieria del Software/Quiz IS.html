@@ -1109,12 +1109,12 @@ function chapterRun(cid) {
   const st = loadStats(), last = (st._ultimo || {})[cid] || [];
   return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
 }
-/* Due simulazioni: "sim" = prova intercorso (24 domande, almeno 2 per capitolo della prova),
+/* Due simulazioni: "sim" = prova intercorso (15 domande, almeno 2 per capitolo della prova),
    "simtutto" = tutto il corso (30 domande, almeno 1 per capitolo). */
 /* Le domande con d: n vengono dal "Deposito domande" del corso (le più probabili all'esame):
    ogni simulazione ne contiene almeno metà; "dep" usa solo quelle. */
 const SIMS = {
-  sim: { title: "Simulazione prova intercorso", tot: 24, min: 2, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
+  sim: { title: "Simulazione prova intercorso", tot: 15, min: 2, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
   simtutto: { title: "Simulazione su tutto il corso", tot: 30, min: 1, dep: 0.5, chaps: () => CHAPTERS },
   dep: { title: "Domande del deposito", tot: 30, min: 0, dep: 1, chaps: () => CHAPTERS }
 };
@@ -1161,8 +1161,7 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione</h2>
-      <p>24 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 2 per capitolo, diverse a ogni giro. Oppure 30 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
-      <p>In ogni simulazione almeno metà delle domande viene dal <b>deposito domande</b> del corso (${Q.filter(q => q.d).length} domande, segnate con l'etichetta "deposito"). Con "Domande del deposito" le ripassi tutte.</p>
+      <p>15 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 2 per capitolo, diverse a ogni giro. Oppure 30 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <div class="actions"><button class="btn" type="button" id="go-sim">Prova intercorso →</button>
       <button class="btn" type="button" id="go-simtutto">Tutto il corso (30) →</button>
