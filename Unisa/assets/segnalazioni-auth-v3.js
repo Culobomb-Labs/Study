@@ -5,7 +5,7 @@ const app = getApps().find(a => a.name === '[DEFAULT]') || initializeApp({apiKey
 const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
 // Dopo ogni scrittura che deve far partire una notifica avvisa il Worker, che lancia subito l'azione di GitHub
 // (altrimenti GitHub la fa partire solo ogni qualche ora). Vuoto = disattivato: vale il controllo programmato.
-const PING_URL='';
+const PING_URL='https://unisa-ping.gpeluso03.workers.dev';
 const ping=async()=>{try{if(!PING_URL||!auth.currentUser)return;const t=await auth.currentUser.getIdToken();fetch(PING_URL,{method:'POST',headers:{Authorization:'Bearer '+t},keepalive:true}).catch(()=>{})}catch(e){}};
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
 const drafts=new Map();
