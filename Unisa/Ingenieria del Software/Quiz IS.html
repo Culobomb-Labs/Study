@@ -72,6 +72,7 @@ button{font:inherit;color:inherit}
 /* domanda */
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
 .qhead a{color:var(--muted)}
+.timer{font-variant-numeric:tabular-nums;color:var(--ink)} .timer.low{color:var(--ko)}
 .backq{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:13px;color:var(--c);text-decoration:none;margin:0 0 14px;padding:6px 10px 6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 .backq:hover{border-color:var(--c)}
 .backq:focus-visible{outline:2px solid var(--c);outline-offset:2px}
@@ -1168,6 +1169,7 @@ function record(q, ok) {
 let run = null; // { title, items: [{q, opts, right}], i, answers: [] }
 
 function home() {
+  stopTimer();
   run = null;
   document.body.classList.remove("running");
   const saved = load(), st = loadStats();
@@ -1182,7 +1184,7 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione</h2>
-      <p>15 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 1 per capitolo, diverse a ogni giro. Oppure 25 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
+      <p><b>Prima prova</b>: 15 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 1 per capitolo, diverse a ogni giro. Dura 30 minuti, con il punteggio d'esame: +1 per risposta giusta, −0,25 per risposta sbagliata, 0 se non rispondi. <b>Prova completa</b>: 25 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <div class="actions"><button class="btn" type="button" id="go-sim">Prima prova →</button>
       <button class="btn" type="button" id="go-sim2" disabled aria-disabled="true" title="Non ancora disponibile">Seconda prova</button>
@@ -1200,14 +1202,43 @@ function home() {
   window.scrollTo({ top: 0 });
 }
 
+/* Prima prova (key "sim"): 30 minuti, punteggio d'esame (+1 giusta, −0,25 sbagliata, 0 non risposta). */
+const SIM_MIN = 30;
+let timerId = null;
+const fmtT = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
+const fmtPt = x => x.toLocaleString("it-IT", { maximumFractionDigits: 2 });
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+function tick() {
+  if (!run || !run.deadline) { stopTimer(); return; }
+  const left = run.deadline - Date.now(), el = document.getElementById("timer");
+  if (el) { el.textContent = "⏱ " + fmtT(left); el.classList.toggle("low", left < 5 * 60000); }
+  if (left <= 0) timeUp();
+}
+function startTimer() { stopTimer(); timerId = setInterval(tick, 1000); }
+function timeUp() {
+  stopTimer();
+  if (!run) return;
+  run.items.forEach((it, i) => { if (run.answers[i] === undefined) run.answers[i] = { ok: false, skipped: true }; });
+  run.timeUp = true;
+  result();
+}
+function skip() {
+  if (run.answers[run.i] !== undefined) return;
+  run.answers[run.i] = { ok: false, skipped: true };
+  if (run.i === run.items.length - 1) result(); else { run.i++; ask(); }
+}
+
 function start(title, questions, chapterId, key, from) {
   run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => {
     const opts = shuffle(q.o.map((t, k) => ({ t, ok: k === 0 })));
     return { q, opts };
   }) };
   if (key) rememberRun(key, run.items);
+  stopTimer();
+  if (key === "sim") { run.t0 = Date.now(); run.deadline = run.t0 + SIM_MIN * 60000; }
   try { if (history.state && history.state.quiz) history.replaceState({ quiz: 1 }, ""); else history.pushState({ quiz: 1 }, ""); } catch (e) {}
   ask();
+  if (run.deadline) startTimer();
 }
 
 function ask() {
@@ -1215,16 +1246,18 @@ function ask() {
   const it = run.items[run.i], c = chap(it.q.c), n = run.items.length;
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
-    <div class="qhead"><span>${esc(run.title)}</span><span>Domanda ${run.i + 1} di ${n}</span></div>
+    <div class="qhead"><span>${esc(run.title)}</span><span>${run.deadline ? `<b id="timer" class="timer${run.deadline - Date.now() < 300000 ? " low" : ""}">⏱ ${fmtT(run.deadline - Date.now())}</b> · ` : ""}Domanda ${run.i + 1} di ${n}</span></div>
     <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
     <span class="tag">${c.n} · ${esc(c.t)}</span>${it.q.x ? `<span class="tag dep">prova 5 novembre</span>` : ""}${it.q.d ? `<span class="tag dep">deposito · n. ${it.q.d > 100 ? it.q.d - 100 : it.q.d}</span>` : ""}${it.q.o.length === 1 ? `<span class="tag dep">risposta aperta</span>` : ""}
     <h2 class="q">${esc(it.q.q)}</h2>
     ${it.q.o.length === 1 ? openBox() : `<div class="opts" role="group" aria-label="Risposte">${it.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}"><span class="k">${"ABCD"[k]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`}
     <div id="after"></div>
+    ${run.deadline && it.q.o.length > 1 ? `<div class="next"><button class="btn" type="button" id="skip">Non rispondo (0 punti)</button></div>` : ""}
     <p class="hint">${it.q.o.length === 1 ? "Scrivi la tua risposta, poi confrontala con la soluzione e valutati." : "Tasti: 1–4 o A–D per rispondere · Invio per andare avanti"}</p>`;
   app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   if (it.q.o.length === 1) return askOpen(it);
   app.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(+b.dataset.k));
+  const sk = app.querySelector("#skip"); if (sk) sk.onclick = skip;
   const first = app.querySelector(".opt"); if (first) first.focus({ preventScroll: true });
   window.scrollTo({ top: 0 });
 }
@@ -1275,6 +1308,7 @@ function answer(k) {
     else b.classList.add("dim");
   });
   const last = run.i === run.items.length - 1;
+  const skipBtn = app.querySelector("#skip"); if (skipBtn) skipBtn.closest(".next").remove();
   app.querySelector("#after").innerHTML = `
     <div class="fb"><b class="${ok ? "ok" : "ko"}">${ok ? "Giusto." : "Non è questa."}</b><p>${esc(it.q.e)}</p>
       <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) →`)}</p></div>
@@ -1285,6 +1319,8 @@ function answer(k) {
 }
 
 function result(restored) {
+  stopTimer();
+  if (run.deadline && run.used === undefined) run.used = Math.min(Date.now(), run.deadline) - run.t0;
   const n = run.items.length, good = run.answers.filter(a => a && a.ok).length, pct = Math.round(100 * good / n);
   if (run.chapterId && !restored) {
     const saved = load(), prev = saved[run.chapterId];
@@ -1296,7 +1332,7 @@ function result(restored) {
   const rows = CHAPTERS.filter(c => by[c.id]).map(c => `<li><span>${c.n} · ${esc(c.t)}</span><span class="m"><i style="width:${100 * by[c.id].ok / by[c.id].n}%"></i></span><span class="v">${by[c.id].ok}/${by[c.id].n}</span></li>`).join("");
   const wrong = run.items.map((it, i) => ({ it, a: run.answers[i] })).filter(x => !x.a.ok);
   const errs = wrong.map(({ it, a }) => `<div class="err"><p class="eq">${esc(it.q.q)}</p>
-      <p class="yours">La tua risposta: ${esc(it.q.o.length === 1 ? (a.response || "(nessuna risposta scritta)") : it.opts[a.k].t)}</p>
+      <p class="yours">La tua risposta: ${esc(a.skipped ? "(non risposta)" : it.q.o.length === 1 ? (a.response || "(nessuna risposta scritta)") : it.opts[a.k].t)}</p>
       <p><b>${it.q.o.length === 1 ? "Soluzione" : "Giusta"}:</b> ${esc(it.q.o[0])}</p><p>${esc(it.q.e)}</p>
       <p>${qlink(it.q, `Rivedi questo punto nel quaderno (cap. ${chap(it.q.c).n}) →`)}</p></div>`).join("");
   const from = run.key ? { title: run.title, cid: run.chapterId, key: run.key } : run.from;
@@ -1304,7 +1340,10 @@ function result(restored) {
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <p class="label">${esc(run.title)}</p>
-    <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
+    ${run.deadline ? (() => {
+      const nw = run.answers.filter((a, i) => a && !a.ok && !a.skipped && run.items[i].q.o.length > 1).length, ns = run.answers.filter(a => a && a.skipped).length;
+      return `<div class="score"><b>${fmtPt(good - 0.25 * nw)}/${n}</b><span>punti · ${good} giuste, ${nw} sbagliate, ${ns} non risposte · tempo ${fmtT(run.used)} su ${SIM_MIN}:00${run.timeUp ? " (tempo scaduto)" : ""}</span></div>`;
+    })() : `<div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>`}
     <p class="verdict">${verdict}</p>
     ${from && from.cid ? (() => { const st = loadStats(), all = Q.filter(q => q.c === from.cid), k = all.filter(q => known(st, q.id)).length; return `<p class="label">Capitolo ${chap(from.cid).n}: ne sai ${k} su ${all.length}</p><div class="bar"><i style="width:${100 * k / all.length}%"></i></div>`; })() : ""}
     ${Object.keys(by).length > 1 ? `<p class="label">Per capitolo</p><ul class="byc">${rows}</ul>` : ""}
@@ -1330,6 +1369,7 @@ const LAST_RES = STORE + "-ultimo-risultato";
 function saveResult() {
   try {
     sessionStorage.setItem(LAST_RES, JSON.stringify({ title: run.title, chapterId: run.chapterId, key: run.key, from: run.from,
+      t0: run.t0, deadline: run.deadline, used: run.used, timeUp: run.timeUp,
       answers: run.answers, items: run.items.map(it => ({ id: it.q.id, opts: it.opts })) }));
     history.replaceState({ quiz: 1, res: 1 }, "");
   } catch (e) {}
@@ -1341,7 +1381,7 @@ function restoreResult() {
     const byId = new Map(Q.map(q => [q.id, q]));
     const items = s.items.map(x => ({ q: byId.get(x.id), opts: x.opts || undefined }));
     if (!items.length || items.some(x => !x.q)) return false;
-    run = { title: s.title, chapterId: s.chapterId, key: s.key, from: s.from, answers: s.answers, items, i: items.length - 1 };
+    run = { title: s.title, chapterId: s.chapterId, key: s.key, from: s.from, answers: s.answers, items, i: items.length - 1, t0: s.t0, deadline: s.deadline, used: s.used, timeUp: s.timeUp };
     result(true);
     return true;
   } catch (e) { return false; }
@@ -1371,7 +1411,7 @@ const LAST_RUN = STORE + "-giro-in-corso";
 window.addEventListener("pagehide", () => {
   try {
     if (!run || (history.state && history.state.res)) { sessionStorage.removeItem(LAST_RUN); return; }
-    sessionStorage.setItem(LAST_RUN, JSON.stringify({ title: run.title, chapterId: run.chapterId, key: run.key, from: run.from, i: run.i,
+    sessionStorage.setItem(LAST_RUN, JSON.stringify({ title: run.title, chapterId: run.chapterId, key: run.key, from: run.from, i: run.i, t0: run.t0, deadline: run.deadline,
       answers: run.answers, items: run.items.map(it => ({ id: it.q.id, opts: it.opts })) }));
   } catch (e) {}
 });
@@ -1382,10 +1422,12 @@ function restoreRun() {
     const byId = new Map(Q.map(q => [q.id, q]));
     const items = s.items.map(x => ({ q: byId.get(x.id), opts: x.opts || undefined }));
     if (!items.length || items.some(x => !x.q)) return false;
-    run = { title: s.title, chapterId: s.chapterId, key: s.key, from: s.from, answers: (s.answers || []).map(a => a === null ? undefined : a), items, i: s.i }; // JSON trasforma i buchi in null
+    run = { title: s.title, chapterId: s.chapterId, key: s.key, from: s.from, answers: (s.answers || []).map(a => a === null ? undefined : a), items, i: s.i, t0: s.t0, deadline: s.deadline }; // JSON trasforma i buchi in null
+    if (run.deadline && Date.now() >= run.deadline) { timeUp(); return true; }
     // domanda già risposta: si riparte dalla successiva (o dal risultato se era l'ultima)
     if (run.answers[run.i] !== undefined) { if (run.i >= items.length - 1) { result(); return true; } run.i++; }
     ask();
+    if (run.deadline) startTimer();
     return true;
   } catch (e) { return false; }
 }
