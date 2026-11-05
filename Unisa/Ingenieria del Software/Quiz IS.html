@@ -1185,15 +1185,13 @@ function home() {
       <p>15 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 1 per capitolo, diverse a ogni giro. Oppure 25 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <div class="actions"><button class="btn" type="button" id="go-sim">Prova intercorso →</button>
-      <button class="btn" type="button" id="go-simtutto">Tutto il corso (25) →</button>
-      <button class="btn" type="button" id="go-dep">Domande del deposito (30) →</button></div>
+      <button class="btn" type="button" id="go-simtutto">Tutto il corso (25) →</button></div>
     </section>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
     <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
   app.querySelector("#go-sim").onclick = () => start(SIMS.sim.title, simRun("sim"), null, "sim");
   app.querySelector("#go-simtutto").onclick = () => start(SIMS.simtutto.title, simRun("simtutto"), null, "simtutto");
-  app.querySelector("#go-dep").onclick = () => start(SIMS.dep.title, simRun("dep"), null, "dep");
   app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
     const c = chap(b.dataset.c);
     start(`${c.n} · ${c.t}`, chapterRun(c.id), c.id, c.id);
