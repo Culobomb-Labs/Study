@@ -169,7 +169,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 
   <div class="exam">
     <div class="day">ven<b>6</b>nov</div>
-    <div><h3>Prima prova intercorso</h3><p>Quattro pacchetti di slide: Requirements Elicitation, Intro UML, Analisi dei requisiti, Class e sequence diagram.</p></div>
+    <div><h3>Prima prova intercorso</h3><p>Cinque dispense: Requirements Elicitation, Intro UML, Analisi dei requisiti, Class e sequence diagram, Pull-based development e code review.</p></div>
     <div class="cd" id="cd"></div>
   </div>
 
@@ -211,9 +211,16 @@ output{font-family:var(--f-mono);color:var(--ink)}
         <li><span class="n">08</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#dyn">Modello dinamico e sequence</a><span class="s">Perché serve, come si scrive un messaggio, BCE in pratica (Accedi, Richiedi prestito, Paga ordine, package), Class e sequence insieme, Modellare nell'era GenAI</span></div></li>
       </ul>
     </section>
+    <section class="pkg">
+      <div class="hd"><span class="k">5</span><h3>Pull-based development e code review</h3></div>
+      <p>Come si collabora su GitHub: Onion Model, contributor e integrator, pull request, code inspection di Fagan e modern code review.</p>
+      <ul>
+        <li><span class="n">18</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#review">Pull-based development e code review</a><span class="s">Tutto il capitolo: Onion Model, pull request e push, criteri di accettazione, 4 ruoli e 6 fasi di Fagan, modern code review</span></div></li>
+      </ul>
+    </section>
   </div>
 
-  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07 e 08</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prova intercorso" pesca solo da questi capitoli.</div>
+  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07, 08 e 18</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prova intercorso" pesca solo da questi capitoli.</div>
   <p class="muted" style="font-size:14px;margin:0">Non entrano: 00 Java minimo, 01 Riunioni e minuta, 05 Ciclo di vita, 09–16 object design e testing, 17 Scrum. La corrispondenza tra slide e capitoli è ricostruita dagli argomenti dei pacchetti: se in un pacchetto c'è qualcosa che qui manca, segnalalo.</p>
 
   <div class="tbl" id="mappa"><table>
@@ -233,9 +240,9 @@ output{font-family:var(--f-mono);color:var(--ink)}
     <fieldset>
       <legend>Per quale prova</legend>
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
-        <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 18</small></span></label>
         <label class="scope off" title="Gli argomenti non sono ancora stati comunicati"><input type="radio" name="scope" value="seconda" disabled><span><b>Seconda prova</b><small>argomenti non ancora disponibili</small></span></label>
-        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–17</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–18</small></span></label>
       </div>
     </fieldset>
     <fieldset>
@@ -338,6 +345,10 @@ const TOPICS = [
     read: "Cap. 08: Modellare nell'era GenAI (diagramma come specifica e come verifica, LLM dietro un'interfaccia, RAG, agenti)",
     draw: "Fai l'esercizio per casa \"promemoria scritti da un LLM\": class diagram e sequence BCE",
     open: "Dove sta l'LLM in un modello BCE e perché" },
+  { id: "review", ch: "18", cid: "review", pkg: "Pull-based e code review", t: "Pull-based development e code review", min: 50, pri: 4,
+    read: "Cap. 18: Onion Model, contributor e integrator, pull request e criteri di accettazione, 4 ruoli e 6 fasi di Fagan, modern code review",
+    draw: "Schema delle 6 fasi di Fagan con chi lavora in ogni fase, e tabella code inspection vs modern code review",
+    open: "Differenze tra code inspection e modern code review" },
   { id: "riuso", full: true, ch: "09", cid: "riuso", pkg: "Object design", t: "Riuso: ereditarietà e delega", min: 45, pri: 3,
     read: "Cap. 09: ereditarietà di specifica e di implementazione, principio di Liskov, delega (Stack e List)",
     draw: "Riscrivi Stack con la delega e disegna i due class diagram (ereditarietà e delega)",
@@ -378,7 +389,7 @@ const TOPICS = [
 /* Per quale prova: quali argomenti, che data proporre, che simulazione fare nel quiz */
 const SCOPES = {
   prima: { topics: () => TOPICS.filter(t => !t.full), exam: "2026-11-06", examLbl: "La prova è il",
-    sim: { t: "Simulazione prova intercorso", s: "Nel quiz: \"Simulazione prova intercorso\" (20 domande). Poi rivedi gli errori." },
+    sim: { t: "Simulazione prova intercorso", s: "Nel quiz: \"Simulazione prova intercorso\" (24 domande). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
   completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",

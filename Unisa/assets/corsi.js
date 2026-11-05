@@ -21,7 +21,7 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
       { "name": "Piano di studio: prima prova, seconda prova o esame completo", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano di studio IS.html", "progressKey": "piano-intercorso-ingsw" },
-      { "name": "Quiz, capitoli 01–17", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
+      { "name": "Quiz, capitoli 01–18", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {
