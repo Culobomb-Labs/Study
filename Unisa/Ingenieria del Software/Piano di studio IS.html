@@ -220,7 +220,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
     </section>
   </div>
 
-  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07, 08 e 18</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prova intercorso" pesca solo da questi capitoli.</div>
+  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07, 08 e 18</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prima prova" pesca solo da questi capitoli.</div>
   <p class="muted" style="font-size:14px;margin:0">Non entrano: 00 Java minimo, 01 Riunioni e minuta, 05 Ciclo di vita, 09–16 object design e testing, 17 Scrum. La corrispondenza tra slide e capitoli è ricostruita dagli argomenti dei pacchetti: se in un pacchetto c'è qualcosa che qui manca, segnalalo.</p>
 
   <div class="tbl" id="mappa"><table>
@@ -393,11 +393,11 @@ const TOPICS = [
 /* Per quale prova: quali argomenti, che data proporre, che simulazione fare nel quiz */
 const SCOPES = {
   prima: { topics: () => TOPICS.filter(t => !t.full), exam: "2026-11-06", examLbl: "La prova è il",
-    sim: { t: "Simulazione prova intercorso", s: "Nel quiz: \"Simulazione prova intercorso\" (15 domande). Poi rivedi gli errori." },
+    sim: { t: "Simulazione prima prova", s: "Nel quiz: \"Prima prova\" (15 domande). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
   completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
-    sim: { t: "Simulazione su tutto il corso", s: "Nel quiz: \"Tutto il corso\" (25 domande). Poi rivedi gli errori." },
+    sim: { t: "Simulazione prova completa", s: "Nel quiz: \"Prova completa\" (25 domande). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso, sequence e black-box testing",
     recap: "Relazioni del class diagram, include/extend, frame del sequence, regole BCE, modelli di ciclo di vita, pattern e indizi, formule BVA/WECT/SECT, V(G), ruoli e cerimonie Scrum" }
 };
