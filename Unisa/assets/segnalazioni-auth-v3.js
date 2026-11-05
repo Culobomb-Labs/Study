@@ -3,6 +3,10 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, getRedirectResult, onAuth
 import { getFirestore, collection, query, where, onSnapshot, runTransaction, updateDoc, doc, serverTimestamp, writeBatch, getDocs } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js';
 const app = getApps().find(a => a.name === '[DEFAULT]') || initializeApp({apiKey:'AIzaSyAI8QZjC3qSNq33bNBk7Ls19bjanc4-QnQ',authDomain:'appunti-unisa.firebaseapp.com',projectId:'appunti-unisa',storageBucket:'appunti-unisa.firebasestorage.app',messagingSenderId:'682409351930',appId:'1:682409351930:web:728a3ba5a1d23ffe0a0743'});
 const auth=getAuth(app), db=getFirestore(app), $=s=>document.querySelector(s);
+// Dopo ogni scrittura che deve far partire una notifica avvisa il Worker, che lancia subito l'azione di GitHub
+// (altrimenti GitHub la fa partire solo ogni qualche ora). Vuoto = disattivato: vale il controllo programmato.
+const PING_URL='';
+const ping=async()=>{try{if(!PING_URL||!auth.currentUser)return;const t=await auth.currentUser.getIdToken();fetch(PING_URL,{method:'POST',headers:{Authorization:'Bearer '+t},keepalive:true}).catch(()=>{})}catch(e){}};
 const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',resolved:'Risolta'};
 const drafts=new Map();
 const romeDay = date => new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Rome', year:'numeric', month:'2-digit', day:'2-digit'}).format(date);
@@ -164,7 +168,7 @@ onAuthStateChanged(auth,async u=>{
         for(const [value,name] of Object.entries(statuses)){
           const b=document.createElement('button'); b.type='button'; b.className='status-opt '+value; b.dataset.v=value; b.setAttribute('role','radio'); b.textContent=name;
           b.onclick=async()=>{ if(b.getAttribute('aria-checked')==='true')return; const prev=d.status; paintPick(value); btns.forEach(x=>x.disabled=true);
-            try{await updateDoc(doc(db,'reports',item.id),{status:value,updatedAt:serverTimestamp()})}catch(e){paintPick(prev);$('#list-message').textContent='Impossibile aggiornare lo stato.'}finally{btns.forEach(x=>x.disabled=false)} };
+            try{await updateDoc(doc(db,'reports',item.id),{status:value,updatedAt:serverTimestamp()});ping()}catch(e){paintPick(prev);$('#list-message').textContent='Impossibile aggiornare lo stato.'}finally{btns.forEach(x=>x.disabled=false)} };
           b.onkeydown=e=>{const k=btns.indexOf(b), n=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0; if(n){e.preventDefault();btns[(k+n+btns.length)%btns.length].focus();}};
           btns.push(b); row.append(b);
         }
@@ -265,7 +269,7 @@ function composerEl(item,d){
         b.set(m,{da:'utente',uid:user.uid,testo,createdAt:serverTimestamp()});
         b.update(r,{userReplyAt:serverTimestamp(),lastReplyId:m.id,updatedAt:serverTimestamp()});
       }
-      await b.commit();
+      await b.commit(); ping();
       drafts.delete(key); input.value=''; result.textContent='Inviata.';
     }catch(e){
       result.textContent=isAdmin()?'Invio non riuscito. Riprova.':'Invio non riuscito. Aspetta qualche secondo tra una risposta e l’altra e controlla la connessione.';
@@ -325,6 +329,7 @@ $('#form').onsubmit=async e=>{
       tx.set(quotaRef,{count,lastReportId:reportRef.id,updatedAt:serverTimestamp()});
       tx.set(reportRef,{userId:sender.uid,authorEmail:sender.email,title,message:text,contact,status:'new',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
+    ping();
     if(user===sender && auth.currentUser===sender){form.reset();paintCounter();msg('Segnalazione inviata','ok');}
   } catch(e) {
     if(user===sender && auth.currentUser===sender)msg(e.message==='daily-limit'?'Hai usato tutte e 5 le segnalazioni: riprova 12 ore dopo la quinta.':'Invio non riuscito. Controlla la connessione, l’accesso Google e la data del dispositivo, poi riprova.');
