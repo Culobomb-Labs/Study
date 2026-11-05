@@ -393,7 +393,7 @@ const TOPICS = [
 /* Per quale prova: quali argomenti, che data proporre, che simulazione fare nel quiz */
 const SCOPES = {
   prima: { topics: () => TOPICS.filter(t => !t.full), exam: "2026-11-06", examLbl: "La prova è il",
-    sim: { t: "Simulazione prima prova", s: "Nel quiz: \"Prima prova\" (15 domande). Poi rivedi gli errori." },
+    sim: { t: "Simulazione prima prova", s: "Nel quiz: \"Prima prova\" (15 domande, 30 minuti, punteggio d'esame). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
   completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
