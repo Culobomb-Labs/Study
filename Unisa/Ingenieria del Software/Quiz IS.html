@@ -1130,8 +1130,8 @@ function chapterRun(cid) {
 /* Le domande con d: n vengono dal "Deposito domande" del corso (le più probabili all'esame):
    ogni simulazione ne contiene almeno metà; "dep" usa solo quelle. */
 const SIMS = {
-  sim: { title: "Simulazione prova intercorso", tot: 15, min: 1, x: 5, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
-  simtutto: { title: "Simulazione su tutto il corso", tot: 25, min: 1, dep: 0.5, chaps: () => CHAPTERS },
+  sim: { title: "Simulazione prima prova", tot: 15, min: 1, x: 5, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
+  simtutto: { title: "Simulazione prova completa", tot: 25, min: 1, dep: 0.5, chaps: () => CHAPTERS },
   dep: { title: "Domande del deposito", tot: 30, min: 0, dep: 1, chaps: () => CHAPTERS }
 };
 function simRun(key) {
@@ -1184,9 +1184,9 @@ function home() {
       <h2>Simulazione</h2>
       <p>15 domande miste sui capitoli della prova intercorso di venerdì 6 novembre (02, 03, 04, 06, 07, 08 e 18), almeno 1 per capitolo, diverse a ogni giro. Oppure 25 domande su tutto il corso, almeno una per capitolo. Alla fine vedi il punteggio per capitolo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
-      <div class="actions"><button class="btn" type="button" id="go-sim">Prova intercorso →</button>
-      <button class="btn" type="button" id="go-simtutto">Tutto il corso (25) →</button>
-      <button class="btn" type="button" id="go-sim2" disabled aria-disabled="true" title="Non ancora disponibile">Seconda prova</button></div>
+      <div class="actions"><button class="btn" type="button" id="go-sim">Prima prova →</button>
+      <button class="btn" type="button" id="go-sim2" disabled aria-disabled="true" title="Non ancora disponibile">Seconda prova</button>
+      <button class="btn" type="button" id="go-simtutto">Prova completa (25) →</button></div>
     </section>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
