@@ -177,7 +177,11 @@ onAuthStateChanged(auth,async u=>{
       }
       if(!isAdmin() && d.status==='rejected'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni rifiutate vengono eliminate 7 giorni dopo l’ultima modifica.';card.append(n)}
       else if(!isAdmin() && d.status==='resolved'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni risolte vengono eliminate 30 giorni dopo l’ultima modifica.';card.append(n)}
-      card.append(composerEl(item,d));
+      // La conversazione sul sito c'è solo se la risposta si vuole qui (nessun contatto indicato).
+      // Se è già iniziata (messaggi presenti) resta, così non si interrompe a metà.
+      const chatSulSito=!d.contact||d.adminComment||(threads.get(item.id)?.docs.length>0);
+      if(chatSulSito)card.append(composerEl(item,d));
+      else if(!isAdmin()){const n=document.createElement('p');n.className='expire-note';n.textContent='Hai chiesto di essere contattato altrove (vedi “Contatto”): qui sul sito non c’è una conversazione per questa segnalazione.';card.append(n)}
       $('#list').append(card);
     }
     if(refocus){const t=document.querySelector(`textarea[data-reply-for="${refocus.id}"]`);if(t){t.focus({preventScroll:true});try{t.setSelectionRange(refocus.a,refocus.b);}catch(e){}}}
