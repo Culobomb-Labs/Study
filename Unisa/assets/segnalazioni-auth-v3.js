@@ -11,6 +11,7 @@ const statuses={new:'Nuova',in_progress:'In elaborazione',rejected:'Rifiutata',r
 const drafts=new Map();
 const romeDay = date => new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Rome', year:'numeric', month:'2-digit', day:'2-digit'}).format(date);
 const reportDateFormat=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+const cardDateFormat=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',day:'numeric',month:'short',year:'numeric'});
 function reportDateElement(timestamp){
   const date=timestamp?.toDate?.();
   if(!(date instanceof Date) || Number.isNaN(date.getTime()))return null;
@@ -18,7 +19,8 @@ function reportDateElement(timestamp){
   const time=document.createElement('time');
   time.className='report-date';
   time.dateTime=date.toISOString();
-  time.textContent=`Inviata: ${parts.day}-${parts.month}-${parts.year}, ${parts.hour}:${parts.minute}`;
+  time.textContent=`Inviata il ${cardDateFormat.format(date)} · ${parts.hour}:${parts.minute}`;
+  time.title=`${parts.day}-${parts.month}-${parts.year}, ${parts.hour}:${parts.minute}`;
   return time;
 }
 let admin=false;
@@ -29,6 +31,13 @@ const MAX_REPLY_USER=550, MAX_REPLY_ADMIN=1500;
 const isAdmin=()=>admin;
 let user=null, readyUser=null, unsubscribe=null, sending=false, authVersion=0, latestDocs=[], renderReports=()=>{};
 for(const id of ['report-search','report-filter','report-sort']) document.getElementById(id).addEventListener('input',()=>renderReports());
+const chips=[...document.querySelectorAll('#filter-chips .fchip')];
+const paintChips=()=>{const v=$('#report-filter').value;chips.forEach(c=>{const on=c.dataset.v===v;c.setAttribute('aria-checked',on?'true':'false');c.tabIndex=on?0:-1;});};
+chips.forEach((c,k)=>{
+  c.onclick=()=>{$('#report-filter').value=c.dataset.v;paintChips();renderReports();};
+  c.onkeydown=e=>{const n=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0;if(n){e.preventDefault();const t=chips[(k+n+chips.length)%chips.length];t.focus();t.click();}};
+});
+paintChips();
 const msg=(s,kind='')=>{const m=$('#message'); m.textContent=s; m.dataset.state=kind;};
 const authMsg=(s)=>$('#auth-message').textContent=s;
 auth.languageCode='it';
@@ -143,22 +152,38 @@ onAuthStateChanged(auth,async u=>{
     const term=isAdmin()?$('#report-search').value.trim().toLocaleLowerCase('it'):'';
     const filter=isAdmin()?$('#report-filter').value:'all';
     const order=isAdmin()?$('#report-sort').value:'newest';
-    const docs=latestDocs.filter(item=>{const d=item.data();return (filter==='all'||d.status===filter)&&(!term||[d.title,d.message,d.contact,d.authorEmail].some(x=>String(x||'').toLocaleLowerCase('it').includes(term)))});
+    const matches=latestDocs.filter(item=>{const d=item.data();return !term||[d.title,d.message,d.contact,d.authorEmail].some(x=>String(x||'').toLocaleLowerCase('it').includes(term))});
+    const docs=matches.filter(item=>filter==='all'||item.data().status===filter);
+    if(isAdmin()){
+      const counts={all:matches.length};matches.forEach(item=>{const st=item.data().status;counts[st]=(counts[st]||0)+1;});
+      document.querySelectorAll('#filter-chips [data-count]').forEach(b=>b.textContent=counts[b.dataset.count]||0);
+      paintChips();
+      $('#report-count').textContent=latestDocs.length?(docs.length===latestDocs.length?`${docs.length} ${docs.length===1?'segnalazione':'segnalazioni'}`:`${docs.length} di ${latestDocs.length}`):'';
+    }
     docs.sort((a,b)=>{const x=a.data(),y=b.data(),delta=(x.createdAt?.seconds||0)-(y.createdAt?.seconds||0);return order==='oldest'?delta:order==='status'?(String(x.status).localeCompare(String(y.status))||-delta):-delta});
     $('#list-message').textContent=docs.length?'':(latestDocs.length?'Nessuna segnalazione corrisponde alla ricerca.':'Nessuna segnalazione.');
     for(const item of docs){
       const d=item.data(), card=document.createElement('article'), title=document.createElement('h3'), text=document.createElement('p'), badge=document.createElement('span');
-      card.className='entry'; title.textContent=d.title; text.textContent=d.message;
-      badge.className='status '+(Object.hasOwn(statuses,d.status)?d.status:''); badge.textContent=statuses[d.status]||'Sconosciuta';
-      card.append(title,badge);
+      const st=Object.hasOwn(statuses,d.status)?d.status:'';
+      card.className='entry'+(st?' st-'+st:''); title.textContent=d.title; text.className='entry-text'; text.textContent=d.message;
+      badge.className='status '+st; badge.textContent=statuses[d.status]||'Sconosciuta';
+      const head=document.createElement('header'); head.className='entry-head'; head.append(title,badge); card.append(head);
       const sentAt=reportDateElement(d.createdAt);
       if(sentAt)card.append(sentAt);
       card.append(text);
-      if(isAdmin() && d.authorEmail){const account=document.createElement('p');account.textContent='Account Google: '+d.authorEmail;card.append(account)}
-      if(d.contact){const c=document.createElement('p');c.className='contact-line';c.append('Contatto: ');if(window.UAContact)c.append(window.UAContact.render(d.contact,document,d.authorEmail));else c.append(String(d.contact));card.append(c)}
-      else if(isAdmin()){const c=document.createElement('p');c.className='contact-line';c.textContent='Contatto: risposta qui sul sito';card.append(c)}
+      /* account e contatto: righe compatte con etichetta */
+      const info=document.createElement('dl'); info.className='entry-info';
+      const row=(label,value)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.append(value);info.append(dt,dd);return dd;};
+      if(isAdmin() && d.authorEmail)row('Account',d.authorEmail);
+      if(d.contact){const dd=row('Contatto','');dd.className='contact-line';if(window.UAContact)dd.append(window.UAContact.render(d.contact,document,d.authorEmail));else dd.append(String(d.contact));}
+      else if(isAdmin())row('Contatto','Risposta qui sul sito');
+      if(info.children.length)card.append(info);
       card.append(threadEl(item,d));
+      // La conversazione sul sito c'è solo se la risposta si vuole qui (nessun contatto indicato).
+      // Se è già iniziata (messaggi presenti) resta, così non si interrompe a metà.
+      const chatSulSito=!d.contact||d.adminComment||(threads.get(item.id)?.docs.length>0);
       if(isAdmin()){
+        const tools=document.createElement('div'); tools.className='entry-admin';
         /* stato: quattro pulsanti colorati al posto del menu a tendina */
         const group=document.createElement('div'), gl=document.createElement('span'), row=document.createElement('div');
         group.className='status-pick'; gl.className='status-pick-lbl'; gl.id='st-'+item.id; gl.textContent='Stato';
@@ -172,16 +197,16 @@ onAuthStateChanged(auth,async u=>{
           b.onkeydown=e=>{const k=btns.indexOf(b), n=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0; if(n){e.preventDefault();btns[(k+n+btns.length)%btns.length].focus();}};
           btns.push(b); row.append(b);
         }
-        paintPick(d.status); group.append(gl,row); card.append(group);
-        card.append(deleteEl(item));
+        paintPick(d.status); group.append(gl,row); tools.append(group);
+        if(chatSulSito)tools.append(composerEl(item,d));
+        tools.append(deleteEl(item));
+        card.append(tools);
+      } else {
+        if(chatSulSito)card.append(composerEl(item,d));
+        else {const n=document.createElement('p');n.className='expire-note';n.textContent='Hai chiesto di essere contattato altrove (vedi “Contatto”): qui sul sito non c’è una conversazione per questa segnalazione.';card.append(n)}
+        if(d.status==='rejected'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni rifiutate vengono eliminate 7 giorni dopo l’ultima modifica.';card.append(n)}
+        else if(d.status==='resolved'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni risolte vengono eliminate 30 giorni dopo l’ultima modifica.';card.append(n)}
       }
-      if(!isAdmin() && d.status==='rejected'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni rifiutate vengono eliminate 7 giorni dopo l’ultima modifica.';card.append(n)}
-      else if(!isAdmin() && d.status==='resolved'){const n=document.createElement('p');n.className='expire-note';n.textContent='Le segnalazioni risolte vengono eliminate 30 giorni dopo l’ultima modifica.';card.append(n)}
-      // La conversazione sul sito c'è solo se la risposta si vuole qui (nessun contatto indicato).
-      // Se è già iniziata (messaggi presenti) resta, così non si interrompe a metà.
-      const chatSulSito=!d.contact||d.adminComment||(threads.get(item.id)?.docs.length>0);
-      if(chatSulSito)card.append(composerEl(item,d));
-      else if(!isAdmin()){const n=document.createElement('p');n.className='expire-note';n.textContent='Hai chiesto di essere contattato altrove (vedi “Contatto”): qui sul sito non c’è una conversazione per questa segnalazione.';card.append(n)}
       $('#list').append(card);
     }
     if(refocus){const t=document.querySelector(`textarea[data-reply-for="${refocus.id}"]`);if(t){t.focus({preventScroll:true});try{t.setSelectionRange(refocus.a,refocus.b);}catch(e){}}}
@@ -258,8 +283,10 @@ function composerEl(item,d){
   const label=document.createElement('label'), input=document.createElement('textarea'), send=document.createElement('button'), result=document.createElement('p');
   label.innerHTML=isAdmin()?'Scrivi all’utente <span class="optional">lo vede solo chi ha inviato la segnalazione; gli arriva una notifica</span>':'Rispondi all’amministratore <span class="optional">ad esempio il link o le informazioni che ti ha chiesto</span>';
   input.rows=3; input.maxLength=max; input.dataset.replyFor=item.id; input.placeholder=isAdmin()?'Scrivi una risposta…':'Scrivi la tua risposta…';
-  input.value=drafts.get(key)||''; input.oninput=()=>{drafts.set(key,input.value);send.disabled=!input.value.trim();};
-  send.type='button'; send.className='save-comment send-reply'; send.textContent='Invia'; send.disabled=!input.value.trim();
+  const count=document.createElement('small'); count.className='composer-count';
+  const paintCount=()=>{count.textContent=input.value.length+' / '+max;count.dataset.state=input.value.length>=max?'full':input.value.length>=max*0.9?'near':'';};
+  input.value=drafts.get(key)||''; input.oninput=()=>{drafts.set(key,input.value);send.disabled=!input.value.trim();paintCount();};
+  send.type='button'; send.className='save-comment send-reply'; send.textContent='Invia'; send.disabled=!input.value.trim(); paintCount();
   result.setAttribute('role','status'); result.className='composer-msg';
   send.onclick=async()=>{
     const testo=input.value.trim(); if(!testo)return;
@@ -274,13 +301,14 @@ function composerEl(item,d){
         b.update(r,{userReplyAt:serverTimestamp(),lastReplyId:m.id,updatedAt:serverTimestamp()});
       }
       await b.commit(); ping();
-      drafts.delete(key); input.value=''; result.textContent='Inviata.';
+      drafts.delete(key); input.value=''; paintCount(); result.textContent='Inviata.';
     }catch(e){
       result.textContent=isAdmin()?'Invio non riuscito. Riprova.':'Invio non riuscito. Aspetta qualche secondo tra una risposta e l’altra e controlla la connessione.';
       send.disabled=false;
     }
   };
-  label.append(input); wrap.append(label,send,result);
+  const bar=document.createElement('div'); bar.className='composer-bar'; bar.append(count,send);
+  label.append(input); wrap.append(label,bar,result);
   return wrap;
 }
 /* Elimina (solo amministratore): due passaggi, "Elimina" e poi "Sì, elimina", per non cancellare per sbaglio.
