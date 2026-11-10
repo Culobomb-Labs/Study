@@ -193,7 +193,8 @@ footer a{text-underline-offset:3px}
     <div class="seal" aria-hidden="true"><svg viewBox="0 0 160 160">
 <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0"/></defs>
 <linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
-<g id="seal-arcs"></g>
+<linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0"><stop offset="0" style="stop-color:var(--u-c1,#5b3fa3)"/><stop offset=".55" style="stop-color:var(--u-c2,#1d6a86)"/><stop offset="1" style="stop-color:var(--u-c3,#2f7d52)"/></linearGradient>
+<circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5"/>
 <g class="ring"><text textLength="322.7" lengthAdjust="spacing"><textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">Appunti · Unisa · Informatica · 3° anno ·</textPath></text></g>
 <circle cx="80" cy="80" r="35" fill="var(--ink)"/>
 <g transform="translate(62 62) scale(.9)" fill="none" stroke="url(#sealGrad)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15 20 8l16 7-16 7z"/><path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7"/><path d="M36 15v9"/></g>
@@ -306,21 +307,6 @@ document.getElementById("n-courses").textContent = COURSES.length;
 document.getElementById("n-docs").textContent = nDocs;
 document.getElementById("n-courses").dataset.uaCount = COURSES.length;
 document.getElementById("n-docs").dataset.uaCount = nDocs;
-// Archi del sigillo: uno per corso, con il suo colore (si adattano da soli quando aggiungi corsi)
-(function(){
-  const g = document.getElementById("seal-arcs");
-  const n = COURSES.length; if (!n || !g) return;
-  const r = 70, step = 360 / n, gap = Math.min(7, step * .18), P = a => [80 + r * Math.cos(a * Math.PI / 180), 80 + r * Math.sin(a * Math.PI / 180)];
-  COURSES.forEach((c, i) => {
-    const a0 = -90 + i * step + gap, a1 = -90 + (i + 1) * step - gap, [x0, y0] = P(a0), [x1, y1] = P(a1);
-    const d = n === 1 ? "M80 10a70 70 0 1 1 0 140a70 70 0 1 1 0-140" : `M${x0} ${y0}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`;
-    const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    el.setAttribute("d", d); el.setAttribute("fill", "none"); el.setAttribute("stroke", `var(--ua-c-${c.color}, var(--ua-muted))`);
-    el.setAttribute("stroke-width", "4"); el.setAttribute("stroke-linecap", "round"); g.append(el);
-  });
-})();
-
-
 /* Avanzamento: legge le spunte salvate nel browser dalle pagine (capitoli fatti, attività del piano) */
 function progressOf(key, meta) {
   let saved = {};
