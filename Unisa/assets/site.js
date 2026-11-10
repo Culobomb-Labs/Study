@@ -73,7 +73,7 @@
       crumbs += `<span class="ua-sep" aria-hidden="true">/</span><a class="ua-crumb" href="${ROOT}index.html#${esc(here.c.code.toLowerCase())}">${esc(here.c.name)}</a>`;
       crumbs += `<span class="ua-sep" aria-hidden="true">/</span><span class="ua-dot" style="--c:var(--ua-c-${esc(here.c.color)})" aria-hidden="true"></span><span class="ua-crumb ua-here" aria-current="page">${esc(here.d.name)}</span>`;
     }
-    bar.innerHTML = `<div class="ua-bar-in">
+    bar.innerHTML = `<div class="ua-bar-in"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="uaGrad" gradientUnits="userSpaceOnUse" x1="2" y1="0" x2="22" y2="0"><stop offset="0" style="stop-color:var(--ua-c-is)"/><stop offset=".55" style="stop-color:var(--ua-c-pd)"/><stop offset="1" style="stop-color:var(--ua-c-mp)"/></linearGradient></defs></svg>
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
       <div class="ua-actions">
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
