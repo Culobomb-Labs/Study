@@ -214,6 +214,46 @@ footer a{text-underline-offset:3px}
   .code::before{margin:0;width:18px}
   .course:hover .code::before{width:18px}
 }
+
+/* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive) */
+.site-foot{position:relative;margin-top:24px;border-top:0;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--surface) 70%,transparent))}
+.site-foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--ua-c-is),var(--ua-c-pd),var(--ua-c-mp),transparent);opacity:1;height:2px}
+.site-foot .wrap{display:block;padding-block:44px 34px;color:var(--muted)}
+.f-grid{display:grid;grid-template-columns:1.2fr .7fr 1.1fr;gap:32px 48px;align-items:start}
+.f-k{display:block;font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.f-logo{display:inline-block;font-family:"Dancing Script","Segoe Script",cursive;font-weight:700;font-size:34px;line-height:1;color:var(--ink);text-decoration:none}
+.f-logo span{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-right:.08em}
+.f-brand p{margin:0 0 14px;font-size:14px;line-height:1.55;max-width:34ch}
+.f-brand .build-meta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-left:0;text-align:left}
+.f-brand #built{font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--ink);letter-spacing:-.01em}
+.f-brand #version:not(:empty){font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;color:var(--ink);
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box;border:1px solid transparent}
+.f-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.f-links a{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;white-space:nowrap;color:var(--ink);text-decoration:none;transition:color .2s,transform .2s var(--ua-ease)}
+.f-links a:hover{color:var(--c,var(--ink));transform:translateX(3px)}
+.f-dot{width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted));flex:none}
+.f-links b{font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--c,var(--muted));min-width:22px}
+.site-foot .drives{width:auto;gap:8px}
+.site-foot .drive{background:var(--surface)}
+.site-foot .drive-t{white-space:normal}
+.site-foot .drive:hover{border-color:transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box}
+.site-foot .drive-ic{background:color-mix(in srgb,var(--ua-c-pd) 16%,transparent);color:var(--ua-c-pd)}
+body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,var(--line) 70%,transparent)}
+@media (max-width:760px){
+  /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due pulsanti affiancati, poi le cartelle */
+  .site-foot .wrap{padding-block:30px 26px}
+  .f-grid{grid-template-columns:1fr;gap:22px}
+  .f-brand{display:flex;flex-direction:column;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+  .f-brand .f-k{margin-bottom:6px}
+  .f-brand .build-meta{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .f-brand #built{font-size:18px}
+  .f-col .f-k{display:none}
+  .f-links{flex-direction:row;gap:10px}
+  .f-links li{flex:1}
+  .f-links a{width:100%;justify-content:center;box-sizing:border-box;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-weight:600}
+  .f-links a:hover{transform:none}
+  .f-links .f-dot{display:none}
+}
 @media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
 .hero .wrap{position:relative}
 .stats{grid-row:3 !important;align-self:start}
@@ -265,9 +305,21 @@ footer a{text-underline-offset:3px}
     <div class="list" id="list"></div>
   </main>
 
-  <footer><div class="wrap">
-    <nav class="drives" aria-label="Cartelle Google Drive">
-      <span class="drives-k">Cartelle Google Drive</span>
+  <footer class="site-foot"><div class="wrap">
+    <div class="f-grid">
+      <div class="f-brand">
+        <span class="f-k">Ultimo aggiornamento</span>
+        <div class="build-meta"><span id="built">—</span><span id="version"></span></div>
+      </div>
+      <nav class="f-col" aria-label="Sito">
+        <span class="f-k">Sito</span>
+        <ul class="f-links">
+          <li><a href="news.html"><i class="f-dot"></i>News</a></li>
+          <li><a href="segnalazioni.html"><i class="f-dot"></i>Segnalazioni</a></li>
+        </ul>
+      </nav>
+      <nav class="drives" aria-label="Cartelle Google Drive">
+      <span class="f-k">Cartelle Google Drive</span>
       <a class="drive" href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x" target="_blank" rel="noopener">
         <span class="drive-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></span>
         <span class="drive-t">UNI Files</span>
@@ -281,7 +333,7 @@ footer a{text-underline-offset:3px}
         <span class="drive-go" aria-hidden="true">↗</span>
       </a>
     </nav>
-    <div class="build-meta"><span id="built"></span><span id="version"></span></div>
+    </div>
   </div></footer>
 
 <script src="assets/corsi.js"></script>
