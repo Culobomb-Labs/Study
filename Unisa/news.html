@@ -16,13 +16,18 @@ body{margin:0;background:var(--ua-bg,#fff);color:var(--ua-ink,#111418);font:400 
 .eyebrow{font:500 12.5px/1 "IBM Plex Mono",ui-monospace,monospace;color:var(--ua-muted,#5d636b)}
 .eyebrow a{color:inherit;text-underline-offset:3px}
 h1{font:800 clamp(36px,8vw,52px)/1 "Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;margin:12px 0 10px}
+/* titolo "News": gradiente caldo del campanello, più ampio (giallo → arancio → rosa) perché si veda bene su una parola corta */
+:root{--nw1:#d97706;--nw2:#ea580c;--nw3:#e11d48}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nw1:#fcd34d;--nw2:#fb923c;--nw3:#f43f5e}}
+:root[data-theme="dark"]{--nw1:#fcd34d;--nw2:#fb923c;--nw3:#f43f5e}
+h1.ua-h1-news{background:linear-gradient(100deg,var(--nw1) 5%,var(--nw2) 50%,var(--nw3) 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content;padding-right:.04em}
 .lede{color:var(--ua-muted,#5d636b);margin:0 0 28px;max-width:56ch}
 </style>
 </head>
 <body>
   <main class="wrap">
     <div class="eyebrow"><a href="index.html">Appunti Unisa</a> · News</div>
-    <h1>News</h1>
+    <h1 class="ua-h1-news">News</h1>
     <p class="lede">Nuovi appunti, quiz, cambi di programma e avvisi sui corsi. Attiva le notifiche per saperlo appena esce qualcosa.</p>
     <div id="ua-news-page"><p class="ua-ni-wait">Carico le notizie…</p></div>
   </main>
