@@ -176,8 +176,8 @@ footer a{text-underline-offset:3px}
 .seal text{font-family:var(--f-mono);font-size:10px;fill:var(--muted);text-transform:uppercase}
 /* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio cambia col tema, quindi anche le tinte */
 :root{--s-c1:#a58bf0;--s-c2:#4fb3d6;--s-c3:#5fc48c}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s-c1:color-mix(in srgb,var(--ua-c-is) 45%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 45%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 45%,#000)}}
-:root[data-theme="dark"]{--s-c1:color-mix(in srgb,var(--ua-c-is) 45%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 45%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 45%,#000)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s-c1:color-mix(in srgb,var(--ua-c-is) 60%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 60%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 60%,#000)}}
+:root[data-theme="dark"]{--s-c1:color-mix(in srgb,var(--ua-c-is) 60%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 60%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 60%,#000)}
 @keyframes sealSpin{to{transform:rotate(360deg)}}
 @media (max-width:720px){.seal{grid-column:auto;grid-row:auto;position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:92px;width:100px;height:100px}.stats{grid-row:auto !important}}
 @media (prefers-reduced-motion:reduce){.seal .ring{animation:none}}
@@ -192,7 +192,7 @@ footer a{text-underline-offset:3px}
     <p class="lede" data-ua-rise>Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si legge dal browser, anche da telefono.</p>
     <div class="seal" aria-hidden="true"><svg viewBox="0 0 160 160">
 <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0"/></defs>
-<linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="62" y1="0" x2="98" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
+<linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
 <g id="seal-arcs"></g>
 <g class="ring"><text textLength="322.7" lengthAdjust="spacing"><textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">Appunti · Unisa · Informatica · 3° anno ·</textPath></text></g>
 <circle cx="80" cy="80" r="35" fill="var(--ink)"/>
