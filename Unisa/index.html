@@ -174,6 +174,10 @@ footer a{text-underline-offset:3px}
 .seal svg{width:100%;height:100%;overflow:visible}
 .seal .ring{transform-origin:80px 80px;animation:sealSpin 48s linear infinite}
 .seal text{font-family:var(--f-mono);font-size:10px;fill:var(--muted);text-transform:uppercase}
+/* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio cambia col tema, quindi anche le tinte */
+:root{--s-c1:#a58bf0;--s-c2:#4fb3d6;--s-c3:#5fc48c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s-c1:color-mix(in srgb,var(--ua-c-is) 45%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 45%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 45%,#000)}}
+:root[data-theme="dark"]{--s-c1:color-mix(in srgb,var(--ua-c-is) 45%,#000);--s-c2:color-mix(in srgb,var(--ua-c-pd) 45%,#000);--s-c3:color-mix(in srgb,var(--ua-c-mp) 45%,#000)}
 @keyframes sealSpin{to{transform:rotate(360deg)}}
 @media (max-width:720px){.seal{grid-column:auto;grid-row:auto;position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:92px;width:100px;height:100px}.stats{grid-row:auto !important}}
 @media (prefers-reduced-motion:reduce){.seal .ring{animation:none}}
@@ -188,10 +192,11 @@ footer a{text-underline-offset:3px}
     <p class="lede" data-ua-rise>Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si legge dal browser, anche da telefono.</p>
     <div class="seal" aria-hidden="true"><svg viewBox="0 0 160 160">
 <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0"/></defs>
+<linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="62" y1="0" x2="98" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
 <g id="seal-arcs"></g>
 <g class="ring"><text textLength="322.7" lengthAdjust="spacing"><textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">Appunti · Unisa · Informatica · 3° anno ·</textPath></text></g>
 <circle cx="80" cy="80" r="35" fill="var(--ink)"/>
-<g transform="translate(62 62) scale(.9)" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15 20 8l16 7-16 7z"/><path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7"/><path d="M36 15v9"/></g>
+<g transform="translate(62 62) scale(.9)" fill="none" stroke="url(#sealGrad)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15 20 8l16 7-16 7z"/><path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7"/><path d="M36 15v9"/></g>
 </svg></div>
     <div class="stats" aria-label="Riepilogo" data-ua-rise>
       <div class="stat"><b id="n-courses">0</b><span>corsi</span></div>
