@@ -24,7 +24,7 @@
 <script>try{var t=localStorage.getItem("ua-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
 /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
@@ -71,8 +71,20 @@ h1 .h1-dot{color:var(--ink)}
 .stat b{display:block;font-family:var(--f-display);font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;font-variant-numeric:lining-nums proportional-nums}
 .stat span{display:flex;align-items:center;gap:6px;margin-top:8px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
 .stat span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted)}
-.stat:first-child span::before{background:var(--ua-c-is)}
-.stat:last-child span::before{background:var(--ua-c-mp)}
+/* numeri delle statistiche: gradiente caldo ambra → arancio → rosa su tutti e due, per staccarli dal resto */
+:root{--st-c1:#d97706;--st-c2:#ea580c;--st-c3:#db2777}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--st-c1:#fbbf24;--st-c2:#fb923c;--st-c3:#f472b6}}
+:root[data-theme="dark"]{--st-c1:#fbbf24;--st-c2:#fb923c;--st-c3:#f472b6}
+.stat b{width:fit-content;background-image:linear-gradient(90deg,var(--st-c1),var(--st-c2) 50%,var(--st-c3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* alone verde acqua → azzurro che segue le lettere, complementare al gradiente caldo dei numeri; etichetta in corsivo calligrafico, grigia */
+:root{--st-dot:#0d9488;--st-dot2:#0284c7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--st-dot:#2dd4bf;--st-dot2:#38bdf8}}
+:root[data-theme="dark"]{--st-dot:#2dd4bf;--st-dot2:#38bdf8}
+.stat span::before,.stat:first-child span::before,.stat:last-child span::before{content:none}
+.stat span>i{font-style:normal;color:color-mix(in srgb,var(--st-dot) 35%,var(--ink));text-shadow:0 0 3px color-mix(in srgb,var(--st-dot) 70%,transparent),0 0 9px color-mix(in srgb,var(--st-dot) 60%,transparent),0 0 18px color-mix(in srgb,var(--st-dot2) 50%,transparent)}
+.stat{overflow:hidden}
+.stat span{gap:8px;margin-top:6px;font-family:"Dancing Script","Segoe Script","Brush Script MT",cursive;font-weight:600;font-style:normal;font-size:21px;letter-spacing:0;text-transform:none;color:var(--muted)}
+
 
 /* registro corsi */
 .list{border-top:2px solid var(--ink);margin-bottom:56px}
@@ -198,8 +210,8 @@ footer a{text-underline-offset:3px}
 <g transform="translate(62 62) scale(.9)" fill="none" stroke="url(#sealGrad)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15 20 8l16 7-16 7z"/><path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7"/><path d="M36 15v9"/></g>
 </svg></div>
     <div class="stats" aria-label="Riepilogo" data-ua-rise>
-      <div class="stat"><b id="n-courses">0</b><span>corsi</span></div>
-      <div class="stat"><b id="n-docs">0</b><span>documenti</span></div>
+      <div class="stat"><b id="n-courses">0</b><span><i>Corsi</i></span></div>
+      <div class="stat"><b id="n-docs">0</b><span><i>Documenti</i></span></div>
     </div>
   </div></header>
 
