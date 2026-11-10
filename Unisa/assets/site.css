@@ -34,6 +34,7 @@
 .ua-logo-p{fill:var(--ua-bg)}
 .ua-logo-s{fill:var(--ua-c-so)}
 .ua-brand:hover .ua-logo{transform:rotate(-6deg)}
+.ua-brand-u{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--ua-ink)} /* "Unisa" col gradiente dei corsi, come nella home */
 .ua-sep{color:var(--ua-line);flex:none}
 .ua-crumb{color:var(--ua-muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis}
 .ua-crumb.ua-here{color:var(--ua-ink)}
