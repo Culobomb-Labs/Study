@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: write   # per avviare "News dal sito" quando l'amministratore ha scritto una notizia nella pagina News
 concurrency:
   group: notifiche-segnalazioni
   cancel-in-progress: false
@@ -27,3 +28,14 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node .github/scripts/notifiche_segnalazioni.mjs
+      - name: Notizie scritte dal sito in attesa?
+        id: news
+        if: ${{ !cancelled() }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/news_dal_sito.mjs --controlla
+      - name: Pubblicale
+        if: ${{ !cancelled() && steps.news.outputs.in_attesa != '0' && steps.news.outputs.in_attesa != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run news-dal-sito.yml --ref main -R "${{ github.repository }}"

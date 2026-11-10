@@ -19,6 +19,20 @@ async function submit(db, uid='reader', countOverride) {
   return report;
 }
 try {
+  // notizie scritte dal sito: solo l'amministratore, con i campi giusti
+  const bozza=(o={})=>({tipo:'news',titolo:'Titolo',testo:'',corso:'',link:'',immagine:'',stato:'in-attesa',uid:'admin',createdAt:serverTimestamp(),...o});
+  await assertSucceeds(setDoc(doc(collection(admin,'newsBozze')),bozza()));
+  await assertSucceeds(setDoc(doc(collection(admin,'newsBozze')),bozza({tipo:'avviso',corso:'IS'})));
+  await assertFails(setDoc(doc(collection(user,'newsBozze')),bozza({uid:'reader'})));
+  await assertFails(setDoc(doc(collection(admin,'newsBozze')),bozza({tipo:'altro'})));
+  await assertFails(setDoc(doc(collection(admin,'newsBozze')),bozza({stato:'pubblicata'})));
+  await assertFails(setDoc(doc(collection(admin,'newsBozze')),bozza({titolo:''})));
+  await assertFails(setDoc(doc(collection(admin,'newsBozze')),bozza({extra:1})));
+  const nb=doc(collection(admin,'newsBozze')); await assertSucceeds(setDoc(nb,bozza()));
+  await assertSucceeds(getDoc(nb));
+  await assertFails(getDoc(doc(user,'newsBozze',nb.id)));
+  await assertFails(updateDoc(nb,{stato:'pubblicata'}));
+
   const first=await assertSucceeds(submit(user));
   await assertSucceeds(getDoc(first));
   await assertFails(getDoc(doc(another,'reports',first.id)));

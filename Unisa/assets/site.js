@@ -635,6 +635,7 @@
     }
     paintAccount();
     if (ap && !ap.hidden) renderAccount();
+    if (IS_NEWS_PAGE) paintNewsAdmin();
   }
 
   // Google mostra sempre la scelta dell'account, invece di entrare da solo con l'ultimo usato
@@ -1074,14 +1075,15 @@
     const c = CORSI.find(x => x.code === n.corso);
     const tag = c ? `<span class="ua-ni-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
     const fresh = npFresh.has(n.id) ? `<span class="ua-ni-new">nuova</span>` : "";
-    const meta = `<span class="ua-ni-meta">${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh}</span>`;
+    const avv = n.tipo === "avviso" ? `<span class="ua-ni-avv">Avviso</span>` : "";
+    const meta = `<span class="ua-ni-meta">${avv}${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh}</span>`;
     if (full) {
       const link = n.link ? `<a class="ua-ni-link" href="${esc(newsHref(n))}">Apri →</a>` : "";
       const img = n.immagine ? `<img class="ua-ni-img" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
-      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}" id="${esc(n.id)}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
+      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" id="${esc(n.id || "")}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
     }
     const thumb = n.immagine ? `<img class="ua-ni-thumb" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
-    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
+    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
   }
   const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
 
@@ -1151,10 +1153,112 @@
     const box = document.getElementById("ua-news-page");
     if (!box) return;
     npFresh = new Set(unread().map(n => n.id));
-    box.innerHTML = `<div class="ua-np-nt ua-np-nt-card" data-ua-nt>${notifControl()}</div>
+    box.innerHTML = `<div id="ua-news-admin"></div><div class="ua-np-nt ua-np-nt-card" data-ua-nt>${notifControl()}</div>
       ${news.length ? `<ul class="ua-ni-list ua-ni-full">${news.map(n => newsItem(n, true)).join("")}</ul>` : emptyNews}`;
     if (location.hash) { const t = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t) t.scrollIntoView({ block: "center" }); }
     markRead();
+    paintNewsAdmin();
+  }
+
+  /* pagina news.html, solo per l'amministratore: scrive una notizia o un avviso, che l'azione "News dal sito"
+     aggiunge a news.json e pubblica, mandando la notifica a tutti. Le regole di Firestore (newsBozze) fanno
+     scrivere solo l'account amministratore: questo riquadro è solo la comodità. */
+  const NEWS_ADMIN = "gpeluso03@gmail.com";
+  const PING_URL = "https://unisa-ping.gpeluso03.workers.dev"; // avvia subito l'azione su GitHub (vedi cloudflare/ping-worker.js)
+  const isNewsAdmin = u => !!u && u.email === NEWS_ADMIN && u.emailVerified && (u.providerData || []).some(p => p.providerId === "google.com");
+  let naUnsub = null;
+  function paintNewsAdmin() {
+    const box = document.getElementById("ua-news-admin");
+    if (!box) return;
+    if (!isNewsAdmin(cloudUser)) { box.innerHTML = ""; delete box.dataset.on; if (naUnsub) { naUnsub(); naUnsub = null; } return; }
+    if (box.dataset.on) return;
+    box.dataset.on = "1";
+    const docs = CORSI.flatMap(c => c.docs.map(d => d.path));
+    box.innerHTML = `<form class="ua-na" novalidate>
+      <div class="ua-na-head"><b>Scrivi una notizia</b><span>Lo vedi solo tu · arriva a tutti con la notifica</span></div>
+      <div class="ua-na-seg" role="radiogroup" aria-label="Tipo">
+        <button type="button" role="radio" aria-checked="true" data-tipo="news">News</button>
+        <button type="button" role="radio" aria-checked="false" data-tipo="avviso">Avviso</button>
+      </div>
+      <label class="ua-na-f"><span>Titolo <small data-cnt="titolo">0/120</small></span><input name="titolo" maxlength="120" autocomplete="off" placeholder="Es. Quiz di PD online"></label>
+      <label class="ua-na-f"><span>Testo <i>facoltativo</i> <small data-cnt="testo">0/600</small></span><textarea name="testo" maxlength="600" rows="3" placeholder="Cosa c'è di nuovo, in una o due frasi"></textarea></label>
+      <div class="ua-na-row">
+        <label class="ua-na-f"><span>Corso <i>facoltativo</i></span><select name="corso"><option value="">Nessuno</option>${CORSI.map(c => `<option value="${esc(c.code)}">${esc(c.code)} · ${esc(c.name)}</option>`).join("")}</select></label>
+        <label class="ua-na-f"><span>Link <i>facoltativo</i></span><input name="link" maxlength="300" list="ua-na-docs" autocomplete="off" placeholder="Pagina del sito o https://…"><datalist id="ua-na-docs">${docs.map(p => `<option value="${esc(p)}">`).join("")}</datalist></label>
+      </div>
+      <label class="ua-na-f"><span>Immagine <i>facoltativa</i></span><select name="img"><option value="">Nessuna</option><option value="__url">Indirizzo web…</option></select></label>
+      <label class="ua-na-f" data-url hidden><span>Indirizzo dell'immagine</span><input name="imgurl" maxlength="300" placeholder="https://…" autocomplete="off"></label>
+      <div class="ua-na-prev"><span class="ua-na-k">Anteprima</span><ul class="ua-ni-list ua-ni-full"></ul></div>
+      <div class="ua-na-go"><button type="submit" class="ua-na-send" disabled>Pubblica e avvisa tutti</button><button type="button" class="ua-na-undo" hidden>Annulla</button></div>
+      <p class="ua-na-msg" role="status"></p>
+      <div class="ua-na-log" hidden><span class="ua-na-k">Ultime inviate dal sito</span><ul></ul></div>
+    </form>`;
+    const f = box.querySelector("form"), $ = s => f.querySelector(s);
+    let tipo = "news", confirm = false;
+    fetch(ROOT + "news/immagini.json").then(r => r.ok ? r.json() : []).then(list => {
+      $('[name="img"]').insertAdjacentHTML("beforeend", list.map(n => `<option value="news/img/${esc(n)}">${esc(n)}</option>`).join(""));
+    }).catch(() => {});
+    const val = () => {
+      const g = n => (f.elements[n].value || "").trim();
+      const img = g("img") === "__url" ? g("imgurl") : g("img");
+      return { tipo, titolo: g("titolo"), testo: g("testo"), corso: g("corso"), link: g("link"), immagine: img };
+    };
+    const problem = v => !v.titolo ? "Scrivi il titolo."
+      : v.immagine && !/^https:\/\//.test(v.immagine) && !v.immagine.startsWith("news/img/") ? "L'indirizzo dell'immagine deve iniziare con https://"
+      : v.link && /^http:\/\//.test(v.link) ? "Il link deve iniziare con https://" : "";
+    const setConfirm = on => {
+      confirm = on;
+      $(".ua-na-send").textContent = on ? "Confermi? Pubblica e manda la notifica" : "Pubblica e avvisa tutti";
+      $(".ua-na-send").classList.toggle("is-confirm", on);
+      $(".ua-na-undo").hidden = !on;
+    };
+    const paint = () => {
+      const v = val();
+      f.querySelectorAll("[data-cnt]").forEach(s => { s.textContent = `${f.elements[s.dataset.cnt].value.length}/${f.elements[s.dataset.cnt].maxLength}`; });
+      $("[data-url]").hidden = f.elements.img.value !== "__url";
+      $(".ua-na-prev ul").innerHTML = newsItem({ ...v, id: "", titolo: v.titolo || "Titolo della notizia", data: new Date().toISOString().slice(0, 10), immagine: v.immagine && (v.immagine.startsWith("https://") || v.immagine.startsWith("news/img/")) ? v.immagine : "" }, true);
+      $(".ua-na-send").disabled = !!problem(v);
+      if (confirm) setConfirm(false);
+    };
+    f.addEventListener("input", paint); f.addEventListener("change", paint);
+    f.querySelectorAll("[data-tipo]").forEach(b => b.addEventListener("click", () => {
+      tipo = b.dataset.tipo;
+      f.querySelectorAll("[data-tipo]").forEach(x => x.setAttribute("aria-checked", String(x === b)));
+      f.classList.toggle("is-avv", tipo === "avviso"); paint();
+    }));
+    $(".ua-na-undo").addEventListener("click", () => setConfirm(false));
+    const msg = (t, bad) => { const m = $(".ua-na-msg"); m.textContent = t; m.classList.toggle("is-bad", !!bad); };
+    f.addEventListener("submit", async e => {
+      e.preventDefault();
+      const v = val(), p = problem(v);
+      if (p) { msg(p, true); return; }
+      if (!confirm) { setConfirm(true); msg(""); return; }
+      setConfirm(false); $(".ua-na-send").disabled = true; msg("Invio…");
+      try {
+        const c = await fbAuth();
+        if (!isNewsAdmin(c.auth.currentUser)) throw new Error("account");
+        await c.fs.addDoc(c.fs.collection(c.db, "newsBozze"), { ...v, stato: "in-attesa", uid: c.auth.currentUser.uid, createdAt: c.fs.serverTimestamp() });
+        try { const t = await c.auth.currentUser.getIdToken(); fetch(PING_URL, { method: "POST", headers: { Authorization: "Bearer " + t } }).catch(() => {}); } catch (e2) {}
+        f.reset(); tipo = "news"; f.classList.remove("is-avv");
+        f.querySelectorAll("[data-tipo]").forEach(x => x.setAttribute("aria-checked", String(x.dataset.tipo === "news")));
+        paint();
+        msg("Inviata. Tra qualche minuto è online e arriva la notifica a chi l'ha attivata.");
+      } catch (err) {
+        $(".ua-na-send").disabled = false;
+        msg(err && err.message === "account" ? "Serve l'accesso con l'account amministratore." : "Non sono riuscito a inviarla: controlla la connessione e riprova.", true);
+      }
+    });
+    paint();
+    // stato delle ultime inviate (in attesa → pubblicata), in tempo reale
+    fbAuth().then(c => {
+      const q = c.fs.query(c.fs.collection(c.db, "newsBozze"), c.fs.orderBy("createdAt", "desc"), c.fs.limit(5));
+      naUnsub = c.fs.onSnapshot(q, s => {
+        const log = $(".ua-na-log"); log.hidden = s.empty;
+        const ST = { "in-attesa": "In pubblicazione…", pubblicata: "Pubblicata", errore: "Non pubblicata" };
+        log.querySelector("ul").innerHTML = s.docs.map(d => { const x = d.data();
+          return `<li><span class="ua-na-st is-${esc(x.stato)}">${ST[x.stato] || esc(x.stato)}</span><b>${x.tipo === "avviso" ? "Avviso · " : ""}${esc(x.titolo)}</b>${x.errore ? `<small>${esc(x.errore)}</small>` : ""}</li>`; }).join("");
+      }, () => {});
+    }).catch(() => {});
   }
 
   /* ---------------- uso offline (app installabile) ---------------- */

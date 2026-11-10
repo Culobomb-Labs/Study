@@ -1,0 +1,30 @@
+name: News dal sito
+# Pubblica le notizie e gli avvisi scritti dall'amministratore nella pagina News del sito.
+# Parte da sola: l'azione "Notifiche segnalazioni" (che il sito avvia subito dopo l'invio) la lancia
+# quando trova notizie in attesa. Si può anche lanciare a mano: Actions → News dal sito → Run workflow.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: news
+  cancel-in-progress: false
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix .github/scripts --no-save --no-audit --no-fund firebase-admin@14
+      - name: Aggiungi le notizie, salva e pubblica il sito
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/news_dal_sito.mjs

@@ -180,6 +180,13 @@ def main():
         shutil.rmtree(OUT)
     shutil.copytree(SRC, OUT)
 
+    # elenco delle immagini per le news (il modulo dell'amministratore nella pagina News le propone in un menu)
+    img_dir = os.path.join(OUT, "news", "img")
+    imgs = sorted(n for n in os.listdir(img_dir) if n.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"))) if os.path.isdir(img_dir) else []
+    os.makedirs(os.path.join(OUT, "news"), exist_ok=True)
+    with open(os.path.join(OUT, "news", "immagini.json"), "w", encoding="utf-8") as f:
+        json.dump(imgs, f, ensure_ascii=False)
+
     courses = load_courses()
     doc_names = {d["path"]: d["name"] for c in courses for d in c["docs"]}
     doc_course = {d["path"]: c for c in courses for d in c["docs"]}

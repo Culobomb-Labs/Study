@@ -45,7 +45,7 @@ def main():
 
     old = {n.get("id") for n in live if isinstance(n, dict)}
     fresh = [n for n in here if n["id"] not in old][:MAX]
-    output([{"id": n["id"], "titolo": n["titolo"], "testo": n.get("testo", "")} for n in fresh])
+    output([{"id": n["id"], "titolo": n["titolo"], "testo": n.get("testo", ""), "tipo": n.get("tipo", "news")} for n in fresh])
 
 
 if __name__ == "__main__":

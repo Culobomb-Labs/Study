@@ -213,6 +213,26 @@ service cloud.firestore {
       }
     }
 
+    // notizie e avvisi scritti dall'amministratore nella pagina News: le pubblica l'azione "News dal sito"
+    // (aggiunge a news.json, pubblica il sito e manda la notifica). Il sito può solo crearle e leggerle;
+    // lo stato (in-attesa → pubblicata / errore) lo aggiorna lo script, che non passa da queste regole.
+    match /newsBozze/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['tipo', 'titolo', 'testo', 'corso', 'link', 'immagine', 'stato', 'uid', 'createdAt'])
+        && request.resource.data.tipo in ['news', 'avviso']
+        && request.resource.data.titolo is string
+        && request.resource.data.titolo.size() >= 1 && request.resource.data.titolo.size() <= 120
+        && request.resource.data.testo is string && request.resource.data.testo.size() <= 600
+        && request.resource.data.corso is string && request.resource.data.corso.size() <= 6
+        && request.resource.data.link is string && request.resource.data.link.size() <= 300
+        && request.resource.data.immagine is string && request.resource.data.immagine.size() <= 300
+        && request.resource.data.stato == 'in-attesa'
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

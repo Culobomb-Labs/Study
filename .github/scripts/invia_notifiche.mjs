@@ -44,7 +44,7 @@ for (const n of news.slice().reverse()) {
     if (!batch.length) continue;
     const res = await messaging.sendEachForMulticast({
       tokens: batch,
-      data: { id: String(n.id), titolo: String(n.titolo).slice(0, 120), testo: String(n.testo || "").slice(0, 600), url },
+      data: { id: String(n.id), titolo: ((n.tipo === "avviso" ? "Avviso · " : "") + String(n.titolo)).slice(0, 130), testo: String(n.testo || "").slice(0, 600), url },
       webpush: { headers: { Urgency: "high", TTL: String(4 * 24 * 3600) }, fcmOptions: { link: url } },
     });
     res.responses.forEach((r, k) => {

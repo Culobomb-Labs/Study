@@ -7,6 +7,12 @@ name: Pubblica una news
 on:
   workflow_dispatch:
     inputs:
+      tipo:
+        description: "Tipo: news, oppure avviso (evidenziato nella lista e nella notifica)"
+        required: false
+        type: choice
+        default: news
+        options: [news, avviso]
       titolo:
         description: "Titolo (è anche il titolo della notifica)"
         required: true
@@ -20,7 +26,7 @@ on:
         required: false
         type: choice
         default: nessuno
-        options: [nessuno, IS, MP, PD]
+        options: [nessuno, IS, MP, PD, SO]
       link:
         description: "Link (facoltativo): pagina del sito, es. Ingenieria del Software/Quiz IS.html, oppure https://…"
         required: false
@@ -54,6 +60,7 @@ jobs:
           CORSO: ${{ inputs.corso }}
           LINK: ${{ inputs.link }}
           IMMAGINE: ${{ inputs.immagine }}
+          TIPO: ${{ inputs.tipo }}
         run: python .github/scripts/aggiungi_news.py
       - name: Salva nel repository
         env:

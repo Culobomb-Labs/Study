@@ -1,7 +1,7 @@
 """Aggiunge una notizia in cima a Unisa/news.json, con i campi scritti nel modulo dell'azione
 "Pubblica una news" (scheda Actions di GitHub). Così non serve toccare il JSON a mano.
 
-Variabili: TITOLO (obbligatorio), TESTO, CORSO, LINK, IMMAGINE.
+Variabili: TITOLO (obbligatorio), TESTO, CORSO, LINK, IMMAGINE, TIPO (news o avviso).
 IMMAGINE è il nome di un file caricato prima in Unisa/news/img/ (es. quiz.jpg),
 oppure un indirizzo web che inizia con https://.
 """
@@ -36,6 +36,9 @@ def main():
         fail("Il titolo è obbligatorio.")
     if corso in ("", "nessuno", "-"):
         corso = ""
+    tipo = get("TIPO").lower()
+    if tipo not in ("", "news", "avviso"):
+        fail("TIPO deve essere news o avviso.")
 
     with open(NEWS, encoding="utf-8") as f:
         data = json.load(f)
@@ -60,6 +63,8 @@ def main():
         nid, k = f"{base}-{k}", k + 1
 
     item = {"id": nid, "data": oggi, "titolo": titolo}
+    if tipo == "avviso":
+        item["tipo"] = "avviso"
     for key, val in (("testo", testo), ("corso", corso), ("link", link), ("immagine", immagine)):
         if val:
             item[key] = val
