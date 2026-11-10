@@ -9,13 +9,20 @@
   --ua-font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --ua-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --ua-ease:cubic-bezier(.2,.7,.2,1);
+  --ua-g-bell1:#d97706; --ua-g-bell2:#ea580c; --ua-g-sun1:#ca8a04; --ua-g-sun2:#d97706;
+  --ua-g-moon1:#4f46e5; --ua-g-moon2:#9333ea; --ua-g-auto1:#d97706; --ua-g-auto2:#4f46e5;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
-  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#4fb3d6; --ua-c-so:#f09a6c;}}
+  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#4fb3d6; --ua-c-so:#f09a6c;
+  --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
+  --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
+}}
 :root[data-theme="dark"]{
+  --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
+  --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
@@ -45,9 +52,22 @@
   font:500 13px/1 var(--ua-font);cursor:pointer;transition:background .15s,border-color .15s}
 .ua-btn:hover{background:var(--ua-soft);border-color:var(--ua-muted)}
 .ua-btn:focus-visible{outline:2px solid var(--ua-ink);outline-offset:2px}
-/* icone della barra in alto: tratto col gradiente dei corsi (come il sigillo della home); il gradiente è definito una volta sola in site.js */
+/* barra in alto: ogni pulsante ha il suo gradiente (definiti una volta sola in site.js)
+   - Cerca: il gradiente dei corsi, come il sigillo della home, sulla lente e su un bordo sottile (è l'azione principale)
+   - campanello: caldo, ambra → rosso; tema: sole giallo-arancio, luna indaco-viola, automatico dal sole alla luna */
 .ua-actions .ua-btn svg{stroke:url(#uaGrad)}
 .ua-actions .ua-btn svg [fill="currentColor"]{fill:url(#uaGrad)}
+.ua-actions .ua-news-btn svg{stroke:url(#uaBell)}
+.ua-actions .ua-theme[data-mode="light"] svg{stroke:url(#uaSun)}
+.ua-actions .ua-theme[data-mode="dark"] svg{stroke:url(#uaMoon)}
+.ua-actions .ua-theme[data-mode="auto"] svg{stroke:url(#uaAuto)}
+.ua-actions .ua-theme[data-mode="auto"] svg [fill="currentColor"]{fill:url(#uaAuto)}
+.ua-btn.ua-open-search{border-color:transparent;
+  background:linear-gradient(var(--ua-bg),var(--ua-bg)) padding-box,
+    linear-gradient(90deg,color-mix(in srgb,var(--ua-c-is) 55%,var(--ua-line)),color-mix(in srgb,var(--ua-c-pd) 55%,var(--ua-line)) 55%,color-mix(in srgb,var(--ua-c-mp) 55%,var(--ua-line))) border-box}
+.ua-btn.ua-open-search:hover,.ua-btn.ua-open-search:focus-visible{
+  background:linear-gradient(var(--ua-soft),var(--ua-soft)) padding-box,
+    linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box}
 .ua-kbd{opacity:.7}
 .ua-btn svg{flex:none}
 .ua-kbd{font:500 11px/1 var(--ua-mono);color:var(--ua-muted);border:1px solid var(--ua-line);border-radius:4px;padding:3px 5px}
