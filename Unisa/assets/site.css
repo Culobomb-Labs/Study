@@ -58,6 +58,7 @@
 .ua-actions .ua-btn svg{stroke:url(#uaGrad)}
 .ua-actions .ua-btn svg [fill="currentColor"]{fill:url(#uaGrad)}
 .ua-actions .ua-news-btn svg{stroke:url(#uaBell)}
+.ua-nt-bell svg{stroke:url(#uaBell)} /* campanello della riga Notifiche (tendina e pagina News): stesso gradiente ambra → arancio */
 .ua-actions .ua-theme[data-mode="light"] svg{stroke:url(#uaSun)}
 .ua-actions .ua-theme[data-mode="dark"] svg{stroke:url(#uaMoon)}
 .ua-actions .ua-theme[data-mode="auto"] svg{stroke:url(#uaAuto)}

@@ -1041,7 +1041,7 @@
 
   // interruttore delle notifiche, o una spiegazione se su questo dispositivo non si può
   function notifControl() {
-    const head = `<span class="ua-nt-ic">${ICON.bell}</span>`;
+    const head = `<span class="ua-nt-ic ua-nt-bell">${ICON.bell}</span>`;
     if (!notifSupported()) {
       const why = isIOS && !standalone()
         ? `Su iPhone e iPad: tocca <b>Condividi</b> → <b>Aggiungi alla schermata Home</b>, apri il sito dall'icona e attivale da qui.`
