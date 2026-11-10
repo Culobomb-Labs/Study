@@ -6,6 +6,12 @@
    - piccoli effetti sulla home
    Si carica con: <script src=".../assets/site.js" data-root="percorso/della/home/" data-page="percorso/della/pagina"></script> */
 (function () {
+  // corsivo calligrafico del marchio "Appunti Unisa" nella barra: si carica su tutte le pagine (la home lo carica già da sé)
+  if (!document.querySelector('link[href*="Dancing+Script"]')) {
+    const f = document.createElement("link"); f.rel = "stylesheet";
+    f.href = "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap";
+    document.head.appendChild(f);
+  }
   "use strict";
 
   // alcune pagine lo includono già da sole e la pubblicazione lo aggiunge di nuovo: basta una volta

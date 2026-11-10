@@ -24,7 +24,7 @@
 <script>try{var t=localStorage.getItem("ua-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600;700&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 <style>
 /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
@@ -65,6 +65,11 @@ h1 .h1-l + .h1-l{color:var(--muted)}
   h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
 }
 h1 .h1-dot{color:var(--ink)}
+/* titolo in corsivo calligrafico, come le etichette delle statistiche; "Unisa" pieno col gradiente (il solo contorno con un corsivo legato si accavalla) */
+h1{font-family:"Dancing Script","Segoe Script","Brush Script MT",cursive;font-weight:700;letter-spacing:0;line-height:1.05}
+h1 .h1-l + .h1-l{-webkit-text-stroke:0 !important;-webkit-text-fill-color:transparent !important;letter-spacing:0 !important;padding-right:.08em}
+h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
+
 .lede{grid-column:1;margin:0;max-width:52ch;color:var(--muted);font-size:17px}
 .stats{grid-column:2;grid-row:2 / span 2;display:grid;grid-template-columns:repeat(2,minmax(124px,1fr));gap:10px}
 .stat{min-width:112px;padding:14px 16px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 1px 0 var(--glow)}
