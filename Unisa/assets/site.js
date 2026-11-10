@@ -1098,7 +1098,7 @@
     const list = news.slice(0, PANEL_MAX);
     const more = news.length > PANEL_MAX ? `Tutte le notizie (${news.length}) →` : "Tutte le notizie →";
     np.querySelector(".ua-np-in").innerHTML = `
-      <div class="ua-np-head"><h2>News</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
+      <div class="ua-np-head"><h2 class="ua-np-news">News</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
       <div class="ua-np-body">${!newsLoaded ? `<p class="ua-ni-wait">Carico…</p>` : list.length ? `<ul class="ua-ni-list">${list.map(n => newsItem(n, false)).join("")}</ul>` : emptyNews}</div>
       <div class="ua-np-nt" data-ua-nt>${notifControl()}</div>
       <a class="ua-np-all" href="${NEWS_PAGE}">${more}</a>`;

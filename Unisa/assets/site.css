@@ -97,6 +97,7 @@
   background:var(--ua-bg);border:1px solid var(--ua-line);border-radius:14px;box-shadow:var(--ua-shadow);outline:0;animation:ua-pop .18s var(--ua-ease) both}
 .ua-np-grip{display:none}
 .ua-np-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+.ua-np-head h2.ua-np-news{background:linear-gradient(90deg,var(--ua-g-bell1),var(--ua-g-bell2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content} /* "News": stesso gradiente del campanello */
 .ua-np-head h2{margin:0;font:600 12px/1 var(--ua-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ua-muted)}
 .ua-np-close{appearance:none;border:0;background:transparent;color:var(--ua-muted);width:30px;height:30px;border-radius:8px;font:400 22px/1 var(--ua-font);cursor:pointer}
 .ua-np-close:hover{background:var(--ua-soft);color:var(--ua-ink)}

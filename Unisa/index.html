@@ -253,7 +253,12 @@ body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,va
   .f-links a{width:100%;justify-content:center;box-sizing:border-box;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-weight:600}
   .f-links a:hover{transform:none}
   .f-links .f-dot{display:none}
+  /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
+  .f-links a[href="news.html"]{color:var(--ua-g-bell2);background:color-mix(in srgb,var(--ua-g-bell1) 12%,var(--surface));border-color:color-mix(in srgb,var(--ua-g-bell1) 40%,var(--line))}
+  .f-links a[href="segnalazioni.html"]{color:var(--ua-warn);background:var(--ua-warn-soft);border-color:var(--ua-warn-line)}
 }
+.f-links a[href="news.html"] .f-dot{background:linear-gradient(135deg,var(--ua-g-bell1),var(--ua-g-bell2))}
+.f-links a[href="segnalazioni.html"] .f-dot{background:var(--ua-warn)}
 @media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
 .hero .wrap{position:relative}
 .stats{grid-row:3 !important;align-self:start}
