@@ -134,26 +134,26 @@ body.running .lede{display:none}
    vengono mescolate a ogni giro), e = spiegazione. Tutto preso dal Quaderno di Android (Mobile Programming). */
 const CHAPTERS = [
   { id: "piattaforma", n: "01", t: "La piattaforma Android" },
-  { id: "versioni", n: "02", t: "Versioni e livelli API" },
-  { id: "strumenti", n: "03", t: "Android Studio e strumenti" },
-  { id: "layout", n: "04", t: "Layout e misure" },
-  { id: "listview", n: "05", t: "ListView e Adapter" },
-  { id: "ciclo", n: "06", t: "Ciclo di vita dell'Activity" },
+  { id: "versioni", n: "02", t: "Versioni" },
+  { id: "strumenti", n: "03", t: "Android Developer Tools" },
+  { id: "layout", n: "04", t: "Layouts" },
+  { id: "listview", n: "05", t: "ListView" },
+  { id: "ciclo", n: "06", t: "Ciclo di vita, Cambi di configurazione e Backstack" },
   { id: "intent", n: "07", t: "Intent" },
   { id: "permessi", n: "08", t: "Permessi" },
-  { id: "thread", n: "09", t: "Thread e AsyncTask" },
-  { id: "frammenti", n: "10", t: "Frammenti (Fragments)" },
+  { id: "thread", n: "09", t: "Threads" },
+  { id: "frammenti", n: "10", t: "Fragments" },
   { id: "rete", n: "11", t: "Networking" },
-  { id: "storage", n: "12", t: "Salvare i dati" },
-  { id: "grafica", n: "13", t: "Grafica e custom view" },
-  { id: "touch", n: "14", t: "Multitouch e gesti" },
-  { id: "media", n: "15", t: "MediaPlayer e audio focus" },
+  { id: "storage", n: "12", t: "Data Storage" },
+  { id: "grafica", n: "13", t: "Grafica" },
+  { id: "touch", n: "14", t: "Multitouch" },
+  { id: "media", n: "15", t: "Media player" },
   { id: "sensori", n: "16", t: "Sensori" },
   { id: "notifiche", n: "17", t: "Notifiche" },
   { id: "alarms", n: "18", t: "Alarms" },
-  { id: "broadcast", n: "19", t: "Broadcast" },
-  { id: "provider", n: "20", t: "Content Provider" },
-  { id: "service", n: "21", t: "Service" }
+  { id: "broadcast", n: "19", t: "Broadcasts" },
+  { id: "provider", n: "20", t: "Content Providers" },
+  { id: "service", n: "21", t: "Services" }
 ];
 const Q = [
   // 01 · La piattaforma Android
@@ -178,7 +178,7 @@ const Q = [
   { c: "piattaforma", q: "WebKit, libc e OpenGL ES appartengono a quale strato?", o: ["Librerie native", "Kernel Linux", "Application framework", "Applicazioni"], e: "Le librerie native stanno insieme al runtime ART." },
   { c: "piattaforma", q: "Driver, memoria, processi e file system sono gestiti da…", o: ["Il kernel Linux", "L'application framework", "ART", "Il Package Manager"], e: "Sono i servizi base di un sistema operativo." },
 
-  // 02 · Versioni e livelli API
+  // 02 · Versioni
   { c: "versioni", q: "Da quale API i permessi pericolosi si chiedono a runtime?", o: ["API 23 (Android 6.0 Marshmallow)", "API 21 (Android 5.0)", "API 26 (Android 8.0)", "API 30 (Android 11)"], e: "Prima di API 23 si accettavano tutti all'installazione." },
   { c: "versioni", q: "Da quale API ogni notifica deve avere un canale?", o: ["API 26 (Android 8.0 Oreo)", "API 21 (Android 5.0)", "API 23 (Android 6.0)", "API 33 (Android 13)"], e: "Senza canale la notifica non compare." },
   { c: "versioni", q: "Da quale API le connessioni http in chiaro sono bloccate di default?", o: ["API 28 (Android 9 Pie)", "API 26 (Android 8.0)", "API 23 (Android 6.0)", "API 31 (Android 12)"], e: "L'errore tipico è “Cleartext not permitted”." },
@@ -195,7 +195,7 @@ const Q = [
   { c: "versioni", q: "Android 6.0 si chiama…", o: ["Marshmallow", "Lollipop", "Oreo", "Pie"], e: "API 23: permessi pericolosi a runtime." },
   { c: "versioni", q: "Android 8.0 si chiama…", o: ["Oreo", "Pie", "Marshmallow", "Lollipop"], e: "API 26: canali di notifica obbligatori." },
 
-  // 03 · Android Studio e strumenti
+  // 03 · Android Developer Tools
   { c: "strumenti", q: "Cos'è il manifesto (AndroidManifest.xml)?", o: ["La carta d'identità dell'app: permessi, activity, icona, service, receiver, provider", "Il file con tutte le stringhe tradotte", "Il file che contiene il codice Java", "Il file di configurazione dell'emulatore"], e: "Tutto ciò che il sistema deve sapere dell'app sta lì." },
   { c: "strumenti", q: "Cosa c'è nella cartella res/?", o: ["Le risorse: layout, valori (stringhe, colori), drawable, mipmap, menu", "Il codice sorgente Java", "Le librerie native", "I log dell'app"], e: "java/ contiene il codice sorgente." },
   { c: "strumenti", q: "A cosa serve Gradle?", o: ["È il sistema di build: dipendenze dalle librerie e come compilare", "È l'emulatore di Android", "È il debugger", "È il database dell'app"], e: "Le dipendenze stanno anche in libs.versions.toml." },
@@ -215,7 +215,7 @@ const Q = [
   { c: "strumenti", q: "A cosa serve il Profiler?", o: ["A guardare uso di memoria, CPU, rete e GPU, per esempio per trovare memory leak", "A tradurre le stringhe", "A firmare l'app", "A creare layout"], e: "Il Logcat invece mostra i log." },
   { c: "strumenti", q: "Quale modello di progetto si usa per partire nel corso?", o: ["Empty Views Activity", "Game Activity", "Native C++", "Wear OS"], e: "File → New → New Project → Empty Views Activity." },
   { c: "strumenti", q: "Quale livello di log indica un warning?", o: ["w", "v", "d", "i"], e: "w = warning." },
-  // 04 · Layout e misure
+  // 04 · Layouts
   { c: "layout", q: "Quale vantaggio ha scrivere il layout in XML?", o: ["È facile e separa la grafica dal codice", "È dinamico e si adatta a runtime", "Non serve il manifesto", "È più veloce da eseguire del codice"], e: "Il layout programmatico invece è dinamico ma va gestito tutto nel codice." },
   { c: "layout", q: "Quale vantaggio ha il layout programmatico (nel codice)?", o: ["È dinamico e si adatta a runtime", "Separa la grafica dal codice", "Non richiede di scrivere Java", "È sempre più semplice dell'XML"], e: "Si possono anche combinare i due modi." },
   { c: "layout", q: "Quanti elementi radice può avere un file di layout XML?", o: ["Uno solo", "Due", "Quanti ne vuoi", "Nessuno"], e: "Per esempio un LinearLayout che contiene gli altri." },
@@ -242,7 +242,7 @@ const Q = [
   { c: "layout", q: "Quale di questi NON è un widget comune?", o: ["Cursor", "TextView", "EditText", "CheckBox"], e: "Cursor serve per leggere i risultati di un database." },
   { c: "layout", q: "ListView e GridView sono riempite da…", o: ["Un Adapter", "Un Intent", "Un Service", "Un Broadcast"], e: "Vedi capitolo 05." },
 
-  // 05 · ListView e Adapter
+  // 05 · ListView
   { c: "listview", q: "Quali elementi mostra una ListView?", o: ["Solo quelli che entrano nello schermo; gli altri si vedono scorrendo", "Tutti gli elementi insieme, anche se escono dallo schermo", "Solo il primo elemento", "Solo elementi di tipo immagine"], e: "Per questo serve un Adapter che crea le righe man mano." },
   { c: "listview", q: "A cosa serve l'Adapter?", o: ["Fa da ponte tra i dati e la ListView, creando le righe mentre l'utente scorre", "Salva i dati nel database", "Gestisce i permessi della lista", "Disegna le icone dell'app"], e: "Prende i dati, per esempio da un array." },
   { c: "listview", q: "Qual è il primo dei 4 passi per una lista?", o: ["Preparare i dati (es. un array di stringhe)", "Chiamare setAdapter", "Creare il listener del click", "Dichiarare la lista nel manifesto"], e: "Poi l'adapter, poi il widget, poi collegarli." },
@@ -257,7 +257,7 @@ const Q = [
   { c: "listview", q: "Cosa passi al costruttore di ArrayAdapter nell'esempio?", o: ["Context, layout della riga, id della TextView, array dei dati", "Solo l'array dei dati", "Un Intent e un Bundle", "Un Cursor e una query"], e: "new ArrayAdapter<>(this, R.layout.list_element, R.id.textViewList, nomi)." },
   { c: "listview", q: "Perché la ListView usa un Adapter invece di creare subito tutte le righe?", o: ["Per creare solo le righe visibili, man mano che si scorre", "Perché le liste non possono avere più di 10 righe", "Perché le righe vanno salvate su file", "Per chiedere i permessi"], e: "Così anche liste lunghe restano leggere." },
   { c: "listview", q: "In una lista semplice ogni riga è…", o: ["Una stringa", "Un frammento", "Un'activity", "Un service"], e: "Per righe complesse serve un CustomAdapter." },
-  // 06 · Ciclo di vita dell'Activity
+  // 06 · Ciclo di vita, Cambi di configurazione e Backstack
   { c: "ciclo", q: "Cos'è un'Activity?", o: ["Una schermata dell'app", "Un thread in background", "Un file di risorse XML", "Un messaggio tra app"], e: "Android chiama i suoi metodi in un ordine preciso mentre nasce, viene usata e muore." },
   { c: "ciclo", q: "Qual è la catena completa del ciclo di vita?", o: ["onCreate → onStart → onResume → in esecuzione → onPause → onStop → onDestroy", "onStart → onCreate → onResume → onStop → onPause → onDestroy", "onCreate → onResume → onStart → onPause → onDestroy → onStop", "onResume → onCreate → onStart → onStop → onPause → onDestroy"], e: "Da saper ridisegnare a memoria." },
   { c: "ciclo", q: "Quali metodi vengono chiamati quando premi Home?", o: ["onPause → onStop", "onDestroy", "onPause → onStop → onDestroy", "Nessuno"], e: "L'activity non viene distrutta." },
@@ -316,7 +316,7 @@ const Q = [
   { c: "permessi", q: "Nello schema, come chiedi il permesso?", o: ["requestPermissionLauncher.launch(Manifest.permission.CAMERA)", "checkSelfPermission(CAMERA)", "sendBroadcast(CAMERA)", "putExtra(CAMERA)"], e: "Passo 3: lo chiedo." },
   { c: "permessi", q: "Basta dichiarare un permesso pericoloso nel manifesto?", o: ["No: da API 23 va anche chiesto a runtime e controllato con checkSelfPermission", "Sì, sempre", "Sì, ma solo su emulatore", "No, non va dichiarato affatto"], e: "Domanda lampo del capitolo." },
 
-  // 09 · Thread e AsyncTask
+  // 09 · Threads
   { c: "thread", q: "Cos'è un thread?", o: ["Un flusso di esecuzione parallelo dentro un processo", "Un processo separato con memoria propria", "Una schermata dell'app", "Un file .dex"], e: "Ha program counter e stack propri, condivide la memoria (heap)." },
   { c: "thread", q: "Cosa condividono i thread di un processo?", o: ["La memoria (heap)", "Il program counter", "Lo stack", "Niente"], e: "Program counter e stack sono propri di ogni thread." },
   { c: "thread", q: "Come si avvia un thread?", o: ["Si crea un Thread con dentro un Runnable e si chiama start(), che esegue run()", "Si chiama direttamente run() sul main thread", "Con startActivity", "Con sendBroadcast"], e: "start() lancia il nuovo flusso." },
@@ -332,7 +332,7 @@ const Q = [
   { c: "thread", q: "Cosa riceve onPostExecute(Result)?", o: ["Il risultato restituito da doInBackground, alla fine, nel main thread", "I parametri iniziali", "Il progresso", "Il Bundle dell'activity"], e: "Qui puoi aggiornare la UI con il risultato." },
   { c: "thread", q: "Da quale metodo si chiama publishProgress()?", o: ["doInBackground()", "onPostExecute()", "onPreExecute()", "onCreate()"], e: "Fa eseguire onProgressUpdate sul main thread." },
   { c: "thread", q: "AsyncTask oggi è…", o: ["Deprecato da Google (da API 30), ma va saputo per l'esame", "Il metodo consigliato da Google", "Eliminato da API 21", "Obbligatorio per la rete"], e: "È nelle slide." },
-  // 10 · Frammenti
+  // 10 · Fragments
   { c: "frammenti", q: "Cos'è un frammento?", o: ["Una porzione di interfaccia, una specie di sotto-activity", "Un'activity indipendente", "Un thread in background", "Un tipo di service"], e: "Vive sempre dentro un'activity." },
   { c: "frammenti", q: "Come è legato il ciclo di vita del frammento a quello dell'activity?", o: ["Se l'activity va in pausa, ci vanno anche i frammenti", "Sono del tutto indipendenti", "Il frammento sopravvive sempre all'activity", "Il frammento non ha ciclo di vita"], e: "Il frammento vive dentro l'activity." },
   { c: "frammenti", q: "Perché esistono i frammenti?", o: ["Per adattarsi allo schermo, es. lista e articolo affiancati su tablet, uno alla volta sul telefono", "Per fare operazioni di rete", "Per salvare dati", "Per ricevere broadcast"], e: "Esempio dell'app di notizie." },
@@ -366,7 +366,7 @@ const Q = [
   { c: "rete", q: "Quali metodi di JSoup estraggono pezzi della pagina?", o: ["getElementById e select", "moveToFirst e moveToNext", "putExtra e getExtra", "measure e layout"], e: "Dopo Jsoup.connect(url).get()." },
   { c: "rete", q: "Con HttpURLConnection, da dove leggi la risposta?", o: ["Da getInputStream()", "Da getOutputStream() soltanto", "Da getIntent()", "Dal Bundle"], e: "Dopo openConnection()." },
 
-  // 12 · Salvare i dati
+  // 12 · Data Storage
   { c: "storage", q: "Cos'è lo spazio privato di un'app?", o: ["Una cartella accessibile solo all'app, cancellata se la disinstalli", "La SD card", "Lo spazio condiviso con le altre app", "La cache del browser"], e: "Lo spazio pubblico contiene file condivisi." },
   { c: "storage", q: "“External storage” vuol dire SD card?", o: ["No: vuol dire fuori dallo spazio privato dell'app, memoria interna o SD", "Sì, sempre", "Sì, ma solo da API 29", "No, vuol dire cloud"], e: "Può stare in /storage/emulated/0/." },
   { c: "storage", q: "Cosa restituisce getFilesDir()?", o: ["/data/user/0/<package>/files/", "/data/user/0/<package>/cache/", "/storage/emulated/0/Android/data/<package>/files/", "/data/user/0/<package>/databases/"], e: "Spazio privato." },
@@ -393,8 +393,51 @@ const Q = [
   { c: "storage", q: "Come inserisci una riga in SQLite?", o: ["Metti i valori in un ContentValues e chiami db.insert(tabella, null, valori)", "Con putExtra", "Con un Bundle e commit()", "Con openFileOutput"], e: "Ci sono anche update e delete." },
   { c: "storage", q: "Cosa restituisce db.query()?", o: ["Un Cursor, da scorrere con moveToFirst/moveToNext", "Un array di stringhe", "Un ContentValues", "Un Intent"], e: "Leggi con getInt/getString + getColumnIndex." },
   { c: "storage", q: "Con un Cursor, come leggi una colonna?", o: ["getInt()/getString() con getColumnIndex()", "getExtra()", "getTag()", "findViewById()"], e: "Dopo moveToFirst / moveToNext." },
+  { c: "storage", q: "Cos'è il Context rispetto ad Activity?", o: ["La sua superclasse: ha i metodi per le directory relative all'app", "Una sua sottoclasse", "Una classe solo per i database", "Un permesso"], e: "L'Environment invece è una classe di aiuto con metodi statici." },
+  { c: "storage", q: "Cos'è la classe Environment?", o: ["Una classe di aiuto con metodi statici per le informazioni di sistema e le directory condivise", "La superclasse di Activity", "Una sottoclasse di SQLiteOpenHelper", "Un tipo di Intent"], e: "Molti suoi metodi sono deprecati. Il Context invece è la superclasse di Activity." },
+  { c: "storage", q: "Qual è la differenza tra getDataDir() e getDataDirectory()?", o: ["getDataDir() (Context) dà /data/user/0/<package>/, getDataDirectory() (Environment) dà /data/", "Sono lo stesso metodo", "getDataDir() dà /data/, getDataDirectory() dà /data/user/0/<package>/", "getDataDir() dà la cache, getDataDirectory() la SD"], e: "Trabocchetto: uno è della cartella dell'app, l'altro del sistema." },
+  { c: "storage", q: "Cosa restituisce getCacheDir()?", o: ["/data/user/0/<package>/cache/", "/data/user/0/<package>/files/", "/storage/emulated/0/Android/data/<package>/cache/", "/cache/"], e: "Quella esterna è getExternalCacheDir()." },
+  { c: "storage", q: "Cosa restituisce getExternalCacheDir()?", o: ["/storage/emulated/0/Android/data/<package>/cache/", "/data/user/0/<package>/cache/", "/cache/", "/storage/emulated/0/Android/data/<package>/files/"], e: "La cache privata è getCacheDir()." },
+  { c: "storage", q: "A cosa serve getNoBackupFilesDir()?", o: ["Alla directory per i file che non devono avere copie di backup nel cloud (es. Google Drive)", "Alla directory dei file temporanei", "Alla cartella dei database", "Alla SD card"], e: "Restituisce /data/user/0/<package>/no_backup/." },
+  { c: "storage", q: "Cosa fa getDir(nome, modo)?", o: ["Restituisce la directory files/nome nello spazio privato, creandola se non esiste", "Cancella la directory nome", "Restituisce la SD card", "Apre un database"], e: "Percorso: /data/user/0/<package>/files/nome." },
+  { c: "storage", q: "Cosa restituisce getDatabasePath(nome)?", o: ["/data/user/0/<package>/databases/nome", "/data/user/0/<package>/files/nome", "/data/user/0/<package>/shared_prefs/nome", "/storage/emulated/0/databases/nome"], e: "Spazio privato dell'app." },
+  { c: "storage", q: "Cosa restituisce getExternalFilesDirs()?", o: ["Un array: [0] memoria flash, [1] SD card (se c'è)", "Una sola stringa con la SD", "Un Cursor", "Un array con i file dell'app"], e: "Con Environment.DIRECTORY_PICTURES aggiunge la sottocartella Pictures." },
+  { c: "storage", q: "Quale metodo dell'Environment restituisce /system/?", o: ["getRootDirectory()", "getDataDirectory()", "getDownloadCacheDirectory()", "getExternalStorageDirectory()"], e: "getDataDirectory() dà /data/, getDownloadCacheDirectory() dà /cache/." },
+  { c: "storage", q: "Quale metodo dell'Environment restituisce /cache/?", o: ["getDownloadCacheDirectory()", "getRootDirectory()", "getCacheDir()", "getExternalCacheDir()"], e: "getCacheDir() è del Context e dà la cache dell'app." },
+  { c: "storage", q: "Cosa restituisce getExternalStorageDirectory()?", o: ["/storage/emulated/0/", "/data/", "/system/", "/storage/emulated/0/Android/data/<package>/files/"], e: "È dell'Environment: spazio pubblico." },
+  { c: "storage", q: "Cosa si può dire di getExternalStoragePublicDirectory(tipo)?", o: ["È deprecato: dà directory pubbliche come Documents, Pictures, Movies", "È l'unico metodo da usare da API 33", "Dà la directory privata dell'app", "Crea una tabella SQL"], e: "Da API 29 è stato introdotto MediaStore." },
+  { c: "storage", q: "Quali sono le partizioni della memoria interna citate?", o: ["/system, /data, /cache, /boot", "/sdcard, /usb, /cloud", "/files, /shared_prefs, /databases", "/res, /raw, /layout"], e: "La memoria esterna invece è la microSD." },
+  { c: "storage", q: "Cosa succede alla directory privata se disinstalli l'app?", o: ["Viene cancellata, anche quella sulla SD", "Resta sulla SD", "Passa a un'altra app", "Viene spostata in Download"], e: "Lo spazio privato è accessibile solo all'app." },
+  { c: "storage", q: "Come si controlla se ci sono SD card montate?", o: ["Con lo StorageManager e getStorageVolumes(), guardando getDirectory() e isRemovable()", "Con SharedPreferences", "Con getFilesDir()", "Con un Cursor"], e: "getSystemService(Context.STORAGE_SERVICE). La SD ha percorso /storage/XXXX-XXXX/." },
+  { c: "storage", q: "Cosa dà getExternalFilesDirs(null) alla posizione [1]?", o: ["La SD removibile, se c'è: /storage/XXXX-XXXX/Android/data/<package>/files/", "La memoria interna", "La cache", "Sempre null"], e: "dirs[0] è la memoria esterna primaria (/storage/emulated/0/)." },
+  { c: "storage", q: "Da API 30, cosa permette READ_EXTERNAL_STORAGE?", o: ["L'accesso solo ai file media", "L'accesso a tutti i file", "La scrittura sulla SD", "Nulla, non esiste più"], e: "WRITE_EXTERNAL_STORAGE è ignorato; per file manager c'è MANAGE_EXTERNAL_STORAGE." },
+  { c: "storage", q: "Come ottiene l'accesso un'app con MANAGE_EXTERNAL_STORAGE?", o: ["L'utente la approva nelle Impostazioni (All files access)", "Con un normale permesso a runtime", "Si ottiene da sola nel manifesto", "Con MediaStore"], e: "Pensato per file manager, backup e antivirus; va giustificato su Google Play." },
+  { c: "storage", q: "Quali metodi danno l'oggetto SharedPreferences?", o: ["getSharedPreferences(\"filename\") e getDefaultSharedPreferences()", "openFileOutput() e openFileInput()", "getFilesDir() e getCacheDir()", "getWritableDatabase() e query()"], e: "Il primo serve per più file di preferenze." },
+  { c: "storage", q: "Quando si usa getSharedPreferences(\"filename\") invece di getDefaultSharedPreferences()?", o: ["Quando si vogliono usare più file di preferenze", "Quando si vuole usare la SD", "Quando si usa SQL", "Mai: sono uguali"], e: "Il file è shared_prefs/<filename>.xml." },
+  { c: "storage", q: "Dove sta il file creato da getSharedPreferences(\"filename\")?", o: ["/data/user/0/<package>/shared_prefs/filename.xml", "/data/user/0/<package>/files/filename", "/data/user/0/<package>/databases/filename", "/storage/emulated/0/filename.xml"], e: "Quello di default è <package>_preferences.xml." },
+  { c: "storage", q: "Dove sta il file di getDefaultSharedPreferences()?", o: ["shared_prefs/<package>_preferences.xml", "shared_prefs/MainActivity.xml", "files/default.xml", "databases/default"], e: "Nella cartella privata dell'app." },
+  { c: "storage", q: "Cosa restituisce getPreferences() (senza “Shared”)?", o: ["Preferenze non condivise con le altre activity: shared_prefs/MainActivity.xml", "Le preferenze di default dell'app", "Un Cursor", "Un file in res/raw"], e: "Trabocchetto: non va usato al posto di getSharedPreferences." },
+  { c: "storage", q: "Come si ottiene l'Editor delle SharedPreferences?", o: ["Con il metodo edit() sull'oggetto SharedPreferences", "Con getEditor()", "Con openFileOutput()", "Con db.edit()"], e: "Sull'Editor si usa put…, poi commit()." },
+  { c: "storage", q: "Con l'Editor, quale metodo scrive un valore?", o: ["put (es. putBoolean(\"KEY\", valore))", "get", "insert", "moveToNext"], e: "Per leggere si usa get sull'oggetto SharedPreferences." },
+  { c: "storage", q: "Cosa restituisce openFileInput(fileName)?", o: ["Un FileInputStream", "Un FileOutputStream", "Un Cursor", "Un Bundle"], e: "Poi read() e close(). openFileOutput restituisce un FileOutputStream." },
+  { c: "storage", q: "Cosa restituisce openFileOutput(fileName, mode)?", o: ["Un FileOutputStream", "Un FileInputStream", "Un InputStream", "Un Cursor"], e: "Poi write() e close()." },
+  { c: "storage", q: "Cosa restituisce openRawResource(R.raw.nome)?", o: ["Un InputStream per leggere il file statico in res/raw", "Un OutputStream", "Un Cursor", "Un percorso della SD"], e: "Il file statico è incluso nell'app." },
+  { c: "storage", q: "Cosa fa MODE_APPEND?", o: ["Aggiunge i dati in fondo al file", "Rende il file leggibile da tutti", "Cancella il file", "Salva sulla SD"], e: "MODE_PRIVATE invece rende il file privato." },
+  { c: "storage", q: "Cosa sono MODE_WORLD_READABLE e MODE_WORLD_WRITABLE?", o: ["Modi per file leggibili/scrivibili da tutti, obsoleti da API 17", "Modi introdotti con API 33", "Modi per le SharedPreferences di default", "Modi dei database"], e: "Per questo si usa MODE_PRIVATE." },
+  { c: "storage", q: "Quale metodo cancella un file nello spazio privato?", o: ["deleteFile()", "removeFile()", "getDir()", "fileList()"], e: "fileList() restituisce l'array dei file presenti." },
+  { c: "storage", q: "Cosa restituisce fileList()?", o: ["L'array dei file presenti nello spazio privato", "L'elenco dei database", "I file della SD", "Un Cursor"], e: "deleteFile() cancella un file." },
+  { c: "storage", q: "Di chi è la responsabilità di cancellare i file nella cache?", o: ["Dell'app, anche se Android può cancellarli se manca spazio", "Solo di Android", "Dell'utente", "Del manifesto"], e: "La cache è per file temporanei, max consigliato 1 MB." },
+  { c: "storage", q: "Quale stato di Environment.getExternalStorageState() permette di scrivere?", o: ["MEDIA_MOUNTED", "MEDIA_MOUNTED_READ_ONLY", "MEDIA_REMOVED", "MEDIA_SHARED"], e: "Per almeno leggere va bene anche MEDIA_MOUNTED_READ_ONLY." },
+  { c: "storage", q: "Quali stati permettono di leggere dalla memoria esterna?", o: ["MEDIA_MOUNTED e MEDIA_MOUNTED_READ_ONLY", "Solo MEDIA_MOUNTED", "Solo MEDIA_MOUNTED_READ_ONLY", "Nessuno dei due"], e: "Per scrivere serve MEDIA_MOUNTED." },
+  { c: "storage", q: "Dove funziona il database SQL di Android?", o: ["Solo all'interno dell'app", "Condiviso tra tutte le app", "Solo sulla SD", "Solo in cloud"], e: "Per condividere i dati con altre app serve un Content Provider." },
+  { c: "storage", q: "Quali metodi del database inseriscono, cancellano e aggiornano record?", o: ["db.insert(), db.delete(), db.update()", "db.put(), db.remove(), db.set()", "moveToFirst(), moveToNext(), getInt()", "edit(), commit(), apply()"], e: "db.query() invece legge e restituisce un Cursor." },
+  { c: "storage", q: "Cos'è ContentValues?", o: ["Una classe “contenitore” in cui scrivi i valori di un record da inserire", "Il risultato di una query", "Una sottoclasse di SQLiteOpenHelper", "Un tipo di permesso"], e: "Il risultato di una query è un Cursor." },
+  { c: "storage", q: "A cosa serve il secondo argomento di db.insert(tabella, null, valori)?", o: ["Dice cosa fare se il ContentValues è vuoto: null = nessun record, nome colonna = record con valore nullo", "È la chiave primaria", "È il nome del database", "È la versione del database"], e: "Di solito si passa null." },
+  { c: "storage", q: "Cosa indicano projection, selection e selectionArgs in db.query()?", o: ["Colonne da restituire, colonne della WHERE e valori della WHERE", "Tabella, database e versione", "Ordinamento, gruppi e filtro dei gruppi", "Nome, permessi e modo"], e: "Seguono groupBy, having e sortOrder." },
+  { c: "storage", q: "Quali metodi del Cursor leggono un valore?", o: ["getInt(), getString() con getColumnIndex(nomeColonna)", "putInt() e putString()", "insert() e update()", "edit() e commit()"], e: "Per scorrere: moveToFirst() e moveToNext()." },
+  { c: "storage", q: "Cosa passa al costruttore della superclasse un SQLiteOpenHelper?", o: ["super(context, nome, null, DATABASE_VERSION)", "super(db)", "super(cursor)", "super(intent)"], e: "Poi onCreate() con la CREATE TABLE e onUpgrade()." },
 
-  // 13 · Grafica e custom view
+  // 13 · Grafica
   { c: "grafica", q: "Quando si disegna in un Canvas invece che in una View?", o: ["Per grafica complessa, aggiornata spesso", "Per grafica semplice e statica", "Solo per i testi", "Mai"], e: "La View va bene per grafica semplice." },
   { c: "grafica", q: "Cos'è un Drawable?", o: ["Qualcosa che si può disegnare: forma, immagine, colore", "Un tipo di layout", "Un thread grafico", "Un file .dex"], e: "ShapeDrawable, BitmapDrawable, ColorDrawable." },
   { c: "grafica", q: "Quale Drawable rappresenta un'immagine?", o: ["BitmapDrawable", "ShapeDrawable", "ColorDrawable", "TextDrawable"], e: "ShapeDrawable = forma, ColorDrawable = colore." },
@@ -411,7 +454,7 @@ const Q = [
   { c: "grafica", q: "Differenza tra invalidate() e requestLayout()?", o: ["invalidate() ridisegna solo quella view (onDraw); requestLayout() rifà measure, layout e draw sull'albero", "Sono identici", "invalidate() rifà tutto, requestLayout() solo onDraw", "requestLayout() cancella la view"], e: "Da non confondere." },
   { c: "grafica", q: "Se cambia solo il colore di una view, cosa chiami?", o: ["invalidate(): la dimensione non cambia", "requestLayout()", "setMeasuredDimension()", "commit()"], e: "Basta ridisegnare." },
   { c: "grafica", q: "Quali valori può avere un LayoutParams in onMeasure?", o: ["Un numero, MATCH_PARENT o WRAP_CONTENT", "Solo MATCH_PARENT", "EXACTLY, AT_MOST, UNSPECIFIED", "Solo valori in px"], e: "I MeasureSpec invece sono i vincoli del padre." },
-  // 14 · Multitouch e gesti
+  // 14 · Multitouch
   { c: "touch", q: "Come si rappresenta un tocco?", o: ["Con un MotionEvent", "Con un Intent", "Con un Bundle", "Con un SensorEvent"], e: "Ogni dito è un pointer." },
   { c: "touch", q: "Differenza tra ID e indice di un pointer?", o: ["L'ID resta uguale finché il dito è giù; l'indice può cambiare da un evento all'altro", "L'indice resta uguale, l'ID cambia", "Sono la stessa cosa", "L'ID vale solo per il primo dito"], e: "Non confonderli." },
   { c: "touch", q: "Quale action indica che il primo dito tocca?", o: ["ACTION_DOWN", "ACTION_POINTER_DOWN", "ACTION_MOVE", "ACTION_UP"], e: "Il secondo dito genera ACTION_POINTER_DOWN." },
@@ -430,7 +473,7 @@ const Q = [
   { c: "touch", q: "Cosa fa ViewFlipper?", o: ["Mostra una view alla volta con animazione: showNext(), showPrevious()", "Ruota lo schermo", "Inverte i colori", "Registra i gesti su file"], e: "È sottoclasse di ViewAnimator." },
   { c: "touch", q: "Di quale classe è sottoclasse ViewFlipper?", o: ["ViewAnimator", "ListView", "Canvas", "FrameLayout"], e: "Mostra una view alla volta." },
 
-  // 15 · MediaPlayer e audio focus
+  // 15 · Media player
   { c: "media", q: "Serve chiamare prepare() dopo MediaPlayer.create()?", o: ["No, create() lo fa già", "Sì, sempre", "Sì, ma solo per i video", "No, perché si chiama start() due volte"], e: "Domanda lampo del capitolo." },
   { c: "media", q: "Cosa si fa quando il MediaPlayer non serve più?", o: ["mp.release(); mp = null; per liberare la risorsa", "Niente, si libera da solo", "mp.start() di nuovo", "Si chiama finish()"], e: "Libera la risorsa!" },
   { c: "media", q: "Quale sequenza si usa per suonare da URL?", o: ["new MediaPlayer(), setDataSource(url), prepare(), start()", "MediaPlayer.create(url), prepare(), prepare()", "start(), setDataSource(url)", "release(), start()"], e: "Per URL esterni meglio prepareAsync()." },
@@ -499,7 +542,7 @@ const Q = [
   { c: "alarms", q: "Da API 29, cosa non può più fare un alarm?", o: ["Riportare l'app in primo piano da solo: si mostra una notifica che l'utente tocca", "Partire a telefono spento", "Usare l'AlarmManager", "Lanciare un intent"], e: "Android 10." },
   { c: "alarms", q: "setExactAndAllowWhileIdle() è un alarm…", o: ["Preciso", "Impreciso", "Ripetuto impreciso", "Di sistema"], e: "Parte anche in idle." },
 
-  // 19 · Broadcast
+  // 19 · Broadcasts
   { c: "broadcast", q: "Quali sono le 4 componenti fondamentali di Android?", o: ["Activity, Broadcast, Content Provider, Service", "Activity, Fragment, Layout, View", "Intent, Bundle, Cursor, Thread", "Manifest, Gradle, res, java"], e: "Le ultime tre servono in casi particolari." },
   { c: "broadcast", q: "Cos'è un broadcast?", o: ["Un messaggio globale (un Intent) che chiunque sia interessato può ricevere", "Una notifica nella barra di stato", "Un thread speciale", "Un tipo di layout"], e: "Si manda con sendBroadcast()." },
   { c: "broadcast", q: "Quale metodo implementa un BroadcastReceiver?", o: ["onReceive(Context, Intent)", "onCreate(Bundle)", "onBind(Intent)", "onSensorChanged(SensorEvent)"], e: "Domanda lampo del capitolo." },
@@ -517,7 +560,7 @@ const Q = [
   { c: "broadcast", q: "Cosa si usa oggi al posto di LocalBroadcastManager?", o: ["ViewModel, LiveData, WorkManager", "AsyncTask", "Toast", "JSoup"], e: "I broadcast locali sono obsoleti." },
   { c: "broadcast", q: "Le ultime tre delle 4 componenti fondamentali servono…", o: ["In casi particolari", "In ogni app", "Solo nei giochi", "Solo su tablet"], e: "L'Activity c'è quasi sempre." },
 
-  // 20 · Content Provider
+  // 20 · Content Providers
   { c: "provider", q: "Cosa fa un Content Provider?", o: ["Espone i dati di un database ad altre app", "Disegna le view", "Gestisce l'audio focus", "Avvia le activity"], e: "Esempi: rubrica, registro chiamate, cronologia browser, file multimediali." },
   { c: "provider", q: "Con cosa si accede a un Content Provider?", o: ["Un ContentResolver, con comandi simili a SQL", "Un BroadcastReceiver", "Un Socket", "Un MediaPlayer"], e: "query, insert, update, delete + notifiche sui cambiamenti." },
   { c: "provider", q: "Com'è fatto l'URI di un Content Provider?", o: ["content://authority/path/id", "http://path/authority", "file://id/path", "provider://id"], e: "authority = provider, path = tabella, id = record." },
@@ -531,7 +574,7 @@ const Q = [
   { c: "provider", q: "Quale permesso serve per leggere la rubrica?", o: ["READ_CONTACTS", "INTERNET", "CAMERA", "SET_ALARM"], e: "È un permesso pericoloso." },
   { c: "provider", q: "Quale di questi NON è un Content Provider già pronto citato?", o: ["Il Logcat", "La rubrica", "Il registro chiamate", "La cronologia del browser"], e: "Anche i file multimediali (MediaStore)." },
 
-  // 21 · Service
+  // 21 · Services
   { c: "service", q: "Cosa fa un Service?", o: ["Operazioni lunghe senza interfaccia: scaricare, sincronizzare, suonare musica", "Mostra una schermata", "Disegna grafica", "Gestisce il backstack"], e: "Può girare a lungo, ma il sistema può fermarlo." },
   { c: "service", q: "Un service gira in un thread separato?", o: ["No, per default gira nel main thread, a meno che non lo specifichi tu", "Sì, sempre", "Sì, in un processo separato", "Dipende dal permesso INTERNET"], e: "Trabocchetto classico!" },
   { c: "service", q: "Il sistema può fermare un service?", o: ["Sì, se servono risorse", "No, mai", "Solo se l'utente lo disinstalla", "Solo in modalità aereo"], e: "Anche se può girare a lungo." },

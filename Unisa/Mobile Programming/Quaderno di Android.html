@@ -287,8 +287,8 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- 02 -->
-<section class="ch" id="versioni" data-t="Versioni e livelli API">
-  <div class="ch-head"><span class="ch-num">02</span><h2>Versioni e livelli API</h2><span class="ch-sub">I numeri che tornano in tutto il corso</span></div>
+<section class="ch" id="versioni" data-t="Versioni">
+  <div class="ch-head"><span class="ch-num">02</span><h2>Versioni</h2><span class="ch-sub">I numeri che tornano in tutto il corso</span></div>
   <p>Ogni versione di Android ha un nome di dolce (in ordine alfabetico) e un <b>livello API</b>. Nel corso molte regole cambiano "da API X in poi". Questa è la mappa da tenere a mente:</p>
   <div class="api">
     <div><b>21</b><small>Android 5.0 Lollipop</small>ART sostituisce Dalvik. Notifiche heads-up.</div>
@@ -309,8 +309,8 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- 03 -->
-<section class="ch" id="strumenti" data-t="Android Studio e strumenti">
-  <div class="ch-head"><span class="ch-num">03</span><h2>Android Studio e strumenti</h2><span class="ch-sub">Progetto, emulatore, adb, debug</span></div>
+<section class="ch" id="strumenti" data-t="Android Developer Tools">
+  <div class="ch-head"><span class="ch-num">03</span><h2>Android Developer Tools</h2><span class="ch-sub">Progetto, emulatore, adb, debug</span></div>
   <h3>Com'è fatto un progetto</h3>
   <p>Si parte da <b>File → New → New Project → Empty Views Activity</b>. Dentro trovi:</p>
   <ul>
@@ -349,8 +349,8 @@ adb pull &lt;percorso/app.apk&gt;      <span class="c"># copia l'apk sul PC</spa
 </section>
 
 <!-- 04 -->
-<section class="ch" id="layout" data-t="Layout e misure">
-  <div class="ch-head"><span class="ch-num">04</span><h2>Layout e misure</h2><span class="ch-sub">Come si disegna una schermata</span></div>
+<section class="ch" id="layout" data-t="Layouts">
+  <div class="ch-head"><span class="ch-num">04</span><h2>Layouts</h2><span class="ch-sub">Come si disegna una schermata</span></div>
   <p>Il <b>layout</b> definisce l'aspetto dell'interfaccia. Si può scrivere in due modi, anche insieme:</p>
   <div class="vs">
     <div><h4>In XML</h4><ul><li>Facile da scrivere</li><li>Separa la grafica dal codice</li><li>Però è statico</li></ul></div>
@@ -403,8 +403,8 @@ adb pull &lt;percorso/app.apk&gt;      <span class="c"># copia l'apk sul PC</spa
 </section>
 
 <!-- 05 -->
-<section class="ch" id="listview" data-t="ListView e Adapter">
-  <div class="ch-head"><span class="ch-num">05</span><h2>ListView e Adapter</h2><span class="ch-sub">Mostrare liste lunghe</span></div>
+<section class="ch" id="listview" data-t="ListView">
+  <div class="ch-head"><span class="ch-num">05</span><h2>ListView</h2><span class="ch-sub">Mostrare liste lunghe</span></div>
   <p>Una ListView mostra solo gli elementi che entrano nello schermo; gli altri si vedono scorrendo. L'<mark>Adapter</mark> è il "ponte" che prende i dati da un array e crea le righe man mano che l'utente scorre.</p>
   <h3>I 4 passi</h3>
 <pre><code>String[] nomi = {"Maria", "Luca", "Anna", ...};                    <span class="c">// 1. i dati</span>
@@ -428,8 +428,8 @@ listView.setOnItemClickListener((parent, view, position, id) -&gt; {
 </section>
 
 <!-- 06 -->
-<section class="ch" id="ciclo" data-t="Ciclo di vita">
-  <div class="ch-head"><span class="ch-num">06</span><h2>Ciclo di vita dell'Activity</h2><span class="ch-sub">Il capitolo più importante</span></div>
+<section class="ch" id="ciclo" data-t="Ciclo di vita, Cambi di configurazione e Backstack">
+  <div class="ch-head"><span class="ch-num">06</span><h2>Ciclo di vita, Cambi di configurazione e Backstack</h2><span class="ch-sub">Il capitolo più importante</span></div>
   <p>Un'<b>Activity</b> è una schermata dell'app. Android chiama dei metodi in un ordine preciso mentre l'activity nasce, viene usata e muore:</p>
   <div class="flow"><span>onCreate</span><i>→</i><span>onStart</span><i>→</i><span>onResume</span><i>→</i><span class="run">in esecuzione</span><i>→</i><span>onPause</span><i>→</i><span>onStop</span><i>→</i><span>onDestroy</span></div>
   <div class="tbl"><table>
@@ -533,8 +533,8 @@ protected void onActivityResult(int req, int res, Intent data) {
 </section>
 
 <!-- 09 -->
-<section class="ch" id="thread" data-t="Thread e AsyncTask">
-  <div class="ch-head"><span class="ch-num">09</span><h2>Thread e AsyncTask</h2><span class="ch-sub">Fare lavori lunghi senza bloccare l'app</span></div>
+<section class="ch" id="thread" data-t="Threads">
+  <div class="ch-head"><span class="ch-num">09</span><h2>Threads</h2><span class="ch-sub">Fare lavori lunghi senza bloccare l'app</span></div>
   <p>Un <b>thread</b> è un flusso di esecuzione parallelo dentro un processo. Ogni thread ha il suo program counter e il suo stack, ma condivide con gli altri la memoria (heap).</p>
   <ul>
     <li>Si crea un oggetto <code>Thread</code> con dentro un <code>Runnable</code> (che ha il metodo <code>run()</code>) e si chiama <code>start()</code>, che a sua volta esegue <code>run()</code>.</li>
@@ -558,8 +558,8 @@ protected void onActivityResult(int req, int res, Intent data) {
 </section>
 
 <!-- 10 -->
-<section class="ch" id="frammenti" data-t="Frammenti">
-  <div class="ch-head"><span class="ch-num">10</span><h2>Frammenti (Fragments)</h2><span class="ch-sub">Pezzi di interfaccia riutilizzabili</span></div>
+<section class="ch" id="frammenti" data-t="Fragments">
+  <div class="ch-head"><span class="ch-num">10</span><h2>Fragments</h2><span class="ch-sub">Pezzi di interfaccia riutilizzabili</span></div>
   <p>Un frammento è una <b>porzione di interfaccia</b>, una specie di sotto-activity. Vive sempre dentro un'activity e il suo ciclo di vita è legato a quello dell'activity (se l'activity va in pausa, ci vanno anche i frammenti).</p>
   <div class="def"><b class="lbl">Perché esistono</b>Per adattarsi allo schermo. Esempio: app di notizie con un frammento <i>lista titoli</i> e un frammento <i>articolo</i>. Su tablet o in orizzontale li vedi affiancati; su telefono in verticale ne vedi uno alla volta.</div>
   <h3>Metodi da implementare</h3>
@@ -605,42 +605,116 @@ ft.commit();</code></pre>
 </section>
 
 <!-- 12 -->
-<section class="ch" id="storage" data-t="Salvare i dati">
-  <div class="ch-head"><span class="ch-num">12</span><h2>Salvare i dati</h2><span class="ch-sub">File, preferenze, database SQL</span></div>
+<section class="ch" id="storage" data-t="Data Storage">
+  <div class="ch-head"><span class="ch-num">12</span><h2>Data Storage</h2><span class="ch-sub">File, preferenze, database SQL</span></div>
+  <h3>Memoria persistente</h3>
+  <ul>
+    <li><b>Interna:</b> memoria flash (o simile), divisa in varie partizioni: <code>/system</code>, <code>/data</code>, <code>/cache</code>, <code>/boot</code>…</li>
+    <li><b>Esterna:</b> la microSD.</li>
+  </ul>
   <h3>Dove stanno i dati</h3>
   <ul>
-    <li><b>Spazio privato:</b> ogni app ha la sua cartella, accessibile <b>solo</b> a lei. Se disinstalli l'app viene cancellata.</li>
+    <li><b>Spazio privato:</b> ogni app ha la sua directory dedicata, accessibile <b>solo</b> a lei. Sta nella memoria interna e, da API 29, anche in quella esterna. Se disinstalli l'app viene cancellata (anche quella sulla SD!).</li>
     <li><b>Spazio pubblico:</b> file condivisi con altre app (foto, musica, documenti).</li>
-    <li>Attenzione: <mark>"External" non vuol dire SD card</mark>. Vuol dire fuori dallo spazio privato; può stare nella memoria interna (<code>/storage/emulated/0/</code>) o sulla SD (<code>/storage/XXXX-XXXX/</code>).</li>
+    <li>Attenzione: <mark>"External" non vuol dire SD card</mark>. Vuol dire fuori dallo spazio privato; può stare nella memoria interna non removibile (<code>/storage/emulated/0/</code>) o sulla SD removibile (<code>/storage/XXXX-XXXX/</code>, dove <code>XXXX-XXXX</code> è l'identificativo del volume in cui è montata la SD).</li>
   </ul>
+  <h3>Context ed Environment</h3>
+  <ul>
+    <li><b>Context:</b> è la <b>superclasse di Activity</b>. Ha i metodi per le directory relative all'app, sia dello spazio privato sia di quelle condivise.</li>
+    <li><b>Environment:</b> classe di aiuto con <b>metodi statici</b> per le informazioni di sistema. Restituisce le directory di sistema e condivise (molti metodi sono deprecati).</li>
+  </ul>
+  <div class="def"><b class="lbl">Trabocchetto</b><code>getDataDir()</code> (Context, API 24+) dà <code>/data/user/0/&lt;package&gt;/</code>, cioè la cartella <b>dell'app</b>. <code>getDataDirectory()</code> (Environment) dà <code>/data/</code>, cioè quella <b>del sistema</b>.</div>
+  <h3>Metodi del Context: spazio privato</h3>
   <div class="tbl"><table>
     <tr><th>Metodo (Context)</th><th>Percorso</th></tr>
+    <tr><td>getDataDir()</td><td><code>/data/user/0/&lt;package&gt;/</code></td></tr>
     <tr><td>getFilesDir()</td><td><code>/data/user/0/&lt;package&gt;/files/</code></td></tr>
     <tr><td>getCacheDir()</td><td><code>/data/user/0/&lt;package&gt;/cache/</code></td></tr>
-    <tr><td>getDatabasePath(n)</td><td><code>/data/user/0/&lt;package&gt;/databases/n</code></td></tr>
-    <tr><td>getExternalFilesDir()</td><td><code>/storage/emulated/0/Android/data/&lt;package&gt;/files/</code></td></tr>
+    <tr><td>getNoBackupFilesDir()</td><td><code>/data/user/0/&lt;package&gt;/no_backup/</code>: per i file che <b>non</b> devono avere copie di backup nel cloud (es. su Google Drive)</td></tr>
+    <tr><td>getDatabasePath(nome)</td><td><code>/data/user/0/&lt;package&gt;/databases/nome</code></td></tr>
+    <tr><td>getDir(nome, modo)</td><td><code>/data/user/0/&lt;package&gt;/files/nome</code>: se la directory non esiste viene creata</td></tr>
   </table></div>
-  <p>Lo <code>0</code> nel percorso è l'ID dell'utente principale.</p>
+  <p>Lo <code>0</code> nel percorso è l'ID dell'utente: se ci sono più utenti sono identificati da <code>/n/</code>, e <code>0</code> è l'utente principale.</p>
+  <h3>Metodi del Context: spazio esterno</h3>
+  <div class="tbl"><table>
+    <tr><th>Metodo (Context)</th><th>Percorso</th></tr>
+    <tr><td>getExternalFilesDir()</td><td><code>/storage/emulated/0/Android/data/&lt;package&gt;/files/</code></td></tr>
+    <tr><td>getExternalFilesDirs()</td><td>Restituisce un <b>array</b>: <code>[0]</code> memoria flash (<code>/storage/emulated/0/Android/data/&lt;package&gt;/files/</code>), <code>[1]</code> SD card (<code>/storage/1234-5678/Android/data/&lt;package&gt;/files/</code>)</td></tr>
+    <tr><td>getExternalFilesDirs(Environment.DIRECTORY_PICTURES)</td><td>Array come sopra, ma con la sottocartella <code>Pictures</code> in fondo (vale anche per gli altri tipi)</td></tr>
+    <tr><td>getExternalCacheDir()</td><td><code>/storage/emulated/0/Android/data/&lt;package&gt;/cache/</code></td></tr>
+  </table></div>
+  <h3>Metodi dell'Environment: spazio pubblico</h3>
+  <div class="tbl"><table>
+    <tr><th>Metodo (Environment)</th><th>Percorso</th></tr>
+    <tr><td>getDataDirectory()</td><td><code>/data/</code></td></tr>
+    <tr><td>getRootDirectory()</td><td><code>/system/</code></td></tr>
+    <tr><td>getDownloadCacheDirectory()</td><td><code>/cache/</code></td></tr>
+    <tr><td>getExternalStorageDirectory()</td><td><code>/storage/emulated/0/</code></td></tr>
+    <tr><td>getExternalStoragePublicDirectory(tipo)</td><td><b>deprecato</b>: <code>/storage/emulated/0/Documents/</code>, <code>Pictures/</code>, <code>Movies/</code>…</td></tr>
+  </table></div>
   <h3>Storage e permessi nel tempo</h3>
   <ul>
-    <li><b>API ≤ 28:</b> <code>READ_</code>/<code>WRITE_EXTERNAL_STORAGE</code> danno accesso a tutto.</li>
-    <li><b>API 29+:</b> le app sono "sandboxed" anche fuori. Per i media condivisi si usa <b>MediaStore</b> (un Content Provider con un database SQL di indici), per gli altri file <b>SAF</b>.</li>
-    <li><b>API 30+:</b> WRITE ignorato; <code>MANAGE_EXTERNAL_STORAGE</code> per file manager e backup (va giustificato su Google Play).</li>
+    <li><b>API ≤ 28:</b> <code>READ_EXTERNAL_STORAGE</code> dà accesso in lettura a tutti i file della memoria esterna (anche SD); <code>WRITE_EXTERNAL_STORAGE</code> dà accesso in scrittura e lettura.</li>
+    <li><b>API 29+:</b> le app sono "sandboxed" anche fuori e accedono solo al proprio spazio. I due permessi esistono per compatibilità, ma l'accesso non viene dato. Per i media condivisi si usa <b>MediaStore</b>, per gli altri file <b>SAF</b>.</li>
+    <li><b>API 30+:</b> <code>WRITE_EXTERNAL_STORAGE</code> ignorato; <code>READ_EXTERNAL_STORAGE</code> dà accesso solo ai <b>media</b>. Nuovo <code>MANAGE_EXTERNAL_STORAGE</code>: accesso senza restrizioni, simile a WRITE, che l'utente approva in Impostazioni ("All files access"). Pensato per file manager, backup e antivirus, e va giustificato su Google Play.</li>
     <li><b>API 33+:</b> <code>READ_MEDIA_IMAGES</code>, <code>_VIDEO</code>, <code>_AUDIO</code>.</li>
   </ul>
+  <p><b>MediaStore</b> è un Content Provider pensato per i dati condivisi (immagini, video, audio, download), che stanno nelle directory pubbliche; mantiene degli indici in un database SQL. <b>SAF</b> (Storage Access Framework) è simile, per file arbitrari non media. <code>getExternalStoragePublicDirectory()</code> è deprecato da API 29, quando è stato introdotto MediaStore.</p>
+  <h3>SD card</h3>
+  <p>Per controllare se ci sono SD montate si usa lo <code>StorageManager</code>:</p>
+<pre><code>StorageManager sm = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+for (StorageVolume volume : sm.getStorageVolumes()) {
+    Log.d("STORAGE", "Description: " + volume.getDescription(context));
+    Log.d("STORAGE", "Directory: " + volume.getDirectory());    <span class="c">// /storage/XXXX-XXXX/</span>
+    Log.d("STORAGE", "Removable: " + volume.isRemovable());
+}</code></pre>
+  <p>Oppure <code>File[] dirs = getExternalFilesDirs(null);</code>: <code>dirs[0]</code> è la memoria esterna primaria (<code>/storage/emulated/0/</code>), <code>dirs[1]</code>, se c'è, è la SD removibile (<code>/storage/XXXX-XXXX/Android/data/&lt;package&gt;/files/</code>). Da API 29 la SD è trattata come la memoria interna: ogni app ha il proprio spazio e sono accessibili solo le directory comuni (Documents, Pictures, Movies…).</p>
   <h3>SharedPreferences</h3>
-  <p>Piccoli dati in coppie <b>chiave-valore</b> (es. impostazioni). Per leggere usi <code>get</code>; per scrivere serve un <code>Editor</code>:</p>
+  <p>Classe per salvare piccoli dati in coppie <b>chiave-valore</b> (es. impostazioni). L'oggetto <code>SharedPreferences</code> si ottiene con uno di questi due metodi:</p>
+  <div class="tbl"><table>
+    <tr><th>Metodo</th><th>Quando</th><th>File</th></tr>
+    <tr><td>getSharedPreferences("filename", MODE_PRIVATE)</td><td>quando vuoi usare <b>più file</b> di preferenze</td><td><code>/data/user/0/&lt;package&gt;/shared_prefs/&lt;filename&gt;.xml</code></td></tr>
+    <tr><td>getDefaultSharedPreferences()</td><td>un solo file di preferenze di default (in codice: <code>PreferenceManager.getDefaultSharedPreferences(this)</code>)</td><td><code>/data/user/0/&lt;package&gt;/shared_prefs/&lt;package&gt;_preferences.xml</code></td></tr>
+  </table></div>
+  <div class="def"><b class="lbl">Trabocchetto</b>Non usare <code>getPreferences()</code> (senza "Shared"): serve per preferenze <b>non condivise</b> con le altre activity dell'app e restituisce <code>/data/user/0/&lt;package&gt;/shared_prefs/MainActivity.xml</code>.</div>
+  <p>Per leggere usi <code>get</code>; per scrivere serve un <b>Editor</b>, che si ottiene con <code>edit()</code>, e su di lui usi <code>put</code>:</p>
 <pre><code>SharedPreferences p = getSharedPreferences("file", MODE_PRIVATE);
-boolean v = p.getBoolean("KEY", false);       <span class="c">// leggi</span>
-SharedPreferences.Editor e = p.edit();
-e.putBoolean("KEY", true);
+boolean v = p.getBoolean("KEY", false);       <span class="c">// leggi: get + valore di default</span>
+SharedPreferences.Editor e = p.edit();        <span class="c">// scrivere: serve l'editor</span>
+e.putBoolean("KEY", true);                    <span class="c">// put</span>
 e.commit();                                   <span class="c">// senza commit non salva!</span></code></pre>
+  <p>Esiste anche <code>apply()</code>, che salva in background; nel corso si usa <code>commit()</code>.</p>
   <h3>File</h3>
-<pre><code>FileOutputStream fos = openFileOutput("hello_file", Context.MODE_PRIVATE);
-fos.write("hello world!".getBytes());
-fos.close();                                  <span class="c">// per leggere: openFileInput, read, close</span></code></pre>
-  <p>Modi: <code>MODE_PRIVATE</code>, <code>MODE_APPEND</code>. Un file statico si mette in <code>res/raw</code> e si legge con <code>openRawResource(R.raw.nome)</code>. Per i file temporanei c'è la cache (max consigliato 1 MB; Android la svuota se serve spazio).</p>
+  <p>Per ogni app il sistema prevede una directory privata: solo l'app può accedervi. Per <b>creare e scrivere</b> un file: 1) <code>openFileOutput(fileName, mode)</code>, che restituisce un <code>FileOutputStream</code>; 2) <code>write()</code>; 3) <code>close()</code>.</p>
+<pre><code>String FILENAME = "hello_file";
+String string = "hello world!";
+FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+fos.write(string.getBytes());
+fos.close();</code></pre>
+  <p>Per <b>leggere</b>: 1) <code>openFileInput(fileName)</code>, che restituisce un <code>FileInputStream</code>; 2) <code>read()</code>; 3) <code>close()</code>.</p>
+  <div class="tbl"><table>
+    <tr><th>Modo</th><th>Significato</th></tr>
+    <tr><td>MODE_PRIVATE</td><td>Il file è privato (sarebbe stato meglio <code>MODE_CREATE</code>). Nello spazio privato lo è già di default. Da API 29 gli spazi pubblici si usano tramite MediaStore</td></tr>
+    <tr><td>MODE_APPEND</td><td>Aggiunge in fondo al file</td></tr>
+    <tr><td>MODE_WORLD_READABLE / MODE_WORLD_WRITABLE</td><td>Leggibile / scrivibile da tutti. <b>Obsoleti da API 17</b></td></tr>
+  </table></div>
+  <p>Un file <b>statico</b> si mette in <code>res/raw</code> e si legge con <code>openRawResource(R.raw.nome)</code>, che restituisce un <code>InputStream</code>.</p>
+  <div class="tbl"><table>
+    <tr><th>Metodo</th><th>Fa</th></tr>
+    <tr><td>getFilesDir()</td><td>Restituisce la directory privata dell'app, dove vengono salvati i file</td></tr>
+    <tr><td>getDir()</td><td>Crea (o apre, se esiste) una directory nello spazio privato</td></tr>
+    <tr><td>deleteFile()</td><td>Cancella un file nello spazio privato</td></tr>
+    <tr><td>fileList()</td><td>Restituisce l'array dei file presenti nello spazio privato</td></tr>
+  </table></div>
+  <h3>File temporanei</h3>
+  <p>Si usa la directory <b>cache</b>, che si ottiene con <code>getCacheDir()</code>. Android cancella i file della cache <b>se serve</b> (quando manca spazio), ma è comunque responsabilità dell'app cancellarli. Non va usata per file grandi (max consigliato <b>1 MB</b>).</p>
+  <h3>External storage: è disponibile?</h3>
+<pre><code>String state = Environment.getExternalStorageState();
+boolean scrivibile = Environment.MEDIA_MOUNTED.equals(state);
+boolean leggibile  = scrivibile || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);</code></pre>
+  <p>Per <b>scrivere</b> serve <code>MEDIA_MOUNTED</code>; per almeno <b>leggere</b> va bene anche <code>MEDIA_MOUNTED_READ_ONLY</code>.</p>
   <h3>Mini ripasso SQL</h3>
+  <p>Android supporta i database SQL (<i>Structured Query Language</i>, il linguaggio standard per i database relazionali). Le <b>tavole</b> hanno una riga per ogni elemento e una colonna per ogni campo.</p>
   <div class="tbl"><table>
     <tr><th>Comando</th><th>Fa</th></tr>
     <tr><td>CREATE / ALTER / DROP</td><td>Crea / modifica / cancella una tabella</td></tr>
@@ -651,22 +725,44 @@ fos.close();                                  <span class="c">// per leggere: op
   </table></div>
   <p>La <b>chiave primaria</b> è la colonna che identifica in modo unico ogni riga.</p>
   <h3>SQLite in Android</h3>
+  <p>Il database SQL è disponibile <b>solo all'interno dell'app</b>.</p>
   <ul>
-    <li>Crei una sottoclasse di <code>SQLiteOpenHelper</code> e nel suo <code>onCreate()</code> esegui la <code>CREATE TABLE</code> con <code>db.execSQL()</code>. Va riscritto anche <code>onUpgrade()</code>.</li>
-    <li><code>db = helper.getWritableDatabase()</code> ti dà il database.</li>
-    <li>Per inserire metti i valori in un <code>ContentValues</code> e chiami <code>db.insert(tabella, null, valori)</code>. Ci sono anche <code>db.update()</code> e <code>db.delete()</code>.</li>
-    <li><code>db.query(...)</code> restituisce un <b>Cursor</b>: lo scorri con <code>moveToFirst()</code> e <code>moveToNext()</code>, e leggi con <code>getInt()</code>/<code>getString()</code> + <code>getColumnIndex()</code>.</li>
+    <li>Crei una sottoclasse di <code>SQLiteOpenHelper</code> e nel suo <code>onCreate()</code> esegui la <code>CREATE TABLE</code> con <code>db.execSQL()</code>. Va riscritto anche <code>onUpgrade()</code>. Il costruttore chiama <code>super(context, nome, null, DATABASE_VERSION)</code>.</li>
+    <li>Crei l'helper (<code>dbHelper = new MyDBHelper(this)</code>) e da lì ricavi il database: <code>SQLiteDatabase db = dbHelper.getWritableDatabase()</code>.</li>
+    <li>Metodi per inserire, cancellare e aggiornare: <code>db.insert()</code>, <code>db.delete()</code>, <code>db.update()</code>.</li>
+    <li><b>ContentValues</b> è una classe "contenitore": scrivi i valori di un record con <code>put("COLONNA", valore)</code> e poi chiami <code>db.insert(nomeTavola, null, contentValues)</code>.</li>
+    <li>Il <b>secondo argomento</b> di <code>insert</code> dice cosa fare se il <code>ContentValues</code> è vuoto: <code>null</code> = non inserire nessun record; il nome di una colonna = inserisce un record con valore nullo per quella colonna.</li>
+    <li><code>db.query(tabella, projection, selection, selectionArgs, groupBy, having, sortOrder)</code> esegue la query: <i>projection</i> = colonne da restituire, <i>selection</i> = colonne della clausola WHERE, <i>selectionArgs</i> = valori della WHERE. Restituisce un <b>Cursor</b>.</li>
+    <li>Il <b>Cursor</b> contiene tutti i record restituiti; lo scorri con <code>moveToFirst()</code> e <code>moveToNext()</code>, e leggi con <code>getInt()</code>/<code>getString()</code> + <code>getColumnIndex(nomeColonna)</code>.</li>
   </ul>
+<pre><code>private static final String CREATE_CMD =
+    "CREATE TABLE MYTABLE (_ID INTEGER PRIMARY KEY, stringa TEXT NOT NULL, numero INTEGER);";
+
+ContentValues record = new ContentValues();
+record.put("STRINGA", "Roberto");
+record.put("NUMERO", 2);
+db.insert("MYTABLE", null, record);
+
+Cursor cursor = db.query("MYTABLE", projection, selection, selectionArgs, null, null, sortOrder);
+if (cursor.moveToFirst()) {
+    do {
+        String nome = cursor.getString(cursor.getColumnIndex("STRINGA"));
+    } while (cursor.moveToNext());
+}</code></pre>
   <div class="quiz"><h4>Domande lampo</h4>
     <details><summary>"External storage" vuol dire SD card?</summary><p>No: vuol dire fuori dallo spazio privato dell'app. Può essere memoria interna o SD.</p></details>
+    <details><summary>Qual è la differenza tra getDataDir() e getDataDirectory()?</summary><p>getDataDir() è del Context e dà la cartella dell'app (/data/user/0/&lt;package&gt;/); getDataDirectory() è dell'Environment e dà /data/.</p></details>
+    <details><summary>Cosa restituisce getExternalFilesDirs()?</summary><p>Un array: [0] la memoria flash, [1] la SD card (se c'è).</p></details>
+    <details><summary>Come ottieni le SharedPreferences?</summary><p>Con getSharedPreferences("nome") per più file, o getDefaultSharedPreferences() per quello di default. Non con getPreferences().</p></details>
     <details><summary>Come salvi un booleano nelle SharedPreferences?</summary><p>Prendi l'Editor con edit(), usi putBoolean(chiave, valore) e poi commit().</p></details>
+    <details><summary>A cosa serve il secondo argomento di db.insert()?</summary><p>Dice cosa fare se il ContentValues è vuoto: null = nessun record; nome di colonna = record con valore nullo per quella colonna.</p></details>
     <details><summary>Cosa restituisce db.query()?</summary><p>Un Cursor, che si scorre con moveToFirst/moveToNext per leggere i record.</p></details>
   </div>
 </section>
 
 <!-- 13 -->
-<section class="ch" id="grafica" data-t="Grafica e custom view">
-  <div class="ch-head"><span class="ch-num">13</span><h2>Grafica e custom view</h2><span class="ch-sub">Disegnare, animare, creare widget propri</span></div>
+<section class="ch" id="grafica" data-t="Grafica">
+  <div class="ch-head"><span class="ch-num">13</span><h2>Grafica</h2><span class="ch-sub">Disegnare, animare, creare widget propri</span></div>
   <ul>
     <li>Si disegna in una <b>View</b> (grafica semplice, statica) o in un <b>Canvas</b> (grafica complessa, aggiornata spesso).</li>
     <li><b>Drawable</b> = qualcosa che si può disegnare: <code>ShapeDrawable</code> (forma), <code>BitmapDrawable</code> (immagine), <code>ColorDrawable</code> (colore). Si mette nella view da XML o con <code>setImageDrawable()</code>.</li>
@@ -694,8 +790,8 @@ fos.close();                                  <span class="c">// per leggere: op
 </section>
 
 <!-- 14 -->
-<section class="ch" id="touch" data-t="Multitouch e gesti">
-  <div class="ch-head"><span class="ch-num">14</span><h2>Multitouch e gesti</h2><span class="ch-sub">Dita sullo schermo</span></div>
+<section class="ch" id="touch" data-t="Multitouch">
+  <div class="ch-head"><span class="ch-num">14</span><h2>Multitouch</h2><span class="ch-sub">Dita sullo schermo</span></div>
   <p>Un tocco è un <b>MotionEvent</b>. Ogni dito è un <b>pointer</b>, con un <mark>ID che resta uguale</mark> finché il dito è giù. L'<b>indice</b> invece può cambiare da un evento all'altro: non confonderli.</p>
   <div class="tbl"><table>
     <tr><th>Action</th><th>Quando</th></tr>
@@ -719,8 +815,8 @@ fos.close();                                  <span class="c">// per leggere: op
 </section>
 
 <!-- 15 -->
-<section class="ch" id="media" data-t="MediaPlayer e audio focus">
-  <div class="ch-head"><span class="ch-num">15</span><h2>MediaPlayer e audio focus</h2><span class="ch-sub">Suonare audio e video</span></div>
+<section class="ch" id="media" data-t="Media player">
+  <div class="ch-head"><span class="ch-num">15</span><h2>Media player</h2><span class="ch-sub">Suonare audio e video</span></div>
 <pre><code>MediaPlayer mp = MediaPlayer.create(context, R.raw.brano);  <span class="c">// create() fa già prepare()</span>
 mp.start();   mp.pause();   mp.stop();
 mp.release(); mp = null;                                     <span class="c">// libera la risorsa!</span></code></pre>
@@ -808,8 +904,8 @@ notificationManager.notify(notification_id, nb.build());</code></pre>
 </section>
 
 <!-- 19 -->
-<section class="ch" id="broadcast" data-t="Broadcast">
-  <div class="ch-head"><span class="ch-num">19</span><h2>Broadcast</h2><span class="ch-sub">Messaggi per tutti</span></div>
+<section class="ch" id="broadcast" data-t="Broadcasts">
+  <div class="ch-head"><span class="ch-num">19</span><h2>Broadcasts</h2><span class="ch-sub">Messaggi per tutti</span></div>
   <p>Le 4 componenti fondamentali di Android sono <b>Activity, Broadcast, Content Provider, Service</b>. Le ultime tre servono in casi particolari.</p>
   <div class="def"><b class="lbl">In una frase</b>Un broadcast è un messaggio globale (un Intent) che chiunque sia interessato può ricevere. Chi lo manda usa <code>sendBroadcast()</code>, chi lo riceve è un <b>BroadcastReceiver</b> con il metodo <code>onReceive()</code>.</div>
   <ul>
@@ -832,8 +928,8 @@ notificationManager.notify(notification_id, nb.build());</code></pre>
 </section>
 
 <!-- 20 -->
-<section class="ch" id="provider" data-t="Content Provider">
-  <div class="ch-head"><span class="ch-num">20</span><h2>Content Provider</h2><span class="ch-sub">Condividere dati tra app</span></div>
+<section class="ch" id="provider" data-t="Content Providers">
+  <div class="ch-head"><span class="ch-num">20</span><h2>Content Providers</h2><span class="ch-sub">Condividere dati tra app</span></div>
   <p>Un Content Provider <b>espone i dati di un database ad altre app</b>. Esempi già pronti: rubrica, registro chiamate, cronologia del browser, file multimediali. Ci si accede con un <code>ContentResolver</code>, con comandi simili a SQL (query, insert, update, delete) più le notifiche sui cambiamenti.</p>
   <div class="def"><b class="lbl">L'URI</b><code>content://authority/path/id</code><br>authority = quale provider · path = quale tabella · id = quale record (chiave primaria). Senza id indichi tutta la tabella.</div>
   <p>Esempio: <code>content://com.android.contacts/contacts/</code> è tutta la tabella dei contatti.</p>
@@ -851,8 +947,8 @@ notificationManager.notify(notification_id, nb.build());</code></pre>
 </section>
 
 <!-- 21 -->
-<section class="ch" id="service" data-t="Service">
-  <div class="ch-head"><span class="ch-num">21</span><h2>Service</h2><span class="ch-sub">Lavoro in background senza interfaccia</span></div>
+<section class="ch" id="service" data-t="Services">
+  <div class="ch-head"><span class="ch-num">21</span><h2>Services</h2><span class="ch-sub">Lavoro in background senza interfaccia</span></div>
   <p>Un Service fa operazioni lunghe <b>senza interfaccia</b>: scaricare un file, sincronizzare con un server, suonare musica. Può continuare a girare a lungo, ma il sistema può fermarlo se servono risorse.</p>
   <div class="note">Trabocchetto classico: di default un Service gira nel main thread dell'app, non in un thread separato!</div>
   <div class="vs">
