@@ -33,6 +33,7 @@
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
+    user: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
     bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
@@ -79,7 +80,7 @@
         <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
         <button class="ua-btn ua-news-btn" type="button" aria-label="News" title="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
         <button class="ua-btn ua-theme" type="button"></button>
-        <button class="ua-btn ua-open-sync" type="button" aria-label="Sposta i progressi su un altro dispositivo" title="Sposta i progressi su un altro dispositivo">${ICON.sync}</button>
+        <button class="ua-btn ua-open-sync" type="button" aria-label="Accedi per salvare i progressi" title="Accedi per salvare i progressi">${ICON.user}</button>
       </div></div>`;
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
     const fit = () => {
@@ -713,9 +714,9 @@
         b.setAttribute("aria-label", `I tuoi progressi: accesso fatto come ${who}, spunte sincronizzate`);
         b.title = `Accesso fatto come ${who}`;
       } else {
-        b.innerHTML = ICON.sync;
-        b.setAttribute("aria-label", "I tuoi progressi: accedi con Google o spostali con un link");
-        b.title = "I tuoi progressi su tutti i dispositivi";
+        b.innerHTML = ICON.user;
+        b.setAttribute("aria-label", "Accedi: salva i tuoi progressi su tutti i dispositivi");
+        b.title = "Accedi per salvare i progressi";
       }
     });
   }
