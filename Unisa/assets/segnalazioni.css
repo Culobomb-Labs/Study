@@ -1,8 +1,8 @@
 /* Pagina segnalazioni. Stesso tono caldo del pulsante "Segnala un problema" (site.css, --ua-warn). */
 :root {
   color-scheme: light;
-  --bg:#f6f6f4; --surface:#fff; --ink:#111418; --muted:#5d636b; --line:#e0e1de;
-  --soft:#f1f1ee; --accent:#c4232b; --accent-ink:#fff; --accent-soft:#fdeced; --accent-line:#f2c2c5;
+  --bg:#ebeae6; --surface:#f4f3f0; --ink:#111418; --muted:#5d636b; --line:#d2d1cb;
+  --soft:#e2e1dc; --accent:#c4232b; --accent-ink:#fff; --accent-soft:#fdeced; --accent-line:#f2c2c5;
   --font-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
   --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,monospace;

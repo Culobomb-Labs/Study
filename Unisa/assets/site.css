@@ -2,7 +2,7 @@
    Tutte le classi iniziano con "ua-" per non toccare lo stile dei quaderni. */
 
 :root{
-  --ua-bg:#ffffff; --ua-ink:#111418; --ua-muted:#5d636b; --ua-line:#e2e3e1; --ua-soft:#f2f2ef;
+  --ua-bg:#f4f3f0; --ua-ink:#111418; --ua-muted:#5d636b; --ua-line:#d6d5cf; --ua-soft:#e7e6e1;
   --ua-shadow:0 18px 50px -12px rgba(17,20,24,.28),0 2px 6px rgba(17,20,24,.06);
   --ua-mark:#fff1b8; --ua-warn:#c4232b; --ua-warn-soft:#fdeced; --ua-warn-line:#f2c2c5; --ua-veil:rgba(17,20,24,.32);
   --ua-c-is:#5b3fa3; --ua-c-mp:#2f7d52; --ua-c-pd:#1d6a86; --ua-c-so:#a4471f;
