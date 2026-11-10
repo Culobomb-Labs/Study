@@ -45,6 +45,10 @@
   font:500 13px/1 var(--ua-font);cursor:pointer;transition:background .15s,border-color .15s}
 .ua-btn:hover{background:var(--ua-soft);border-color:var(--ua-muted)}
 .ua-btn:focus-visible{outline:2px solid var(--ua-ink);outline-offset:2px}
+/* barra in alto: al passaggio del mouse, col focus o a tendina aperta il bordo prende il gradiente dei corsi (come la scritta Unisa) */
+.ua-btn.ua-open-search:hover,.ua-btn.ua-news-btn:hover,.ua-btn.ua-theme:hover,.ua-btn.ua-open-sync:hover,.ua-btn.ua-open-search:focus-visible,.ua-btn.ua-news-btn:focus-visible,.ua-btn.ua-theme:focus-visible,.ua-btn.ua-open-sync:focus-visible,.ua-btn.ua-open-search[aria-expanded="true"],.ua-btn.ua-news-btn[aria-expanded="true"],.ua-btn.ua-theme[aria-expanded="true"],.ua-btn.ua-open-sync[aria-expanded="true"]{border-color:transparent;
+  background:linear-gradient(var(--ua-soft),var(--ua-soft)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box}
+.ua-kbd{opacity:.7}
 .ua-btn svg{flex:none}
 .ua-kbd{font:500 11px/1 var(--ua-mono);color:var(--ua-muted);border:1px solid var(--ua-line);border-radius:4px;padding:3px 5px}
 .ua-theme svg{transition:transform .4s var(--ua-ease)}
