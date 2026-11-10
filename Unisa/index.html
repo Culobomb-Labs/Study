@@ -127,6 +127,37 @@ h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
 .docs-empty{border:1px dashed var(--line);border-radius:8px;padding:16px 18px;color:var(--muted);font-size:15px;line-height:1.5}
 .docs-empty b{color:var(--ink);font-weight:600}
 @keyframes pulse{50%{opacity:.35}}
+/* corsi come schede: griglia a due colonne, ogni scheda con il colore del suo corso */
+.list{border-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.course{position:relative;isolation:isolate;display:flex;flex-direction:column;gap:16px;padding:22px 22px 18px;border:1px solid var(--line);border-radius:18px;
+  background:radial-gradient(420px 180px at 0 0,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--surface);overflow:hidden;
+  transition:transform .25s var(--ua-ease),border-color .25s,box-shadow .25s}
+.course:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));box-shadow:0 14px 34px -18px color-mix(in srgb,var(--c) 60%,transparent)}
+.course::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
+.code{position:absolute;right:16px;top:6px;z-index:-1;font-size:76px;line-height:1;letter-spacing:-.04em;padding:0;
+  color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--c) 40%,transparent);opacity:.9}
+.code::before{content:none}
+.course h2{font-size:24px;padding-right:118px}
+.docs{border:0;border-radius:12px;background:transparent;gap:6px;overflow:visible}
+.docs::before{content:none}
+.docs li+li{border-top:0}
+.docs a{grid-template-columns:34px minmax(0,1fr) auto;gap:1px 12px;padding:10px 12px;border-radius:12px;background:var(--hover);
+  border:1px solid transparent;transition:border-color .2s,background .2s}
+.docs a:hover{border-color:color-mix(in srgb,var(--c) 50%,transparent);background:color-mix(in srgb,var(--c) 8%,var(--hover))}
+.docs a::before{content:"Q";grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
+  font:700 14px/1 var(--f-display);color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
+.docs a[data-kind="Piano di studio"]::before{content:"P"}
+.docs a[data-kind="Quiz"]::before{content:"?"}
+.dname{grid-column:2}.dinfo{grid-column:2}
+.arrow{grid-column:3}
+.docs .prog{grid-column:2 / span 2}
+.course.soon{grid-column:1 / -1;flex-direction:row;align-items:center;gap:24px;border-style:dashed;background:transparent}
+.course.soon::after{content:none}
+.course.soon .code{position:static;z-index:auto;font-size:40px;-webkit-text-stroke:0;color:var(--muted)}
+.course.soon h2{padding-right:0}
+.course.soon .soon-box{flex:1}
+@media (max-width:760px){.list{grid-template-columns:1fr}.course.soon{flex-direction:column;align-items:flex-start}}
+
 
 /* in arrivo */
 .soon .code{color:var(--muted)}
@@ -292,7 +323,7 @@ function render() {
     const ul = document.createElement("ul"); ul.className = "docs";
     for (const d of c.docs) {
       const li = document.createElement("li"); const a = document.createElement("a");
-      a.href = d.path.split("/").map(encodeURIComponent).join("/");
+      a.href = d.path.split("/").map(encodeURIComponent).join("/"); a.dataset.kind = d.kind;
       const n = document.createElement("span"); n.className = "dname"; n.textContent = d.name;
       const i = document.createElement("span"); i.className = "dinfo"; i.dataset.path = d.path; i.dataset.kind = d.kind;
       if (d.progressKey) i.dataset.key = d.progressKey;
