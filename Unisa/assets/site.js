@@ -24,6 +24,8 @@
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
   const CORSI = window.CORSI || [];
+  // corsi che compaiono solo nelle news (etichetta e scelta nel modulo dell'amministratore), non in home
+  const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }]);
   const THEME_KEY = "ua-theme";
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
@@ -1072,7 +1074,7 @@
   });
 
   function newsItem(n, full) {
-    const c = CORSI.find(x => x.code === n.corso);
+    const c = NEWS_CORSI.find(x => x.code === n.corso);
     const tag = c ? `<span class="ua-ni-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
     const fresh = npFresh.has(n.id) ? `<span class="ua-ni-new">nuova</span>` : "";
     const avv = n.tipo === "avviso" ? `<span class="ua-ni-avv">Avviso</span>` : "";
@@ -1183,7 +1185,7 @@
       <label class="ua-na-f"><span>Titolo <small data-cnt="titolo">0/120</small></span><input name="titolo" maxlength="120" autocomplete="off" placeholder="Es. Quiz di PD online"></label>
       <label class="ua-na-f"><span>Testo <i>facoltativo</i> <small data-cnt="testo">0/600</small></span><textarea name="testo" maxlength="600" rows="3" placeholder="Cosa c'è di nuovo, in una o due frasi"></textarea></label>
       <div class="ua-na-row">
-        <label class="ua-na-f"><span>Corso <i>facoltativo</i></span><select name="corso"><option value="">Nessuno</option>${CORSI.map(c => `<option value="${esc(c.code)}">${esc(c.code)} · ${esc(c.name)}</option>`).join("")}</select></label>
+        <label class="ua-na-f"><span>Corso <i>facoltativo</i></span><select name="corso"><option value="">Nessuno</option>${NEWS_CORSI.map(c => `<option value="${esc(c.code)}">${esc(c.code)} · ${esc(c.name)}</option>`).join("")}</select></label>
         <label class="ua-na-f"><span>Link <i>facoltativo</i></span><input name="link" maxlength="300" list="ua-na-docs" autocomplete="off" placeholder="Pagina del sito o https://…"><datalist id="ua-na-docs">${docs.map(p => `<option value="${esc(p)}">`).join("")}</datalist></label>
       </div>
       <label class="ua-na-f"><span>Immagine <i>facoltativa</i></span><select name="img"><option value="">Nessuna</option><option value="__url">Indirizzo web…</option></select></label>

@@ -26,7 +26,7 @@ on:
         required: false
         type: choice
         default: nessuno
-        options: [nessuno, IS, MP, PD, SO]
+        options: [nessuno, IS, MP, PD, SO, AL]   # AL = Accompagnamento al lavoro
       link:
         description: "Link (facoltativo): pagina del sito, es. Ingenieria del Software/Quiz IS.html, oppure https://…"
         required: false

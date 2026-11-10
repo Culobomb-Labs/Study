@@ -17,7 +17,7 @@ initializeApp({ credential: cert(sa) });
 const db = getFirestore();
 
 const ADMIN = "gpeluso03@gmail.com";
-const CORSI = ["", "IS", "MP", "PD", "SO"];
+const CORSI = ["", "IS", "MP", "PD", "SO", "AL"]; // AL = Accompagnamento al lavoro (solo nelle news)
 const snap = await db.collection("newsBozze").where("stato", "==", "in-attesa").get();
 const docs = snap.docs.sort((a, b) => (a.get("createdAt")?.toMillis() || 0) - (b.get("createdAt")?.toMillis() || 0));
 
