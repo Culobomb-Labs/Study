@@ -72,6 +72,16 @@ window.CORSI =
       { "name": "Quaderno di Basi di Dati", "kind": "Quaderno", "path": "Basi di Dati/Quaderno di Basi di Dati.html", "progressKey": "quaderno-basi-done" },
       { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" }
     ]
+  },
+  {
+    "code": "AL",
+    "name": "Accompagnamento al lavoro",
+    "meta": "3° anno · Orientamento in uscita",
+    "stato": "in-aggiornamento",
+    "color": "al",
+    "docs": [
+      { "name": "Quaderno di Accompagnamento al lavoro", "kind": "Quaderno", "path": "Accompagnamento al lavoro/Quaderno di Accompagnamento al lavoro.html", "progressKey": "quaderno-al-done" }
+    ]
   }
 ]
 /* CORSI-FINE */

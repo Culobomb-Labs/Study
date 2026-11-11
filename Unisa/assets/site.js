@@ -24,8 +24,8 @@
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
   const CORSI = window.CORSI || [];
-  // corsi che compaiono solo nelle news (etichetta e scelta nel modulo dell'amministratore), non in home
-  const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }]);
+  // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
+  const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
   const THEME_KEY = "ua-theme";
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
