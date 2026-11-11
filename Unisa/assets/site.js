@@ -38,7 +38,7 @@
   const ICON = {
     search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
     home: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg>',
-    list: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/></svg>',
+    book: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.5 5 8 4.5 3.5 4.5v14c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-14c-4.5 0-7 .5-8.5 2z"/><path d="M12 6.5v14"/><path d="M6 8.5h3.5M6 11.5h3.5M14.5 8.5H18M14.5 11.5H18"/></svg>',
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
@@ -105,7 +105,7 @@
   function buildCopyright() {
     if (document.querySelector(".ua-copy")) return;
     const y = new Date().getFullYear(), years = y > COPY_START ? `${COPY_START}–${y}` : `${COPY_START}`;
-    const foot = el("footer", { class: "ua-copy" + (IS_HOME ? "" : " ua-copy-dock") });
+    const foot = el("footer", { class: "ua-copy ua-copy-dock" }); // spazio sotto per la barra in basso, presente in tutte le pagine
     foot.innerHTML = `<div class="ua-copy-in"><span class="ua-copy-b">© ${years} Culobomb-Labs<span class="ua-copy-sep" aria-hidden="true">·</span>Appunti Unisa</span></div>`;
     document.body.append(foot);
     /* alcune pagine hanno un margine laterale sul body: il piè di pagina va da bordo a bordo, come la barra */
@@ -117,29 +117,38 @@
     fit(); window.addEventListener("resize", fit);
   }
 
-  /* ---------------- pulsanti fluttuanti ----------------
-     Nelle pagine di appunti la barra in alto scorre via: qui restano Home, Cerca e, quando servono,
-     Indice (telefono, nei quaderni), News (solo con notizie da leggere) e Torna su (dopo un po' di scorrimento). */
+  /* ---------------- barra in basso (schede, stile iOS) ----------------
+     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Indice (telefono, nei quaderni),
+     Cerca e News, con la scheda della pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
+     a parte, sopra la barra, che compare dopo un po' di scorrimento. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
+    const tab = (tag, cls, attrs, icon, label) =>
+      `<${tag} class="ua-tab ${cls}" ${attrs}><span class="ua-tab-ic">${icon}</span><span class="ua-label">${label}</span></${tag}>`;
+    const on = 'aria-current="page"';
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
-    dock.innerHTML = `<a href="${ROOT}index.html" class="ua-dock-home" aria-label="Torna alla home">${ICON.home}<span class="ua-label">Home</span></a>
-      ${idx ? `<button type="button" class="ua-dock-idx" aria-label="Indice dei capitoli">${ICON.list}<span class="ua-label">Indice</span></button>` : ""}
-      <button type="button" class="ua-open-search" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-label">Cerca</span></button>
-      <button type="button" class="ua-news-btn" hidden aria-label="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
-      <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
+    dock.innerHTML = `<div class="ua-tabs">
+      ${tab("a", "ua-dock-home" + (IS_HOME ? " is-on" : ""), `href="${ROOT}index.html"` + (IS_HOME ? ` ${on}` : ""), ICON.home, "Home")}
+      ${idx ? tab("button", "ua-dock-idx", 'type="button"', ICON.book, "Indice") : ""}
+      ${tab("button", "ua-open-search", 'type="button"', ICON.search, "Cerca")}
+      ${IS_NEWS_PAGE ? tab("a", "is-on", `href="${ROOT}news.html" ${on}`, ICON.bell, "News")
+        : tab("button", "ua-news-btn", 'type="button" aria-haspopup="dialog" aria-expanded="false"', ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
+    </div>
+    <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
     const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    const toTop = () => window.scrollTo({ top: 0, behavior: smooth() });
+    dock.querySelectorAll('[aria-current="page"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); toTop(); })); // la scheda della pagina in cui sei riporta in cima
     if (idx) dock.querySelector(".ua-dock-idx").addEventListener("click", () => {
       const d = idx.querySelector("details"); if (d) d.open = true;
       idx.scrollIntoView({ behavior: smooth(), block: "start" });
     });
     const up = dock.querySelector(".ua-up");
-    up.addEventListener("click", () => window.scrollTo({ top: 0, behavior: smooth() }));
+    up.addEventListener("click", toTop);
     let ticking = false;
     window.addEventListener("scroll", () => {
       if (ticking) return; ticking = true;
-      requestAnimationFrame(() => { const on = scrollY > 700; dock.classList.toggle("ua-scrolled", on); up.tabIndex = on ? 0 : -1; ticking = false; });
+      requestAnimationFrame(() => { const far = scrollY > 700; dock.classList.toggle("ua-scrolled", far); up.tabIndex = far ? 0 : -1; ticking = false; });
     }, { passive: true });
   }
 
@@ -955,7 +964,6 @@
     const k = unread().length;
     document.querySelectorAll(".ua-news-btn").forEach(b => {
       const dot = b.querySelector(".ua-news-dot"); if (dot) dot.hidden = !k;
-      if (b.closest(".ua-dock")) b.hidden = !k;
       const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
       b.setAttribute("aria-label", l); b.title = l;
     });
@@ -1459,7 +1467,7 @@
   }
   buildBar();
   buildCopyright();
-  if (!IS_HOME && !IS_NEWS_PAGE) buildDock();
+  buildDock();
   buildPalette();
   loadNews();
   buildSyncDialog();

@@ -11,7 +11,7 @@
   --ua-ease:cubic-bezier(.2,.7,.2,1);
   --ua-g-bell1:#d97706; --ua-g-bell2:#ea580c; --ua-g-sun1:#ca8a04; --ua-g-sun2:#d97706;
   --ua-g-moon1:#4f46e5; --ua-g-moon2:#9333ea; --ua-g-auto1:#d97706; --ua-g-auto2:#4f46e5;
-  --ua-glass1:rgba(255,255,255,.55); --ua-glass2:rgba(255,255,255,.18); --ua-glass-edge:rgba(255,255,255,.85); --ua-glass-hi:rgba(255,255,255,.9); --ua-glass-hover:rgba(255,255,255,.5);
+  --ua-glass:rgba(246,246,248,.62); --ua-glass-rim:rgba(255,255,255,.95); --ua-glass-rim2:rgba(255,255,255,.35); --ua-glass-on:rgba(0,0,0,.07); --ua-glass-shadow:0 10px 30px -8px rgba(17,20,24,.22),0 0 0 .5px rgba(17,20,24,.10);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
@@ -20,10 +20,10 @@
   --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
-  --ua-glass1:rgba(255,255,255,.13); --ua-glass2:rgba(255,255,255,.03); --ua-glass-edge:rgba(255,255,255,.2); --ua-glass-hi:rgba(255,255,255,.32); --ua-glass-hover:rgba(255,255,255,.1);
+  --ua-glass:rgba(44,44,48,.55); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
 }}
 :root[data-theme="dark"]{
-  --ua-glass1:rgba(255,255,255,.13); --ua-glass2:rgba(255,255,255,.03); --ua-glass-edge:rgba(255,255,255,.2); --ua-glass-hi:rgba(255,255,255,.32); --ua-glass-hover:rgba(255,255,255,.1);
+  --ua-glass:rgba(44,44,48,.55); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
@@ -85,7 +85,7 @@
 /* ---------- news: campanello, tendina, pagina ---------- */
 .ua-news-btn{position:relative}
 .ua-news-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 2px var(--ua-bg);pointer-events:none}
-.ua-dock .ua-news-dot{top:7px;right:8px;box-shadow:0 0 0 2px var(--ua-bg)}
+.ua-dock .ua-news-dot{top:-2px;right:-5px;box-shadow:0 0 0 2px var(--ua-bg)}
 .ua-news-dot[hidden]{display:none}
 .ua-btn[aria-expanded="true"]{background:var(--ua-soft);border-color:var(--ua-muted)}
 
@@ -162,34 +162,39 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-copy-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .ua-copy-b{color:var(--ua-ink);font:700 20px/1.3 "Dancing Script","Segoe Script","Brush Script MT",cursive;word-spacing:.12em} /* stesso corsivo del marchio nella barra */
 .ua-copy-sep{margin:0 .42em 0 .3em}
-.ua-copy-dock{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.ua-copy-dock{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))} /* spazio per la barra in basso */
 @media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
 
-/* ---------- pulsanti fluttuanti sulle pagine di appunti ----------
-   Vetro lucido tipo "liquid glass": quasi trasparente e sfocato, riflesso chiaro in alto, bordo illuminato
-   e ombra morbida per staccarlo dalla pagina. I colori del vetro sono le variabili --ua-glass… del tema. */
+/* ---------- barra in basso: schede in vetro, stile iOS ("liquid glass") ----------
+   Vetro fumé molto sfocato, bordo che riflette la luce in alto a sinistra e in basso a destra, scheda attiva su una
+   pillola più scura. Icone e scritte monocromatiche. I colori del vetro sono le variabili --ua-glass… del tema. */
 .ua-dock{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
-  display:flex;gap:2px;padding:5px;border-radius:20px;border:1px solid var(--ua-glass-edge);isolation:isolate;
-  background:linear-gradient(160deg,var(--ua-glass1),var(--ua-glass2));
-  -webkit-backdrop-filter:blur(14px) saturate(1.8);backdrop-filter:blur(14px) saturate(1.8);
-  box-shadow:inset 0 1px 0 var(--ua-glass-hi),inset 0 -1px 0 var(--ua-glass2),0 12px 32px -10px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.12);
-  font:500 13px/1 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
-.ua-dock::before{content:"";position:absolute;inset:1px 1px 50% 1px;z-index:-1;border-radius:19px 19px 40% 40% / 19px 19px 14px 14px;
-  background:linear-gradient(180deg,var(--ua-glass2),transparent);pointer-events:none} /* riflesso sulla metà alta */
-.ua-dock a,.ua-dock button{appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;position:relative;
-  height:38px;min-width:38px;padding:0 12px;border-radius:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;
-  transition:background .15s}
-.ua-dock a:hover,.ua-dock button:hover{background:var(--ua-glass-hover)}
-.ua-dock :focus-visible{outline:2px solid var(--ua-ink);outline-offset:-2px}
+  font:500 11.5px/1 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
+.ua-tabs,.ua-dock .ua-up{position:relative;isolation:isolate;background:var(--ua-glass);
+  -webkit-backdrop-filter:blur(22px) saturate(1.9);backdrop-filter:blur(22px) saturate(1.9);box-shadow:var(--ua-glass-shadow)}
+.ua-tabs::before,.ua-dock .ua-up::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;
+  background:linear-gradient(135deg,var(--ua-glass-rim),var(--ua-glass-rim2) 35%,var(--ua-glass-rim2) 65%,var(--ua-glass-rim));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude} /* bordo che rifrange */
+.ua-tabs{display:flex;gap:2px;padding:5px;border-radius:999px}
+.ua-tab{appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;font:inherit;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:66px;height:56px;padding:0 12px;border-radius:999px;
+  transition:background .2s var(--ua-ease)}
+.ua-tab:hover{background:color-mix(in srgb,var(--ua-glass-on) 60%,transparent)}
+.ua-tab.is-on{background:var(--ua-glass-on);font-weight:600}
+.ua-tab-ic{position:relative;display:grid;place-items:center;height:24px}
+.ua-tab-ic svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8}
+.ua-dock :focus-visible{outline:2px solid var(--ua-ink);outline-offset:-3px}
 .ua-dock [hidden]{display:none}
-.ua-dock svg{stroke:url(#uaGrad);flex:none}
-.ua-dock .ua-news-btn svg{stroke:url(#uaBell)}
-.ua-dock .ua-up svg{stroke:var(--ua-muted)}
-.ua-dock .ua-up{padding:0;width:0;min-width:0;overflow:hidden;opacity:0;transition:width .25s var(--ua-ease),opacity .2s,background .15s}
-.ua-dock.ua-scrolled .ua-up{width:38px;opacity:1}
+/* Torna su: bottone rotondo di vetro sopra la barra, compare dopo un po' di scorrimento */
+.ua-dock .ua-up{position:absolute;right:0;bottom:calc(100% + 10px);width:48px;height:48px;border:0;border-radius:50%;color:inherit;cursor:pointer;
+  display:grid;place-items:center;opacity:0;transform:translateY(8px) scale(.9);pointer-events:none;transition:opacity .2s,transform .25s var(--ua-ease)}
+.ua-dock .ua-up svg{width:20px;height:20px;stroke:currentColor}
+.ua-dock.ua-scrolled .ua-up{opacity:1;transform:none;pointer-events:auto}
 .ua-dock-idx{display:none!important} /* l'indice serve solo su telefono: su PC resta fisso a lato */
-@media (max-width:900px){.ua-dock-idx{display:inline-flex!important}}
-@media (max-width:640px){.ua-dock .ua-label{display:none}.ua-dock a,.ua-dock button{padding:0;width:42px;height:42px}.ua-dock.ua-scrolled .ua-up{width:42px}}
+@media (max-width:900px){.ua-dock-idx{display:flex!important}}
+@media (max-width:640px){ /* su telefono la barra occupa tutta la larghezza, come le schede di iOS */
+  .ua-dock{left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:max(10px,env(safe-area-inset-bottom,0px))}
+  .ua-tab{flex:1;min-width:0;padding:0 4px}}
 @media print{.ua-dock,.ua-bar{display:none}}
 
 /* ---------- ricerca ---------- */
@@ -253,7 +258,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 @keyframes ua-fade{from{opacity:0}}
 @keyframes ua-pop{from{opacity:0;transform:translateY(-6px) scale(.985)}}
 @keyframes ua-rise{from{opacity:0;transform:translateY(10px)}}
-@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-theme svg{transition:none}}
+@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-tab,.ua-theme svg{transition:none}}
 
 /* ---------- news: immagini ---------- */
 .ua-ni-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
