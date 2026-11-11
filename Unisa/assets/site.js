@@ -162,47 +162,61 @@
     bar.prepend(lens);
     tabs.forEach(t => t.setAttribute("draggable", "false"));
     bar.addEventListener("dragstart", e => e.preventDefault()); // altrimenti il browser trascina il link e annulla il gesto
+    bar.addEventListener("contextmenu", e => e.preventDefault()); // niente anteprima del link tenendo premuto (iPhone)
     const home = () => bar.querySelector(".ua-tab.is-on");
     const box = t => ({ x: t.offsetLeft, w: t.offsetWidth });
     const put = (x, w) => { bar.style.setProperty("--lx", x + "px"); bar.style.setProperty("--lw", w + "px"); };
+    const jump = (x, w) => { lens.classList.add("no-anim"); put(x, w); void lens.offsetWidth; lens.classList.remove("no-anim"); }; // senza scivolare
     const rest = () => { const h = home(); bar.classList.toggle("has-on", !!h); if (h) { const b = box(h); put(b.x, b.w); } };
     const under = x => tabs.reduce((a, t) => Math.abs(t.offsetLeft + t.offsetWidth / 2 - x) < Math.abs(a.offsetLeft + a.offsetWidth / 2 - x) ? t : a);
     const PAD = 8; // la lente premuta sporge un po' ai lati
-    let press = null, swallow = false;
+    let press = null, swallowUntil = 0;
+    const local = e => e.clientX - bar.getBoundingClientRect().left;
     const follow = x => {
       const t = under(x), w = t.offsetWidth + PAD * 2;
       put(Math.min(Math.max(x - w / 2, -PAD), bar.clientWidth - w + PAD), w);
       tabs.forEach(o => o.classList.toggle("is-under", o === t));
       return t;
     };
+    const open = t => {
+      if (t.matches('a[aria-current="page"]')) window.scrollTo({ top: 0, behavior: "smooth" }); // la scheda della pagina in cui sei: torna in cima
+      else if (t.tagName === "A") location.href = t.href; // i link si aprono direttamente: più affidabile su iPhone
+      else t.click();
+    };
     bar.addEventListener("pointerdown", e => {
       if (e.button) return;
-      const x = e.clientX - bar.getBoundingClientRect().left;
-      press = { id: e.pointerId, x0: x, moved: false };
-      bar.setPointerCapture(e.pointerId);
+      const x = local(e), t = under(x);
+      press = { id: e.pointerId, x0: x, moved: false, last: t };
+      try { bar.setPointerCapture(e.pointerId); } catch (_) {}
+      if (!home()) { const w = t.offsetWidth + PAD * 2; jump(t.offsetLeft - PAD, w); } // nessuna scheda attiva: la lente nasce sotto il dito
       bar.classList.add("is-pressing");
       follow(x);
     });
     bar.addEventListener("pointermove", e => {
       if (!press || e.pointerId !== press.id) return;
-      const x = e.clientX - bar.getBoundingClientRect().left;
+      const x = local(e);
       if (!press.moved && Math.abs(x - press.x0) > 6) { press.moved = true; bar.classList.add("is-dragging"); }
-      if (press.moved) follow(x);
+      if (press.moved) press.last = follow(x);
     });
-    const end = (e, cancel) => {
+    // anche se il sistema annulla il gesto (pointercancel), si apre la scheda su cui era la lente
+    const end = (e, cancelled) => {
       if (!press || e.pointerId !== press.id) return;
-      const x = e.clientX - bar.getBoundingClientRect().left, t = cancel ? null : under(x);
+      const t = cancelled ? press.last : under(local(e));
       press = null; bar.classList.remove("is-dragging");
-      if (t) { const b = box(t); put(b.x - PAD, b.w + PAD * 2); swallow = true; } // la lente si posa sulla scheda scelta
+      const b = box(t); put(b.x - PAD, b.w + PAD * 2); // la lente si posa sulla scheda scelta
+      swallowUntil = Date.now() + 700;
       setTimeout(() => {
         bar.classList.remove("is-pressing"); tabs.forEach(o => o.classList.remove("is-under")); rest();
-        if (t) t.click();
-      }, t ? 200 : 0);
+        open(t);
+      }, 180);
     };
     bar.addEventListener("pointerup", e => end(e, false));
     bar.addEventListener("pointercancel", e => end(e, true));
-    // il clic "vero" del dito arriva subito dopo il rilascio: lo fermiamo, la scheda si apre a fine animazione
-    bar.addEventListener("click", e => { if (swallow && e.isTrusted) { e.preventDefault(); e.stopImmediatePropagation(); } swallow = false; }, true);
+    // il clic "vero" del dito arriva subito dopo il rilascio: lo fermiamo, la scheda si apre a fine animazione.
+    // Solo per un attimo dopo il gesto: Invio e spazio da tastiera restano normali.
+    bar.addEventListener("click", e => {
+      if (e.isTrusted && Date.now() < swallowUntil) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
     new ResizeObserver(rest).observe(bar);
     rest();
   }

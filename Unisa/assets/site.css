@@ -188,12 +188,13 @@ a.ua-ni:hover{background:var(--ua-soft)}
   background:conic-gradient(from 200deg,rgba(255,255,255,.9),#7ee8fa 15%,rgba(255,255,255,.5) 25%,#f9a8d4 40%,rgba(255,255,255,.85) 55%,#fde68a 70%,rgba(255,255,255,.5) 85%,rgba(255,255,255,.9));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
 .ua-tabs.is-pressing .ua-lens::before{opacity:.85}
+.ua-lens.no-anim,.ua-lens.no-anim::before{transition:none}
 .ua-tabs.is-dragging .ua-lens{transition:transform .08s linear,width .2s var(--ua-ease),top .25s,bottom .25s,background .25s,box-shadow .25s}
-.ua-tab{position:relative;z-index:1;appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent;
+.ua-tab{position:relative;z-index:1;-webkit-touch-callout:none;appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:66px;height:56px;padding:0 12px;border-radius:999px;
   transition:background .2s var(--ua-ease),transform .3s cubic-bezier(.3,1.35,.5,1)}
-.ua-tab:hover{background:color-mix(in srgb,var(--ua-glass-on) 45%,transparent)}
-.ua-tabs.is-pressing .ua-tab:hover,.ua-tab.is-on:hover{background:transparent}
+@media (hover:hover){.ua-tab:hover{background:color-mix(in srgb,var(--ua-glass-on) 45%,transparent)}
+  .ua-tabs.is-pressing .ua-tab:hover,.ua-tab.is-on:hover{background:transparent}} /* su iPhone il "passaggio del mouse" resterebbe attaccato dopo il tocco */
 .ua-tab.is-on{font-weight:600}
 .ua-tab.is-under{transform:scale(1.14)} /* la lente ingrandisce la scheda sotto */
 .ua-tab-ic{position:relative;display:grid;place-items:center;height:24px}
