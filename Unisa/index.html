@@ -59,9 +59,9 @@ h1 .h1-l + .h1-l{color:var(--muted)}
     letter-spacing:var(--u-ls)} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
   /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
   :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 20%,var(--bg));--u-ls:.045em;
-    --u-c1:color-mix(in srgb,var(--ua-c-is) 55%,#000);--u-c2:color-mix(in srgb,var(--ua-c-pd) 55%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 55%,#000)}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}}
-  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-pd);--u-c3:var(--ua-c-mp)}
+    --u-c1:color-mix(in srgb,var(--ua-c-is) 55%,#000);--u-c2:color-mix(in srgb,var(--ua-c-bd) 55%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 55%,#000)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-bd);--u-c3:var(--ua-c-mp)}}
+  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-bd);--u-c3:var(--ua-c-mp)}
   h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
 }
 h1 .h1-dot{color:var(--ink)}
@@ -217,17 +217,17 @@ footer a{text-underline-offset:3px}
 
 /* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive) */
 .site-foot{position:relative;margin-top:24px;border-top:0;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--surface) 70%,transparent))}
-.site-foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--ua-c-is),var(--ua-c-pd),var(--ua-c-mp),transparent);opacity:1;height:2px}
+.site-foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--ua-c-is),var(--ua-c-bd),var(--ua-c-mp),transparent);opacity:1;height:2px}
 .site-foot .wrap{display:block;padding-block:44px 34px;color:var(--muted)}
 .f-grid{display:grid;grid-template-columns:1.2fr .7fr 1.1fr;gap:32px 48px;align-items:start}
 .f-k{display:block;font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
 .f-logo{display:inline-block;font-family:"Dancing Script","Segoe Script",cursive;font-weight:700;font-size:34px;line-height:1;color:var(--ink);text-decoration:none}
-.f-logo span{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-right:.08em}
+.f-logo span{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-right:.08em}
 .f-brand p{margin:0 0 14px;font-size:14px;line-height:1.55;max-width:34ch}
 .f-brand .build-meta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-left:0;text-align:left}
 .f-brand #built{font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--ink);letter-spacing:-.01em}
 .f-brand #version:not(:empty){font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;color:var(--ink);
-  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box;border:1px solid transparent}
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box;border:1px solid transparent}
 .f-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
 .f-links a{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;white-space:nowrap;color:var(--ink);text-decoration:none;transition:color .2s,transform .2s var(--ua-ease)}
 .f-links a:hover{color:var(--c,var(--ink));transform:translateX(3px)}
@@ -236,8 +236,8 @@ footer a{text-underline-offset:3px}
 .site-foot .drives{width:auto;gap:8px}
 .site-foot .drive{background:var(--surface)}
 .site-foot .drive-t{white-space:normal}
-.site-foot .drive:hover{border-color:transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box}
-.site-foot .drive-ic{background:color-mix(in srgb,var(--ua-c-pd) 16%,transparent);color:var(--ua-c-pd)}
+.site-foot .drive:hover{border-color:transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box}
+.site-foot .drive-ic{background:color-mix(in srgb,var(--ua-c-bd) 16%,transparent);color:var(--ua-c-bd)}
 body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,var(--line) 70%,transparent)}
 @media (max-width:760px){
   /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due pulsanti affiancati, poi le cartelle */
@@ -268,7 +268,7 @@ body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,va
 .seal .ring{transform-origin:80px 80px;animation:sealSpin 48s linear infinite}
 .seal text{font-family:var(--f-mono);font-size:10px;fill:var(--muted);text-transform:uppercase}
 /* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio è sempre scuro, così i colori risaltano in entrambi i temi */
-:root{--s-c1:#a58bf0;--s-c2:#4fb3d6;--s-c3:#5fc48c}
+:root{--s-c1:#a58bf0;--s-c2:#7ea6ff;--s-c3:#5fc48c}
 @keyframes sealSpin{to{transform:rotate(360deg)}}
 @media (max-width:720px){.seal{grid-column:auto;grid-row:auto;position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:92px;width:100px;height:100px}.stats{grid-row:auto !important}}
 @media (prefers-reduced-motion:reduce){.seal .ring{animation:none}}
@@ -284,7 +284,7 @@ body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,va
     <div class="seal" aria-hidden="true"><svg viewBox="0 0 160 160">
 <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0"/></defs>
 <linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
-<linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0"><stop offset="0" style="stop-color:var(--u-c1,#5b3fa3)"/><stop offset=".55" style="stop-color:var(--u-c2,#1d6a86)"/><stop offset="1" style="stop-color:var(--u-c3,#2f7d52)"/></linearGradient>
+<linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0"><stop offset="0" style="stop-color:var(--u-c1,#5b3fa3)"/><stop offset=".55" style="stop-color:var(--u-c2,#2350c8)"/><stop offset="1" style="stop-color:var(--u-c3,#2f7d52)"/></linearGradient>
 <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5"/>
 <g class="ring"><text textLength="322.7" lengthAdjust="spacing"><textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">Appunti · Unisa · Informatica · 3° anno ·</textPath></text></g>
 <circle cx="80" cy="80" r="35" fill="#111418" stroke="var(--line,#2a2e33)" stroke-width="1"/>

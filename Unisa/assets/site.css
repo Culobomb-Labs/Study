@@ -5,7 +5,7 @@
   --ua-bg:#f4f3f0; --ua-ink:#111418; --ua-muted:#5d636b; --ua-line:#d6d5cf; --ua-soft:#e7e6e1;
   --ua-shadow:0 18px 50px -12px rgba(17,20,24,.28),0 2px 6px rgba(17,20,24,.06);
   --ua-mark:#fff1b8; --ua-warn:#c4232b; --ua-warn-soft:#fdeced; --ua-warn-line:#f2c2c5; --ua-veil:rgba(17,20,24,.32);
-  --ua-c-is:#5b3fa3; --ua-c-mp:#2f7d52; --ua-c-pd:#1d6a86; --ua-c-so:#a4471f; --ua-c-al:#b0306f;
+  --ua-c-is:#5b3fa3; --ua-c-mp:#2f7d52; --ua-c-pd:#8a5a00; --ua-c-bd:#2350c8; --ua-c-so:#a4471f; --ua-c-al:#b0306f;
   --ua-font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --ua-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --ua-ease:cubic-bezier(.2,.7,.2,1);
@@ -16,7 +16,7 @@
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
-  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#4fb3d6; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;
+  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
 }}
@@ -26,7 +26,7 @@
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
-  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#4fb3d6; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;}
+  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;}
 
 /* ---------- barra in alto ---------- */
 .ua-bar{position:relative;z-index:30;min-height:52px;background:var(--ua-bg);border-bottom:1px solid var(--ua-line);
@@ -41,7 +41,7 @@
 .ua-logo-p{fill:var(--ua-bg)}
 .ua-logo-s{fill:var(--ua-c-so)}
 .ua-brand:hover .ua-logo{transform:rotate(-6deg)}
-.ua-brand-u{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--ua-ink)} /* "Unisa" col gradiente dei corsi, come nella home */
+.ua-brand-u{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--ua-ink)} /* "Unisa" col gradiente dei corsi, come nella home */
 .ua-sep{color:var(--ua-line);flex:none}
 .ua-crumb{color:var(--ua-muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis}
 .ua-crumb.ua-here{color:var(--ua-ink)}
@@ -66,10 +66,10 @@
 .ua-actions .ua-theme[data-mode="auto"] svg [fill="currentColor"]{fill:url(#uaAuto)}
 .ua-btn.ua-open-search{border-color:transparent;
   background:linear-gradient(var(--ua-bg),var(--ua-bg)) padding-box,
-    linear-gradient(90deg,color-mix(in srgb,var(--ua-c-is) 55%,var(--ua-line)),color-mix(in srgb,var(--ua-c-pd) 55%,var(--ua-line)) 55%,color-mix(in srgb,var(--ua-c-mp) 55%,var(--ua-line))) border-box}
+    linear-gradient(90deg,color-mix(in srgb,var(--ua-c-is) 55%,var(--ua-line)),color-mix(in srgb,var(--ua-c-bd) 55%,var(--ua-line)) 55%,color-mix(in srgb,var(--ua-c-mp) 55%,var(--ua-line))) border-box}
 .ua-btn.ua-open-search:hover,.ua-btn.ua-open-search:focus-visible{
   background:linear-gradient(var(--ua-soft),var(--ua-soft)) padding-box,
-    linear-gradient(90deg,var(--ua-c-is),var(--ua-c-pd) 55%,var(--ua-c-mp)) border-box}
+    linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box}
 .ua-kbd{opacity:.7}
 .ua-btn svg{flex:none}
 .ua-kbd{font:500 11px/1 var(--ua-mono);color:var(--ua-muted);border:1px solid var(--ua-line);border-radius:4px;padding:3px 5px}

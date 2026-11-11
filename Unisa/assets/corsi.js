@@ -1,6 +1,6 @@
 /* Elenco dei corsi del sito. È l'unico posto da modificare quando aggiungi materiale.
    - path: percorso del file a partire dalla cartella Unisa (gli spazi vanno bene)
-   - color: is | mp | pd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
+   - color: is | mp | pd | so | bd | ... (i colori sono in assets/site.css, variabili --ua-c-...)
    - stato: "aggiornato" (appunti completi e aggiornati), "in-aggiornamento" (appunti ancora in lavorazione)
      oppure "in-arrivo" (corso aggiunto, appunti non ancora caricati: "docs" può restare vuoto, cioè [])
    - resto (facoltativo): il canale del corso a cui si riferiscono gli appunti, es. "1" per Resto 1
@@ -56,9 +56,21 @@ window.CORSI =
     "stato": "aggiornato",
     "color": "so",
     "docs": [
-        { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-operativi-done" },
+        { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-so-cap3-15-v1" },
         { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Sistemi Operativi/Piano di studio SO.html", "progressKey": "piano-esame-so" },
         { "name": "Quiz, capitoli 03–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
+    ]
+  },
+  {
+    "code": "BD",
+    "resto": "1",
+    "name": "Basi di Dati",
+    "meta": "2° anno · Database",
+    "stato": "aggiornato",
+    "color": "bd",
+    "docs": [
+      { "name": "Quaderno di Basi di Dati", "kind": "Quaderno", "path": "Basi di Dati/Quaderno di Basi di Dati.html", "progressKey": "quaderno-basi-done" },
+      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" }
     ]
   }
 ]

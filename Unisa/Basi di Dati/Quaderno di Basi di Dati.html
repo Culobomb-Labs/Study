@@ -1,0 +1,873 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Appunti interattivi di Basi di Dati, lezioni 02–10"><title>Quaderno di Basi di Dati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@500;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f7f4ee;--grid:rgba(35,38,43,.055);--ink:#23262b;--soft:#646b75;--rule:#d8d6cf;--surface:#fffdfa;--acc:#1f4fc4;--tint:#e3eafb;--red:#b8322a;--hl:rgba(240,190,0,.28);--code:#eeece7;--ok:#26704a;--study:#fffdfa;--display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;--body:"Atkinson Hyperlegible","Segoe UI",Verdana,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--paper:#0e1011;--grid:rgba(255,255,255,.018);--ink:#f1f2f4;--soft:#a1a6ae;--rule:#282b2f;--surface:#151719;--acc:#86a8ff;--tint:#18233d;--red:#ff8a7a;--hl:rgba(134,168,255,.30);--code:#1d2023;--ok:#7fc69a;--study:#191c1f;}}:root[data-theme="dark"]{color-scheme:dark;--paper:#0e1011;--grid:rgba(255,255,255,.018);--ink:#f1f2f4;--soft:#a1a6ae;--rule:#282b2f;--surface:#151719;--acc:#86a8ff;--tint:#18233d;--red:#ff8a7a;--hl:rgba(134,168,255,.30);--code:#1d2023;--ok:#7fc69a;--study:#191c1f;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;padding:0 18px 80px;background:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;color:var(--ink);font:17px/1.62 var(--body)}a{color:var(--acc)}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:3px}.wrap{max-width:1220px;margin:auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:52px}.cover{grid-column:1/-1;padding:54px 0 34px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}.kicker,.mono{font-family:var(--mono)}.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft)}h1,h2,h3,h4{font-family:var(--display)}.cover h1{font-size:clamp(42px,7vw,82px);line-height:.94;letter-spacing:-.035em;margin:12px 0 14px}.cover h1 span{color:var(--acc)}.cover p{margin:0;max-width:68ch;color:var(--soft)}.stamp{width:100%;max-width:380px;text-align:right;color:var(--acc);font:700 30px/1.2 "Caveat",cursive;transform:rotate(-4deg);transform-origin:center}.cover>div:last-child{align-self:center;padding-right:clamp(24px,5vw,80px)}nav.idx{position:sticky;top:0;align-self:start;padding-top:24px;z-index:20;max-height:100vh;overflow:auto}.idx h2{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 20px}.idx ol{list-style:none;padding:0;margin:0;display:grid;gap:2px}.idx a{display:grid;grid-template-columns:28px 1fr 26px;gap:6px;padding:5px 7px;color:var(--ink);text-decoration:none;border-radius:3px;font-size:14px;line-height:1.3}.idx a:hover{background:var(--tint)}.idx a.done{background:transparent}.idx a.done .t{color:var(--soft)}.idx a.done .cnt::after{content:"✓";color:var(--ok);font:600 14px var(--mono)}.idx .n{font:11px var(--mono);color:var(--soft)}.idx .cnt{font:11px var(--mono);color:var(--acc);text-align:right}.idx .part{padding:12px 6px 3px;color:var(--acc);font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}.idx a.miss{opacity:.36}.progress{font:12px var(--mono);color:var(--soft);margin:14px 0 6px}.bar{height:6px;background:var(--rule);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}.search{position:relative;margin:0 0 16px}.slbl{display:block;margin-bottom:5px;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}.sbox{position:relative}.sbox input{width:100%;padding:9px 34px 9px 10px;border:1.5px solid var(--ink);border-radius:4px;background:var(--surface);color:var(--ink);font:14px var(--body)}.sbox input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}.sbox input[type="search"]::-ms-clear{display:none}.sclr{position:absolute;right:2px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--soft);font-size:19px;cursor:pointer}.sres{position:absolute;top:calc(100% + 5px);left:0;width:min(460px,calc(100vw - 36px));max-height:65vh;overflow:auto;background:var(--surface);border:1.5px solid var(--ink);z-index:30;box-shadow:0 10px 28px #10102030}.sres p{margin:0;padding:8px 11px;border-bottom:1px solid var(--rule);font-size:13px;color:var(--soft)}.sres a{display:block;padding:8px 11px;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);font-size:14px}.sres a:hover,.sres a.on{background:var(--tint)}.sres small{display:block;color:var(--acc);font:10px var(--mono);margin-bottom:3px}main{min-width:0}.partbreak{margin-top:58px;padding-top:14px;border-top:2px solid var(--ink);font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}main>.partbreak:first-child{border-top:0;padding-top:0}section.ch{padding:42px 0 8px;border-bottom:1px dashed var(--rule);scroll-margin-top:20px}.ch-head{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;align-items:baseline;margin-bottom:16px}.ch-num{font:600 13px var(--mono);color:var(--acc)}.ch h2{font-size:clamp(27px,4vw,39px);line-height:1.05;letter-spacing:-.02em;margin:0}.ch-sub{grid-column:2;color:var(--soft);font-size:15px}.ch h3{font-size:21px;line-height:1.15;margin:30px 0 7px}.ch h4{font-size:16px;margin:0 0 5px}.ch p,.ch li{max-width:72ch}.ch ul,.ch ol{padding-left:1.25em;margin:8px 0}.ch li{margin:4px 0}.ch li::marker{color:var(--acc)}.def,.note,.exam{max-width:75ch;margin:15px 0;padding:13px 17px;border-radius:3px}.def{background:var(--tint)}.def b.lbl,.exam b.lbl{display:block;margin-bottom:4px;color:var(--acc);font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}.note{border-left:3px solid var(--red);background:var(--surface);padding-left:15px}.exam{border:1px solid var(--acc);background:var(--surface)}.exam b.lbl{color:var(--red)}code{font:.86em var(--mono);background:var(--code);padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}pre{overflow:auto;background:var(--code);padding:13px 16px;border-radius:4px;font:13px/1.5 var(--mono)}.tbl{max-width:100%;overflow:auto;margin:14px 0}table{border-collapse:collapse;width:100%;min-width:460px;font-size:14.5px}th{padding:8px 10px;border-bottom:2px solid var(--ink);text-align:left;color:var(--soft);font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.08em}td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.vs>div{padding:12px 15px;border:1px solid var(--rule);background:var(--surface);min-width:0}.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:18px 0;padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px}.flow span{padding:7px 10px;border:1px solid var(--rule);background:var(--tint);font:12px var(--mono);text-align:center}.flow i{font-style:normal;color:var(--soft)}figure.diagram{margin:18px 0;padding:14px;background:var(--surface);border:1px solid var(--rule);max-width:850px}figure.diagram svg,figure.diagram img{display:block;width:100%;height:auto}figure.diagram img{max-width:100%;object-fit:contain}figcaption{margin-top:7px;color:var(--soft);font-size:13px}.quiz{max-width:72ch;margin:20px 0}.quiz details{padding:9px 0;border-top:1px solid var(--rule)}.quiz details:last-child{border-bottom:1px solid var(--rule)}.quiz summary{display:flex;align-items:center;gap:6px;list-style:none;font:700 16px/1.4 var(--display);cursor:pointer}.quiz summary::-webkit-details-marker{display:none}.quiz summary::marker{content:""}.quiz summary::before{content:"?";flex:0 0 16px;color:var(--acc);font:700 18px/1 var(--display)}.quiz details p{margin:6px 0 0;color:var(--soft)}.check{display:inline-flex;gap:8px;align-items:center;margin:20px 0 26px;color:var(--soft);font:12px var(--mono);cursor:pointer}.check input{width:18px;height:18px;accent-color:var(--ok)}.widget{max-width:720px;margin:18px 0;padding:17px 19px;background:var(--surface);border:1px solid var(--ink)}.widget h4{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}.widget label{display:grid;grid-template-columns:170px 1fr 70px;align-items:center;gap:10px;margin:8px 0;font-size:14px}.widget input{width:100%;accent-color:var(--acc)}.widget output{font:13px var(--mono);text-align:right}.widget .answer{font:700 31px var(--display);color:var(--acc)}section.ch.study{margin:58px 0 0;padding:36px 34px;background:var(--study);color:var(--ink);border:1px solid var(--rule)}.study .review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 42px;max-width:none;padding:0;margin:26px 0;list-style:none}.study .review-grid li{max-width:none;margin:0;padding:0}.review-grid h3{margin:0 0 8px!important;font-size:20px!important}.study .review-grid p{margin:0;color:var(--soft)}.study .quiz{max-width:none}.study .quiz>h4{margin:0;padding:0 0 10px;border-bottom:1px solid var(--rule);color:var(--soft);font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase}.study .oral-grid{display:block}.study .oral-grid details{padding:15px 0;border:0;border-bottom:1px solid var(--rule);background:transparent}.study .resource-list{padding-left:1.3em}.study .resource-list li{margin:13px 0}.resources{margin:76px 0 0!important;padding:32px 34px!important;background:var(--study);border:1px solid var(--rule)}.resources .ch-head{display:block;margin:0 0 22px}.resources .ch-head .ch-num,.resources .ch-head .ch-sub{display:none}.resources .ch-head h2{font-size:30px}.resources .resource-list{margin:0}.resources .resource-list li{margin:15px 0}.study .resource-list a{color:var(--ink)}.study h2,.study h3,.study h4,.study p,.study li{color:var(--ink)}.study .ch-num{color:var(--acc)}.study .check{color:var(--soft)}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;gap:0}.cover{padding-top:35px}.stamp{font-size:30px}nav.idx{position:static;padding-top:15px;max-height:none;overflow:visible}.idx ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 8px}.partbreak{margin-top:44px}}@media(max-width:640px){body{padding-inline:12px}.cover{grid-template-columns:1fr;gap:13px}.stamp{text-align:right}.cover>div:last-child{padding-right:clamp(24px,14vw,80px)}.vs{grid-template-columns:1fr}.idx ol{grid-template-columns:1fr}.widget label{grid-template-columns:1fr 60px}.widget label span{grid-column:1/-1}section.ch.study{margin-inline:0;padding:26px 18px}.study .review-grid{grid-template-columns:1fr}.study .oral-grid{display:block}table{min-width:410px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="../assets/quaderno.css">
+<style>
+.widget input[type=number]{padding:6px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font:14px var(--mono)}
+figure.diagram svg{color:var(--ink)}
+pre u{text-decoration-thickness:1.5px}
+</style>
+
+</head><body><div class="wrap">
+<header class="cover"><div><div class="kicker">Basi di Dati · Quaderno d’esame · Lezioni 02–10</div><h1>Dallo <span>schema ER</span><br>al B+-tree</h1><p>Appunti guidati su DBMS, progettazione concettuale e logica, modello relazionale, algebra, SQL, JDBC e progettazione fisica. Definizioni, esempi svolti dalle slide, confronti e tranelli da riconoscere all’esame.</p></div><div><div class="stamp">Prima il “che cosa”, poi il “come”: entità, relazioni, query, indici.</div></div></header>
+<nav class="idx" aria-label="Indice degli appunti"><div class="search" role="search"><label for="q" class="slbl">Cerca negli appunti</label><div class="sbox"><input id="q" type="search" placeholder="es. chiave esterna, HAVING, B+-tree…" autocomplete="off" aria-controls="sres"><button class="sclr" type="button" id="qclr" aria-label="Cancella ricerca" hidden>×</button></div><div class="sres" id="sres" role="region" aria-label="Risultati della ricerca" aria-live="polite" hidden></div></div><h2 class="index-title">Indice</h2><ol id="toc"></ol><div class="progress"><span id="pc">0</span> capitoli ripassati su <span id="pt">9</span></div><div class="bar"><i id="pb"></i></div></nav>
+<main>
+<div class="partbreak">Parte I · Fondamenti</div>
+<section class="ch" id="dbms" data-t="Concetti di base e architetture dei DBMS" data-part="Parte I · Fondamenti"><div class="ch-head"><span class="ch-num">02</span><h2>Concetti di base e architetture dei DBMS</h2><span class="ch-sub">Che cos’è un DBMS, perché conviene rispetto ai file, i tre livelli e l’indipendenza dei dati.</span></div>
+<div class="def"><b class="lbl">Definizione</b>Un <b>DBMS</b> (Database Management System, sistema per la gestione di basi di dati) è una collezione di programmi che permette di <b>creare e manutenere</b> una base di dati. È un software <b>general-purpose</b>: lo stesso DBMS serve applicazioni diverse e memorizza le informazioni in strutture dati efficienti, scalabili e flessibili.</div>
+<h3>Cosa fa un DBMS</h3>
+<div class="tbl"><table><tr><th>Funzione</th><th>Che cosa significa</th></tr>
+<tr><td><b>Definire</b> il database</td><td>Specificare i dati da memorizzare: tipi di dati, strutture, vincoli.</td></tr>
+<tr><td><b>Costruire</b> il database</td><td>Memorizzare i dati su una memoria di massa controllata dal DBMS.</td></tr>
+<tr><td><b>Manipolare</b> il database</td><td>Interrogarlo per ritrovare dati specifici, aggiornarlo per riflettere i cambiamenti del mondo reale, generare report.</td></tr></table></div>
+<div class="vs"><div><h4>DBMS</h4><p>È l’<b>applicativo</b> che gestisce i database. Esempio: MySQL. Come Word.</p></div><div><h4>Database</h4><p>È l’<b>insieme di dati</b>. Esempio: un file .MDB. Come il file .DOC.</p></div></div>
+<p>Non è obbligatorio usare un DBMS general-purpose: si può scrivere un proprio insieme di programmi, cioè un <b>DBMS special-purpose</b>. Conviene solo per soluzioni molto piccole.</p>
+<h3>Metadati e catalogo</h3>
+<p>Il database non contiene solo i dati ma anche la loro <b>definizione completa</b>. Queste informazioni sulla struttura si chiamano <b>metadati</b> e stanno nel <b>catalogo di sistema</b> (o dizionario dei dati): il DBMS lo consulta per conoscere la struttura dei file di quel database. Esempio: il metadato è <code>Type Studente = record nome, matricola, anno end</code>; i dati sono le righe Rossi, Bianchi, Verdi…</p>
+<h3>Proprietà di una base di dati</h3>
+<ul><li><b>Dati persistenti:</b> vivono indipendentemente dall’esecuzione dei programmi che li usano.</li>
+<li><b>Dati condivisi:</b> più settori dell’azienda usano gli stessi dati. Senza un DBMS questo porta a <b>ridondanza</b> (informazioni ripetute) e <b>rischio di incoerenza</b> (versioni diverse degli stessi dati che non coincidono).</li>
+<li><b>Multiutenza:</b> accesso contemporaneo di più utenti, con <b>controllo dell’accesso</b> (chi può leggere o modificare cosa) e <b>controllo della concorrenza</b> (esempio classico: prenotazione dei posti di una compagnia aerea).</li>
+<li><b>Affidabilità:</b> resistenza a malfunzionamenti hardware e software, perché la base di dati è una risorsa preziosa da conservare a lungo. La tecnica fondamentale è la <b>gestione delle transazioni</b>.</li></ul>
+<div class="vs"><div><h4>Transazione per l’utente</h4><p>Programma a disposizione per un’attività frequente e predefinita: versamento allo sportello, certificato anagrafico, prenotazione aerea. Di solito scritto in un linguaggio host.</p></div><div><h4>Transazione per il sistema</h4><p><b>Sequenza indivisibile di operazioni</b>: o tutte o nessuna.</p></div></div>
+<h3>DBMS e file processing</h3>
+<p>Nell’approccio <b>file processing</b> ogni programma (es. Gestione Esami, Gestione Iscrizioni) ha i suoi file e contiene la descrizione della loro struttura: le descrizioni sono ripetute e possono diventare incoerenti. Nell’approccio <b>DBMS</b> c’è un’unica base di dati con un <b>catalogo</b> che descrive i dati in modo centralizzato, usato da tutti i programmi.</p>
+<div class="tbl"><table><tr><th></th><th>Pro</th><th>Contro</th></tr>
+<tr><td><b>DBMS</b></td><td>Gestione centralizzata, standardizzazione ed “economia di scala”; servizi integrati; meno ridondanze e inconsistenze; <b>minor accoppiamento programma/dati</b> (sviluppo e manutenzione più semplici).</td><td>Costo del DBMS; overhead computazionale (meno efficienza).</td></tr>
+<tr><td><b>File processing</b></td><td>Niente acquisto del DBMS (difficile da ammortizzare per piccole applicazioni); programmi molto efficienti.</td><td>Ridondanza e alto rischio di inconsistenze; <b>forte accoppiamento programma/dati</b> (sviluppo e manutenzione più difficili).</td></tr></table></div>
+<h3>Modelli dei dati</h3>
+<p>Ogni DBMS supporta un <b>modello dei dati</b>: un insieme di costrutti per descrivere i dati, nascondendo i dettagli di memorizzazione (come una mappa rappresenta un territorio con dei simboli, mostrando alcune caratteristiche e nascondendone altre). Nel modello relazionale il costrutto è la <b>relazione</b> (tabella), che definisce insiemi di record omogenei. Il database vero e proprio è solo quello sui file: il DBMS si occupa di memorizzarvi i dati espressi secondo il modello.</p>
+<div class="vs"><div><h4>Modelli concettuali</h4><p>Rappresentano i dati in modo <b>indipendente da ogni sistema</b>, descrivono concetti del mondo reale, si usano nelle fasi preliminari di progettazione. Il più noto: <b>Entity-Relationship (ER)</b>.</p></div><div><h4>Modelli logici</h4><p>Adottati dai DBMS per organizzare i dati e usati dai programmi, <b>indipendenti dalle strutture fisiche</b>. Esempi: relazionale, reticolare, gerarchico, a oggetti.</p></div></div>
+<div class="vs"><div><h4>Schema · aspetto intensionale</h4><p>Descrive la struttura ed è <b>sostanzialmente invariante</b> nel tempo. Nel relazionale: le <b>intestazioni</b> delle tabelle.</p></div><div><h4>Istanza · aspetto estensionale</h4><p>I <b>valori attuali</b>, che possono cambiare molto rapidamente. Nel relazionale: il <b>corpo</b> delle tabelle.</p></div></div>
+<h3>Architettura ANSI/SPARC a tre livelli</h3>
+<p>Nell’architettura semplificata ci sono due schemi: lo <b>schema logico</b> (descrizione secondo il modello logico, es. tabelle) e lo <b>schema interno o fisico</b> (le strutture di memorizzazione: file, record con puntatori, ordinamenti). Lo standard ANSI/SPARC aggiunge sopra il livello <b>esterno</b>.</p>
+<figure class="diagram"><svg viewBox="0 0 640 300" role="img" aria-label="Architettura ANSI/SPARC: viste del livello esterno collegate allo schema logico, collegato allo schema interno e al database su disco">
+<g font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">
+<g fill="none" stroke="currentColor" stroke-opacity=".55"><rect x="40" y="20" width="130" height="40" rx="6"/><rect x="255" y="20" width="130" height="40" rx="6"/><rect x="470" y="20" width="130" height="40" rx="6"/>
+<rect x="170" y="120" width="300" height="44" rx="6" stroke="var(--acc)" stroke-opacity="1" stroke-width="1.6"/><rect x="170" y="206" width="300" height="44" rx="6"/>
+<path d="M105 60 L280 120 M320 60 L320 120 M535 60 L360 120 M320 164 L320 206 M320 250 L320 270"/></g>
+<text x="105" y="45" text-anchor="middle">Vista 1</text><text x="320" y="45" text-anchor="middle">Vista 2</text><text x="535" y="45" text-anchor="middle">Vista n</text>
+<text x="320" y="147" text-anchor="middle" fill="var(--acc)">SCHEMA LOGICO</text><text x="320" y="233" text-anchor="middle">SCHEMA INTERNO</text><text x="320" y="290" text-anchor="middle">file su disco (il DB vero)</text>
+<text x="10" y="95" font-size="11" opacity=".7">mapping esterno/logico</text><text x="490" y="190" font-size="11" opacity=".7">mapping logico/interno</text>
+</g></svg>
+<figcaption>Livello esterno (viste per gruppi di utenti, es. contabilità, segreteria didattica, segreteria studenti) → livello logico (database Università) → livello interno (organizzazione fisica).</figcaption></figure>
+<div class="tbl"><table><tr><th>Schema</th><th>Cosa descrive</th></tr>
+<tr><td><b>Esterno</b> (viste)</td><td>Una porzione della base di dati, in un modello di alto livello, per un particolare gruppo di utenti; nasconde il resto. Es. la segreteria didattica vede tutti gli esami ma non gli stipendi. La vista ESAME-DOCENTE è costruita estraendo dati da ESAME e CORSO.</td></tr>
+<tr><td><b>Logico</b></td><td>L’<b>intera</b> base di dati nel modello logico del DBMS.</td></tr>
+<tr><td><b>Interno</b> (fisico)</td><td>Lo schema logico realizzato con strutture di memorizzazione.</td></tr></table></div>
+<p>I tre schemi sono solo <b>descrizioni</b>: gli unici dati che esistono davvero sono a livello fisico. Un <b>mapping</b> è il processo che trasforma richieste e risultati tra i livelli: una richiesta sullo schema esterno diventa una richiesta sullo schema logico e poi sullo schema interno; i risultati fanno il percorso inverso.</p>
+<h3>Indipendenza dei dati</h3>
+<p>È la capacità di cambiare lo schema a un livello <b>senza dover cambiare lo schema al livello superiore</b>.</p>
+<div class="vs"><div><h4>Indipendenza logica</h4><p>Si cambia lo <b>schema logico</b> (si aggiunge o rimuove un tipo di record o un data item) senza cambiare <b>schemi esterni e programmi</b>: cambiano solo le definizioni delle viste e i mapping. Es. la vista ESAMI SUPERATI non deve cambiare se cambia la tabella ESAME.</p></div><div><h4>Indipendenza fisica</h4><p>Si cambia lo <b>schema interno</b> (si riorganizza un file, si aggiunge un percorso di accesso) senza cambiare lo <b>schema logico</b>. Es. un indice su CORSO per Denominazione e Semestre non cambia la query “corsi del secondo semestre”: la rende solo più veloce.</p></div></div>
+<div class="exam"><b class="lbl">Da non confondere</b>L’indipendenza <b>fisica</b> si ottiene <b>più facilmente</b> di quella logica. Ricorda la direzione: si cambia il livello più basso e quello sopra resta com’è.</div>
+<div class="vs"><div><h4>Vantaggi dei 3 livelli</h4><p>Database più flessibile e scalabile; reale indipendenza dei dati.</p></div><div><h4>Svantaggi</h4><p>I due livelli di mapping creano <b>overhead</b> nella compilazione o esecuzione delle query; il catalogo è più grande perché deve descrivere come trasformare richieste e dati tra i livelli.</p></div></div>
+<h3>Chi lavora con i database</h3>
+<div class="tbl"><table><tr><th>Figura</th><th>Ruolo</th></tr>
+<tr><td><b>DBA</b> (DataBase Administrator)</td><td>Autorizza l’accesso, coordina e monitora l’uso, acquisisce risorse hardware e software. Nelle grandi organizzazioni ha uno staff.</td></tr>
+<tr><td><b>Database designer</b> (progettista)</td><td>Individua i dati da memorizzare e sceglie le strutture; capisce le esigenze degli utenti, sviluppa le viste; il DB finale deve soddisfare tutti i gruppi di utenti.</td></tr>
+<tr><td><b>Utenti finali</b></td><td><b>Casuali</b>: accedono di rado con query language sofisticati. <b>Naive o parametrici</b>: la parte più grande, usano query e aggiornamenti standard. <b>Sofisticati</b>: ingegneri, scienziati, analisti che conoscono le funzioni del DBMS. <b>Stand-alone</b>: gestiscono database personali con pacchetti applicativi.</td></tr>
+<tr><td><b>Analisti di sistema</b> e <b>programmatori di applicazioni</b></td><td>Gli analisti determinano i requisiti degli utenti e specificano le transazioni; i programmatori le implementano.</td></tr>
+<tr><td>Altre figure</td><td>Progettisti e sviluppatori di DBMS; sviluppatori di tool (progetto, monitoraggio, prototipazione); operatori e personale di manutenzione hardware e software.</td></tr></table></div>
+<h3>Linguaggi dei DBMS</h3>
+<div class="tbl"><table><tr><th>Linguaggio</th><th>Serve a</th></tr>
+<tr><td><b>DDL</b> · Data Definition Language</td><td>Definire gli schemi. Il compilatore DDL identifica i costrutti e memorizza la descrizione nel <b>catalogo</b>. Se i livelli non sono separati, definisce tutti gli schemi.</td></tr>
+<tr><td><b>SDL</b> · Storage Definition Language</td><td>Specificare lo schema <b>interno</b>, quando logico e interno sono ben distinti (allora il DDL definisce solo lo schema logico).</td></tr>
+<tr><td><b>VDL</b> · View Definition Language</td><td>Specificare le viste utente e il loro mapping sullo schema logico (architetture a 3 livelli).</td></tr>
+<tr><td><b>DML</b> · Data Manipulation Language</td><td>Manipolare i dati: recuperare, inserire, cancellare, aggiornare.</td></tr></table></div>
+<p>Nei DBMS moderni si usa un <b>unico linguaggio integrato</b>: <b>SQL</b> è una combinazione di DDL, VDL, DML e SDL.</p>
+<div class="vs"><div><h4>DML di alto livello (non procedurale)</h4><p>Operazioni complesse in modo conciso; usabile da terminale o dentro un programma. <b>Set-at-a-time</b> (molti record in un’istruzione) e <b>dichiarativo</b>: dice <i>quale</i> dato ritrovare, non <i>come</i>. Es. SQL.</p></div><div><h4>DML di basso livello (procedurale)</h4><p>Va inglobato in un linguaggio general-purpose. <b>Record-at-a-time</b>: ritrova un record alla volta, quindi servono costrutti come l’iterazione.</p></div></div>
+<p>Un DML inglobato in un linguaggio general-purpose (l’<b>host language</b>) si chiama <b>data sublanguage</b>; un DML di alto livello usato da solo in modo interattivo si chiama <b>query language</b>.</p>
+<h3>Interfacce e utility</h3>
+<ul><li><b>Menu-based:</b> la richiesta si compone un passo alla volta scegliendo da menu, senza ricordare comandi e sintassi; i menu pull-down si usano nelle interfacce di <b>browsing</b>.</li>
+<li><b>Form-based:</b> un form per utente; riempiendolo tutto si inseriscono dati, riempiendolo in parte il DBMS cerca i dati che corrispondono. Pensate per utenti naive; il <i>form specification language</i> aiuta a definirle.</li>
+<li><b>Interfacce per il DBA:</b> comandi privilegiati per riorganizzare il DB, cambiare uno schema, impostare parametri, creare account.</li></ul>
+<p><b>Utility:</b> <i>loading</i> (conversione da formati esterni), <i>performance monitor</i> (statistiche per il DBA), <i>backup</i> (copie su dispositivi di streaming), <i>file organization</i> (riorganizzare i file per migliorare le prestazioni).</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>MySQL è un database?</summary><p>No: è un DBMS. Il database è l’insieme di dati che gestisce.</p></details><details><summary>Dove stanno i metadati?</summary><p>Nel catalogo di sistema (dizionario dei dati).</p></details><details><summary>Cambio un indice su disco e le query restano uguali: che indipendenza è?</summary><p>Indipendenza fisica.</p></details><details><summary>Schema o istanza: cosa cambia spesso?</summary><p>L’istanza (aspetto estensionale); lo schema è sostanzialmente invariante.</p></details><details><summary>Perché un DML di alto livello si dice set-at-a-time?</summary><p>Perché una sola istruzione può ritrovare molti record insieme.</p></details></div></section>
+
+<div class="partbreak">Parte II · Progettazione</div>
+<section class="ch" id="er" data-t="Progettazione di basi di dati e modello ER" data-part="Parte II · Progettazione"><div class="ch-head"><span class="ch-num">03</span><h2>Progettazione di basi di dati: metodologie e modello ER</h2><span class="ch-sub">Il ciclo di vita, le tre fasi della progettazione e tutti i costrutti del modello Entity-Relationship.</span></div>
+<h3>Il ciclo di vita dei sistemi informativi</h3>
+<p>La progettazione di una base di dati è una delle attività dello sviluppo di un sistema informativo. Il <b>ciclo di vita</b> è l’insieme e la sequenza delle attività svolte da analisti, progettisti e utenti; è <b>iterativo</b>, per questo si disegna come un ciclo.</p>
+<div class="flow"><span>Studio di fattibilità</span><i>→</i><span>Raccolta e analisi dei requisiti</span><i>→</i><span>Progettazione</span><i>→</i><span>Realizzazione</span><i>→</i><span>Validazione e collaudo</span><i>→</i><span>Funzionamento</span></div>
+<div class="tbl"><table><tr><th>Fase</th><th>Cosa si fa</th></tr>
+<tr><td>Studio di fattibilità</td><td>Aree di applicazione, costi/benefici, complessità di dati e processi, priorità tra le applicazioni.</td></tr>
+<tr><td>Raccolta e analisi dei requisiti</td><td>Raccolta dettagliata con interviste agli utenti, per definire le funzionalità.</td></tr>
+<tr><td>Progettazione</td><td>Di <b>dati</b> e di <b>funzioni</b> (applicazioni).</td></tr>
+<tr><td>Realizzazione</td><td>Si implementa il sistema, si carica il DB, si implementano e testano le transazioni.</td></tr>
+<tr><td>Validazione e collaudo</td><td>Si verifica che il sistema soddisfi requisiti e prestazioni.</td></tr>
+<tr><td>Funzionamento</td><td>Parte quando tutto è validato, a volte dopo l’addestramento del personale. Nuove funzionalità → si ripetono i passi (<b>manutenzione</b>).</td></tr></table></div>
+<p>Nella progettazione ci si concentra sui <b>dati</b> perché hanno un ruolo centrale e sono <b>più stabili</b> delle applicazioni.</p>
+<h3>Metodologia e fasi della progettazione dei dati</h3>
+<p>Una <b>metodologia</b> articola le attività in <b>fasi indipendenti</b>, dà <b>strategie</b> e criteri di scelta, usa <b>modelli di rappresentazione</b> per ingressi e uscite delle fasi. Deve avere: <b>generalità</b>, <b>qualità del prodotto</b> (correttezza, completezza, efficienza rispetto alle risorse), <b>facilità d’uso</b>.</p>
+<div class="flow"><span>Requisiti</span><i>→</i><span>Progettazione concettuale<br>→ schema concettuale</span><i>→</i><span>Progettazione logica<br>→ schema logico</span><i>→</i><span>Progettazione fisica<br>→ schema fisico</span></div>
+<div class="exam"><b class="lbl">Da ricordare</b>La progettazione <b>concettuale</b> dice <b>“che cosa”</b> (analisi); logica e fisica dicono <b>“come”</b> (progettazione). Ogni fase produce uno <b>schema</b> di un modello dei dati.</div>
+<p>Perché non partire direttamente dallo schema logico? Non sapremmo da dove cominciare, ci perderemmo nei dettagli, dovremmo pensare subito a chiavi e collegamenti tra tabelle, e i modelli logici sono rigidi. I <b>modelli concettuali</b> servono a ragionare sulla realtà indipendentemente dalla realizzazione, rappresentano classi di dati e loro correlazioni, e hanno rappresentazioni grafiche utili anche per documentare e comunicare.</p>
+<h3>I costrutti del modello ER</h3>
+<div class="tbl"><table><tr><th>Costrutto</th><th>Definizione</th><th>Simbolo</th></tr>
+<tr><td><b>Entità</b></td><td>Classe di oggetti (fatti, persone, cose) con proprietà comuni ed <b>esistenza autonoma</b>. Es. impiegato, città, conto corrente, ordine, fattura.</td><td>Rettangolo</td></tr>
+<tr><td><b>Associazione</b> (relationship, relazione, correlazione)</td><td>Legame logico fra due o più entità. Es. Residenza (persona–città), Esame (studente–corso).</td><td>Rombo</td></tr>
+<tr><td><b>Attributo</b></td><td>Proprietà elementare di un’entità o associazione; associa a ogni occorrenza un valore del suo <b>dominio</b>.</td><td>Pallino vuoto</td></tr>
+<tr><td><b>Identificatore</b></td><td>Strumento per identificare in modo univoco le occorrenze di un’entità.</td><td>Pallino pieno / barra</td></tr>
+<tr><td><b>Generalizzazione</b></td><td>Lega un’entità genitore alle sue entità figlie (casi particolari).</td><td>Freccia verso il genitore</td></tr></table></div>
+<p>Nomi: ogni entità e associazione ha un nome <b>univoco</b> nello schema, espressivo, al <b>singolare</b>; per le associazioni meglio <b>sostantivi</b> che verbi.</p>
+<div class="vs"><div><h4>Entità</h4><p>La classe (es. Studente). Nello schema si rappresentano le entità, non le singole istanze (astrazione).</p></div><div><h4>Occorrenza (istanza)</h4><p>Un elemento della classe: l’oggetto, la persona… non i dati che la descrivono.</p></div></div>
+<p>Un’<b>occorrenza di un’associazione binaria</b> è una coppia di occorrenze di entità, una per ciascuna entità coinvolta; di un’associazione <b>n-aria</b> è una n-upla. In un’associazione <b>non ci possono essere occorrenze ripetute</b>.</p>
+<div class="exam"><b class="lbl">Trabocchetto: “associazioni corrette?”</b>Esame tra Studente e Corso, o Visita tra Paziente e Medico: se lo stesso studente può sostenere lo stesso esame più volte (o lo stesso paziente fare più visite con lo stesso medico), la coppia si ripeterebbe, e non è ammesso. In quel caso Esame (o Visita) va modellato come <b>entità</b>.</div>
+<h3>Tipi particolari di associazione</h3>
+<ul><li><b>Più associazioni sulle stesse entità:</b> Residenza e Sede di lavoro tra Impiegato e Città.</li>
+<li><b>N-aria:</b> Fornitura tra Fornitore, Prodotto e Dipartimento.</li>
+<li><b>Ricorsiva:</b> coinvolge due volte la stessa entità, es. Conoscenza su Persona. Se non è simmetrica servono i <b>ruoli</b>: Successione su Sovrano con ruoli Successore e Predecessore.</li>
+<li><b>Ternaria ricorsiva:</b> Confronto tra Tennista (ruoli Migliore e Peggiore) e Superficie.</li></ul>
+<h3>Attributi composti</h3>
+<p>Raggruppano attributi della stessa entità o associazione affini per significato o uso. Es. Via, Numero civico e CAP formano <b>Indirizzo</b>.</p>
+<h3>Cardinalità delle associazioni</h3>
+<p>Coppia (min, max) associata a ogni entità che partecipa a un’associazione: il numero minimo e massimo di occorrenze dell’associazione a cui <b>ciascuna occorrenza dell’entità</b> può partecipare. Es. Impiegato (1,5) Assegnamento (0,50) Incarico: ogni impiegato ha da 1 a 5 incarichi, ogni incarico è assegnato da 0 a 50 impiegati.</p>
+<div class="vs"><div><h4>Minima</h4><p><b>0</b> = partecipazione <b>opzionale</b><br><b>1</b> = partecipazione <b>obbligatoria</b></p></div><div><h4>Massima</h4><p><b>1</b> = al più una<br><b>N</b> = nessun limite</p></div></div>
+<figure class="diagram"><svg viewBox="0 0 640 170" role="img" aria-label="Schema ER: Impiegato con cardinalità (0,1) partecipa ad Afferenza, Dipartimento con cardinalità (1,N); Afferenza ha l'attributo Data">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<g fill="none" stroke="currentColor" stroke-width="1.4"><rect x="30" y="70" width="140" height="44"/><rect x="470" y="70" width="140" height="44"/>
+<path d="M320 62 L380 92 L320 122 L260 92 Z" stroke="var(--acc)"/><path d="M170 92 L260 92 M380 92 L470 92 M320 62 L320 30"/></g>
+<circle cx="320" cy="26" r="5" fill="var(--paper,#fff)" stroke="currentColor"/>
+<line x1="100" y1="114" x2="100" y2="140" stroke="currentColor"/><circle cx="100" cy="144" r="5" fill="currentColor"/>
+<text x="100" y="97" text-anchor="middle">Impiegato</text><text x="540" y="97" text-anchor="middle">Dipartimento</text><text x="320" y="97" text-anchor="middle" fill="var(--acc)">Afferenza</text>
+<text x="332" y="22">Data</text><text x="112" y="149">Codice</text>
+<text x="215" y="84" text-anchor="middle" fill="var(--acc)">(0,1)</text><text x="425" y="84" text-anchor="middle" fill="var(--acc)">(1,N)</text></g></svg>
+<figcaption>Ogni impiegato afferisce al più a un dipartimento (0,1); ogni dipartimento ha almeno un impiegato (1,N). Codice (pallino pieno) è l’identificatore di Impiegato.</figcaption></figure>
+<p>Con le cardinalità <b>massime</b> si distinguono associazioni <b>uno a uno</b>, <b>uno a molti</b>, <b>molti a molti</b>.</p>
+<div class="tbl"><table><tr><th>Tipo</th><th>Esempi dalle slide</th></tr>
+<tr><td>Molti a molti</td><td>Studente (0,N) Esame (0,N) Corso · Alpinista (1,N) Scalata (0,N) Montagna · Macchinista (1,N) Abilitazione (1,N) Locomotore</td></tr>
+<tr><td>Uno a molti</td><td>Persona (0,1) Impiego (0,N) Azienda · Cinema (1,1) Ubicazione (0,N) Località · Comune (1,1) Ubicazione (1,N) Provincia</td></tr>
+<tr><td>Uno a uno</td><td>Professore di ruolo e Cattedra con Titolarità: (0,1)–(0,1), (1,1)–(0,1) o (1,1)–(1,1) a seconda dei vincoli.</td></tr></table></div>
+<div class="note">Due avvertenze: attenzione al <b>verso</b> nelle associazioni uno a molti (la cardinalità si legge dal lato dell’entità a cui è scritta accanto); le associazioni <b>obbligatorie-obbligatorie</b> (min 1 da entrambi i lati) sono <b>molto rare</b>.</div>
+<h3>Cardinalità degli attributi</h3>
+<p>Anche gli attributi possono avere una cardinalità, per indicare:</p>
+<ul><li><b>attributi opzionali</b> (informazione incompleta): Numero patente <b>(0,1)</b>;</li><li><b>attributi multivalore</b>: Telefono <b>(0,N)</b>.</li></ul>
+<p>Se manca, la cardinalità di un attributo è (1,1).</p>
+<h3>Identificatori</h3>
+<div class="vs"><div><h4>Interno</h4><p>Fatto solo di attributi dell’entità. Es. Targa per Automobile; Cognome + Nome + Data di nascita per Persona.</p></div><div><h4>Esterno</h4><p>Fatto di (attributi +) entità esterne raggiunte tramite associazioni. Es. Studente identificato da Matricola <b>+ Università</b> attraverso Iscrizione.</p></div></div>
+<ul><li>Ogni entità deve avere <b>almeno un</b> identificatore, ma può averne più di uno.</li><li>Un’identificazione esterna è possibile solo attraverso un’associazione a cui l’entità da identificare partecipa con cardinalità <b>(1,1)</b>.</li><li>Le associazioni non hanno identificatori: le loro occorrenze sono già identificate dalle occorrenze delle entità che collegano.</li></ul>
+<h3>Generalizzazioni</h3>
+<p>Mettono in relazione entità E1…En con un’entità E che le comprende come casi particolari: E è <b>generalizzazione</b> (genitore), E1…En sono <b>specializzazioni</b> o sottotipi (figlie). Es. Dipendente → Impiegato, Funzionario, Dirigente.</p>
+<ul><li>Ogni proprietà di E è significativa per le figlie.</li><li>Ogni occorrenza di una figlia è anche occorrenza di E.</li><li><b>Ereditarietà:</b> attributi, associazioni e altre generalizzazioni del genitore sono ereditati dalle figlie e <b>non si ridisegnano</b>.</li></ul>
+<div class="tbl"><table><tr><th></th><th>Esclusiva (e)</th><th>Sovrapposta / overlap (o)</th></tr>
+<tr><td><b>Totale (t)</b><br><small>ogni occorrenza del genitore è in almeno una figlia</small></td><td><b>(t,e)</b> Studente → In corso, Fuori corso · Persona → Uomo, Donna</td><td><b>(t,o)</b> Dipendente → Impiegato, Funzionario, Dirigente</td></tr>
+<tr><td><b>Parziale (p)</b><br><small>alcune occorrenze del genitore non sono in nessuna figlia</small></td><td><b>(p,e)</b> Persona → Disoccupato, Lavoratore</td><td><b>(p,o)</b> Persona → Lavoratore, Studente, se una persona può essere entrambi o nessuno dei due</td></tr></table></div>
+<p><b>Esclusiva</b>: ogni occorrenza del genitore è in <b>al più una</b> figlia. Considerando (senza perdita di generalità) generalizzazioni esclusive, totale e parziale si distinguono dal riempimento della freccia (piena = totale). Possono esistere gerarchie a più livelli, più generalizzazioni allo stesso livello, entità genitore e figlia in gerarchie diverse. Se c’è <b>una sola figlia</b> si parla di <b>sottoinsieme</b>.</p>
+<div class="exam"><b class="lbl">Esercizio delle slide</b>Persone con CF, cognome, età; gli uomini anche la posizione militare; impiegati con stipendio che possono essere segretari, direttori o progettisti (un progettista può essere anche responsabile); studenti (non impiegati) con matricola; persone che non sono né impiegati né studenti. Soluzione: Persona (CF, Cognome, Età) → Uomo (PosizioneMilitare), Donna: totale ed esclusiva. Persona → Impiegato (Stipendio), Studente (Matricola): <b>parziale ed esclusiva</b>. Impiegato → Segretario, Direttore, Progettista; Progettista → Responsabile come <b>sottoinsieme</b>.</div>
+<h3>Esempio completo: l’azienda di sviluppo software</h3>
+<p>Dipartimenti (nome, telefoni) a cui afferiscono al più una volta gli impiegati (codice, cognome), eventualmente con data di afferenza; impiegati che partecipano eventualmente a progetti (nome, budget) con uno o più dipendenti; ogni dipartimento diretto da un unico dipendente e composto da un’unica sede (città, indirizzo con via e CAP).</p>
+<div class="tbl"><table><tr><th>Associazione</th><th>Lato 1</th><th>Lato 2</th></tr>
+<tr><td>Afferenza (attributo Data (0,1))</td><td>Impiegato (0,1)</td><td>Dipartimento (1,N)</td></tr>
+<tr><td>Direzione</td><td>Impiegato (0,1)</td><td>Dipartimento (1,1)</td></tr>
+<tr><td>Partecipazione</td><td>Impiegato (0,N)</td><td>Progetto (1,N)</td></tr>
+<tr><td>Composizione</td><td>Dipartimento (1,1)</td><td>Sede (1,N)</td></tr></table></div>
+<p>Identificatori: Impiegato → Codice; Progetto → Nome; Sede → Città; Dipartimento → Nome + Sede (esterno, tramite Composizione). Telefono di Dipartimento è multivalore (1,N).</p>
+<h3>Documentazione degli schemi</h3>
+<p>Uno schema ER si accompagna con il <b>dizionario dei dati</b> e con i <b>vincoli non esprimibili</b>.</p>
+<div class="vs"><div><h4>Dizionario delle entità</h4><p>Entità, descrizione, attributi, identificatore. Es. Impiegato · Dipendente dell’azienda · Codice, Cognome, Stipendio · Codice.</p></div><div><h4>Dizionario delle associazioni</h4><p>Associazione, descrizione, entità componenti, attributi. Es. Afferenza · Afferenza a un dipartimento · Impiegato, Dipartimento · Data.</p></div></div>
+<p>Vincoli non esprimibili nello schema (esempi delle slide): il direttore di un dipartimento deve afferire a quel dipartimento; un impiegato non deve guadagnare più del direttore del suo dipartimento; un dipartimento con sede a Roma deve essere diretto da un impiegato con più di dieci anni di anzianità; un impiegato che non afferisce a nessun dipartimento non deve partecipare a nessun progetto.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>(0,1) su Impiegato in Afferenza cosa dice?</summary><p>Che ogni impiegato afferisce al più a un dipartimento, e può anche non afferire a nessuno.</p></details><details><summary>Quando serve un identificatore esterno?</summary><p>Quando gli attributi dell’entità non bastano; si usa un’associazione a cui l’entità partecipa con (1,1).</p></details><details><summary>Generalizzazione con una sola figlia?</summary><p>Si chiama sottoinsieme.</p></details><details><summary>Che differenza c’è tra totale ed esclusiva?</summary><p>Totale: ogni occorrenza del genitore è in almeno una figlia. Esclusiva: in al più una figlia.</p></details><details><summary>Telefono (0,N) su Impiegato è…</summary><p>Un attributo multivalore e opzionale.</p></details></div></section>
+
+<section class="ch" id="logica" data-t="Progettazione logica" data-part="Parte II · Progettazione"><div class="ch-head"><span class="ch-num">04</span><h2>Progettazione logica</h2><span class="ch-sub">Carico applicativo, tavole di volumi e accessi, e le quattro ristrutturazioni dello schema ER.</span></div>
+<div class="def"><b class="lbl">Obiettivo</b>“Tradurre” lo schema concettuale in uno <b>schema logico</b> che rappresenti gli stessi dati nel formato di un modello logico, ad esempio il <b>modello relazionale</b>.</div>
+<p>Non è una semplice trascrizione: alcuni aspetti dello schema ER <b>non sono rappresentabili direttamente</b> nel modello logico (es. le generalizzazioni), e in questa fase si valutano anche le <b>prestazioni</b>.</p>
+<div class="flow"><span>Schema ER + carico applicativo</span><i>→</i><span>Ristrutturazione dello schema ER</span><i>→</i><span>Schema ER ristrutturato</span><i>→</i><span>Traduzione nel modello logico</span><i>→</i><span>Schema logico</span></div>
+<p>La ristrutturazione serve a <b>semplificare la traduzione</b> e a <b>“ottimizzare” le prestazioni</b>. Ma le prestazioni non si possono valutare con precisione su uno schema concettuale: si usano degli indicatori.</p>
+<h3>Valutare le prestazioni: il carico applicativo</h3>
+<ul><li><b>Numero di occorrenze</b> previste di entità e associazioni (spazio).</li><li><b>Numero di accessi</b> a occorrenze di entità e associazioni durante un’operazione (tempo).</li></ul>
+<div class="def"><b class="lbl">Principio di Pareto (80:20)</b>Un sistema dedica l’<b>80%</b> delle risorse al <b>20%</b> delle operazioni più frequenti. Quindi si calcolano gli accessi solo per quel 20% (es. 10 operazioni previste → si studiano le 2 più frequenti).</div>
+<div class="tbl"><table><tr><th>Tavola</th><th>Contiene</th></tr>
+<tr><td><b>Volumi</b></td><td>Stima delle occorrenze di ogni entità (E) e associazione (R).</td></tr>
+<tr><td><b>Operazioni</b></td><td>Tipo (<b>I</b> interattiva, <b>B</b> batch) e frequenza del 20% di operazioni più frequenti. Conviene usare sempre <b>la stessa unità temporale</b> (es. “1 volta/giorno” diventa “30 volte/mese” se l’altra è mensile).</td></tr>
+<tr><td><b>Accessi</b></td><td>Per ogni operazione: concetto, costrutto, numero di accessi, tipo (<b>L</b> lettura, <b>S</b> scrittura), costruita su uno <b>schema di navigazione</b>.</td></tr></table></div>
+<h4>Esempio: la tavola dei volumi dell’azienda</h4>
+<div class="tbl"><table><tr><th>Concetto</th><th>Tipo</th><th>Volume</th><th>Come si ricava</th></tr>
+<tr><td>Sede</td><td>E</td><td>10</td><td>dato</td></tr>
+<tr><td>Dipartimento</td><td>E</td><td>80</td><td>in media 8 dipartimenti per sede: 10 × 8</td></tr>
+<tr><td>Impiegato</td><td>E</td><td>2000</td><td>dato</td></tr>
+<tr><td>Progetto</td><td>E</td><td>500</td><td>dato</td></tr>
+<tr><td>Composizione</td><td>R</td><td>80</td><td>= Dipartimento (ogni dipartimento ha una sola sede)</td></tr>
+<tr><td>Afferenza</td><td>R</td><td>1900</td><td>il 5% dei dipendenti non afferisce: 2000 − 100</td></tr>
+<tr><td>Direzione</td><td>R</td><td>80</td><td>= Dipartimento (un direttore per dipartimento)</td></tr>
+<tr><td>Partecipazione</td><td>R</td><td>6000</td><td>in media 3 progetti per impiegato: 2000 × 3</td></tr></table></div>
+<p>Operazione frequente “trova tutti i dati di un impiegato, del suo dipartimento e dei progetti a cui partecipa”: Impiegato 1 L, Afferenza 1 L, Dipartimento 1 L, Partecipazione 3 L, Progetto 3 L.</p>
+<h3>Le attività della ristrutturazione</h3>
+<div class="flow"><span>1. Analisi delle ridondanze</span><i>→</i><span>2. Eliminazione delle generalizzazioni</span><i>→</i><span>3. Partizionamento / accorpamento</span><i>→</i><span>4. Scelta degli identificatori primari</span></div>
+<h3>1 · Analisi delle ridondanze</h3>
+<div class="def"><b class="lbl">Ridondanza</b>Informazione <b>significativa ma derivabile</b> da altre. Si decide se eliminarla o mantenerla in base al suo impatto sugli accessi del 20% di operazioni più frequenti.</div>
+<div class="vs"><div><h4>Vantaggi</h4><p>Semplifica le interrogazioni (si legge il dato già pronto).</p></div><div><h4>Svantaggi</h4><p>Appesantisce gli aggiornamenti; occupa più spazio.</p></div></div>
+<p><b>Forme di ridondanza:</b> attributi derivabili da altri attributi della stessa entità (Importo lordo = Importo netto + IVA in Fattura) o di altre entità (Importo totale di Acquisto da Prezzo dei Prodotti tramite Composizione, o da un conteggio); associazioni derivabili dalla composizione di altre in presenza di <b>cicli</b> (Frequenza tra Studente e Corso, deducibile se un corso ha un solo professore: Studente–Corso–Docenza–Professore).</p>
+<h4>Esempio svolto: Numero abitanti di Città</h4>
+<p>Persona (1,1) Residenza (1,N) Città; Città ha l’attributo ridondante <b>Numero abitanti</b>. Volumi: Città 200, Persona 1.000.000, Residenza 1.000.000. Op. 1 (I, 500/giorno): memorizza una nuova persona con la città. Op. 2 (I, 2/giorno): stampa i dati di una città con il numero di abitanti.</p>
+<div class="vs"><div><h4>Con la ridondanza</h4><p>Op. 1: Persona 1 S, Residenza 1 S, Città 1 L, Città 1 S → 3 S + 1 L.<br>Op. 2: Città 1 L.<br><b>Totale:</b> 500 × (3×2 + 1) + 2 = <b>3502 accessi/giorno</b> + 4 byte × 200 città = 800 byte.</p></div><div><h4>Senza la ridondanza</h4><p>Op. 1: Persona 1 S, Residenza 1 S → 2 S.<br>Op. 2: Città 1 L + Residenza 5000 L (1.000.000/200).<br><b>Totale:</b> 500 × 2×2 + 2 × 5001 = <b>12002 accessi/giorno</b>.</p></div></div>
+<div class="exam"><b class="lbl">Regola del conto</b>Gli accessi in <b>scrittura contano doppio</b>. Qui conviene <b>mantenere</b> la ridondanza: 3502 contro 12002, al prezzo di soli 800 byte.</div>
+<p>Esercizio delle slide (stesso schema, con Persona → Lavoratore 80% / Studente 20%, 10 città, 500.000 persone): op. 1 365 volte/anno, op. 2 (report di tutte le città) 1 volta/anno. Con ridondanza: (4 S + 1 L) = 9 accessi × 365 = 3285, più 10 L → <b>3295 accessi/anno</b> e 4 × 10 = 40 byte. Senza: 3 S = 6 × 365 = 2190, più 10 + 500.000 L → <b>502.200 accessi/anno</b>. Conviene mantenere la ridondanza.</p>
+<h3>2 · Eliminazione delle generalizzazioni</h3>
+<p>Il modello relazionale <b>non rappresenta direttamente le generalizzazioni</b>, mentre entità e associazioni sì: si sostituiscono le gerarchie con entità e associazioni. Prendiamo E0 (A01, A02, associazione R1 con E3) con figlie E1 (A11) ed E2 (A21, associazione R2 con E4).</p>
+<div class="tbl"><table><tr><th>Possibilità</th><th>Cosa succede</th><th>Conviene se</th></tr>
+<tr><td><b>1. Figlie nel genitore</b></td><td>Resta solo E0 con A01, A02 e gli attributi delle figlie A11, A21 <b>opzionali (0,1)</b>, più un attributo <b>TIPO</b> che dice a quale figlia appartiene l’occorrenza. R2 diventa opzionale lato E0.</td><td>Gli accessi a padre e figlie sono <b>contestuali</b>.</td></tr>
+<tr><td><b>2. Genitore nelle figlie</b></td><td>Spariscono E0: E1 ed E2 ereditano A01, A02; R1 si sdoppia in R11 (E1–E3) e R12 (E2–E3). Possibile solo se la generalizzazione è <b>totale</b>.</td><td>Gli accessi alle figlie sono <b>distinti</b>.</td></tr>
+<tr><td><b>3. Sostituzione con associazioni</b></td><td>Restano tutte le entità, legate da RG1 (E0–E1) e RG2 (E0–E2) con cardinalità <b>(0,1) lato genitore</b> e <b>(1,1) lato figlia</b>; le figlie sono identificate esternamente dal genitore.</td><td>Gli accessi alle figlie sono <b>separati</b> da quelli al padre.</td></tr></table></div>
+<p>Sono possibili soluzioni <b>ibride</b>, soprattutto in gerarchie a più livelli (es. E1 accorpata in E0 con TIPO, E2 legata con RG2). La scelta si fa come per le ridondanze, ma non solo contando gli accessi.</p>
+<h3>3 · Partizionamento e accorpamento</h3>
+<div class="def"><b class="lbl">Principio</b>Gli accessi si riducono <b>separando</b> attributi di un concetto che vengono acceduti separatamente e <b>raggruppando</b> attributi di concetti diversi acceduti insieme.</div>
+<div class="tbl"><table><tr><th>Caso</th><th>Esempio delle slide</th></tr>
+<tr><td><b>Partizionamento verticale</b> di entità</td><td>Impiegato (Codice, Cognome, Indirizzo, Data nascita, Livello, Stipendio, Ritenute) → <b>Dati anagrafici</b> (Codice, Cognome, Indirizzo, Data nascita) (1,1)–(1,1) <b>Dati lavorativi</b> (Livello, Stipendio, Ritenute).</td></tr>
+<tr><td><b>Eliminazione di attributi multivalore</b></td><td>Agenzia con Telefono (1,N) → nuova entità <b>Telefono</b> (Numero) legata da <b>Utenza</b>: Agenzia (1,N) – Telefono (1,1).</td></tr>
+<tr><td><b>Accorpamento</b> di entità/associazioni</td><td>Persona (1,1) Residenza (1,1) Appartamento → un’unica entità Persona con Indirizzo e Interno. Tipico delle associazioni <b>uno a uno</b>.</td></tr>
+<tr><td><b>Partizionamento orizzontale</b> di associazioni</td><td>Composizione tra Giocatore e Squadra (Data acquisto, Data cessione (0,1)) → <b>Composizione attuale</b> (Data acquisto; Giocatore (1,1)) e <b>Composizione passata</b> (Data acquisto, Data cessione).</td></tr></table></div>
+<h3>4 · Scelta degli identificatori principali</h3>
+<p>Operazione <b>indispensabile</b> per la traduzione nel relazionale (diventerà la chiave primaria). Criteri:</p>
+<ul><li><b>assenza di opzionalità</b> (niente attributi che possono essere nulli);</li><li><b>semplicità</b> (pochi attributi);</li><li><b>utilizzo nelle operazioni più frequenti o importanti</b>.</li></ul>
+<p>Se nessun identificatore soddisfa i requisiti si introducono <b>nuovi attributi (codici)</b> generati apposta. Es. Progetto (Nome, Budget) → si aggiunge <b>ID</b>.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Perché si analizza solo il 20% delle operazioni?</summary><p>Per il principio di Pareto: assorbono l’80% delle risorse.</p></details><details><summary>Come si contano le scritture nelle tavole degli accessi?</summary><p>Doppie.</p></details><details><summary>Quale eliminazione delle gerarchie richiede che la generalizzazione sia totale?</summary><p>L’accorpamento del genitore nelle figlie: un’occorrenza del padre che non sta in nessuna figlia andrebbe persa.</p></details><details><summary>Un attributo multivalore come si elimina?</summary><p>Diventa un’entità a parte collegata con un’associazione.</p></details><details><summary>Primo criterio per scegliere l’identificatore principale?</summary><p>Assenza di opzionalità.</p></details></div></section>
+
+<div class="partbreak">Parte III · Modello relazionale</div>
+<section class="ch" id="relazionale" data-t="Il modello relazionale" data-part="Parte III · Modello relazionale"><div class="ch-head"><span class="ch-num">05</span><h2>Il modello relazionale</h2><span class="ch-sub">Relazioni, ennuple, valori nulli, vincoli di integrità, chiavi e chiavi esterne.</span></div>
+<h3>Modelli logici</h3>
+<div class="vs"><div><h4>Gerarchico e reticolare</h4><p>Usano <b>riferimenti espliciti (puntatori)</b> fra record. Il modello <b>a oggetti</b> è più recente e poco diffuso.</p></div><div><h4>Relazionale</h4><p>È <b>basato su valori</b>: anche i riferimenti fra dati in relazioni diverse sono rappresentati con valori.</p></div></div>
+<p>Proposto da <b>E. F. Codd nel 1970</b> per favorire l’indipendenza dei dati; disponibile in DBMS reali dal <b>1981</b> (non era facile implementare l’indipendenza con efficienza e affidabilità). Si basa sul concetto matematico di relazione, con una variante, e le relazioni si rappresentano con <b>tabelle</b>.</p>
+<h3>Relazione: due accezioni</h3>
+<div class="def"><b class="lbl">Relazione matematica</b>Dati n insiemi D1…Dn (anche non distinti), il <b>prodotto cartesiano</b> D1 × … × Dn è l’insieme di tutte le n-uple (d1, …, dn) con di ∈ Di. Una <b>relazione matematica</b> su D1…Dn è un <b>sottoinsieme</b> del prodotto cartesiano; D1…Dn sono i suoi <b>domini</b>.</div>
+<p>Es. D1 = {a, b}, D2 = {x, y, z}: il prodotto ha 6 coppie; {(a,x), (a,z), (b,y)} è una relazione. Essendo un insieme: <b>non c’è ordinamento</b> fra le n-uple, le n-uple sono <b>distinte</b>, ma ogni n-upla è <b>ordinata</b> (l’i-esimo valore viene dall’i-esimo dominio).</p>
+<p>In Partite ⊆ string × string × int × int lo stesso dominio ha due ruoli (squadra di casa e fuori, reti di casa e fuori) distinguibili solo dalla posizione: la struttura è <b>posizionale</b>. Il modello relazionale la rende <b>non posizionale</b> associando a ogni dominio un nome, l’<b>attributo</b>, che ne descrive il ruolo (Casa, Fuori, RetiCasa, RetiFuori).</p>
+<h3>Quando una tabella è una relazione</h3>
+<ul><li>i valori di ogni colonna sono <b>omogenei</b> (stesso tipo);</li><li>le righe sono <b>diverse</b> fra loro;</li><li>le intestazioni delle colonne sono <b>diverse</b> fra loro.</li></ul>
+<p>In una tabella che rappresenta una relazione l’<b>ordine delle righe</b> e quello delle <b>colonne</b> sono <b>irrilevanti</b>.</p>
+<h3>Basato su valori</h3>
+<p>Studenti, Esami e Corsi sono collegati dai valori: in Esami la colonna Studente contiene la Matricola, la colonna Corso contiene il Codice del corso. Vantaggi della struttura basata su valori:</p>
+<ul><li>indipendenza dalle strutture fisiche, che possono cambiare dinamicamente;</li><li>si rappresenta solo ciò che è rilevante per l’applicazione;</li><li>l’utente finale vede gli stessi dati dei programmatori;</li><li>i dati sono più facilmente portabili da un sistema a un altro;</li><li>i puntatori sono <b>direzionali</b>, i valori no.</li></ul>
+<h3>Schemi, ennuple, istanze</h3>
+<div class="tbl"><table><tr><th>Concetto</th><th>Definizione</th></tr>
+<tr><td><b>Schema di relazione</b></td><td>Un nome R con un insieme di attributi: R(A1, …, An).</td></tr>
+<tr><td><b>Schema di base di dati</b></td><td>Insieme di schemi di relazione: R = {R1(X1), …, Rk(Xk)}.</td></tr>
+<tr><td><b>Ennupla (tupla)</b> su X</td><td>Funzione che associa a ogni attributo A di X un valore del dominio di A. <b>t[A]</b> è il valore di t su A.</td></tr>
+<tr><td><b>Istanza di relazione</b> su R(X)</td><td>Insieme r di ennuple su X.</td></tr>
+<tr><td><b>Istanza di base di dati</b></td><td>Insieme di relazioni r = {r1, …, rn}, con ri relazione su Ri(Xi).</td></tr></table></div>
+<p>Esistono anche relazioni su un solo attributo, es. Studenti lavoratori(Matricola).</p>
+<h3>Informazione incompleta e valori nulli</h3>
+<p>Il modello impone una struttura rigida, ma i dati disponibili possono non corrispondere al formato (es. SecondoNome: Franklin <b>Delano</b> Roosevelt, ma Churchill o Stalin non ne hanno). <b>Non conviene</b> usare valori del dominio come 0, stringa vuota o “99”: potrebbero non esistere valori inutilizzati, potrebbero diventare significativi, e i programmi dovrebbero ricordarne ogni volta il significato.</p>
+<div class="def"><b class="lbl">Valore nullo</b><b>NULL</b> denota l’<b>assenza</b> di un valore del dominio e <b>non è un valore del dominio</b>. Per ogni attributo A, t[A] è un valore di dom(A) oppure NULL. Sulla presenza di nulli si possono (e si devono) imporre restrizioni.</div>
+<p>Interpretazioni: valore <b>sconosciuto</b>, valore <b>inesistente</b>… ma i DBMS <b>non distinguono</b> i tipi di nullo. Troppi nulli (matricola nulla in Studenti, Studente e Corso nulli in Esami, Titolo nullo in Corsi) rendono i dati inutilizzabili.</p>
+<h3>Vincoli di integrità</h3>
+<div class="def"><b class="lbl">Vincolo di integrità</b>Proprietà che deve essere soddisfatta dalle istanze che rappresentano informazioni corrette. Formalmente è un <b>predicato</b>: associa a ogni istanza vero o falso.</div>
+<p>Servono perché esistono istanze sintatticamente corrette ma impossibili: un voto 32, una lode con voto 27, due studenti con la stessa matricola, un esame di uno studente 739430 che non esiste. Utili per descrivere meglio la realtà, per la qualità dei dati, nella progettazione e nell’esecuzione delle interrogazioni. Non tutte le proprietà sono esprimibili con vincoli.</p>
+<div class="tbl"><table><tr><th>Tipo</th><th>Cosa controlla</th><th>Esempio</th></tr>
+<tr><td><b>Intrarelazionale · di dominio</b></td><td>Un solo attributo</td><td>(Voto ≥ 18) AND (Voto ≤ 30)</td></tr>
+<tr><td><b>Intrarelazionale · di ennupla</b></td><td>Valori di ciascuna ennupla, indipendentemente dalle altre</td><td>(Voto = 30) OR NOT (Lode = “e lode”) · Lordo = Ritenute + Netto</td></tr>
+<tr><td><b>Intrarelazionale · chiave</b></td><td>Più ennuple della stessa relazione</td><td>Due studenti non hanno la stessa Matricola</td></tr>
+<tr><td><b>Interrelazionale</b></td><td>Più relazioni</td><td>Integrità referenziale: lo Studente di Esami deve esistere in Studenti</td></tr></table></div>
+<p>Sintassi dei vincoli di ennupla: espressione booleana di atomi che confrontano valori di attributo o espressioni aritmetiche su di essi.</p>
+<h3>Chiavi</h3>
+<div class="def"><b class="lbl">Superchiave e chiave</b>Un insieme K di attributi è <b>superchiave</b> per r se r non contiene due ennuple distinte t1, t2 con t1[K] = t2[K]. K è <b>chiave (candidata)</b> se è una superchiave <b>minimale</b>, cioè non contiene un’altra superchiave.</div>
+<p>In Studenti(Matricola, Cognome, Nome, Corso, Data di nascita): <b>Matricola</b> è chiave (superchiave con un solo attributo, quindi minimale); <b>Cognome, Nome, Data di nascita</b> è un’altra chiave. In un’istanza può capitare che non ci siano ennuple uguali su Cognome e Corso, ma non è <b>sempre</b> vero: i vincoli si definiscono a <b>livello di schema</b> (valgono per tutte le istanze) e sono corrette solo le istanze che li soddisfano tutti.</p>
+<ul><li><b>Esistenza:</b> una relazione non contiene ennuple uguali, quindi l’insieme di tutti i suoi attributi è superchiave e c’è sempre almeno una chiave.</li><li><b>Importanza:</b> le chiavi garantiscono l’accessibilità a ciascun dato e permettono di correlare dati in relazioni diverse.</li></ul>
+<div class="def"><b class="lbl">Chiave primaria</b>Con i nulli i valori della chiave non identificano più le ennuple e non permettono i riferimenti. La <b>chiave primaria</b> è la chiave candidata su cui <b>non sono ammessi valori nulli</b>. Notazione: <b>sottolineatura</b>.</div>
+<h3>Integrità referenziale e chiave esterna</h3>
+<div class="def"><b class="lbl">Vincolo di integrità referenziale</b>Un vincolo (“chiave esterna”) fra gli attributi X di R1 e un’altra relazione R2 impone ai valori su X in R1 di <b>comparire come valori della chiave primaria di R2</b>. Una <b>chiave esterna</b> (foreign key) è quindi un gruppo di attributi che coincide con la chiave primaria di un’altra relazione.</div>
+<p>Esempio: Infrazioni(Codice, Data, Vigile, Prov, Numero), Vigili(Matricola, Cognome, Nome), Auto(Prov, Numero, Cognome, Nome). Vincoli fra <b>Vigile</b> di Infrazioni e Vigili, e fra <b>Prov, Numero</b> di Infrazioni e Auto. Un’infrazione su un’auto (TO, E39548) che non compare in Auto è una <b>violazione</b>.</p>
+<ul><li>Giocano un ruolo fondamentale nel modello basato su valori.</li><li>Con i <b>nulli</b> possono essere meno restrittivi: un Impiegato con Progetto NULL non viola il vincolo verso Progetti.</li><li>Attenzione ai vincoli su <b>più attributi</b>: in Incidenti(Codice, Data, ProvA, NumeroA, ProvB, NumeroB) ci sono due vincoli verso Auto, e l’<b>ordine degli attributi è significativo</b> (ProvA con Prov, NumeroA con Numero).</li></ul>
+<h4>Azioni compensative</h4>
+<p>Se si elimina un’ennupla riferita (es. il progetto XYZ) il comportamento <b>standard</b> del DBMS è <b>rifiutare l’operazione</b>. In alternativa:</p>
+<div class="vs"><div><h4>Eliminazione in cascata</h4><p>Si eliminano anche le ennuple che riferivano XYZ (gli impiegati Neri).</p></div><div><h4>Introduzione di valori nulli</h4><p>Le ennuple che riferivano XYZ restano, con Progetto = NULL.</p></div></div>
+<div class="exam"><b class="lbl">Da non confondere</b>Superchiave ≠ chiave: la chiave è una superchiave <b>minimale</b>. Chiave candidata ≠ chiave primaria: la primaria è quella scelta che <b>non ammette nulli</b>. E un vincolo che “vale” su un’istanza non è per forza un vincolo dello schema.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>NULL è un valore del dominio?</summary><p>No: indica l’assenza di un valore del dominio.</p></details><details><summary>{Matricola, Cognome} è chiave se Matricola è chiave?</summary><p>No: è una superchiave ma non è minimale.</p></details><details><summary>In una relazione conta l’ordine delle righe?</summary><p>No, né quello delle righe né quello delle colonne.</p></details><details><summary>Cosa fa di default un DBMS se una cancellazione viola un vincolo referenziale?</summary><p>Rifiuta l’operazione.</p></details><details><summary>Vincolo di ennupla o interrelazionale: Lordo = Ritenute + Netto?</summary><p>Di ennupla: guarda una sola ennupla alla volta.</p></details></div></section>
+
+<section class="ch" id="mapping" data-t="Mapping: dall’ER al relazionale" data-part="Parte III · Modello relazionale"><div class="ch-head"><span class="ch-num">06</span><h2>Mapping: dall’ER al relazionale</h2><span class="ch-sub">Come si traduce ogni costrutto dello schema ristrutturato in relazioni con chiavi e vincoli.</span></div>
+<div class="def"><b class="lbl">Idea di base</b>Le <b>entità</b> diventano relazioni sugli stessi attributi. Le <b>associazioni</b> diventano relazioni sugli <b>identificatori delle entità coinvolte</b> più i loro attributi propri. Per le associazioni bisogna guardare bene le <b>cardinalità</b>.</div>
+<p>Notazione: la chiave primaria è <u>sottolineata</u>; un asterisco (*) indica un attributo che ammette valori nulli.</p>
+<h3>Associazioni molti a molti</h3>
+<p>Impiegato (0,N) Partecipazione (1,N) Progetto, con Data inizio su Partecipazione:</p>
+<pre>Impiegato(<u>Matricola</u>, Cognome, Stipendio)
+Progetto(<u>Codice</u>, Nome, Budget)
+Partecipazione(<u>Matricola</u>, <u>Codice</u>, DataInizio)</pre>
+<p>Con i vincoli di integrità referenziale: Matricola di Partecipazione → Impiegato; Codice di Partecipazione → Progetto. Conviene dare <b>nomi più espressivi</b> agli attributi della chiave: Partecipazione(<u>Impiegato</u>, <u>Progetto</u>, DataInizio).</p>
+<h3>Associazioni ricorsive</h3>
+<p>Prodotto con Composizione ricorsiva (ruoli Composto e Componente, attributo Quantità): i ruoli diventano i nomi degli attributi.</p>
+<pre>Prodotto(<u>Codice</u>, Nome, Costo)
+Composizione(<u>Composto</u>, <u>Componente</u>, Quantità)</pre>
+<h3>Associazioni n-arie</h3>
+<pre>Fornitore(<u>PartitaIVA</u>, Nome)
+Prodotto(<u>Codice</u>, Genere)
+Dipartimento(<u>Nome</u>, Telefono)
+Fornitura(<u>Fornitore</u>, <u>Prodotto</u>, <u>Dipartimento</u>, Quantità)</pre>
+<h3>Associazioni uno a molti</h3>
+<p>Giocatore (1,1) Contratto (0,N) Squadra, con Ingaggio. La traduzione “di base” crea tre relazioni, ma la chiave di Contratto coincide con quella di Giocatore, quindi c’è una <b>soluzione più compatta</b>: si porta l’associazione dentro l’entità con cardinalità (1,1).</p>
+<div class="vs"><div><h4>Di base</h4><p><code>Giocatore(<u>Cognome</u>, <u>DataNascita</u>, Ruolo)</code><br><code>Contratto(<u>CognGiocatore</u>, <u>DataNascG</u>, Squadra, Ingaggio)</code><br><code>Squadra(<u>Nome</u>, Città, ColoriSociali)</code></p></div><div><h4>Compatta</h4><p><code>Giocatore(<u>Cognome</u>, <u>DataNasc</u>, Ruolo, Squadra, Ingaggio)</code><br><code>Squadra(<u>Nome</u>, Città, ColoriSociali)</code><br>Vincolo referenziale fra Squadra in Giocatore e la chiave di Squadra.</p></div></div>
+<div class="exam"><b class="lbl">Attenzione</b>Se la cardinalità minima del lato “uno” fosse <b>0</b> (giocatore senza squadra), allora Squadra in Giocatore deve <b>ammettere valori nulli</b>.</div>
+<h3>Entità con identificazione esterna</h3>
+<p>Studente (1,1) Iscrizione (1,N) Università, con Studente identificato da Matricola + Università: la chiave di Università entra nella chiave di Studente, e Iscrizione non serve più.</p>
+<pre>Studente(<u>Matricola</u>, <u>Università</u>, Cognome, AnnoDiCorso)
+Università(<u>Nome</u>, Città, Indirizzo)</pre>
+<h3>Associazioni uno a uno</h3>
+<p>Varie possibilità: fondere da una parte o dall’altra, o addirittura tutto in una relazione. Dipende dalle cardinalità minime.</p>
+<div class="tbl"><table><tr><th>Caso</th><th>Traduzione</th></tr>
+<tr><td>(1,1) – (1,1)<br>Direttore e Dipartimento</td><td>Si fonde da una parte <b>o</b> dall’altra: le due scelte sono simmetriche.</td></tr>
+<tr><td>(0,1) – (1,1)<br>Impiegato (0,1) Direzione (1,1) Dipartimento</td><td>Possibilità <b>privilegiata</b>: si fonde dal lato con (1,1), così non servono nulli.<br><code>Impiegato(<u>Codice</u>, Cognome, Stipendio)</code><br><code>Dipartimento(<u>Nome</u>, Sede, Telefono, Direttore, InizioD)</code><br>Vincolo referenziale Direttore → Impiegato, <b>senza valori nulli</b>.</td></tr>
+<tr><td>(0,1) – (0,1)</td><td>Fondendo da una parte si introducono nulli: in alternativa si traduce l’associazione con una <b>relazione a parte</b>, la cui chiave può essere quella di una qualunque delle due entità.</td></tr></table></div>
+<h3>Lo schema finale dell’azienda</h3>
+<p>Partendo dallo schema ristrutturato (Impiegato, Dipartimento, Sede, Progetto con Afferenza, Direzione, Partecipazione, Composizione):</p>
+<pre>Impiegato(<u>Codice</u>, Cognome, Dipartimento*, Data*)
+Dipartimento(<u>Nome</u>, <u>Città</u>, Telefono, Direttore)
+Sede(<u>Città</u>, Via, CAP)
+Progetto(<u>Nome</u>, Budget)
+Partecipazione(<u>Impiegato</u>, <u>Progetto</u>)</pre>
+<ul><li><b>Afferenza</b> (Impiegato (0,1) – Dipartimento (1,N)) è finita in Impiegato con Dipartimento e Data <b>nullabili</b> (un impiegato può non afferire).</li>
+<li><b>Composizione</b> è sparita: Città fa parte della chiave di Dipartimento (identificazione esterna).</li>
+<li><b>Direzione</b> (Dipartimento (1,1)) è finita in Dipartimento come Direttore, senza nulli.</li>
+<li><b>Partecipazione</b>, molti a molti, è una relazione a sé.</li></ul>
+<h3>Riassunto delle regole</h3>
+<div class="tbl"><table><tr><th>Costrutto</th><th>Diventa</th></tr>
+<tr><td>Entità</td><td>Relazione con i suoi attributi; chiave = identificatore principale.</td></tr>
+<tr><td>Molti a molti, n-aria, ricorsiva</td><td>Relazione con le chiavi delle entità (chiave composta) + attributi propri.</td></tr>
+<tr><td>Uno a molti</td><td>Chiave del lato N e attributi dell’associazione dentro la relazione del lato (x,1); nulli se il minimo è 0.</td></tr>
+<tr><td>Identificazione esterna</td><td>La chiave dell’entità esterna entra nella chiave.</td></tr>
+<tr><td>Uno a uno</td><td>Fusione dal lato (1,1) se c’è; altrimenti relazione a parte o nulli.</td></tr></table></div>
+<p><b>Strumenti CASE</b>: esistono prodotti che supportano tutte le fasi della progettazione di basi di dati, spesso con notazioni UML-like; esempio citato: <b>ER-Win</b>.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Qual è la chiave di Partecipazione (molti a molti)?</summary><p>La coppia delle chiavi di Impiegato e Progetto.</p></details><details><summary>Uno a molti con (1,1) sul giocatore: serve la relazione Contratto?</summary><p>No, conviene la soluzione compatta: Squadra e Ingaggio diventano attributi di Giocatore.</p></details><details><summary>Quando la chiave esterna deve ammettere nulli?</summary><p>Quando la cardinalità minima di partecipazione è 0.</p></details><details><summary>Come si traduce un’entità identificata esternamente?</summary><p>La chiave dell’entità esterna entra nella sua chiave primaria.</p></details></div></section>
+
+<div class="partbreak">Parte IV · Linguaggi</div>
+<section class="ch" id="algebra" data-t="Algebra relazionale" data-part="Parte IV · Linguaggi"><div class="ch-head"><span class="ch-num">07</span><h2>Algebra relazionale</h2><span class="ch-sub">Gli operatori, il join in tutte le sue forme, i valori nulli, le viste e le interrogazioni d’esame.</span></div>
+<h3>Linguaggi per basi di dati</h3>
+<p>Operazioni sullo <b>schema</b>: DDL. Operazioni sui <b>dati</b>: DML, cioè interrogazione (query) e aggiornamento (inserimento, modifica, cancellazione).</p>
+<div class="tbl"><table><tr><th>Linguaggio di interrogazione</th><th>Tipo</th></tr>
+<tr><td><b>Algebra relazionale</b></td><td><b>Procedurale</b>: specifica <i>come</i> generare il risultato</td></tr>
+<tr><td>Calcolo relazionale</td><td>Dichiarativo (teorico): specifica <i>che cosa</i></td></tr>
+<tr><td><b>SQL</b></td><td><b>Parzialmente</b> dichiarativo (reale)</td></tr>
+<tr><td>QBE (Query By Example)</td><td>Dichiarativo (reale)</td></tr></table></div>
+<div class="def"><b class="lbl">Algebra relazionale</b>Insieme di operatori che lavorano <b>su relazioni</b>, producono come risultato <b>una relazione</b> e quindi <b>si possono comporre</b>. Operatori: unione, intersezione, differenza; ridenominazione; selezione; proiezione; join (naturale, prodotto cartesiano, theta-join).</div>
+<h3>Operatori insiemistici</h3>
+<p>Le relazioni sono insiemi e i risultati devono essere relazioni: unione (∪), intersezione (∩) e differenza (−) si applicano solo a relazioni <b>definite sugli stessi attributi</b> (<b>union compatibility</b>).</p>
+<div class="vs"><div><h4>Laureati</h4><p>7274 Rossi 42 · 7432 Neri 54 · 9826 Verdi 45</p></div><div><h4>Quadri</h4><p>9297 Neri 33 · 7432 Neri 54 · 9826 Verdi 45</p></div></div>
+<p>Laureati ∪ Quadri = 4 ennuple (7274, 7432, 9826, 9297); Laureati ∩ Quadri = 7432 Neri, 9826 Verdi; Laureati − Quadri = 7274 Rossi.</p>
+<h3>Ridenominazione (REN, ρ)</h3>
+<p>Operatore <b>monadico</b> che “modifica lo schema” lasciando inalterata l’istanza: cambia il nome di attributi. Serve soprattutto a <b>uniformare schemi</b> prima di un’operazione insiemistica.</p>
+<pre>REN Genitore ← Padre (Paternità)  ∪  REN Genitore ← Madre (Maternità)</pre>
+<p>Così si ottiene un’unica relazione Genitore, Figlio. Allo stesso modo: REN Sede, Retribuzione ← Ufficio, Stipendio (Impiegati) ∪ REN Sede, Retribuzione ← Fabbrica, Salario (Operai).</p>
+<h3>Selezione (SEL, σ)</h3>
+<p>Operatore <b>monadico</b>: il risultato ha <b>lo stesso schema</b> dell’operando e contiene il <b>sottoinsieme delle ennuple</b> che soddisfano una condizione (espressione booleana come quelle dei vincoli di ennupla). Sintassi: <code>SEL condizione (Operando)</code> oppure <code>σ condizione (Operando)</code>.</p>
+<pre>σ Stipendio &gt; 50 (Impiegati)
+σ Stipendio &gt; 50 AND Filiale = 'Milano' (Impiegati)
+σ Cognome = Filiale (Impiegati)       -- confronto fra due attributi</pre>
+<h3>Proiezione (PROJ, π)</h3>
+<p>Operatore <b>monadico</b>: il risultato ha <b>parte degli attributi</b> dell’operando e contiene ennuple a cui contribuiscono tutte le ennuple dell’operando, ristrette agli attributi della lista. Eventuali <b>duplicati</b> creati dall’eliminazione degli attributi vengono eliminati. Sintassi: <code>PROJ ListaAttributi (Operando)</code> oppure <code>π</code>.</p>
+<div class="def"><b class="lbl">Cardinalità della proiezione</b>Una proiezione contiene <b>al più</b> tante ennuple quante l’operando, anche meno se ci sono duplicati. Se la lista X è una <b>superchiave</b> di R, π<sub>X</sub>(R) contiene <b>esattamente</b> tante ennuple quante R.</div>
+<p>Selezione e proiezione sono <b>ortogonali</b>: la selezione è una decomposizione <b>orizzontale</b> (righe), la proiezione è una decomposizione <b>verticale</b> (colonne). Insieme: <code>π Matricola, Cognome (σ Stipendio &gt; 50 (Impiegati))</code>. Ma non permettono di correlare dati in relazioni <b>diverse</b>: serve il join.</p>
+<h3>Join naturale (⋈)</h3>
+<div class="def"><b class="lbl">Join naturale</b>Operatore binario (generalizzabile) su R1(X1), R2(X2): il risultato è una relazione su <b>X1 ∪ X2</b> con le ennuple ottenute combinando ennuple degli operandi che hanno <b>valori uguali sugli attributi comuni</b>.<br>R1 ⋈ R2 = { t su X1X2 | esistono t1 ∈ R1 e t2 ∈ R2 con t[X1] = t1 e t[X2] = t2 }</div>
+<p>Esempio del concorso: Risultati(Numero, Voto) ⋈ Concorrenti(Numero, Candidato) dà Numero, Candidato, Voto.</p>
+<div class="tbl"><table><tr><th>Caso</th><th>Cosa succede</th></tr>
+<tr><td><b>Join completo</b></td><td>Ogni ennupla di entrambi gli operandi contribuisce al risultato.</td></tr>
+<tr><td>Join <b>non completo</b></td><td>Alcune ennuple non hanno corrispondenza e vengono <b>tagliate fuori</b> (es. reparti A e C senza combinazioni).</td></tr>
+<tr><td>Join <b>vuoto</b></td><td>Nessuna combinazione.</td></tr>
+<tr><td>Completo con <b>n × m</b> ennuple</td><td>Tutte le ennuple hanno lo stesso valore sull’attributo comune (es. tutti reparto B).</td></tr></table></div>
+<div class="def"><b class="lbl">Cardinalità del join · R1(A,B), R2(B,C)</b>In generale <b>0 ≤ |R1 ⋈ R2| ≤ |R1| × |R2|</b>.<br>Se B è <b>chiave</b> in R2: <b>0 ≤ |R1 ⋈ R2| ≤ |R1|</b>.<br>Se B è chiave in R2 <b>e</b> c’è un vincolo di integrità referenziale fra B in R1 e R2: <b>|R1 ⋈ R2| = |R1|</b>.</div>
+<h3>Join esterno (outer join)</h3>
+<p>Estende con <b>valori nulli</b> le ennuple che il join (interno) taglierebbe fuori.</p>
+<div class="tbl"><table><tr><th>Versione</th><th>Mantiene</th><th>Impiegati(Rossi A, Neri B, Bianchi B) con Reparti(B Mori, C Bruni)</th></tr>
+<tr><td><b>Sinistro</b> (JOIN left)</td><td>tutte le ennuple del primo operando</td><td>Neri B Mori, Bianchi B Mori, <b>Rossi A null</b></td></tr>
+<tr><td><b>Destro</b> (JOIN right)</td><td>tutte quelle del secondo</td><td>Neri B Mori, Bianchi B Mori, <b>null C Bruni</b></td></tr>
+<tr><td><b>Completo</b> (JOIN full)</td><td>quelle di entrambi</td><td>le due precedenti + Rossi A null + null C Bruni</td></tr></table></div>
+<h3>Join e proiezioni</h3>
+<p>Con R1(X1), R2(X2): <b>π<sub>X1</sub>(R1 ⋈ R2) ⊆ R1</b> (le ennuple tagliate fuori non tornano). Con R(X), X = X1 ∪ X2: <b>π<sub>X1</sub>(R) ⋈ π<sub>X2</sub>(R) ⊇ R</b>: proiettando e poi ricomponendo possono comparire ennuple <b>in più</b> (es. Neri con capo Mori e anche Bruni, quando il reparto B ha due capi).</p>
+<h3>Prodotto cartesiano e theta-join</h3>
+<p>Il <b>prodotto cartesiano</b> (×) combina relazioni <b>senza attributi comuni</b>: la condizione è sempre soddisfatta, quindi contiene tutte le combinazioni, <b>m × n</b> ennuple. Ha senso (quasi) solo se seguito da una selezione: <code>σ Condizione (R1 × R2)</code>, che si scrive <code>R1 JOIN Condizione R2</code> ed è il <b>theta-join</b>.</p>
+<ul><li>Si chiama theta-join perché la condizione è spesso una congiunzione di atomi <b>A1 ϑ A2</b>, con ϑ operatore di confronto (=, &gt;, &lt;…).</li><li>Se ϑ è sempre l’uguaglianza si parla di <b>equi-join</b>.</li></ul>
+<p>Il join naturale si può esprimere con gli altri operatori:</p>
+<pre>Impiegati ⋈ Reparti  =  π Impiegato, Reparto, Capo (σ Reparto = Codice (Impiegati × REN Codice ← Reparto (Reparti)))</pre>
+<h3>Interrogazioni d’esame, passo per passo</h3>
+<p>Schema: <b>Impiegati</b>(Matricola, Nome, Età, Stipendio) e <b>Supervisione</b>(Impiegato, Capo).</p>
+<div class="tbl"><table><tr><th>Richiesta</th><th>Espressione</th></tr>
+<tr><td>Matricola, nome, età e stipendio di chi guadagna più di 40</td><td><code>σ Stipendio&gt;40 (Impiegati)</code> (la proiezione su tutti gli attributi non serve)</td></tr>
+<tr><td>Matricole dei capi di chi guadagna più di 40</td><td><code>π Capo (Supervisione ⋈ Impiegato=Matricola (σ Stipendio&gt;40 (Impiegati)))</code></td></tr>
+<tr><td>Nome e stipendio dei capi di chi guadagna più di 40</td><td><code>π Nome,Stipendio (Impiegati ⋈ Matricola=Capo π Capo (Supervisione ⋈ Impiegato=Matricola (σ Stipendio&gt;40 (Impiegati))))</code></td></tr>
+<tr><td>Impiegati che guadagnano più del proprio capo (matricola, nome, stipendio di entrambi)</td><td><code>π Matricola,Nome,Stipendio,MatrC,NomeC,StipC (σ Stipendio&gt;StipC (REN MatrC,NomeC,StipC,EtàC ← Matricola,Nome,Stipendio,Età (Impiegati) ⋈ MatrC=Capo (Supervisione ⋈ Impiegato=Matricola Impiegati)))</code></td></tr>
+<tr><td>Matricole dei capi i cui impiegati guadagnano <b>tutti</b> più di 40</td><td><code>π Capo (Supervisione) − π Capo (Supervisione ⋈ Impiegato=Matricola (σ Stipendio≤40 (Impiegati)))</code></td></tr></table></div>
+<div class="exam"><b class="lbl">Il trucco del “tutti”</b>L’algebra non ha il “per ogni”: si prendono <b>tutti</b> i candidati e si <b>sottrae</b> chi ha almeno un caso contrario (qui, capi con almeno un impiegato che guadagna ≤ 40). Nell’esempio delle slide i capi sono 5698, 4076 e 8123; 5698 e 4076 hanno un impiegato che guadagna ≤ 40, quindi resta solo <b>8123</b>. E per confrontare una relazione con se stessa (impiegato e capo) serve la <b>ridenominazione</b>.</div>
+<h3>Equivalenza di espressioni</h3>
+<p>Due espressioni sono <b>equivalenti</b> se producono lo stesso risultato <b>qualunque sia l’istanza</b>. I DBMS cercano di eseguire espressioni equivalenti ma meno costose. Esempio, <b>push selections</b> (se A è attributo di R2): <code>σ A=10 (R1 ⋈ R2) = R1 ⋈ σ A=10 (R2)</code>, che riduce molto il risultato intermedio.</p>
+<h3>Selezione e valori nulli</h3>
+<p>Con Bruni di età NULL, <code>σ Età &gt; 40 (Impiegati)</code> non restituisce Bruni: la condizione atomica è <b>vera solo per valori non nulli</b>. Quindi:</p>
+<pre>σ Età&gt;30 (Persone) ∪ σ Età≤30 (Persone) ≠ Persone
+σ Età&gt;30 OR Età≤30 (Persone) ≠ Persone</pre>
+<p>perché selezioni e condizioni atomiche sono valutate separatamente. Per i nulli ci sono le condizioni <b>IS NULL</b> e <b>IS NOT NULL</b>: <code>σ Età&gt;30 OR Età≤30 OR Età IS NULL (Persone) = Persone</code>. Si potrebbe usare una logica a tre valori (vero, falso, sconosciuto), ma non serve.</p>
+<h3>Viste (relazioni derivate)</h3>
+<div class="vs"><div><h4>Relazioni di base</h4><p>Contenuto autonomo.</p></div><div><h4>Relazioni derivate (viste)</h4><p>Contenuto funzione di altre relazioni, definito con un’interrogazione. Sono lo schema esterno dell’architettura ANSI/SPARC.</p></div></div>
+<div class="vs"><div><h4>Viste materializzate</h4><p>Memorizzate nella base di dati. Pro: subito disponibili. Contro: ridondanti, appesantiscono gli aggiornamenti, raramente supportate.</p></div><div><h4>Viste virtuali</h4><p>Non memorizzate: un’interrogazione sulla vista si esegue <b>sostituendo alla vista la sua definizione</b>. σ Capo='Leoni' (Supervisione) diventa σ Capo='Leoni' (π Impiegato,Capo (Afferenza ⋈ Direzione)).</p></div></div>
+<p><b>Motivazioni:</b> schema esterno (ognuno vede solo ciò che gli interessa e ciò che è autorizzato a vedere); strumento di programmazione (semplifica espressioni complesse e sotto-espressioni ripetute, es. “impiegati con lo stesso capo di Rossi”); riuso di programmi esistenti su schemi ristrutturati. Le viste non influiscono sull’efficienza.</p>
+<div class="exam"><b class="lbl">Viste e aggiornamenti</b>Aggiornare una vista significa modificare le relazioni di base perché la vista, ricalcolata, rispecchi l’aggiornamento. Ma la modifica corrispondente <b>in generale non è univoca</b> (inserire “Lupi ha capo Bruni”: in quale reparto? E “Belli ha capo Falchi” se Falchi non dirige nessun reparto?). Quindi <b>ben pochi aggiornamenti sono ammissibili</b> sulle viste.</div>
+<h3>Operatori minimali</h3>
+<p>Bastano <b>5 operatori</b> per ottenere tutti gli altri: <b>SEL, PROJ, ×, ∪, −</b> (più la ridenominazione per gestire i nomi). Per esempio l’intersezione: <b>A ∩ B = A − (A − B) = B − (B − A)</b>; il join è un prodotto cartesiano seguito da selezione (e proiezione).</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>La selezione cambia lo schema?</summary><p>No: stesso schema, meno righe. La proiezione cambia lo schema.</p></details><details><summary>Quando la proiezione ha esattamente le ennuple dell’operando?</summary><p>Quando gli attributi proiettati sono una superchiave.</p></details><details><summary>|R1 ⋈ R2| se B è chiave di R2 con vincolo referenziale da R1?</summary><p>Esattamente |R1|.</p></details><details><summary>Theta-join con solo uguaglianze?</summary><p>Equi-join.</p></details><details><summary>Come si esprime “tutti” in algebra?</summary><p>Con la differenza: tutti i candidati meno quelli con almeno un controesempio.</p></details><details><summary>σ Età&gt;40 restituisce le ennuple con Età NULL?</summary><p>No: serve aggiungere OR Età IS NULL.</p></details></div></section>
+
+<section class="ch" id="sql" data-t="SQL" data-part="Parte IV · Linguaggi"><div class="ch-head"><span class="ch-num">08</span><h2>SQL</h2><span class="ch-sub">Definizione dei dati, interrogazioni, aggregati, nidificate, aggiornamenti, viste, privilegi e transazioni.</span></div>
+<div class="def"><b class="lbl">SQL</b>Linguaggio che contiene sia il <b>DDL</b> sia il <b>DML</b>. È <b>semi-dichiarativo</b>: basato in parte sull’algebra e in parte sul calcolo relazionale. Si usa in modo interattivo o incorporato in programmi (C, Java…).</div>
+<p><b>Storia:</b> prima proposta <b>SEQUEL</b> (1974, Structured English QUEry Language, IBM Research); prime implementazioni in Oracle (1979), SQL/DS (IBM 1981), DB2 (IBM 1983); “standard di fatto” dal 1983 circa. Standard ANSI/ISO: <b>SQL-86</b>, <b>SQL2 (1992)</b>, <b>SQL3 (1999)</b>. Ogni DBMS implementa un <b>dialetto</b>, estensione o sottoinsieme dello standard.</p>
+<h3>Definire schemi e tabelle</h3>
+<pre>CREATE SCHEMA nome_schema AUTHORIZATION nome_utente
+DROP SCHEMA COMPANY CASCADE    -- rimuove anche tabelle, domini, ...
+DROP SCHEMA COMPANY RESTRICT   -- solo se lo schema è vuoto</pre>
+<p><code>CREATE TABLE</code> definisce uno schema di relazione e ne crea un’<b>istanza vuota</b>, specificando attributi, domini e vincoli:</p>
+<pre>CREATE TABLE Impiegato(
+  Matricola CHAR(6) PRIMARY KEY,
+  Nome      CHAR(20) NOT NULL,
+  Cognome   CHAR(20) NOT NULL,
+  Dipart    CHAR(15),
+  Stipendio NUMERIC(9) DEFAULT 0,
+  FOREIGN KEY(Dipart) REFERENCES Dipartimento(NomeDip),
+  UNIQUE(Cognome, Nome)
+)</pre>
+<h4>Domini</h4>
+<div class="tbl"><table><tr><th>Dominio</th><th>Tipi</th></tr>
+<tr><td>Numerici</td><td>Interi <code>INTEGER</code>/<code>INT</code>, <code>SMALLINT</code>; reali <code>FLOAT</code>, <code>REAL</code>, <code>DOUBLE PRECISION</code>; formattati <code>DECIMAL(i,j)</code>, <code>DEC(i,j)</code>, <code>NUMERIC(i,j)</code> con i = precisione (cifre totali) e j = scala (cifre dopo la virgola).</td></tr>
+<tr><td>Stringhe di caratteri</td><td>Fissa <code>CHAR(n)</code>/<code>CHARACTER(n)</code>; variabile <code>VARCHAR(n)</code>/<code>CHAR VARYING(n)</code>. Default n = 1.</td></tr>
+<tr><td>Stringhe di bit</td><td><code>BIT(n)</code>, <code>BIT VARYING(n)</code>.</td></tr>
+<tr><td>Date e orari</td><td><code>DATE</code> (10 posizioni, YYYY-MM-DD); <code>TIME</code> (HH:MM:SS); <code>TIME(i)</code> con i cifre di frazione di secondo; <code>TIME WITH TIME ZONE</code> (+6 posizioni, da +13:00 a −12:59).</td></tr>
+<tr><td>Da SQL:1999</td><td><code>BOOLEAN</code>, <code>BLOB</code> e <code>CLOB</code> (grandi oggetti binari e testuali).</td></tr></table></div>
+<p>Se non si fornisce un valore il DBMS mette il <b>default</b> (di solito NULL); la clausola <code>DEFAULT valore</code> ne specifica un altro. Domini utente riutilizzabili:</p>
+<pre>CREATE DOMAIN Voto AS SMALLINT DEFAULT NULL
+  CHECK (value &gt;= 18 AND value &lt;= 30)</pre>
+<h4>Vincoli</h4>
+<div class="tbl"><table><tr><th>Vincolo</th><th>Significato</th></tr>
+<tr><td><code>NOT NULL</code></td><td>Il valore nullo non è ammesso.</td></tr>
+<tr><td><code>UNIQUE</code></td><td>Definisce una chiave (candidata).</td></tr>
+<tr><td><code>PRIMARY KEY</code></td><td>Chiave primaria: <b>una sola</b> per tabella, implica NOT NULL.</td></tr>
+<tr><td><code>CHECK</code></td><td>Vincoli generici.</td></tr>
+<tr><td><code>REFERENCES</code> / <code>FOREIGN KEY</code></td><td>Integrità referenziale, con possibili politiche di reazione alla violazione.</td></tr></table></div>
+<p>UNIQUE e PRIMARY KEY si scrivono accanto all’attributo (se forma da solo la chiave) oppure come elemento separato, es. <code>PRIMARY KEY(Matricola)</code> in fondo.</p>
+<div class="exam"><b class="lbl">Non è la stessa cosa!</b><code>UNIQUE(Cognome, Nome)</code> dice che la <b>coppia</b> non si ripete (possono esserci due Rossi con nomi diversi). <code>Nome … UNIQUE, Cognome … UNIQUE</code> dice che <b>ciascuno</b> non si ripete da solo: vincolo molto più forte.</div>
+<pre>CREATE TABLE Infrazioni(
+  Codice    CHAR(6) PRIMARY KEY,
+  Data      DATE NOT NULL,
+  Vigile    INTEGER REFERENCES Vigili(Matricola)
+              ON UPDATE CASCADE ON DELETE SET NULL,
+  Provincia CHAR(2),
+  Numero    CHAR(6),
+  FOREIGN KEY(Provincia, Numero) REFERENCES Auto(Provincia, Numero)
+    ON UPDATE CASCADE ON DELETE CASCADE
+)</pre>
+<h4>Modificare gli schemi</h4>
+<pre>ALTER TABLE IMPIEGATO ADD EMAIL VARCHAR(12);          -- default o NULL; NOT NULL non permesso
+ALTER TABLE IMPIEGATO DROP INDIRIZZO CASCADE;         -- CASCADE o RESTRICT
+ALTER TABLE IMPIEGATO ALTER DIPART DROP DEFAULT;
+ALTER TABLE INFRAZIONE ALTER VIGILE SET DEFAULT '3334';</pre>
+<p>Eliminando una colonna con <b>CASCADE</b> si eliminano anche vincoli e viste che la referenziano; con <b>RESTRICT</b> il comando riesce solo se nessuno la referenzia. Un vincolo si può eliminare solo se gli si è dato un nome con <code>CONSTRAINT</code>. Altri comandi: <code>ALTER DOMAIN</code>, <code>DROP DOMAIN</code>, <code>DROP TABLE</code>. Gli indici (<code>CREATE INDEX</code>) riguardano le prestazioni, quindi il livello <b>fisico</b>; in passato erano l’unico modo per definire chiavi.</p>
+<h3>Le tabelle degli esempi</h3>
+<div class="tbl"><table><tr><th>Persone · Nome</th><th>Età</th><th>Reddito</th><th></th><th>Paternità · Padre</th><th>Figlio</th><th></th><th>Maternità · Madre</th><th>Figlio</th></tr>
+<tr><td>Andrea</td><td>27</td><td>21</td><td></td><td>Sergio</td><td>Franco</td><td></td><td>Luisa</td><td>Maria</td></tr>
+<tr><td>Aldo</td><td>25</td><td>15</td><td></td><td>Luigi</td><td>Olga</td><td></td><td>Luisa</td><td>Luigi</td></tr>
+<tr><td>Maria</td><td>55</td><td>42</td><td></td><td>Luigi</td><td>Filippo</td><td></td><td>Anna</td><td>Olga</td></tr>
+<tr><td>Anna</td><td>50</td><td>35</td><td></td><td>Franco</td><td>Andrea</td><td></td><td>Anna</td><td>Filippo</td></tr>
+<tr><td>Filippo</td><td>26</td><td>30</td><td></td><td>Franco</td><td>Aldo</td><td></td><td>Maria</td><td>Andrea</td></tr>
+<tr><td>Luigi</td><td>50</td><td>40</td><td></td><td></td><td></td><td></td><td>Maria</td><td>Aldo</td></tr>
+<tr><td>Franco</td><td>60</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>Olga</td><td>30</td><td>41</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>Sergio</td><td>85</td><td>35</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>Luisa</td><td>75</td><td>87</td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table></div>
+<h3>SELECT di base</h3>
+<pre>SELECT ListaAttributi      -- target list
+FROM ListaTabelle          -- clausola FROM
+[WHERE Condizione]         -- clausola WHERE</pre>
+<div class="def"><b class="lbl">SQL e algebra</b><code>SELECT R1.A1, R2.A4 FROM R1, R2 WHERE R1.A2 = R2.A3</code> equivale a <code>π A1,A4 (σ A2=A3 (R1 × R2))</code>: FROM = <b>prodotto cartesiano</b>, WHERE = <b>selezione</b>, SELECT = <b>proiezione</b>. Con una sola tabella si fanno selezioni, proiezioni e ridenominazioni; con più tabelle join e prodotti cartesiani.</div>
+<pre>SELECT Nome, Reddito FROM Persone WHERE Eta &lt; 30          -- π Nome,Reddito (σ Eta&lt;30 (Persone))
+SELECT p.Nome AS nome, p.Reddito AS reddito
+  FROM Persone p WHERE p.Eta &lt; 30                         -- alias di tabella e di colonna
+SELECT * FROM Persone WHERE Eta &lt; 30                      -- selezione senza proiezione
+SELECT Nome, Reddito FROM Persone                         -- proiezione senza selezione
+SELECT Reddito/2 AS redditoSemestrale FROM Persone WHERE Nome = 'Luigi'
+SELECT * FROM Persone WHERE Reddito &gt; 25 AND (Eta &lt; 30 OR Eta &gt; 60)
+SELECT * FROM Persone WHERE Nome LIKE 'A_d%'              -- _ un carattere, % zero o più
+SELECT * FROM Impiegati WHERE Eta &gt; 40 OR Eta IS NULL</pre>
+<p>Possono servire ridenominazioni nel prodotto cartesiano (la stessa tabella usata due volte con alias diversi) e nella target list. I DBMS ottimizzano: eseguono le selezioni il prima possibile e, se possono, join invece di prodotti cartesiani; perciò conta più la <b>chiarezza</b> che l’efficienza quando si scrive la query.</p>
+<div class="exam"><b class="lbl">Proiezione, attenzione</b>SQL <b>non elimina i duplicati</b> da solo: <code>SELECT Cognome, Filiale FROM Impiegati</code> può restituire due volte Rossi Roma. Per avere la proiezione dell’algebra serve <code>SELECT DISTINCT</code>.</div>
+<h3>Join</h3>
+<pre>-- I padri di persone che guadagnano più di 20
+SELECT DISTINCT Padre
+FROM Persone, Paternita
+WHERE Figlio = Nome AND Reddito &gt; 20
+
+-- Padre e madre di ogni persona
+SELECT Paternita.Figlio, Padre, Madre
+FROM Maternita, Paternita
+WHERE Paternita.Figlio = Maternita.Figlio
+
+-- Le persone che guadagnano più del padre (stessa tabella due volte)
+SELECT f.Nome, f.Reddito, p.Reddito AS RedditoPadre
+FROM Persone p, Paternita, Persone f
+WHERE p.Nome = Padre AND Figlio = f.Nome AND f.Reddito &gt; p.Reddito</pre>
+<p><b>Join esplicito:</b> <code>SELECT … FROM Tabella {JOIN Tabella ON CondDiJoin}, … [WHERE AltraCondizione]</code></p>
+<pre>SELECT f.Nome, f.Reddito, p.Reddito
+FROM Persone p JOIN Paternita ON p.Nome = Padre
+               JOIN Persone f ON Figlio = f.Nome
+WHERE f.Reddito &gt; p.Reddito
+
+SELECT Madre, Paternita.Figlio, Padre FROM Maternita NATURAL JOIN Paternita   -- meno diffuso
+
+-- Padre e, se nota, madre di ogni persona
+SELECT Paternita.Figlio, Padre, Madre
+FROM Paternita LEFT [OUTER] JOIN Maternita ON Paternita.Figlio = Maternita.Figlio</pre>
+<p>Esistono <code>LEFT</code>, <code>RIGHT</code> e <code>FULL OUTER JOIN</code>; la parola OUTER è opzionale.</p>
+<h3>Ordinamento</h3>
+<pre>SELECT Nome, Reddito FROM Persone WHERE Eta &lt; 30 ORDER BY Nome DESC   -- default ASC</pre>
+<h3>Operatori aggregati</h3>
+<p>Nella target list possono comparire funzioni che calcolano un valore da un insieme di ennuple: <b>COUNT, SUM, AVG, MAX, MIN</b>. Sintassi: <code>Funzione([DISTINCT] *)</code> o <code>Funzione([DISTINCT] Attributo)</code>. L’aggregato si applica al <b>risultato</b> dell’interrogazione.</p>
+<pre>SELECT COUNT(*) AS NumFigliDiFranco FROM Paternita WHERE Padre = 'Franco'   -- 2
+SELECT AVG(Reddito) FROM Persone JOIN Paternita ON Nome = Figlio WHERE Padre = 'Franco'</pre>
+<div class="tbl"><table><tr><th>Espressione</th><th>Conta</th></tr>
+<tr><td><code>COUNT(*)</code></td><td>Tutte le ennuple, anche con nulli.</td></tr>
+<tr><td><code>COUNT(Reddito)</code></td><td>Le ennuple con Reddito <b>non nullo</b>.</td></tr>
+<tr><td><code>COUNT(DISTINCT Reddito)</code></td><td>I valori <b>distinti</b> non nulli di Reddito.</td></tr></table></div>
+<p>Anche AVG, SUM, MAX, MIN <b>ignorano i nulli</b>: con redditi 30, NULL, 36, 36, 40 la media è 142/4 = 35,5, non 142/5.</p>
+<div class="exam"><b class="lbl">Target list omogenea</b><code>SELECT Nome, MAX(Reddito) FROM Persone</code> è <b>scorretta</b>: di chi sarebbe il nome? Senza GROUP BY non si mescolano attributi e aggregati. <code>SELECT MIN(Eta), AVG(Reddito) FROM Persone</code> invece va bene.</div>
+<h3>GROUP BY e HAVING</h3>
+<pre>SELECT Padre, COUNT(*) AS NumFigli FROM Paternita GROUP BY Padre
+-- Sergio 1, Luigi 2, Franco 2</pre>
+<p>Semantica: si esegue l’interrogazione senza GROUP BY e aggregati, poi si <b>raggruppa</b> per valori degli attributi di raggruppamento e si applica l’aggregato a <b>ciascun gruppo</b>. Nella target list possono stare solo attributi di raggruppamento e aggregati:</p>
+<pre>SELECT Padre, AVG(f.Reddito), p.Reddito
+FROM Persone f JOIN Paternita ON Figlio = f.Nome
+               JOIN Persone p ON Padre = p.Nome
+GROUP BY Padre, p.Reddito          -- senza p.Reddito qui sarebbe scorretta</pre>
+<pre>-- Padri i cui figli sotto i 30 anni hanno reddito medio maggiore di 25
+SELECT Padre, AVG(f.Reddito)
+FROM Persone f JOIN Paternita ON Figlio = Nome
+WHERE Eta &lt; 30                     -- condizione sulle singole ennuple
+GROUP BY Padre
+HAVING AVG(f.Reddito) &gt; 25         -- condizione sui gruppi</pre>
+<div class="exam"><b class="lbl">WHERE o HAVING?</b><b>WHERE</b> filtra le <b>ennuple</b> prima del raggruppamento e non può contenere aggregati. <b>HAVING</b> filtra i <b>gruppi</b> dopo il raggruppamento e contiene condizioni aggregate.</div>
+<pre>SelectSQL ::= SELECT ListaAttributiOEspressioni
+              FROM ListaTabelle
+              [WHERE CondizioniSemplici]
+              [GROUP BY ListaAttributiDiRaggruppamento [HAVING CondizioniAggregate]]
+              [ORDER BY ListaAttributiDiOrdinamento]</pre>
+<h3>Unione, intersezione, differenza</h3>
+<pre>SELECT ... UNION [ALL] SELECT ...
+SELECT Nome FROM Impiegato INTERSECT SELECT Cognome AS Nome FROM Impiegato
+SELECT Nome FROM Impiegato EXCEPT    SELECT Cognome AS Nome FROM Impiegato</pre>
+<p>La SELECT da sola non fa unioni: serve il costrutto esplicito. I <b>duplicati vengono eliminati</b> (anche quelli delle proiezioni) a meno di <code>ALL</code>. La notazione è <b>posizionale</b>: conta l’ordine delle colonne, non i nomi (il risultato prende di solito i nomi del primo operando).</p>
+<div class="exam"><b class="lbl">Notazione posizionale</b><code>SELECT Padre, Figlio FROM Paternita UNION SELECT Figlio, Madre FROM Maternita</code> mette i figli sotto i genitori, <b>anche</b> se si rinomina con <code>Madre AS Genitore</code>. Corretta: <code>SELECT Padre AS Genitore, Figlio … UNION SELECT Madre AS Genitore, Figlio …</code>.</div>
+<p>INTERSECT equivale a un join: <code>SELECT I.Nome FROM Impiegato I, Impiegato J WHERE I.Nome = J.Cognome</code>.</p>
+<h3>Interrogazioni nidificate</h3>
+<p>Le condizioni atomiche permettono di confrontare un attributo con il risultato di una sottointerrogazione e le quantificazioni esistenziali.</p>
+<pre>-- Nome e reddito del padre di Franco
+SELECT Nome, Reddito FROM Persone
+WHERE Nome = (SELECT Padre FROM Paternita WHERE Figlio = 'Franco')
+
+-- Nome e reddito dei padri di persone che guadagnano più di 20
+SELECT Nome, Reddito FROM Persone
+WHERE Nome IN (SELECT Padre FROM Paternita
+               WHERE Figlio = ANY (SELECT Nome FROM Persone WHERE Reddito &gt; 20))</pre>
+<div class="tbl"><table><tr><th>Operatore</th><th>Vero se</th></tr>
+<tr><td><code>= (subquery)</code></td><td>la subquery restituisce un solo valore uguale</td></tr>
+<tr><td><code>IN</code> (= <code>= ANY</code>)</td><td>il valore compare tra quelli della subquery</td></tr>
+<tr><td><code>ϑ ANY</code></td><td>il confronto è vero con <b>almeno uno</b> dei valori</td></tr>
+<tr><td><code>ϑ ALL</code></td><td>il confronto è vero con <b>tutti</b> i valori</td></tr>
+<tr><td><code>EXISTS</code> / <code>NOT EXISTS</code></td><td>la subquery restituisce almeno una / nessuna ennupla</td></tr></table></div>
+<ul><li>La forma nidificata è “meno dichiarativa” ma a volte più leggibile; piana e nidificata si combinano.</li>
+<li>Le sottointerrogazioni non contengono operatori insiemistici (l’unione si fa al livello esterno).</li>
+<li>La prima versione di SQL aveva solo la forma nidificata, con una relazione per FROM: dichiaratività limitata e <b>impossibile mettere nella target list attributi dei blocchi interni</b> (es. il reddito del figlio).</li>
+<li><b>Visibilità:</b> non si possono usare variabili definite in blocchi <b>più interni</b>; se il nome della variabile è omesso si assume la più vicina; si possono usare variabili di blocchi <b>più esterni</b>. Usare D1 dentro un’altra sottoquery “sorella” è <b>scorretto</b>.</li></ul>
+<pre>-- Persone che hanno almeno un figlio
+SELECT * FROM Persone
+WHERE EXISTS (SELECT * FROM Paternita WHERE Padre = Nome)
+   OR EXISTS (SELECT * FROM Maternita WHERE Madre = Nome)
+
+-- Padri i cui figli guadagnano TUTTI più di 20
+SELECT DISTINCT Padre FROM Paternita Z
+WHERE NOT EXISTS (SELECT * FROM Paternita W, Persone
+                  WHERE W.Padre = Z.Padre AND W.Figlio = Nome AND Reddito &lt;= 20)</pre>
+<div class="def"><b class="lbl">Interrogazioni correlate</b>Se la sottoquery usa variabili del blocco esterno (qui Z.Padre), viene eseguita <b>una volta per ciascuna ennupla</b> dell’interrogazione esterna.</div>
+<pre>-- Differenza con NOT EXISTS
+SELECT Nome FROM Impiegato I
+WHERE NOT EXISTS (SELECT * FROM Impiegato WHERE Cognome = I.Nome)
+
+-- La persona (o le persone) con il reddito massimo
+SELECT * FROM Persone WHERE Reddito = (SELECT MAX(Reddito) FROM Persone)</pre>
+<p>Una disgiunzione (OR) con EXISTS si può spesso riscrivere come UNION, ma non sempre.</p>
+<h3>Aggiornare i dati</h3>
+<pre>INSERT INTO Persone VALUES ('Mario', 25, 52)
+INSERT INTO Persone(Nome, Eta, Reddito) VALUES ('Pino', 25, 52)
+INSERT INTO Persone(Nome, Reddito) VALUES ('Lino', 55)       -- Eta = NULL o default
+INSERT INTO Persone(Nome)
+  SELECT Padre FROM Paternita WHERE Padre NOT IN (SELECT Nome FROM Persone)</pre>
+<p>Ordine di attributi e valori è significativo, le due liste devono avere lo stesso numero di elementi; senza lista si usano tutti gli attributi nell’ordine di definizione; gli attributi mancanti ricevono NULL (se permesso) o il default.</p>
+<pre>DELETE FROM Persone WHERE Eta &lt; 35
+DELETE FROM Paternita WHERE Figlio NOT IN (SELECT Nome FROM Persone)
+DELETE FROM Paternita                    -- senza WHERE: WHERE TRUE, cancella tutto
+UPDATE Persone SET Reddito = 45 WHERE Nome = 'Piero'
+UPDATE Persone SET Reddito = Reddito * 1.1 WHERE Eta &lt; 30</pre>
+<p>In UPDATE il nuovo valore può essere un’espressione, una SELECT, NULL o DEFAULT. Una DELETE può eliminare ennuple di altre tabelle se le chiavi esterne sono definite con <b>CASCADE</b>.</p>
+<h3>CHECK e asserzioni</h3>
+<pre>CREATE TABLE Impiegato(
+  Matricola CHARACTER(6), Cognome CHARACTER(20), Nome CHARACTER(20),
+  Sesso CHARACTER NOT NULL CHECK (Sesso IN ('M','F')),
+  Stipendio INTEGER, Superiore CHARACTER(6),
+  CHECK (Stipendio &lt;= (SELECT Stipendio FROM Impiegato J WHERE Superiore = J.Matricola))
+)
+CREATE ASSERTION AlmenoUnImpiegato CHECK (1 &lt;= (SELECT COUNT(*) FROM Impiegato))</pre>
+<p><b>CHECK</b> esprime vincoli di ennupla (e anche più complessi); <b>CREATE ASSERTION</b> esprime vincoli a livello di <b>schema</b>.</p>
+<h3>Viste in SQL</h3>
+<pre>CREATE VIEW NomeVista [(ListaAttributi)] AS SelectSQL
+  [WITH [LOCAL | CASCADED] CHECK OPTION]
+
+CREATE VIEW ImpiegatiAmmin(Matricola, Nome, Cognome, Stipendio) AS
+  SELECT Matricola, Nome, Cognome, Stipendio FROM Impiegato
+  WHERE Dipart = 'Amministrazione' AND Stipendio &gt; 10
+
+CREATE VIEW ImpiegatiAmminPoveri AS
+  SELECT * FROM ImpiegatiAmmin WHERE Stipendio &lt; 50
+  WITH CHECK OPTION</pre>
+<p>Gli aggiornamenti sono ammessi (di solito) solo su viste definite su <b>una sola relazione</b>. <b>CHECK OPTION</b> permette modifiche solo se l’ennupla <b>continua ad appartenere alla vista</b> (non si può portare lo stipendio a 60).</p>
+<p>Le viste risolvono query altrimenti non standard:</p>
+<pre>-- Nidificazione nella HAVING non ammessa: il dipartimento con la somma di stipendi massima
+CREATE VIEW BudgetStipendi(Dip, TotaleStipendi) AS
+  SELECT Dipart, SUM(Stipendio) FROM Impiegato GROUP BY Dipart
+SELECT Dip FROM BudgetStipendi
+WHERE TotaleStipendi = (SELECT MAX(TotaleStipendi) FROM BudgetStipendi)
+
+-- AVG(COUNT(DISTINCT Ufficio)) non è ammesso: aggregati annidati
+CREATE VIEW DipartUffici(NomeDip, NroUffici) AS
+  SELECT Dipart, COUNT(DISTINCT Ufficio) FROM Impiegato GROUP BY Dipart;
+SELECT AVG(NroUffici) FROM DipartUffici</pre>
+<h3>Controllo dell’accesso</h3>
+<p>Si specifica chi (utente) e come (lettura, scrittura…) usa la base di dati. Oggetto dei privilegi: di solito tabelle, ma anche attributi, viste, domini. L’utente predefinito <code>_system</code> (amministratore) ha tutti i privilegi; il <b>creatore</b> di una risorsa ha tutti i privilegi su di essa.</p>
+<p>Un privilegio è caratterizzato da: risorsa, utente che lo concede, utente che lo riceve, azione permessa, trasmissibilità. Tipi: <b>insert</b>, <b>update</b>, <b>delete</b>, <b>select</b>, <b>references</b> (definire vincoli referenziali verso la risorsa, che possono limitarne le modifiche), <b>usage</b> (usare la risorsa in una definizione, es. un dominio).</p>
+<pre>GRANT &lt;Privileges | ALL PRIVILEGES&gt; ON Resource TO Users [WITH GRANT OPTION]
+GRANT SELECT ON Department TO Stefano
+REVOKE Privileges ON Resource FROM Users [RESTRICT | CASCADE]</pre>
+<p><b>WITH GRANT OPTION</b>: chi riceve il privilegio può trasmetterlo ad altri.</p>
+<h3>Transazioni</h3>
+<div class="def"><b class="lbl">Transazione</b>Insieme di operazioni da considerare <b>indivisibile</b> (atomico), corretto anche con la concorrenza e con effetti definitivi. Proprietà <b>ACID</b>.</div>
+<div class="tbl"><table><tr><th>Proprietà</th><th>Significato</th></tr>
+<tr><td><b>A</b>tomicità</td><td>Eseguita per intero o per niente (bonifico: prelievo da A e versamento su B, o nessuno dei due).</td></tr>
+<tr><td><b>C</b>onsistenza</td><td>Alla fine i vincoli di integrità sono soddisfatti; durante ci possono essere violazioni, ma se restano alla fine la transazione è annullata (“abortita”).</td></tr>
+<tr><td><b>I</b>solamento</td><td>L’effetto di transazioni concorrenti è coerente, equivalente a un’esecuzione separata (due assegni sullo stesso conto incassati insieme: non se ne perde uno).</td></tr>
+<tr><td><b>D</b>urabilità</td><td>Il <b>commit</b> è l’impegno a mantenere il risultato in modo definitivo, anche con guasti e concorrenza.</td></tr></table></div>
+<pre>BEGIN TRANSACTION;
+UPDATE ContoCorrente SET Saldo = Saldo - 10 WHERE NumeroConto = 12345;
+UPDATE ContoCorrente SET Saldo = Saldo + 10 WHERE NumeroConto = 55555;
+COMMIT WORK;      -- oppure ROLLBACK WORK per rinunciare</pre>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>SELECT elimina i duplicati?</summary><p>No, serve DISTINCT. UNION invece li elimina (a meno di UNION ALL).</p></details><details><summary>COUNT(*) e COUNT(Reddito) danno sempre lo stesso numero?</summary><p>No: COUNT(Reddito) non conta le ennuple con Reddito nullo.</p></details><details><summary>Dove metto una condizione su AVG?</summary><p>Nella HAVING, mai nella WHERE.</p></details><details><summary>Come si esprime “tutti i figli guadagnano più di 20” in SQL?</summary><p>Con NOT EXISTS di un figlio che guadagna ≤ 20.</p></details><details><summary>PRIMARY KEY implica NOT NULL?</summary><p>Sì, e ce n’è una sola per tabella.</p></details><details><summary>Cosa fa WITH CHECK OPTION?</summary><p>Permette modifiche tramite la vista solo se le ennuple restano nella vista.</p></details><details><summary>DELETE FROM Paternita senza WHERE?</summary><p>Cancella tutte le ennuple: si intende WHERE TRUE.</p></details></div></section>
+
+<section class="ch" id="jdbc" data-t="SQL nei linguaggi di programmazione e JDBC" data-part="Parte IV · Linguaggi"><div class="ch-head"><span class="ch-num">09</span><h2>SQL nei linguaggi di programmazione: JDBC</h2><span class="ch-sub">Conflitto di impedenza, SQL immerso, cursori, SQL dinamico, CLI e JDBC con Statement, ResultSet e transazioni.</span></div>
+<p>Nelle applicazioni complesse l’utente non esegue comandi SQL ma <b>programmi</b> con poche scelte. SQL da solo non basta: servono funzioni per gestire <b>input</b> (scelte e parametri), <b>output</b> (dati che non sono relazioni o presentazioni complesse) e il <b>controllo</b>. Le applicazioni si scrivono in linguaggi tradizionali (Cobol, C, Java, Fortran) o in linguaggi “ad hoc” (PL/SQL, Informix4GL, Delphi), e più applicazioni accedono allo stesso DBMS.</p>
+<h3>Conflitto di impedenza</h3>
+<div class="def"><b class="lbl">Impedance mismatch</b>“Disaccoppiamento di impedenza” fra base di dati e linguaggio: i <b>linguaggi</b> operano su <b>singole variabili o oggetti</b>, <b>SQL</b> opera su <b>relazioni</b> (insiemi di ennuple).</div>
+<div class="tbl"><table><tr><th>Aspetto</th><th>Linguaggio di programmazione</th><th>SQL</th></tr>
+<tr><td>Accesso e correlazione</td><td>Dipende dal paradigma: scansione di liste, navigazione fra oggetti</td><td>Join (ottimizzabile)</td></tr>
+<tr><td>Tipi di base</td><td>Numeri, stringhe, booleani</td><td>CHAR, VARCHAR, DATE…</td></tr>
+<tr><td>Costruttori di tipo</td><td>Dipendono dal paradigma</td><td>Relazioni ed ennuple</td></tr></table></div>
+<h3>Tre tecniche</h3>
+<div class="tbl"><table><tr><th>Tecnica</th><th>Idea</th></tr>
+<tr><td><b>SQL immerso</b> (embedded)</td><td>Dagli anni ’70; “SQL statico”: le istruzioni sono scritte nel programma.</td></tr>
+<tr><td><b>SQL dinamico</b></td><td>Le istruzioni sono costruite a runtime.</td></tr>
+<tr><td><b>Call Level Interface</b> (CLI)</td><td>Più recente: SQL/CLI, ODBC, JDBC.</td></tr></table></div>
+<h3>SQL immerso</h3>
+<p>Le istruzioni SQL sono “immerse” nel programma scritto nel linguaggio <b>ospite</b>. Un <b>precompilatore</b> del DBMS traduce il programma in un sorgente del linguaggio ospite, sostituendo le istruzioni SQL con chiamate a funzioni di un’API del DBMS.</p>
+<ul><li><code>EXEC SQL</code> segna le porzioni per il precompilatore (definizioni di dati e istruzioni SQL).</li>
+<li>Le variabili del programma si usano come parametri, precedute da <code>:</code>, dove sono ammesse costanti.</li>
+<li><code>sqlca</code> è la struttura di comunicazione fra programma e DBMS; <code>sqlcode</code> contiene il codice dell’ultimo comando: <b>zero = successo</b>, altro valore = errore o anomalia.</li></ul>
+<div class="flow"><span>Sorgente LP + SQL</span><i>→ precompilazione →</i><span>Sorgente LP</span><i>→ compilazione →</i><span>Codice oggetto</span><i>→ collegamento con le librerie del DBMS →</i><span>Eseguibile</span></div>
+<p>Il precompilatore è specifico della combinazione <b>linguaggio – DBMS – sistema operativo</b>.</p>
+<h3>Cursori</h3>
+<p>Una SELECT restituisce zero o più ennuple: con zero o una si usa un record, ma con più ennuple il risultato (una lista) non è gestibile facilmente in molti linguaggi. Il <b>cursore</b> trasmette al programma <b>un’ennupla alla volta</b>: accede a tutte le ennuple in modo globale (tutte insieme o a blocchi, sceglie il DBMS) e le passa al buffer del programma una per volta.</p>
+<div class="tbl"><table><tr><th>Operazione</th><th>Sintassi</th></tr>
+<tr><td>Definizione</td><td><code>DECLARE NomeCursore [SCROLL] CURSOR FOR SELECT …</code></td></tr>
+<tr><td>Esecuzione dell’interrogazione</td><td><code>OPEN NomeCursore</code></td></tr>
+<tr><td>Uso dei risultati, un’ennupla alla volta</td><td><code>FETCH NomeCursore INTO ListaVariabili</code></td></tr>
+<tr><td>Disabilitazione</td><td><code>CLOSE CURSOR NomeCursore</code></td></tr>
+<tr><td>Ennupla corrente (per aggiornare, cursore su una relazione)</td><td><code>CURRENT OF NomeCursore</code> nella WHERE</td></tr></table></div>
+<pre>EXEC SQL SELECT Nome, Cognome INTO :nomeDip, :cognomeDip
+         FROM Dipendente WHERE Matricola = :matrDip;   -- query scalare: niente cursore</pre>
+<div class="exam"><b class="lbl">Attenzione ai cursori</b>Per aggiornamenti e query <b>scalari</b> (una sola ennupla) il cursore non serve. E i cursori riportano la programmazione a un livello troppo basso: <b>nidificando due cursori si rischia di reimplementare il join</b>, togliendo al DBMS la possibilità di ottimizzare.</div>
+<h3>SQL dinamico</h3>
+<p>Quando le istruzioni non sono note mentre si scrive il programma (costruite dal programma o ricevute in input):</p>
+<pre>EXECUTE IMMEDIATE SQLStatement                     -- subito
+PREPARE CommandName FROM SQLStatement              -- prima preparata...
+EXECUTE CommandName [INTO TargetList] [USING ParameterList]   -- ...poi eseguita, anche più volte</pre>
+<h3>Call Level Interface</h3>
+<p>Interfacce che inviano richieste al DBMS tramite <b>funzioni con parametri</b>: standard <b>SQL/CLI</b> (’95, poi in SQL:1999), <b>ODBC</b> (implementazione proprietaria di SQL/CLI), <b>JDBC</b> (CLI per Java).</p>
+<div class="vs"><div><h4>SQL immerso</h4><p><b>Precompilazione</b> (quindi efficienza); uso di SQL completo.</p></div><div><h4>CLI</h4><p><b>Indipendente dal DBMS</b>; permette di accedere a più basi di dati, anche eterogenee.</p></div></div>
+<h3>JDBC</h3>
+<div class="def"><b class="lbl">JDBC</b>Java Database Connectivity: un’<b>API</b> Java (una libreria) per accedere a basi di dati in modo indipendente dalla tecnologia. Ogni DBMS fornisce un <b>driver</b> specifico, caricato a run-time, che traduce le chiamate JDBC in chiamate al DBMS.</div>
+<p><b>Due architetture:</b> l’applicazione Java parla <b>direttamente</b> col database, oppure un <b>livello intermedio</b> (middle-tier, con middleware o application server) invia i comandi e controlla accessi e aggiornamenti: può dare vantaggi di scalabilità.</p>
+<div class="tbl"><table><tr><th>Componente</th><th>Ruolo</th></tr>
+<tr><td><b>Applicazione</b></td><td>Apre e chiude la connessione, imposta le transazioni, invia comandi SQL, riceve i risultati, tutto tramite l’API JDBC.</td></tr>
+<tr><td><b>Gestore di driver</b></td><td>Carica i driver, passa le chiamate al driver corrente, controlla gli errori.</td></tr>
+<tr><td><b>Driver</b></td><td>Stabilisce la connessione, inoltra richieste e risultati, trasforma dati e formati di errore dal DBMS allo standard JDBC.</td></tr>
+<tr><td><b>Sorgente di dati</b></td><td>Elabora i comandi del driver e restituisce i risultati.</td></tr></table></div>
+<p><b>Cosa fa JDBC:</b> esegue comandi DDL e DML, manipola i risultati con il <b>result set</b> (una forma di cursore), reperisce metadati, gestisce transazioni, errori ed eccezioni, definisce stored procedure in Java (in alcuni DBMS). <b>Cosa serve:</b> Java SE con i package <code>java.sql</code> (base) e <code>javax.sql</code> (avanzate, es. pooling di connessioni), il <b>driver JDBC</b> del DBMS (un .jar da aggiungere al progetto o alle variabili d’ambiente; per MySQL 8 è il mysql-connector-j), e il DBMS.</p>
+<div class="flow"><span>1. Caricare il driver</span><i>→</i><span>2. Aprire la connessione</span><i>→</i><span>3. Eseguire istruzioni SQL</span><i>→</i><span>4. Elaborare i risultati</span></div>
+<pre>import java.sql.*;
+
+public class PrimoJDBC {
+  public static void main(String[] arg) {
+    Connection con = null;
+    try {
+      Class.forName("com.mysql.jdbc.Driver");                  // 1. driver
+      String url = "jdbc:mysql://localhost:3306/corsi";        // corsi = nome dello schema
+      con = DriverManager.getConnection(url, "&lt;username&gt;", "&lt;pwd&gt;");   // 2. connessione
+    } catch (Exception e) { System.out.println("Connessione fallita"); }
+    try {
+      Statement query = con.createStatement();                 // 3. istruzione
+      ResultSet result = query.executeQuery("select * from Corsi");
+      while (result.next()) {                                  // 4. risultati
+        String nomeCorso = result.getString("NomeCorso");
+        System.out.println(nomeCorso);
+      }
+    } catch (Exception e) { System.out.println("Errore nell'interrogazione"); }
+  }
+}</pre>
+<p>La <b>Connection</b> è il collegamento attivo fra programma e base di dati, creato da <code>DriverManager.getConnection(url, user, pwd)</code>.</p>
+<h4>Statement</h4>
+<p>Oggetti che inviano istruzioni SQL tramite una connessione e ricevono i risultati; si creano con <code>con.createStatement()</code>.</p>
+<div class="tbl"><table><tr><th>Metodo</th><th>Per</th></tr>
+<tr><td><code>executeQuery</code></td><td>Interrogazioni: restituisce un ResultSet.</td></tr>
+<tr><td><code>executeUpdate</code></td><td>Aggiornamenti e istruzioni DDL.</td></tr>
+<tr><td><code>execute</code></td><td>Istruzioni non note a priori.</td></tr>
+<tr><td><code>executeBatch</code></td><td>Sequenze di istruzioni.</td></tr></table></div>
+<h4>ResultSet</h4>
+<p>Sequenza di ennuple su cui si “naviga” (avanti, indietro, accesso diretto) e dalla cui ennupla <b>corrente</b> si estraggono i valori. Metodi: <code>next()</code>; <code>getXXX(posizione)</code> es. <code>getString(3)</code>, <code>getInt(2)</code>; <code>getXXX(nomeAttributo)</code> es. <code>getString("Cognome")</code>.</p>
+<h4>PreparedStatement e CallableStatement</h4>
+<div class="vs"><div><h4>PreparedStatement</h4><p>Codice SQL <b>già compilato</b>, parametrizzato con <code>?</code>; i parametri si impostano con <code>setXXX(posizione, valore)</code>. In generale <b>più efficiente</b> di Statement e separa meglio istruzioni e costanti (anche gli apici nelle costanti).</p></div><div><h4>CallableStatement</h4><p>Per chiamare <b>stored procedure</b> (es. Oracle PL/SQL) o query memorizzate e parametriche (es. Access).</p></div></div>
+<pre>PreparedStatement pquery = con.prepareStatement(
+    "select * from Corsi where NomeCorso LIKE ?");
+String param = "%" + JOptionPane.showInputDialog("Nome corso (anche parziale)?") + "%";
+pquery.setString(1, param);
+ResultSet result = pquery.executeQuery();</pre>
+<p>Altre funzionalità: aggiornamento dei ResultSet, richiesta di metadati, gestione delle transazioni.</p>
+<h4>Transazioni in JDBC</h4>
+<pre>con.setAutoCommit(true);    // default: ogni operazione è una transazione
+con.setAutoCommit(false);   // transazioni gestite dal programma
+con.commit();
+con.rollback();</pre>
+<div class="exam"><b class="lbl">Da ricordare</b>In JDBC <b>non c’è begin transaction</b>: con autocommit disattivato la transazione comincia da sola e finisce con <code>commit()</code> o <code>rollback()</code>.</div>
+<h3>Stored procedure</h3>
+<p>SQL:1999 (come già SQL-2) permette di definire procedure e funzioni, dette <b>stored procedure</b>, che fanno parte dello <b>schema</b>. Lo standard ha funzioni limitate ed è poco recepito; molti sistemi offrono estensioni ricche (Oracle <b>PL/SQL</b>, Sybase/Microsoft <b>Transact-SQL</b>).</p>
+<pre>procedure AssignCity(:Dep char(20), :City char(20))
+  update Department set City = :City where Name = :Dep</pre>
+<p>Esempio PL/SQL delle slide, <code>Debit</code>: legge saldo e soglia del conto (<code>for update of Amount</code>), calcola il nuovo saldo e, se supera la soglia, aggiorna il conto; altrimenti inserisce una riga in OverDraftExceeded con la data (<code>sysdate</code>).</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Cos’è il conflitto di impedenza?</summary><p>I linguaggi lavorano su una variabile o un oggetto alla volta, SQL su insiemi di ennuple.</p></details><details><summary>A cosa serve il cursore?</summary><p>A passare al programma il risultato di una query un’ennupla alla volta.</p></details><details><summary>sqlcode = 0 significa?</summary><p>Che l’ultimo comando SQL è andato a buon fine.</p></details><details><summary>Quale metodo uso per una INSERT in JDBC?</summary><p>executeUpdate.</p></details><details><summary>Perché preferire PreparedStatement?</summary><p>È precompilato, più efficiente e gestisce i parametri separandoli dal testo SQL.</p></details><details><summary>CLI o SQL immerso: quale è indipendente dal DBMS?</summary><p>La CLI.</p></details></div></section>
+
+<div class="partbreak">Parte V · Livello fisico</div>
+<section class="ch" id="fisica" data-t="Progettazione fisica" data-part="Parte V · Livello fisico"><div class="ch-head"><span class="ch-num">10</span><h2>Progettazione fisica</h2><span class="ch-sub">Memoria secondaria, strutture sequenziali e hash, indici, B-tree e B+-tree, scelta degli indici.</span></div>
+<h3>Memoria principale e secondaria</h3>
+<p>I programmi usano solo dati in memoria <b>principale</b>, ma le basi di dati stanno in memoria <b>secondaria</b> per <b>dimensioni</b> e <b>persistenza</b>: i dati vanno prima trasferiti in memoria principale. La memoria secondaria è organizzata in <b>blocchi</b> di lunghezza (di solito) fissa, di qualche KB; le uniche operazioni sono <b>lettura e scrittura di una pagina</b> (consideriamo blocco e pagina sinonimi).</p>
+<div class="tbl"><table><tr><th>Componente del tempo di accesso</th><th>Valore tipico</th></tr>
+<tr><td>Posizionamento della testina (<b>seek time</b>)</td><td>2–15 ms</td></tr>
+<tr><td>Latenza (<b>rotational delay</b>)</td><td>2–6 ms (4–15 mila giri al minuto)</td></tr>
+<tr><td>Trasferimento di un blocco</td><td>frazioni di ms (100–300 MB/s)</td></tr></table></div>
+<div class="def"><b class="lbl">Il costo che conta</b>Un accesso a memoria secondaria costa <b>quattro o più ordini di grandezza</b> in più di un’operazione in memoria centrale. Nelle applicazioni <b>I/O bound</b> il costo dipende <b>esclusivamente dal numero di accessi</b> a memoria secondaria. Accessi a blocchi vicini costano meno (contiguità).</div>
+<div class="tbl"><table><tr><th>Struttura</th><th>Uso</th></tr>
+<tr><td>Sequenziali</td><td>Primarie</td></tr>
+<tr><td>Calcolate (hash)</td><td>Primarie (e talvolta secondarie)</td></tr>
+<tr><td>Ad albero (di solito indici)</td><td>Secondarie e primarie</td></tr></table></div>
+<h3>Strutture sequenziali</h3>
+<div class="vs"><div><h4>Seriale</h4><p>Detta anche <i>entry sequenced</i>, <b>file heap</b> (“mucchio”), file disordinato: ordinamento <b>fisico ma non logico</b>. Inserimenti in coda (con riorganizzazioni periodiche) o al posto dei record cancellati. Molto diffusa nei DB relazionali, associata a <b>indici secondari</b>. Gestione semplice ma spesso inefficiente.</p></div><div><h4>Sequenziale ordinata</h4><p>Ogni tupla ha una posizione basata sul valore di un campo chiave (o pseudochiave). Un tempo per processi batch su nastri (file principale + file differenziali fusi periodicamente). Inserimenti e modifiche richiedono riorganizzazioni: si lasciano <b>slot liberi</b> al caricamento, o si usa un <b>file di overflow</b> con blocchi collegati.</p></div></div>
+<p>Le strutture ordinate permettono la ricerca binaria solo fino a un certo punto (come si trova la “metà” del file?): nei DB relazionali si usano quasi solo con indici (file <b>ISAM</b> o file ordinati con indice primario).</p>
+<h3>Hash</h3>
+<p>Obiettivo: accesso diretto ai record in base al valore di una chiave. Se i valori possibili sono pochi (1000 studenti con matricole da 1 a 1000) basta un array; se sono molti di più di quelli usati (40 studenti con matricole di 6 cifre) l’array sprecherebbe spazio. La <b>funzione hash</b> associa a ogni chiave un indirizzo in uno spazio poco più grande del necessario. Lo spazio delle chiavi è più grande di quello degli indirizzi, quindi la funzione non è iniettiva e ci sono <b>collisioni</b>; le buone funzioni distribuiscono in modo casuale e uniforme.</p>
+<p>Collisioni: posizioni successive libere, tabella di overflow collegata, funzioni hash alternative. Ci sono quasi sempre, ma le collisioni multiple diventano sempre meno probabili e la molteplicità media è bassa.</p>
+<div class="exam"><b class="lbl">L’esempio delle slide</b>40 record, tabella con 50 posizioni (M mod 50): 1 collisione a 4, 2 a 3, 5 a 2, 12 record in overflow. Accessi medi = (28×1 + 8×2 + 3×3 + 1×4) / 40 = <b>1,425</b>. Con un <b>file hash</b> a <b>fattore di blocco 10</b> e 5 blocchi (M mod 5) restano solo 2 record in overflow: accessi medi 42/40 = <b>1,05</b>. Più record per blocco = meno overflow.</div>
+<p>La lunghezza media delle catene di overflow dipende dal <b>coefficiente di riempimento T/(F×B)</b> (T record, B blocchi, F fattore di blocco): cresce con il riempimento e cala con F. Es. a riempimento 0,8 vale 2,0 con F = 1 e 0,110 con F = 10; a 0,5 vale 0,5 con F = 1 e 0,005 con F = 10.</p>
+<div class="vs"><div><h4>Hash: pro</h4><p>L’organizzazione <b>più efficiente</b> per l’accesso diretto con condizioni di <b>uguaglianza</b> (puntuale): costo medio di poco superiore a 1.</p></div><div><h4>Hash: contro</h4><p><b>Inefficiente per intervalli</b> e per ricerche su altri attributi. “Degenera” se si riduce lo spazio sovrabbondante: va bene solo per file di dimensione abbastanza stabile.</p></div></div>
+<h3>Indici</h3>
+<div class="def"><b class="lbl">Indice</b>Struttura ausiliaria per l’accesso efficiente ai record di un file in base ai valori di un campo (o concatenazione di campi) detto chiave o meglio <b>pseudochiave</b> (non per forza identificante). Come l’indice analitico di un libro: un altro file con record (chiave, indirizzo), <b>ordinato</b> sulla chiave.</div>
+<div class="vs"><div><h4>Indice primario (di cluster)</h4><p>Sul campo su cui è basato l’<b>ordinamento fisico</b> del file. (A volte “primario” è quello su chiave identificante e “di cluster” quello su pseudochiave.) Come l’indice generale di un libro.</p></div><div><h4>Indice secondario</h4><p>Su un campo con ordinamento <b>diverso</b> da quello di memorizzazione. Come l’indice analitico. I suoi benefici sono molto più sensibili.</p></div></div>
+<ul><li>Ogni file ha <b>al più un indice primario</b> e quanti indici secondari si vuole (una guida con indice dei luoghi e degli artisti).</li><li>Un <b>file hash non può avere un indice primario</b>.</li></ul>
+<div class="vs"><div><h4>Denso</h4><p>Contiene <b>tutti</b> i valori della chiave (su campo identificante, un riferimento per record).</p></div><div><h4>Sparso</h4><p>Contiene <b>solo alcuni</b> valori (es. uno per blocco): meno riferimenti dei record.</p></div></div>
+<div class="exam"><b class="lbl">Regole da sapere</b>L’indice <b>primario</b> di solito è <b>sparso</b> (se denso permette di lavorare sugli indirizzi senza accedere ai record). L’indice <b>secondario deve essere denso</b>: il file non è ordinato su quel campo, quindi ogni valore va indicizzato. Puntatori ai blocchi: più compatti; puntatori ai record: permettono operazioni solo sull’indice.</div>
+<h4>Dimensione di un indice</h4>
+<p>L record, B dimensione del blocco, R lunghezza del record, K lunghezza della chiave, P lunghezza dell’indirizzo:</p>
+<div class="tbl"><table><tr><th>Blocchi</th><th>Formula</th><th>Esempio: L = 1.000.000, B = 4 KB, R = 100 B, K = 4 B, P = 4 B</th></tr>
+<tr><td>File</td><td>NF = L / (B/R)</td><td>1.000.000 / 40 = <b>25.000</b></td></tr>
+<tr><td>Indice denso</td><td>ND = L / (B/(K+P))</td><td>1.000.000 / 500 = <b>2.000</b></td></tr>
+<tr><td>Indice sparso</td><td>NS = NF / (B/(K+P))</td><td>25.000 / 500 = <b>50</b></td></tr></table></div>
+<p><b>Caratteristiche:</b> accesso diretto efficiente sulla chiave, sia <b>puntuale</b> sia per <b>intervalli</b>; scansione ordinata efficiente (ogni indice dà un ordinamento logico, con accessi pari al numero di record). Ma modifiche della chiave, inserimenti ed eliminazioni sono <b>inefficienti</b> come nei file ordinati: si usano overflow, marcature, riempimento parziale, blocchi collegati, riorganizzazioni.</p>
+<p><b>Indici su campi non chiave</b> (più record per valore): primario sparso con puntatori solo ai blocchi con valori “nuovi”; primario denso con una coppia per record, o valore + lista di riferimenti, o valore + primo record; secondario denso con una coppia per record oppure un <b>livello di indirezione</b> in più (blocchi intermedi con i riferimenti ai record).</p>
+<h4>Indici multilivello</h4>
+<p>Gli indici sono file, quindi si possono indicizzare: l’indice è ordinato, quindi l’indice sull’indice è <b>primario e sparso</b>; si sale fino a un livello con un solo blocco. I livelli sono pochi: <b>Nj = Nj−1 / (B/(K+P))</b>. Nell’esempio (500 voci per blocco): denso 2.000 → 4 → 1; sparso 50 → 1.</p>
+<h3>B-tree e B+-tree</h3>
+<p>Gli indici visti sono basati su strutture ordinate, poco flessibili con molta dinamicità. I DBMS usano <b>indici dinamici multilivello</b>: i <b>B-tree</b>, alberi di ricerca bilanciati. Ci si arriva per gradi:</p>
+<ul><li><b>Albero binario di ricerca:</b> a sinistra etichette minori, a destra maggiori; ricerca pari alla profondità, logaritmica nel caso medio.</li>
+<li><b>Albero di ricerca di ordine P:</b> ogni nodo ha fino a P figli e P−1 etichette ordinate; nell’i-esimo sottoalbero le etichette stanno tra la (i−1)-esima e la i-esima. Un nodo = un blocco, quindi <b>fan-out</b> molto grande; la ricerca dentro il nodo è sequenziale ma in memoria centrale. Ancora rigido.</li>
+<li><b>B-tree:</b> ogni nodo è un blocco e l’albero è <b>perfettamente bilanciato</b> (tutte le foglie allo stesso livello), grazie al <b>riempimento parziale</b> (in media 70%) e a <b>riorganizzazioni locali</b>.</li></ul>
+<p><b>Split e merge:</b> inserimenti ed eliminazioni partono da una ricerca fino a una foglia. Se nella foglia c’è posto si inserisce, altrimenti il nodo si <b>divide</b> (split) e serve un puntatore in più nel padre, risalendo anche fino alla radice; il riempimento resta sempre <b>sopra il 50%</b>. Le eliminazioni possono ridurre i nodi (merge). Modificare la chiave = eliminare + inserire.</p>
+<div class="tbl"><table><tr><th></th><th>B-tree</th><th>B+-tree</th></tr>
+<tr><td>Chiavi</td><td>Quelle nei nodi intermedi <b>non</b> si ripetono nelle foglie</td><td><b>Tutte</b> le chiavi sono nelle foglie (quelle intermedie sono ripetute)</td></tr>
+<tr><td>Foglie</td><td>—</td><td><b>Collegate in lista</b>: ottimi per gli <b>intervalli</b>, molto usati nei DBMS</td></tr>
+<tr><td>Primario</td><td>Anche i nodi intermedi contengono ennuple</td><td>Le ennuple possono stare nelle foglie</td></tr>
+<tr><td>Secondario</td><td>Anche i nodi intermedi contengono puntatori</td><td>Le foglie contengono i puntatori alle ennuple</td></tr></table></div>
+<h4>Calcolare l’ordine</h4>
+<p>Dati delle slide: V = 9 byte (campo di ricerca), B = 512 byte, Pr = 7 byte (puntatore a record), P = 6 byte (puntatore a blocco).</p>
+<div class="tbl"><table><tr><th>Nodo</th><th>Vincolo</th><th>Risultato</th></tr>
+<tr><td>B-tree</td><td>p·P + (p−1)(Pr+V) ≤ B → 6p + 16(p−1) ≤ 512 → 22p ≤ 528</td><td>p ≤ 24, si sceglie <b>p = 23</b> per lasciare spazio a info aggiuntive (numero di entrate, puntatore al padre)</td></tr>
+<tr><td>B+-tree interno</td><td>p·P + (p−1)·V ≤ B → 6p + 9(p−1) ≤ 512 → 15p ≤ 521</td><td><b>p = 34</b> (fan-out maggiore: i nodi interni non hanno puntatori a record)</td></tr>
+<tr><td>B+-tree foglia</td><td>Pleaf·(Pr+V) + P ≤ B → 16·Pleaf ≤ 506</td><td><b>Pleaf = 31</b> (P serve per il puntatore Pnext alla foglia successiva)</td></tr></table></div>
+<div class="widget" id="calc"><h4>Calcolatore dell’ordine</h4>
+<label><span>Blocco B (byte)</span><input type="number" id="cB" value="512" min="64" step="1"><output></output></label>
+<label><span>Chiave V (byte)</span><input type="number" id="cV" value="9" min="1" step="1"><output></output></label>
+<label><span>Puntatore a record Pr</span><input type="number" id="cPr" value="7" min="1" step="1"><output></output></label>
+<label><span>Puntatore a blocco P</span><input type="number" id="cP" value="6" min="1" step="1"><output></output></label>
+<p style="margin:12px 0 0">B-tree: p ≤ <b id="oB">24</b> · B+-tree interno: p = <b id="oBp">34</b> · foglia: Pleaf = <b id="oL">31</b></p></div>
+<h4>Quante entrate ci stanno</h4>
+<p>Con nodi pieni al <b>69%</b>. <b>B-tree</b> (p = 23): circa 16 puntatori e 15 chiavi per nodo. Radice 1 nodo, 15 entrate; livello 1: 16 nodi, 240 entrate; livello 2: 256 nodi, 3840 entrate; livello 3: 4096 nodi, 61.440 entrate. A <b>3 livelli</b> 4095 entrate, a <b>4 livelli 65.535</b>. <b>B+-tree</b> (p = 34, Pleaf = 31): circa 23 puntatori e 22 chiavi per nodo interno, 21 puntatori a record per foglia. Radice 1 nodo; livello 1: 23 nodi; livello 2: 529 nodi; foglie: 12.167 nodi con 21 × 12.167 = <b>255.507 puntatori a record</b> con 4 livelli, contro 65.535 del B-tree.</p>
+<h4>Inserimento in un B+-tree</h4>
+<ul><li>All’inizio la radice è l’unico nodo, quindi è una foglia con i puntatori ai dati.</li>
+<li><b>Overflow in una foglia:</b> le prime j = ⌈(Pleaf+1)/2⌉ entrate restano, le altre vanno in una nuova foglia; il j-esimo valore (il mediano) è <b>replicato</b> nel padre, con un puntatore alla nuova foglia.</li>
+<li><b>Overflow in un nodo interno:</b> le entrate fino a Pj, con j = ⌊(p+1)/2⌋, restano; il j-esimo valore <b>sale</b> nel padre <b>senza essere replicato</b>; il nuovo nodo prende le entrate da Pj+1 in poi. La scissione può propagarsi fino a creare un nuovo livello.</li></ul>
+<p>Esempio delle slide: p = 3, Pleaf = 2, inserimento di 8, 5, 1, 7, 3, 12.</p>
+<div class="tbl"><table><tr><th>Inserisco</th><th>Che succede</th></tr>
+<tr><td>8, 5</td><td>Nessun overflow: radice-foglia [5, 8].</td></tr>
+<tr><td>1</td><td>Overflow [1, 5, 8]: restano [1, 5], nuova foglia [8], il 5 è replicato in una nuova radice [5].</td></tr>
+<tr><td>7</td><td>Va in [7, 8], nessun overflow.</td></tr>
+<tr><td>3</td><td>Overflow in [1, 3, 5]: [1, 3] e [5], il 3 sale replicato: radice [3, 5].</td></tr>
+<tr><td>12</td><td>Overflow in [7, 8, 12]: [7, 8] e [12], l’8 sale nella radice che diventa [3, 5, 8] e va in overflow: resta [3], nasce [8], il 5 sale (non replicato) in una nuova radice. Un livello in più.</td></tr></table></div>
+<figure class="diagram"><svg viewBox="0 0 640 210" role="img" aria-label="B+-tree finale: radice 5; nodi interni 3 e 8; foglie 1 3, 5, 7 8, 12 collegate in lista">
+<g font-family="JetBrains Mono, monospace" font-size="14" fill="currentColor" text-anchor="middle">
+<g fill="none" stroke="currentColor" stroke-width="1.3"><rect x="290" y="14" width="60" height="32" stroke="var(--acc)"/><rect x="140" y="84" width="60" height="32"/><rect x="440" y="84" width="60" height="32"/>
+<rect x="40" y="160" width="90" height="32"/><rect x="200" y="160" width="60" height="32"/><rect x="360" y="160" width="90" height="32"/><rect x="530" y="160" width="60" height="32"/>
+<path d="M305 46 L170 84 M335 46 L470 84 M155 116 L85 160 M185 116 L230 160 M455 116 L405 160 M485 116 L560 160"/>
+<path d="M130 176 L200 176 M260 176 L360 176 M450 176 L530 176" stroke-dasharray="4 3"/></g>
+<text x="320" y="35" fill="var(--acc)">5</text><text x="170" y="105">3</text><text x="470" y="105">8</text>
+<text x="85" y="181">1 · 3</text><text x="230" y="181">5</text><text x="405" y="181">7 · 8</text><text x="560" y="181">12</text></g></svg>
+<figcaption>Il B+-tree dopo 8, 5, 1, 7, 3, 12. Ogni valore di un nodo interno è anche il valore più a destra del sottoalbero alla sua sinistra; le foglie (tratteggio) sono collegate.</figcaption></figure>
+<h4>Cancellazione in un B+-tree</h4>
+<ul><li>Si cancella sempre a <b>livello foglia</b>; se il valore compare in un nodo interno, lì si sostituisce con il valore immediatamente alla sua sinistra nella foglia.</li>
+<li>Se la foglia va in <b>underflow</b> (meno del minimo) si <b>ridistribuisce</b> con un fratello perché entrambi siano pieni almeno a metà: prima il sinistro, poi il destro.</li>
+<li>Se non si può si fa il <b>merge</b> (si fondono i nodi, una foglia in meno). L’underflow può propagarsi ai nodi interni e, se arriva alla radice, l’albero perde un livello.</li></ul>
+<h3>La progettazione fisica</h3>
+<div class="def"><b class="lbl">Fase finale della progettazione</b><b>Input:</b> schema logico e informazioni sul carico applicativo. <b>Output:</b> schema fisico, cioè le relazioni con le loro strutture fisiche e molti parametri, spesso legati al DBMS.</div>
+<div class="tbl"><table><tr><th>Strutture nei DBMS relazionali</th><th></th></tr>
+<tr><td>Struttura primaria</td><td>Disordinata (heap, “unclustered”); ordinata (“clustered”), anche su pseudochiave; hash (“clustered”), anche su pseudochiave, senza ordinamento; clustering di più relazioni.</td></tr>
+<tr><td>Indici</td><td>Densi o sparsi, semplici o composti: ISAM (statico, di solito su struttura ordinata), B-tree (dinamico), indici hash (secondari, poco dinamici).</td></tr></table></div>
+<div class="tbl"><table><tr><th>DBMS</th><th>Strutture</th></tr>
+<tr><td>Oracle</td><td>Primaria: file heap, “hash cluster”, cluster (anche plurirelazionali, anche ordinati con B-tree denso); indici secondari B-tree, bitmap, su funzioni.</td></tr>
+<tr><td>DB2</td><td>Primaria heap o ordinata con B-tree denso; indice sulla chiave primaria automatico; secondari B-tree densi.</td></tr>
+<tr><td>SQL Server</td><td>Primaria heap o ordinata con indice B-tree sparso; secondari B-tree densi.</td></tr>
+<tr><td>Ingres (anni fa), Informix (DOS, 1994)</td><td>Heap, hash, ISAM anche compressi; indici secondari (Informix: primari non mantenuti).</td></tr></table></div>
+<pre>CREATE [UNIQUE] INDEX IndexName ON TableName (AttributeList)   -- non standard, ma simile ovunque
+DROP INDEX IndexName</pre>
+<p>Nel relazionale la progettazione fisica spesso <b>coincide con la scelta degli indici</b> (più i parametri del DBMS):</p>
+<ul><li>le chiavi primarie sono coinvolte in selezioni e join: molti sistemi definiscono o suggeriscono <b>indici sulle chiavi primarie</b>;</li><li>altri indici per le selezioni e i join <b>importanti</b>;</li><li>se le prestazioni non bastano si “tara” il sistema aggiungendo o togliendo indici;</li><li>con <b>show plan</b> o <b>explain</b> si verifica se e come gli indici vengono usati.</li></ul>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Da cosa dipende il costo in un’applicazione I/O bound?</summary><p>Solo dal numero di accessi a memoria secondaria.</p></details><details><summary>Hash per una ricerca su intervallo?</summary><p>No: l’hash è ottimo solo per l’uguaglianza.</p></details><details><summary>Un indice secondario può essere sparso?</summary><p>No, deve essere denso.</p></details><details><summary>Quanti indici primari può avere un file?</summary><p>Al più uno (e nessuno se è un file hash).</p></details><details><summary>Perché il B+-tree è migliore per gli intervalli?</summary><p>Perché tutte le chiavi stanno nelle foglie, collegate in lista.</p></details><details><summary>Nello split di una foglia di B+-tree il mediano sale o si replica?</summary><p>Si replica nel padre. Nello split di un nodo interno invece sale senza replica.</p></details></div></section>
+
+<section class="ch study" id="ripasso" data-t="Ripasso finale" data-part="Ripasso"><div class="ch-head"><span class="ch-num">✓</span><h2>Ripasso finale</h2><span class="ch-sub">Come allenarsi sugli esercizi tipici e le domande da saper dire a voce.</span></div>
+<div class="review-grid"><article><h3>1. Dal testo allo schema ER</h3><p>Prendi una traccia (come l’azienda di sviluppo software) e sottolinea i sostantivi: entità o attributi? I verbi diventano associazioni. Poi metti cardinalità e identificatori, e scrivi i vincoli non esprimibili.</p></article><article><h3>2. Tavole di volumi e accessi</h3><p>Rifai a mano il caso Numero abitanti: volumi, operazioni, accessi con e senza ridondanza, scritture contate doppie. Decidi e motiva.</p></article><article><h3>3. Ristruttura e traduci</h3><p>Elimina una gerarchia nei tre modi e di’ quando conviene ciascuno; poi traduci lo schema in relazioni con chiavi sottolineate, chiavi esterne e asterischi sui nullabili.</p></article><article><h3>4. Interrogazioni in algebra</h3><p>Su Impiegati e Supervisione scrivi le cinque query delle slide senza guardare. Controlla le ridenominazioni e il trucco della differenza per il “tutti”.</p></article><article><h3>5. Le stesse query in SQL</h3><p>Riscrivile su Persone, Paternità e Maternità: join, GROUP BY con HAVING, NOT EXISTS, MAX con sottoquery. Occhio a DISTINCT e alla target list omogenea.</p></article><article><h3>6. Esercizi di livello fisico</h3><p>Calcola NF, ND, NS e i livelli di un indice; l’ordine di B-tree e B+-tree; inserisci una sequenza di chiavi in un B+-tree con p = 3 e Pleaf = 2 disegnando ogni split.</p></article></div>
+<div class="quiz"><h4>Domande lampo</h4><div class="oral-grid"><details><summary>Che differenza c’è tra indipendenza logica e fisica?</summary><p>Logica: cambio lo schema logico senza toccare viste e programmi. Fisica: cambio lo schema interno senza toccare lo schema logico. La fisica è più facile.</p></details><details><summary>Quando un’associazione molti a molti va trasformata in entità?</summary><p>Quando la stessa coppia di occorrenze deve potersi ripetere (es. lo stesso esame sostenuto più volte).</p></details><details><summary>Superchiave, chiave candidata, chiave primaria?</summary><p>Superchiave: identifica le ennuple. Chiave: superchiave minimale. Primaria: la chiave scelta, senza nulli.</p></details><details><summary>Che cosa garantisce |R1 ⋈ R2| = |R1|?</summary><p>Join su una chiave di R2 con vincolo di integrità referenziale da R1.</p></details><details><summary>WHERE o HAVING per AVG(Reddito) &gt; 25?</summary><p>HAVING: è una condizione su un aggregato, quindi sui gruppi.</p></details><details><summary>Che cos’è il conflitto di impedenza e come lo risolve il cursore?</summary><p>Il linguaggio lavora su un valore alla volta, SQL su insiemi: il cursore consegna le ennuple una alla volta.</p></details><details><summary>Perché un indice secondario deve essere denso?</summary><p>Perché il file non è ordinato su quel campo: senza tutti i valori non si troverebbero i record.</p></details><details><summary>B-tree o B+-tree per le ricerche su intervalli?</summary><p>B+-tree: tutte le chiavi nelle foglie collegate in lista.</p></details></div></div></section>
+<section class="ch study resources" id="risorse" data-t="Risorse" data-part="Risorse"><div class="ch-head"><span class="ch-num">↗</span><h2>Risorse</h2><span class="ch-sub">Le fonti di questo quaderno.</span></div><ul class="resource-list"><li><b>Slide del corso</b> di Basi di Dati, a.a. 2025/2026, proff. G. Polese, L. Caruccio, A. Pagliara: Lezione 02 Concetti di base e architetture dei DBMS · 03 Progettazione di basi di dati · 04 Progettazione logica · 05 Il modello relazionale · 06 Mapping · 07 Algebra relazionale · 08 SQL · 09 JDBC (SQL nei linguaggi di programmazione) · 10 Progettazione fisica. I numeri dei capitoli sono quelli delle lezioni.</li><li><b>Correzioni rispetto alle slide:</b> nell’algebra (lezione 07) gli operatori insiemistici richiedono relazioni definite sugli <b>stessi</b> attributi (la slide dice “non definite”); nella query con GROUP BY Padre, p.Reddito (lezione 08) il JOIN va prima del GROUP BY; nell’esercizio della ridondanza (lezione 04) l’associazione si chiama Residenza, non Nascita.</li></ul></section>
+
+</main></div>
+<script>
+(function(){
+var key='quaderno-basi-done',done={};try{done=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){done={}}var chapters=[].slice.call(document.querySelectorAll('section.ch:not(.study)')),toc=document.getElementById('toc'),links={},last=null;
+chapters.forEach(function(sec){var part=sec.dataset.part;if(part!==last){var h=document.createElement('li');h.className='part';h.textContent=part;toc.appendChild(h);last=part}var a=document.createElement('a');a.href='#'+sec.id;a.innerHTML='<span class="n"></span><span class="t"></span><span class="cnt"></span>';a.querySelector('.n').textContent=sec.querySelector('.ch-num').textContent;a.querySelector('.t').textContent=sec.dataset.t;var li=document.createElement('li');li.appendChild(a);toc.appendChild(li);links[sec.id]=a;var lab=document.createElement('label');lab.className='check';var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!done[sec.id];lab.appendChild(cb);lab.appendChild(document.createTextNode('Capitolo ripassato'));sec.appendChild(lab);cb.addEventListener('change',function(){done[sec.id]=cb.checked;save();update()})});function save(){try{localStorage.setItem(key,JSON.stringify(done))}catch(e){}}function update(){var n=0;chapters.forEach(function(s){var yes=!!done[s.id];if(yes)n++;links[s.id].classList.toggle('done',yes)});document.getElementById('pc').textContent=n;document.getElementById('pt').textContent=chapters.length;document.getElementById('pb').style.width=(chapters.length?n/chapters.length*100:0)+'%'}update();
+var q=document.getElementById('q'),res=document.getElementById('sres'),clr=document.getElementById('qclr'),items=[];document.querySelectorAll('section.ch').forEach(function(s){s.querySelectorAll('h2,h3,h4,p,li,td,summary,.def,.exam,.note').forEach(function(el){var t=el.textContent.replace(/\s+/g,' ').trim();if(t)items.push({el:el,sec:s,text:t})})});var cur=[],sel=-1;function fold(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}function esc(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function run(){var raw=q.value.trim();clr.hidden=!raw;if(raw.length<2){res.hidden=true;res.innerHTML='';cur=[];chapters.forEach(function(s){links[s.id].querySelector('.cnt').textContent='';links[s.id].classList.remove('miss')});return}var terms=fold(raw).split(/\s+/);cur=items.filter(function(it){var f=fold(it.text);return terms.every(function(t){return f.indexOf(t)>=0})});var counts={};cur.forEach(function(it){counts[it.sec.id]=(counts[it.sec.id]||0)+1});chapters.forEach(function(s){var n=counts[s.id]||0;links[s.id].querySelector('.cnt').textContent=n||'';links[s.id].classList.toggle('miss',!n)});if(!cur.length){res.innerHTML='<p>Nessun risultato per “'+esc(raw)+'”. Prova con una parola più corta.</p>';res.hidden=false;return}var html='<p>'+cur.length+' risultati · frecce per scegliere, Invio per aprire</p>';cur.slice(0,50).forEach(function(it,i){html+='<a href="#'+esc(it.sec.id)+'" data-i="'+i+'"><small>'+esc(it.sec.querySelector('.ch-num').textContent+' · '+it.sec.dataset.t)+'</small>'+esc(it.text.slice(0,210))+'</a>'});if(cur.length>50)html+='<p>Altri '+(cur.length-50)+' risultati: aggiungi parole alla ricerca.</p>';res.innerHTML=html;res.hidden=false;sel=-1}
+function go(i){var it=cur[i];if(!it)return;res.hidden=true;it.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});it.el.setAttribute('tabindex','-1');it.el.focus({preventScroll:true})}q.addEventListener('input',run);q.addEventListener('keydown',function(e){var n=res.querySelectorAll('a').length;if(e.key==='ArrowDown'&&n){e.preventDefault();sel=Math.min(n-1,sel+1)}else if(e.key==='ArrowUp'&&n){e.preventDefault();sel=Math.max(0,sel-1)}else if(e.key==='Enter'){e.preventDefault();go(sel<0?0:sel)}else if(e.key==='Escape'){q.value='';run();res.hidden=true}Array.prototype.forEach.call(res.querySelectorAll('a'),function(a,i){a.classList.toggle('on',i===sel)});var active=res.querySelector('a.on');if(active)active.scrollIntoView({block:'nearest'})});res.addEventListener('click',function(e){var a=e.target.closest('a');if(a){e.preventDefault();go(+a.dataset.i)}});document.addEventListener('click',function(e){if(!e.target.closest('.search'))res.hidden=true});document.addEventListener('keydown',function(e){var ae=document.activeElement;if(e.key==='/'&&ae!==q&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))){e.preventDefault();q.focus()}});clr.addEventListener('click',function(){q.value='';run();q.focus()});
+var cIds=['cB','cV','cPr','cP'];function ord(){var v=cIds.map(function(i){return Math.max(1,+document.getElementById(i).value||0)}),B=v[0],V=v[1],Pr=v[2],P=v[3];document.getElementById('oB').textContent=Math.floor((B+Pr+V)/(P+Pr+V));document.getElementById('oBp').textContent=Math.floor((B+V)/(P+V));document.getElementById('oL').textContent=Math.floor((B-P)/(Pr+V))}cIds.forEach(function(i){document.getElementById(i).addEventListener('input',ord)});ord();
+})();
+</script></body></html>

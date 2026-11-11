@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Piano di studio di Basi di Dati</title>
+<meta name="description" content="Piano di studio personalizzato per l'esame di Basi di Dati, con i capitoli del Quaderno di Basi di Dati.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una colonna di lettura. In alto la prova (data e conto alla rovescia), poi i 4 pacchetti di slide
+   con i capitoli del quaderno, poi il generatore del piano personalizzato. Colore del corso (blu). */
+:root{
+  --bg:#ebeae6; --surface:#f4f3f0; --ink:#111418; --muted:#5d636b; --line:#d2d1cb; --soft:#e2e1dc;
+  --c:var(--ua-c-bd,#2350c8); --c-soft:#e3eafb; --ok:#22744a; --ok-bg:#e3f2e9; --warn:#a4570e; --warn-bg:#fbf0e3;
+  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#18233d; --ok:#6fd398; --ok-bg:#15291e; --warn:#f0a95e; --warn-bg:#2e2214; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --soft:#1c2024;
+  --c-soft:#18233d; --ok:#6fd398; --ok-bg:#15291e; --warn:#f0a95e; --warn-bg:#2e2214; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+a{color:var(--c)}
+.wrap{max-width:820px;margin:0 auto;padding-block:40px 80px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;color:var(--c);letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,6vw,48px);line-height:1.02;letter-spacing:-.02em;margin:8px 0 12px;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:-.01em;margin:48px 0 8px}
+h3{font-size:17px;margin:0 0 4px}
+.lede{color:var(--muted);margin:0 0 24px;max-width:62ch}
+.muted{color:var(--muted)}
+.exam{display:grid;grid-template-columns:auto 1fr auto;gap:6px 20px;align-items:center;background:var(--ink);color:var(--bg);border-radius:12px;padding:18px 20px}
+.exam .day{font-family:var(--f-mono);font-size:13px;text-align:center;line-height:1.2;opacity:.85}
+.exam .day b{display:block;font-family:var(--f-display);font-size:30px;opacity:1}
+.exam h3{font-family:var(--f-display);font-size:20px;margin:0}
+.exam p{margin:0;opacity:.75;font-size:14.5px}
+.exam .cd{font-family:var(--f-display);font-weight:800;font-size:26px;text-align:right;line-height:1}
+.exam .cd small{display:block;font-family:var(--f-mono);font-weight:400;font-size:12px;opacity:.7;margin-top:4px}
+.pkgs{display:grid;gap:14px;margin-top:16px}
+.pkg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.pkg .hd{display:flex;gap:12px;align-items:baseline;margin-bottom:6px}
+.pkg .k{font-family:var(--f-mono);font-size:13px;color:var(--c);flex:none}
+.pkg .who{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pkg p{margin:0 0 10px;color:var(--muted);font-size:15px}
+.pkg ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.pkg li{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:start}
+.pkg li .n{font-family:var(--f-mono);font-size:13px;background:var(--c-soft);color:var(--c);border-radius:6px;text-align:center;padding:2px 0}
+.pkg li a{font-weight:600;text-decoration:none}
+.pkg li a:hover{text-decoration:underline}
+.pkg li span.s{display:block;font-size:14px;color:var(--muted)}
+.note{background:var(--soft);border-left:3px solid var(--c);border-radius:0 8px 8px 0;padding:10px 14px;font-size:15px;margin:16px 0}
+.out{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.out span{font-family:var(--f-mono);font-size:12.5px;border:1px dashed var(--line);border-radius:6px;padding:3px 8px;color:var(--muted)}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600}
+/* scelta della prova */
+.scopes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.scope{position:relative;display:block}
+.scope input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.scope span{display:flex;flex-direction:column;gap:2px;height:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);cursor:pointer;transition:border-color .15s,background .15s}
+.scope b{font-size:15px}
+.scope small{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);line-height:1.35}
+.scope:hover span{border-color:var(--muted)}
+.scope input:checked + span{border-color:var(--c);background:var(--c-soft)}
+.scope input:checked + span b{color:var(--c)}
+.scope input:focus-visible + span{outline:2px solid var(--c);outline-offset:2px}
+.scope.off span{opacity:.5;cursor:not-allowed;border-style:dashed}
+.scope.off input{cursor:not-allowed}
+@media (max-width:620px){.scopes{grid-template-columns:1fr}}
+/* generatore */
+form.cfg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:22px;margin-top:16px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+.row{display:flex;flex-wrap:wrap;gap:16px}
+.row label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+input[type=date],select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input[type=range]{width:220px;accent-color:var(--c)}
+output{font-family:var(--f-mono);color:var(--ink)}
+.days{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:14px;background:var(--bg);cursor:pointer;user-select:none}
+.chip input:checked + span{background:var(--c);border-color:var(--c);color:#fff}
+.chip input:focus-visible + span{outline:2px solid var(--c);outline-offset:2px}
+.levels{display:grid;gap:6px}
+.lv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.lv:last-child{border-bottom:0}
+.lv .t{font-size:15px}
+.lv .t small{display:block;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:block;padding:6px 10px;font-size:13px;cursor:pointer;background:var(--bg);border-left:1px solid var(--line);white-space:nowrap}
+.seg label:first-child span{border-left:0}
+.seg input:checked + span{background:var(--c-soft);color:var(--c);font-weight:600}
+.seg input:focus-visible + span{outline:2px solid var(--c);outline-offset:-2px}
+.checks{display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.checks input{accent-color:var(--c);margin-top:4px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.solid{background:var(--c);color:#fff;border-color:var(--c)}
+.btn:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.warn{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:15px}
+.status{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-top:20px}
+.status b.big{font-family:var(--f-display);font-size:26px}
+.bar{grid-column:1/-1;height:8px;background:var(--c-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.plan{display:grid;gap:12px;margin-top:14px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dcard.today{border-color:var(--c);box-shadow:0 0 0 3px var(--c-soft)}
+.dcard.done .dh h3{text-decoration:line-through;text-decoration-color:var(--ok)}
+.dh{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.dh .dt{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center;line-height:1.15}
+.dh .dt b{display:block;font-family:var(--f-display);font-size:22px;color:var(--ink)}
+.dh .min{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.dcard ul{list-style:none;margin:0;padding:6px 0}
+.dcard li label{display:grid;grid-template-columns:20px 1fr auto;gap:12px;padding:8px 16px;cursor:pointer;align-items:start}
+.dcard li label:hover{background:var(--soft)}
+.dcard li input{accent-color:var(--ok);width:18px;height:18px;margin:2px 0 0}
+.dcard li input:checked ~ .tx{color:var(--muted);text-decoration:line-through}
+.dcard li .tx small{display:block;color:var(--muted);font-size:13.5px}
+.dcard li .tm{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.dcard.exam-day{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dcard.exam-day .dh{border-bottom:0}
+.dcard.exam-day .dt,.dcard.exam-day .dt b{color:var(--bg)}
+.tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;margin:0 0 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs a{font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--surface)}
+.tabs a:hover{border-color:var(--c);color:var(--c)}
+.tabs a.on{background:var(--c);border-color:var(--c);color:#fff}
+.tabs a.ext{margin-left:auto;color:var(--c)}
+.tabs a.ext + a.ext{margin-left:0}
+#argomenti,#piano,#planBox,#cfg{scroll-margin-top:64px}
+@media (max-width:560px){.tabs a.ext{margin-left:0}}
+@media (max-width:560px){
+  .exam{grid-template-columns:auto 1fr}.exam .cd{grid-column:1/-1;text-align:left}
+  .lv{grid-template-columns:1fr}.seg{justify-self:start}
+  .dcard li label{grid-template-columns:20px 1fr}.dcard li .tm{grid-column:2}
+}
+@media print{
+  body{background:#fff;color:#000}.no-print,form.cfg,.pkgs,.exam,#argomenti,#mappa{display:none!important}
+  .dcard{break-inside:avoid;border-color:#999}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Basi di Dati · piano di studio</div>
+  <h1>Piano di studio</h1>
+  <p class="lede">Un piano fatto su misura per l'esame: scegli quanto tempo hai e quanto sai già di ogni capitolo, e il piano distribuisce lo studio nei giorni che restano, con esercizi e ripasso.</p>
+
+  <nav class="tabs no-print" aria-label="In questa pagina">
+    <a href="#piano" data-t="piano" class="on">Il tuo piano</a>
+    <a class="ext" href="Quaderno%20di%20Basi%20di%20Dati.html">Quaderno →</a>
+  </nav>
+
+  <h2 id="piano">Il tuo piano di studio</h2>
+  <p class="muted">Dimmi quanto tempo hai e quanto sai già di ogni argomento: il piano distribuisce lo studio nei giorni che hai, segue l’ordine delle lezioni e lascia spazio a esercizi e ripasso. Le spunte restano salvate in questo browser (e si sincronizzano se hai attivato l'accesso con Google).</p>
+
+  <form class="cfg" id="cfg" novalidate>
+    <input type="radio" name="scope" value="completa" checked hidden>
+    <fieldset>
+      <legend>Quando</legend>
+      <div class="row">
+        <label>Comincio il<input type="date" id="start" required></label>
+        <label><span id="examLbl">La prova è il</span><input type="date" id="exam" required></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Quanto tempo hai</legend>
+      <div class="row" style="align-items:center">
+        <label>Ore al giorno <input type="range" id="hours" min="1" max="8" step="0.5" value="3"></label>
+        <output id="hoursOut" for="hours">3 ore</output>
+      </div>
+      <p class="muted" style="font-size:14px;margin:10px 0 6px">Giorni in cui puoi studiare</p>
+      <div class="days" id="days"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Quanto sai già</legend>
+      <div class="levels" id="levels"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Come vuoi studiare</legend>
+      <div class="checks">
+        <label><input type="checkbox" id="optDraw" checked><span>Esercizi a mano: schemi ER, tavole degli accessi, traduzione, query in algebra e SQL, B+-tree (consigliato)</span></label>
+        <label hidden><input type="checkbox" id="optQuiz"><span>Un quiz del capitolo dopo ogni argomento</span></label>
+        <label><input type="checkbox" id="optOpen" checked><span>Domande teoriche scritte (definizione, esempio, confronto)</span></label>
+        <label><input type="checkbox" id="optLast" checked><span>Il giorno prima della prova solo ripasso leggero e simulazione</span></label>
+        <label hidden><input type="checkbox" id="optGenai" checked><span>Includi la parte "Modellare nell'era GenAI" (se il tempo è poco puoi toglierla)</span></label>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button class="btn solid" type="submit">Genera il mio piano</button>
+      <span class="muted" id="cfgMsg" style="font-size:14px"></span>
+    </div>
+  </form>
+
+  <div id="planBox"></div>
+</div>
+
+<script>
+/* Dati della prova */
+const EXAM_DEFAULT = "";
+const Q = "Quaderno%20di%20Basi%20di%20Dati.html";
+const QUIZ = ""; // il quiz di Basi di Dati non c'è ancora: le attività del quiz non compaiono
+const DRAW_T = "Esercizio a mano";
+const KEY = "piano-esame-bd"; // anche in corsi.js come progressKey: così si sincronizza
+const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
+const WD_LONG = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+
+/* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
+   pri = priorità quando il tempo non basta (più alto = più importante). */
+const TOPICS = [
+  {"id": "dbms", "ch": "02", "cid": "dbms", "pkg": "Fondamenti", "t": "Concetti di base e architetture dei DBMS", "min": 45, "pri": 3, "read": "Cap. 02: DBMS e file processing, schema e istanza, architettura ANSI/SPARC, indipendenza logica e fisica, linguaggi DDL/DML", "draw": "Disegna l'architettura a tre livelli con i due mapping e scrivi un esempio di indipendenza logica e uno di fisica", "open": "Indipendenza logica e indipendenza fisica: differenza ed esempi"},
+  {"id": "er", "ch": "03", "cid": "er", "pkg": "Progettazione", "t": "Progettazione di basi di dati e modello ER", "min": 80, "pri": 5, "read": "Cap. 03: ciclo di vita, fasi della progettazione, entità, associazioni, attributi, cardinalità, identificatori, generalizzazioni", "draw": "Dalla traccia dell'azienda di sviluppo software disegna lo schema ER completo con cardinalità e identificatori", "open": "Tipi di generalizzazione: totale/parziale ed esclusiva/sovrapposta"},
+  {"id": "logica", "ch": "04", "cid": "logica", "pkg": "Progettazione", "t": "Progettazione logica", "min": 70, "pri": 5, "read": "Cap. 04: tavole di volumi, operazioni e accessi, analisi delle ridondanze, eliminazione delle gerarchie, partizionamenti e accorpamenti, identificatori", "draw": "Rifai l'analisi della ridondanza Numero abitanti con e senza ridondanza (scritture contate doppie)", "open": "I tre modi di eliminare una generalizzazione e quando conviene ciascuno"},
+  {"id": "relazionale", "ch": "05", "cid": "relazionale", "pkg": "Modello relazionale", "t": "Il modello relazionale", "min": 50, "pri": 4, "read": "Cap. 05: relazioni, ennuple, valori nulli, vincoli di integrità, chiavi, chiave primaria, integrità referenziale", "draw": "Su una tabella di esempio trova superchiavi e chiavi candidate e segna le violazioni dei vincoli", "open": "Superchiave, chiave candidata e chiave primaria"},
+  {"id": "mapping", "ch": "06", "cid": "mapping", "pkg": "Modello relazionale", "t": "Mapping: dall'ER al relazionale", "min": 45, "pri": 5, "read": "Cap. 06: traduzione di molti a molti, ricorsive, n-arie, uno a molti, identificazione esterna, uno a uno", "draw": "Traduci lo schema ristrutturato dell'azienda in relazioni con chiavi, chiavi esterne e nulli", "open": "Come si traduce un'associazione uno a uno nei diversi casi di cardinalità"},
+  {"id": "algebra", "ch": "07", "cid": "algebra", "pkg": "Linguaggi", "t": "Algebra relazionale", "min": 80, "pri": 5, "read": "Cap. 07: operatori insiemistici, ridenominazione, selezione, proiezione, join e outer join, theta-join, nulli, viste", "draw": "Scrivi senza guardare le cinque query su Impiegati e Supervisione, compresa quella con il “tutti”", "open": "Cardinalità del join: i tre casi"},
+  {"id": "sql", "ch": "08", "cid": "sql", "pkg": "Linguaggi", "t": "SQL", "min": 100, "pri": 5, "read": "Cap. 08: CREATE TABLE e vincoli, SELECT, join, aggregati, GROUP BY e HAVING, operatori insiemistici, nidificate, aggiornamenti, viste, GRANT, transazioni", "draw": "Scrivi in SQL le query su Persone e Paternità: join, GROUP BY con HAVING, NOT EXISTS, massimo con sottoquery", "open": "WHERE e HAVING: differenza con un esempio"},
+  {"id": "jdbc", "ch": "09", "cid": "jdbc", "pkg": "Linguaggi", "t": "SQL nei linguaggi di programmazione e JDBC", "min": 45, "pri": 3, "read": "Cap. 09: conflitto di impedenza, SQL immerso e cursori, SQL dinamico, CLI, JDBC con Statement, ResultSet, PreparedStatement e transazioni", "draw": "Scrivi a mano un programma JDBC che apre la connessione, esegue una PreparedStatement e scorre il ResultSet", "open": "Cos'è il conflitto di impedenza e come lo risolve il cursore"},
+  {"id": "fisica", "ch": "10", "cid": "fisica", "pkg": "Livello fisico", "t": "Progettazione fisica", "min": 80, "pri": 4, "read": "Cap. 10: memoria secondaria, file heap, ordinati e hash, indici primari e secondari, densi e sparsi, multilivello, B-tree e B+-tree", "draw": "Calcola l'ordine di B-tree e B+-tree con i dati delle slide e inserisci 8, 5, 1, 7, 3, 12 in un B+-tree (p = 3, Pleaf = 2)", "open": "Indice primario e secondario, denso e sparso: regole"}
+];
+const SCOPES = {
+  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+    sim: {"t": "Simulazione d'esame su carta", "s": "A tempo: uno schema ER da una traccia, la sua traduzione in relazioni e tre query in algebra e SQL. Poi correggi con il quaderno."},
+    focus: "modello ER, progettazione logica, mapping, algebra relazionale e SQL",
+    recap: "Costrutti e cardinalità dell'ER, analisi delle ridondanze, eliminazione delle gerarchie, regole del mapping, chiavi e integrità referenziale, operatori dell'algebra e cardinalità del join, GROUP BY e HAVING, NOT EXISTS, indici e B+-tree" }
+};
+const scopeOf = () => "completa";
+const LEVELS = [
+  { v: 0, t: "Da zero", f: 1 },
+  { v: 1, t: "L'ho letto", f: 0.6 },
+  { v: 2, t: "Lo so bene", f: 0.3 }
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const fmtMin = m => { m = Math.round(m / 5) * 5; const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h} h ${r}′` : `${h} h`) : `${r}′`; };
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} };
+
+/* Form */
+let levelMemo = {};
+function paintLevels(scope) {
+  document.querySelectorAll("#levels input:checked").forEach(r => { levelMemo[r.name.slice(3)] = +r.value; });
+  $("#levels").innerHTML = SCOPES[scope].topics().map(t => `<div class="lv"><div class="t">${esc(t.t)}<small>cap. ${t.ch} · ${esc(t.pkg)}</small></div>
+    <div class="seg" role="radiogroup" aria-label="${esc(t.t)}">${LEVELS.map(l => `<label><input type="radio" name="lv-${t.id}" value="${l.v}" ${(levelMemo[t.id] ?? 0) === l.v ? "checked" : ""}><span>${l.t}</span></label>`).join("")}</div></div>`).join("");
+  $("#examLbl").textContent = SCOPES[scope].examLbl;
+}
+function currentScope() { return "completa"; }
+function buildForm(cfg) {
+  const today = iso(new Date()), scope = scopeOf(cfg);
+  const sr = document.querySelector(`input[name="scope"][value="${scope}"]`); if (sr) sr.checked = true;
+  $("#start").value = cfg.start || today;
+  $("#exam").value = cfg.exam || SCOPES[scope].exam;
+  $("#hours").value = cfg.hours || 3;
+  const days = cfg.days || [1, 2, 3, 4, 5, 6, 0];
+  $("#days").innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label class="chip"><input type="checkbox" name="wd" value="${d}" ${days.includes(d) ? "checked" : ""}><span>${WD_LONG[d]}</span></label>`).join("");
+  levelMemo = Object.assign({}, cfg.levels || {});
+  lastScope = scope;
+  paintLevels(scope);
+  ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => { if (cfg.opts && k in cfg.opts) $("#" + k).checked = cfg.opts[k]; });
+  showHours();
+}
+function showHours() { const h = +$("#hours").value; $("#hoursOut").textContent = `${String(h).replace(".", ",")} ${h === 1 ? "ora" : "ore"}`; }
+$("#hours").addEventListener("input", showHours);
+/* ogni prova ricorda la sua data: cambiando prova si ritrova quella scelta prima (o quella proposta) */
+const examMemo = {};
+let lastScope = null;
+document.querySelectorAll('input[name="scope"]').forEach(r => r.addEventListener("change", () => {
+  const scope = currentScope(), ex = $("#exam");
+  if (lastScope) examMemo[lastScope] = ex.value;
+  ex.value = examMemo[scope] ?? SCOPES[scope].exam;
+  lastScope = scope;
+  paintLevels(scope);
+}));
+function readForm() {
+  const levels = Object.assign({}, levelMemo); SCOPES[currentScope()].topics().forEach(t => { const r = document.querySelector(`input[name="lv-${t.id}"]:checked`); levels[t.id] = r ? +r.value : 0; });
+  const opts = {}; ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => opts[k] = $("#" + k).checked);
+  return { scope: currentScope(), start: $("#start").value, exam: $("#exam").value, hours: +$("#hours").value,
+    days: [...document.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value), levels, opts };
+}
+
+/* Generazione del piano */
+function generate(cfg) {
+  const start = parse(cfg.start), exam = parse(cfg.exam), cap = cfg.hours * 60;
+  const warnings = [];
+  // giorni disponibili prima della prova
+  let days = [];
+  for (let d = new Date(start); d < exam; d = addDays(d, 1)) if (cfg.days.includes(d.getDay())) days.push({ date: iso(d), tasks: [], used: 0 });
+  if (!days.length) return { error: "Non c'è nessun giorno di studio prima della prova: controlla le date e i giorni selezionati." };
+  // giorno di ripasso finale
+  let lastDay = null;
+  if (cfg.opts.optLast && days.length >= 3 && days[days.length - 1].date === iso(addDays(exam, -1))) lastDay = days.pop();
+
+  // blocchi di lavoro per ogni argomento
+  const S = SCOPES[scopeOf(cfg)];
+  const topics = S.topics().filter(t => !t.optional || cfg.opts[t.optional]);
+  const blocks = topics.map(t => {
+    const lv = cfg.levels[t.id] || 0, f = LEVELS[lv].f, q = Q + "#" + t.cid;
+    const items = [];
+    items.push({ k: "read", m: Math.max(15, t.min * f), t: lv === 2 ? "Ripassa velocemente" : lv === 1 ? "Rileggi con attenzione" : "Studia", s: t.read, href: q });
+    if (cfg.opts.optDraw && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: DRAW_T, s: t.draw });
+    if (cfg.opts.optOpen && lv < 2) items.push({ k: "open", m: 10, t: "Domanda aperta scritta", s: t.open });
+    items.push({ k: "lampo", m: 5, t: "Domande lampo del capitolo", s: "Copri la risposta e dilla ad alta voce", href: q });
+    if (cfg.opts.optQuiz && QUIZ) items.push({ k: "quiz", m: 10, t: `Quiz del capitolo ${t.ch}`, s: "Un giro da 10 domande, punta all'80%", href: QUIZ });
+    return { t, lv, items, m: items.reduce((a, i) => a + i.m, 0) };
+  });
+  let need = blocks.reduce((a, b) => a + b.m, 0);
+  const needAll = need;
+  const have = days.length * cap;
+  // se il tempo non basta: si tagliano gli extra degli argomenti a priorità bassa, poi si comprime
+  if (need > have) {
+    const order = [...blocks].sort((a, b) => a.t.pri - b.t.pri || b.lv - a.lv);
+    for (const b of order) {
+      if (need <= have) break;
+      const before = b.m;
+      b.items = b.items.filter(i => i.k !== "draw" && i.k !== "open" || b.t.pri >= 5);
+      b.m = b.items.reduce((a, i) => a + i.m, 0); need -= before - b.m;
+    }
+    if (need > have) {
+      const r = have * 0.95 / need;
+      blocks.forEach(b => { b.items.forEach(i => i.m = Math.max(5, i.m * r)); b.m = b.items.reduce((a, i) => a + i.m, 0); });
+      const tot = have + (lastDay ? cap : 0), nd = days.length + (lastDay ? 1 : 0);
+      const hai = lastDay
+        ? `Hai ${fmtMin(tot)} in tutto (${nd} giorni × ${fmtMin(cap)}), ma l'ultimo giorno è riservato a ripasso e simulazione: per studiare restano ${fmtMin(have)}.`
+        : `Hai ${fmtMin(have)} in tutto (${nd} giorni × ${fmtMin(cap)}).`;
+      warnings.push(`Il tempo è poco. Per fare tutto con il livello che hai indicato servirebbero circa ${fmtMin(needAll)}. ${hai} Ho tolto alcuni esercizi e accorciato le letture: dai la precedenza a ${S.focus}.${lastDay ? " Se vuoi più tempo per studiare, togli la spunta “Il giorno prima della prova solo ripasso”." : ""}`);
+    } else warnings.push("Il tempo è giusto giusto: ho tolto alcuni esercizi sugli argomenti meno importanti.");
+  }
+
+  // distribuzione: si riempiono i giorni in ordine; un'attività lunga si può dividere tra due giorni.
+  // Se il tempo avanza molto (es. esame lontano), lo studio si spalma su tutto il periodo invece di stare nei primi giorni.
+  const capD = Math.min(cap, Math.max(90, Math.ceil(need * 1.3 / days.length / 5) * 5));
+  let di = 0;
+  const pushTask = (task) => {
+    let rest = task.m, part = 0;
+    const pieces = [];
+    while (rest > 0.5 && di < days.length) {
+      const day = days[di], free = capD - day.used;
+      if (free < 10 && day.used > 0) { di++; continue; }
+      // le attività brevi non si spezzano: se non ci stanno, passano al giorno dopo
+      if (rest === task.m && task.m <= 30 && free < task.m && day.used > 0 && di < days.length - 1) { di++; continue; }
+      const take = Math.min(rest, Math.max(free, 10));
+      pieces.push({ day, take }); day.used += take; rest -= take;
+      if (day.used >= capD - 5) di++;
+    }
+    if (rest > 0.5) { const day = days[days.length - 1]; pieces.push({ day, take: rest }); day.used += rest; }
+    pieces.forEach((p, k) => p.day.tasks.push(Object.assign({}, task, { m: p.take, part: pieces.length > 1 ? `${k + 1}/${pieces.length}` : "" })));
+  };
+  blocks.forEach(b => b.items.forEach(i => pushTask(Object.assign({}, i, { topic: b.t }))));
+
+  // giorni avanzati: ripasso degli argomenti meno noti e simulazioni
+  const weak = [...blocks].sort((a, b) => a.lv - b.lv || b.t.pri - a.t.pri);
+  let wi = 0;
+  days.forEach(day => {
+    let free = capD - day.used;
+    if (free >= 30 && day === days[days.length - 1]) {
+      day.tasks.push({ k: "sim", m: 30, t: S.sim.t, s: S.sim.s, href: QUIZ || undefined });
+      day.used += 30; free -= 30;
+    }
+    while (free >= 25 && weak.length) {
+      const b = weak[wi++ % weak.length];
+      day.tasks.push({ k: "rip", m: 25, t: `Ripasso: ${b.t.t}`, s: (QUIZ ? "Rileggi le parti segnate e rifai il quiz del capitolo finché arrivi all'80%" : "Rileggi le parti segnate e rifai le domande lampo del capitolo finché le sai tutte"), href: Q + "#" + b.t.cid, topic: b.t });
+      day.used += 25; free -= 25;
+    }
+  });
+  if (lastDay) {
+    const lc = Math.min(cap, 150);
+    lastDay.tasks = [
+      { k: "sim", m: Math.min(40, lc * 0.35), t: S.sim.t, s: QUIZ ? "A tempo nel quiz, come se fosse l'esame" : S.sim.s, href: QUIZ || undefined },
+      { k: "rip", m: Math.min(45, lc * 0.35), t: "Ripassa solo gli errori della simulazione", s: "Riapri i capitoli dove hai sbagliato o esitato" },
+      { k: "rip", m: Math.min(30, lc * 0.3), t: "Ripasso a memoria", s: S.recap },
+      { k: "rest", m: 0, t: "Stacca presto e dormi bene", s: "Niente argomenti nuovi" }
+    ];
+    lastDay.used = lastDay.tasks.reduce((a, t) => a + t.m, 0);
+    days.push(lastDay);
+  }
+  let n = 0;
+  days.forEach(d => d.tasks.forEach(t => { t.id = "t" + (n++); }));
+  return { days, exam: cfg.exam, scope: scopeOf(cfg), warnings, built: Date.now() };
+}
+
+/* Visualizzazione */
+function render() {
+  const st = load(), box = $("#planBox");
+  if (!st.plan) { box.innerHTML = ""; return; }
+  const p = st.plan, done = st.done || {};
+  const all = p.days.flatMap(d => d.tasks), nd = all.filter(t => done[t.id]).length;
+  const today = iso(new Date());
+  const ex = parse(p.exam);
+  box.innerHTML = `
+    <div class="status">
+      <div><span class="tag">Piano per l'esame</span><br><b class="big">${nd}/${all.length}</b> <span class="muted">attività fatte</span></div>
+      <div class="actions no-print"><button class="btn" type="button" id="print">Stampa</button><button class="btn" type="button" id="reset">Rifai il piano</button></div>
+      <div class="bar"><i style="width:${all.length ? 100 * nd / all.length : 0}%"></i></div>
+    </div>
+    ${(p.warnings || []).map(w => `<p class="warn">${esc(w)}</p>`).join("")}
+    <div class="plan">${p.days.map(d => {
+      const dt = parse(d.date), tot = d.tasks.reduce((a, t) => a + t.m, 0);
+      const dn = d.tasks.length && d.tasks.every(t => done[t.id]);
+      const tags = [...new Set(d.tasks.filter(t => t.topic).map(t => t.topic.t))];
+      const title = tags.length ? tags.join(" · ") : (d.tasks.some(t => t.k === "sim") ? "Simulazione e ripasso finale" : "Ripasso");
+      return `<section class="dcard${d.date === today ? " today" : ""}${dn ? " done" : ""}">
+        <div class="dh"><div class="dt">${WD[dt.getDay()]}<b>${dt.getDate()}</b>${MESI[dt.getMonth()]}</div>
+          <div>${d.date === today ? `<span class="tag">Oggi</span>` : ""}<h3>${esc(title)}</h3></div><span class="min">${fmtMin(tot)}</span></div>
+        <ul>${d.tasks.map(t => `<li><label><input type="checkbox" data-id="${t.id}" ${done[t.id] ? "checked" : ""}>
+          <span class="tx">${esc(t.t)}${t.part ? ` (parte ${t.part})` : ""}${t.topic && !/^Ripasso/.test(t.t) ? ` · <span class="muted">${esc(t.topic.t)}</span>` : ""}
+          <small>${esc(t.s)}${t.href ? ` · <a href="${t.href}">apri</a>` : ""}</small></span>
+          ${t.m ? `<span class="tm">${fmtMin(t.m)}</span>` : ""}</label></li>`).join("")}</ul>
+      </section>`;
+    }).join("")}
+      <section class="dcard exam-day"><div class="dh"><div class="dt">${WD[ex.getDay()]}<b>${ex.getDate()}</b>${MESI[ex.getMonth()]}</div><div><h3>Esame</h3><span style="opacity:.75;font-size:14.5px">Colazione, niente roba nuova. Leggi tutta la traccia prima di cominciare.</span></div><span></span></div></section>
+    </div>`;
+  box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener("change", () => {
+    const s = load(); s.done = s.done || {}; if (cb.checked) s.done[cb.dataset.id] = true; else delete s.done[cb.dataset.id]; save(s); render();
+  }));
+  box.querySelectorAll('a').forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+  $("#print").onclick = () => window.print();
+  $("#reset").onclick = () => { $("#cfg").scrollIntoView({ behavior: "smooth" }); $("#cfgMsg").textContent = "Cambia quello che vuoi e premi “Genera il mio piano”."; };
+}
+
+$("#cfg").addEventListener("submit", e => {
+  e.preventDefault();
+  const cfg = readForm(), msg = $("#cfgMsg");
+  if (!cfg.start || !cfg.exam) { msg.textContent = "Inserisci le due date."; return; }
+  if (cfg.start >= cfg.exam) { msg.textContent = "La data di inizio deve venire prima della prova."; return; }
+  if (!cfg.days.length) { msg.textContent = "Scegli almeno un giorno in cui puoi studiare."; return; }
+  const st = load();
+  if (st.plan && Object.keys(st.done || {}).length && !confirm("Rifacendo il piano le spunte attuali si azzerano. Continuo?")) return;
+  const plan = generate(cfg);
+  if (plan.error) { msg.textContent = plan.error; return; }
+  save({ cfg, plan, done: {} });
+  msg.textContent = "";
+  render();
+  // aggiunge una voce alla cronologia: "indietro" riporta alla configurazione, non alla home
+  if (location.hash === "#planBox") $("#planBox").scrollIntoView({ block: "start" }); else location.hash = "planBox";
+});
+
+buildForm(load().cfg || {});
+render();
+/* se un altro dispositivo aggiorna le spunte (sincronizzazione), ridisegna */
+window.addEventListener("storage", e => { if (e.key === KEY) render(); });
+/* scheda evidenziata in base alla parte di pagina visibile */
+(function () {
+  const tabs = [...document.querySelectorAll(".tabs a[data-t]")];
+  const mark = () => {
+    const y = window.scrollY + 90, piano = document.getElementById("piano").getBoundingClientRect().top + window.scrollY;
+    tabs.forEach(a => a.classList.toggle("on", (a.dataset.t === "piano") === (y >= piano)));
+  };
+  window.addEventListener("scroll", mark, { passive: true }); mark();
+})();
+</script>
+</body>
+</html>
