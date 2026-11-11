@@ -23,6 +23,7 @@
   const ROOT = (me && me.dataset.root) || "./";
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
+  const IS_REPORTS = PAGE === "segnalazioni.html";
   const CORSI = window.CORSI || [];
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
@@ -119,7 +120,7 @@
 
   /* ---------------- barra in basso (schede, stile iOS) ----------------
      In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Indice (telefono, nei quaderni),
-     Cerca e News, con la scheda della pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
+     Cerca, News (la pagina delle notizie) e Segnala, con la scheda della pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
      a parte, sopra la barra, che compare dopo un po' di scorrimento. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
@@ -131,8 +132,8 @@
       ${tab("a", "ua-dock-home" + (IS_HOME ? " is-on" : ""), `href="${ROOT}index.html"` + (IS_HOME ? ` ${on}` : ""), ICON.home, "Home")}
       ${idx ? tab("button", "ua-dock-idx", 'type="button"', ICON.book, "Indice") : ""}
       ${tab("button", "ua-open-search", 'type="button"', ICON.search, "Cerca")}
-      ${IS_NEWS_PAGE ? tab("a", "is-on", `href="${ROOT}news.html" ${on}`, ICON.bell, "News")
-        : tab("button", "ua-news-btn", 'type="button" aria-haspopup="dialog" aria-expanded="false"', ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
+      ${tab("a", "ua-dock-news" + (IS_NEWS_PAGE ? " is-on" : ""), `href="${ROOT}news.html"` + (IS_NEWS_PAGE ? ` ${on}` : ""), ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
+      ${tab("a", "ua-dock-report" + (IS_REPORTS ? " is-on" : ""), `href="${ROOT}segnalazioni.html"` + (IS_REPORTS ? ` ${on}` : ""), ICON.bug, "Segnala")}
     </div>
     <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
@@ -1062,7 +1063,7 @@
   function unread() { const seen = new Set(lsGet(NEWS_SEEN, [])); return news.filter(n => !seen.has(n.id)); }
   function paintNewsDot() {
     const k = unread().length;
-    document.querySelectorAll(".ua-news-btn").forEach(b => {
+    document.querySelectorAll(".ua-news-btn, .ua-dock-news").forEach(b => { // campanello in alto e scheda News in basso
       const dot = b.querySelector(".ua-news-dot"); if (dot) dot.hidden = !k;
       const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
       b.setAttribute("aria-label", l); b.title = l;
