@@ -36,10 +36,7 @@
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .ua-crumbs{flex:1;min-width:0;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden}
 .ua-brand{display:inline-flex;align-items:center;gap:9px;font-family:"Dancing Script","Segoe Script","Brush Script MT",cursive;font-size:21px;font-weight:700;letter-spacing:0;color:var(--ua-ink);text-decoration:none;flex:none}
-.ua-logo{width:22px;height:22px;flex:none;display:block;transition:transform .2s var(--ua-ease)}
-.ua-logo-c{fill:var(--ua-ink)}
-.ua-logo-p{fill:var(--ua-bg)}
-.ua-logo-s{fill:var(--ua-c-so)}
+.ua-logo{width:24px;height:24px;flex:none;display:block;transition:transform .2s var(--ua-ease)} /* il tocco del sigillo della home, a linee, col gradiente dei corsi */
 .ua-brand:hover .ua-logo{transform:rotate(-6deg)}
 .ua-brand-u{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--ua-ink)} /* "Unisa" col gradiente dei corsi, come nella home */
 .ua-sep{color:var(--ua-line);flex:none}
