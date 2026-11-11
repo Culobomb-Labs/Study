@@ -217,9 +217,9 @@
       const left = bar.getBoundingClientRect().left, x = e.clientX - left, t = under(x);
       press = { id: e.pointerId, left, x0: x, moved: false, last: t, on: null, w: t.offsetWidth + PAD * 2 };
       try { bar.setPointerCapture(e.pointerId); } catch (_) {}
-      if (!home()) snap(centerOf(t), press.w); // nessuna scheda attiva: la goccia nasce sotto il dito
+      snap(centerOf(t), press.w); // la goccia nasce subito sotto il dito, senza attese
       bar.classList.add("is-pressing");
-      mark(t); go(centerOf(t), press.w); // dalla scheda attiva scivola sotto il dito
+      mark(t);
     });
     bar.addEventListener("pointermove", e => {
       if (!press || e.pointerId !== press.id) return;
@@ -233,14 +233,15 @@
     const end = (e, cancelled) => {
       if (!press || e.pointerId !== press.id) return;
       const t = cancelled ? press.last : under(local(e)), w = press.w;
-      press = null; swallowUntil = Date.now() + 900;
-      go(centerOf(t), w); // la goccia si posa sulla scheda scelta con la molla
+      press = null; swallowUntil = Date.now() + 600;
+      // la scheda si apre subito; intanto la goccia si posa con la molla e torna pillola
       g.done = () => {
         bar.classList.remove("is-pressing"); tabs.forEach(o => o.classList.remove("is-under"));
         const h = home(); bar.classList.toggle("has-on", !!h);
-        go(h ? centerOf(h) : centerOf(t), h ? h.offsetWidth : w); // torna pillola, sotto la scheda della pagina
-        open(t);
+        go(h ? centerOf(h) : centerOf(t), h ? h.offsetWidth : w); // sotto la scheda della pagina in cui sei
       };
+      go(centerOf(t), w);
+      requestAnimationFrame(() => open(t)); // un fotogramma per far partire l'animazione, poi si apre
     };
     bar.addEventListener("pointerup", e => end(e, false));
     bar.addEventListener("pointercancel", e => end(e, true));
