@@ -11,7 +11,7 @@
   --ua-ease:cubic-bezier(.2,.7,.2,1);
   --ua-g-bell1:#d97706; --ua-g-bell2:#ea580c; --ua-g-sun1:#ca8a04; --ua-g-sun2:#d97706;
   --ua-g-moon1:#4f46e5; --ua-g-moon2:#9333ea; --ua-g-auto1:#d97706; --ua-g-auto2:#4f46e5;
-  --ua-glass:rgba(246,246,248,.62); --ua-glass-rim:rgba(255,255,255,.95); --ua-glass-rim2:rgba(255,255,255,.35); --ua-glass-on:rgba(0,0,0,.07); --ua-glass-shadow:0 10px 30px -8px rgba(17,20,24,.22),0 0 0 .5px rgba(17,20,24,.10);
+  --ua-glass:rgba(246,246,248,.32); --ua-glass-rim:rgba(255,255,255,.95); --ua-glass-rim2:rgba(255,255,255,.35); --ua-glass-on:rgba(0,0,0,.07); --ua-glass-shadow:0 10px 30px -8px rgba(17,20,24,.22),0 0 0 .5px rgba(17,20,24,.10);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
@@ -20,10 +20,10 @@
   --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4;
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
-  --ua-glass:rgba(44,44,48,.55); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
+  --ua-glass:rgba(40,40,44,.30); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
 }}
 :root[data-theme="dark"]{
-  --ua-glass:rgba(44,44,48,.55); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
+  --ua-glass:rgba(40,40,44,.30); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
@@ -166,12 +166,12 @@ a.ua-ni:hover{background:var(--ua-soft)}
 @media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
 
 /* ---------- barra in basso: schede in vetro, stile iOS ("liquid glass") ----------
-   Vetro fumé molto sfocato, bordo che riflette la luce in alto a sinistra e in basso a destra, scheda attiva su una
+   Vetro fumé poco sfocato (il testo sotto si intravede, come in iOS), bordo che riflette la luce in alto a sinistra e in basso a destra, scheda attiva su una
    pillola più scura. Icone e scritte monocromatiche. I colori del vetro sono le variabili --ua-glass… del tema. */
 .ua-dock{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
   font:500 11.5px/1 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
 .ua-tabs,.ua-dock .ua-up{position:relative;isolation:isolate;background:var(--ua-glass);
-  -webkit-backdrop-filter:blur(22px) saturate(1.9);backdrop-filter:blur(22px) saturate(1.9);box-shadow:var(--ua-glass-shadow)}
+  -webkit-backdrop-filter:blur(1.5px) saturate(1.6) brightness(.92);backdrop-filter:blur(1.5px) saturate(1.6) brightness(.92);box-shadow:var(--ua-glass-shadow)}
 .ua-tabs::before,.ua-dock .ua-up::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;
   background:linear-gradient(135deg,var(--ua-glass-rim),var(--ua-glass-rim2) 35%,var(--ua-glass-rim2) 65%,var(--ua-glass-rim));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude} /* bordo che rifrange */
