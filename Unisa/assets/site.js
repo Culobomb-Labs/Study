@@ -154,8 +154,9 @@
   }
 
   /* Lente delle schede, come in iOS: a riposo è la pillola scura sotto la scheda della pagina in cui sei.
-     Premendo la barra diventa una lente di vetro più grande che ingrandisce la scheda sotto; trascinando il dito
-     la segue, e al rilascio scivola sulla scheda scelta, che poi si apre. Da tastiera le schede funzionano come sempre. */
+     Premendo la barra diventa una lente di vetro più grande che ingrandisce la scheda sotto. La lente si muove
+     come una goccia: segue il dito con una molla e si allunga nella direzione del movimento; al rilascio si posa
+     sulla scheda scelta, che poi si apre. Da tastiera le schede funzionano come sempre. */
   function lensTabs(bar) {
     const tabs = [...bar.querySelectorAll(".ua-tab")];
     const lens = el("span", { class: "ua-lens", "aria-hidden": "true" });
@@ -163,21 +164,48 @@
     tabs.forEach(t => t.setAttribute("draggable", "false"));
     bar.addEventListener("dragstart", e => e.preventDefault()); // altrimenti il browser trascina il link e annulla il gesto
     bar.addEventListener("contextmenu", e => e.preventDefault()); // niente anteprima del link tenendo premuto (iPhone)
-    const home = () => bar.querySelector(".ua-tab.is-on");
-    const box = t => ({ x: t.offsetLeft, w: t.offsetWidth });
-    const put = (x, w) => { bar.style.setProperty("--lx", x + "px"); bar.style.setProperty("--lw", w + "px"); };
-    const jump = (x, w) => { lens.classList.add("no-anim"); put(x, w); void lens.offsetWidth; lens.classList.remove("no-anim"); }; // senza scivolare
-    const rest = () => { const h = home(); bar.classList.toggle("has-on", !!h); if (h) { const b = box(h); put(b.x, b.w); } };
-    const under = x => tabs.reduce((a, t) => Math.abs(t.offsetLeft + t.offsetWidth / 2 - x) < Math.abs(a.offsetLeft + a.offsetWidth / 2 - x) ? t : a);
+    const dock = bar.closest(".ua-dock");
+    // il bordo di selezione serve solo da tastiera: con il dito si sommerebbe alla lente
+    dock.addEventListener("pointerdown", () => dock.classList.add("ua-pointer"));
+    dock.addEventListener("keydown", () => dock.classList.remove("ua-pointer"));
     const PAD = 8; // la lente premuta sporge un po' ai lati
-    let press = null, swallowUntil = 0;
-    const local = e => e.clientX - bar.getBoundingClientRect().left;
-    const follow = x => {
-      const t = under(x), w = t.offsetWidth + PAD * 2;
-      put(Math.min(Math.max(x - w / 2, -PAD), bar.clientWidth - w + PAD), w);
-      tabs.forEach(o => o.classList.toggle("is-under", o === t));
-      return t;
+    const home = () => bar.querySelector(".ua-tab.is-on");
+    const under = x => tabs.reduce((a, t) => Math.abs(t.offsetLeft + t.offsetWidth / 2 - x) < Math.abs(a.offsetLeft + a.offsetWidth / 2 - x) ? t : a);
+    const centerOf = t => t.offsetLeft + t.offsetWidth / 2;
+    // stato della goccia: posizione del centro, velocità, larghezza; il disegno avviene una volta per fotogramma
+    const g = { x: 0, v: 0, w: 0, tx: 0, tw: 0, raf: 0 };
+    const draw = () => {
+      const st = Math.min(Math.abs(g.v) / 22, .32); // allungamento dovuto alla velocità
+      bar.style.setProperty("--lx", (g.x - g.w / 2) + "px");
+      bar.style.setProperty("--lw", g.w + "px");
+      bar.style.setProperty("--ls", (1 + st).toFixed(3));
+      bar.style.setProperty("--lsy", (1 - st * .45).toFixed(3));
     };
+    const step = () => {
+      // molla: rigida abbastanza da stare vicino al dito, smorzata per non oscillare troppo
+      const k = .22, d = .68;
+      g.v = (g.v + (g.tx - g.x) * k) * d; g.x += g.v;
+      g.w += (g.tw - g.w) * .3;
+      draw();
+      if (Math.abs(g.tx - g.x) > .3 || Math.abs(g.v) > .3 || Math.abs(g.tw - g.w) > .3) g.raf = requestAnimationFrame(step);
+      else { g.x = g.tx; g.v = 0; g.w = g.tw; draw(); g.raf = 0; if (g.done) { const f = g.done; g.done = null; f(); } }
+    };
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const go = (x, w) => {
+      g.tx = x; g.tw = w;
+      if (still.matches) { snap(x, w); if (g.done) { const f = g.done; g.done = null; f(); } return; } // animazioni ridotte: niente molla
+      if (!g.raf) g.raf = requestAnimationFrame(step);
+    };
+    const snap = (x, w) => { cancelAnimationFrame(g.raf); g.raf = 0; g.x = g.tx = x; g.w = g.tw = w; g.v = 0; draw(); };
+    const rest = () => {
+      if (press || g.raf) return;
+      const h = home(); bar.classList.toggle("has-on", !!h);
+      if (h) snap(centerOf(h), h.offsetWidth);
+    };
+    let press = null, swallowUntil = 0;
+    const local = e => e.clientX - press.left; // misurata dal bordo della barra preso alla pressione
+    const clampX = x => Math.min(Math.max(x, press.w / 2 - PAD), bar.clientWidth - press.w / 2 + PAD);
+    const mark = t => { if (t !== press.on) { if (press.on) press.on.classList.remove("is-under"); t.classList.add("is-under"); press.on = t; } };
     const open = t => {
       if (t.matches('a[aria-current="page"]')) window.scrollTo({ top: 0, behavior: "smooth" }); // la scheda della pagina in cui sei: torna in cima
       else if (t.tagName === "A") location.href = t.href; // i link si aprono direttamente: più affidabile su iPhone
@@ -185,30 +213,33 @@
     };
     bar.addEventListener("pointerdown", e => {
       if (e.button) return;
-      const x = local(e), t = under(x);
-      press = { id: e.pointerId, x0: x, moved: false, last: t };
+      const left = bar.getBoundingClientRect().left, x = e.clientX - left, t = under(x);
+      press = { id: e.pointerId, left, x0: x, moved: false, last: t, on: null, w: t.offsetWidth + PAD * 2 };
       try { bar.setPointerCapture(e.pointerId); } catch (_) {}
-      if (!home()) { const w = t.offsetWidth + PAD * 2; jump(t.offsetLeft - PAD, w); } // nessuna scheda attiva: la lente nasce sotto il dito
+      if (!home()) snap(centerOf(t), press.w); // nessuna scheda attiva: la goccia nasce sotto il dito
       bar.classList.add("is-pressing");
-      follow(x);
+      mark(t); go(centerOf(t), press.w); // dalla scheda attiva scivola sotto il dito
     });
     bar.addEventListener("pointermove", e => {
       if (!press || e.pointerId !== press.id) return;
       const x = local(e);
-      if (!press.moved && Math.abs(x - press.x0) > 6) { press.moved = true; bar.classList.add("is-dragging"); }
-      if (press.moved) press.last = follow(x);
+      if (!press.moved && Math.abs(x - press.x0) > 6) press.moved = true;
+      if (!press.moved) return;
+      const t = under(x); press.last = t; mark(t);
+      go(clampX(x), press.w);
     });
     // anche se il sistema annulla il gesto (pointercancel), si apre la scheda su cui era la lente
     const end = (e, cancelled) => {
       if (!press || e.pointerId !== press.id) return;
-      const t = cancelled ? press.last : under(local(e));
-      press = null; bar.classList.remove("is-dragging");
-      const b = box(t); put(b.x - PAD, b.w + PAD * 2); // la lente si posa sulla scheda scelta
-      swallowUntil = Date.now() + 700;
-      setTimeout(() => {
-        bar.classList.remove("is-pressing"); tabs.forEach(o => o.classList.remove("is-under")); rest();
+      const t = cancelled ? press.last : under(local(e)), w = press.w;
+      press = null; swallowUntil = Date.now() + 900;
+      go(centerOf(t), w); // la goccia si posa sulla scheda scelta con la molla
+      g.done = () => {
+        bar.classList.remove("is-pressing"); tabs.forEach(o => o.classList.remove("is-under"));
+        const h = home(); bar.classList.toggle("has-on", !!h);
+        go(h ? centerOf(h) : centerOf(t), h ? h.offsetWidth : w); // torna pillola, sotto la scheda della pagina
         open(t);
-      }, 180);
+      };
     };
     bar.addEventListener("pointerup", e => end(e, false));
     bar.addEventListener("pointercancel", e => end(e, true));
