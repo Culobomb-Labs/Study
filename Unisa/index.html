@@ -154,21 +154,9 @@ h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
 .dname{grid-column:2}.dinfo{grid-column:2}
 .arrow{grid-column:3}
 .docs .prog{grid-column:2 / span 2}
-.course.soon{grid-column:1 / -1;flex-direction:row;align-items:center;gap:24px;border-style:dashed;background:transparent}
-.course.soon::after{content:none}
-.course.soon .code{position:static;z-index:auto;font-size:40px;-webkit-text-stroke:0;color:var(--muted)}
-.course.soon h2{padding-right:0}
-.course.soon .soon-box{flex:1}
-@media (max-width:760px){.list{grid-template-columns:1fr}.course.soon{flex-direction:column;align-items:flex-start}}
+@media (max-width:760px){.list{grid-template-columns:1fr}}
 
 
-/* in arrivo */
-.soon .code{color:var(--muted)}
-.soon .code::before{background:var(--muted)}
-.soon-box{border:1px dashed var(--line);border-radius:8px;padding:16px 18px;color:var(--muted);font-size:15px;line-height:1.5}
-.soon-box b{color:var(--ink);font-weight:600}
-.soon-box p{margin:0}
-.soon-box p+p{margin-top:8px;font-family:var(--f-mono);font-size:12px}
 
 /* riprendi da dove eri */
 .resume-wrap{padding-block:0 22px}
@@ -399,13 +387,6 @@ function render() {
     }
     row.append(code, info, ul); list.append(row);
   }
-  const soon = document.createElement("section");
-  soon.className = "course soon"; soon.id = "in-arrivo"; soon.setAttribute("data-ua-rise", "");
-  soon.innerHTML = `<div class="code" aria-hidden="true">+</div>
-    <div><h2>In arrivo</h2><div class="meta">Altri corsi e quaderni</div></div>
-    <div class="soon-box"><p><b>Altri appunti in arrivo.</b> Nuovi corsi e quaderni verranno aggiunti durante il semestre, e quelli in aggiornamento si completano man mano.</p>
-    <p>Il sito si aggiorna da solo: torna a dare un'occhiata.</p></div>`;
-  list.append(soon);
 }
 render();
 const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
