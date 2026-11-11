@@ -140,9 +140,9 @@
     pal = el("div", { class: "ua-pal", role: "dialog", "aria-modal": "true", "aria-label": "Cerca negli appunti", hidden: "" });
     pal.innerHTML = `<div class="ua-veil"></div>
       <div class="ua-panel">
-        <label class="ua-field">${ICON.search.replace('width="16" height="16"', 'width="20" height="20"')}
-          <input type="search" id="ua-q" placeholder="Cerca negli appunti: es. spirale, deadlock, intent…" autocomplete="off" spellcheck="false" aria-controls="ua-res" aria-autocomplete="list">
-          <button type="button" class="ua-close" aria-label="Chiudi">esc</button></label>
+        <div class="ua-np-head ua-pal-head"><h2 class="ua-pal-t">Cerca</h2><button type="button" class="ua-np-close ua-close" aria-label="Chiudi">×</button></div>
+        <label class="ua-field">${ICON.search}
+          <input type="search" id="ua-q" placeholder="es. spirale, deadlock, intent…" autocomplete="off" spellcheck="false" aria-controls="ua-res" aria-autocomplete="list"></label>
         <div class="ua-results" id="ua-res" role="listbox" aria-label="Risultati"></div>
         <div class="ua-foot"><span><span class="ua-kbd">↑</span><span class="ua-kbd">↓</span> scegli</span><span><span class="ua-kbd">↵</span> apri</span><span><span class="ua-kbd">esc</span> chiudi</span></div>
       </div>`;
@@ -172,9 +172,8 @@
     return loading;
   }
 
-  /* Su PC/Mac la ricerca si apre "dentro" il pulsante Cerca della barra: il pulsante si allarga verso sinistra
-     e diventa il campo, con i risultati che scendono sotto. Su telefono (o se la barra non si vede) resta
-     la finestra al centro. */
+  /* Su PC/Mac la ricerca è una tendina sotto il pulsante Cerca, come News e "I tuoi progressi".
+     Su telefono (o se la barra non si vede) resta la finestra al centro. */
   function searchAnchor() {
     if (innerWidth <= 640) return null;
     const b = document.querySelector(".ua-bar .ua-open-search");
@@ -186,10 +185,9 @@
     const r = searchAnchor();
     pal.classList.toggle("is-anchored", !!r);
     if (!r) return;
-    const FIELD = 48;
-    pal.style.setProperty("--ay", Math.max(6, r.top + r.height / 2 - FIELD / 2) + "px");
-    pal.style.setProperty("--ar", Math.max(12, innerWidth - r.right) + "px");
-    pal.style.setProperty("--aw", r.width + "px");
+    // come le tendine News e Progressi: si apre sotto il pulsante, allineata al suo bordo destro
+    pal.style.setProperty("--ay", (r.bottom + 8) + "px");
+    pal.style.setProperty("--ar", Math.max(12, document.documentElement.clientWidth - r.right) + "px");
   }
   window.addEventListener("resize", () => { if (pal && !pal.hidden) placeSearch(); });
 
@@ -237,9 +235,9 @@
       for (const it of list) {
         const id = "ua-r" + items.length;
         items.push(it);
-        html += `<a class="ua-hit" id="${id}" role="option" href="${it.href}" data-i="${items.length - 1}" aria-selected="false">
-          <span class="ua-dot" style="--c:var(--ua-c-${esc(it.color)})" aria-hidden="true"></span>
-          <span class="ua-hit-t">${it.title}${it.tag ? `<small>${esc(it.tag)}</small>` : ""}</span>
+        html += `<a class="ua-hit" id="${id}" role="option" href="${it.href}" data-i="${items.length - 1}" aria-selected="false" style="--c:var(--ua-c-${esc(it.color)})">
+          <span class="ua-hit-tag">${esc(it.tag || "")}</span>
+          <span class="ua-hit-t">${it.title}</span>
           <span class="ua-hit-x">${it.text}</span></a>`;
       }
     };
