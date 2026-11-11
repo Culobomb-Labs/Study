@@ -155,10 +155,13 @@ a.ua-ni:hover{background:var(--ua-soft)}
 @media (prefers-reduced-motion:reduce){.ua-np-box,.ua-switch,.ua-switch i{animation:none;transition:none}}
 
 /* ---------- copyright in fondo alla pagina ---------- */
-.ua-copy{box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;text-align:center;clear:both;
-  margin-top:48px;padding:20px max(16px,env(safe-area-inset-left,0px)) max(20px,env(safe-area-inset-bottom,0px));
+/* firma centrata, nel corsivo del marchio "Appunti Unisa" della barra. Colore invariato (--ua-ink). */
+.ua-copy{box-sizing:border-box;clear:both;margin-top:48px;
+  padding:26px max(16px,env(safe-area-inset-right,0px)) max(28px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
   border-top:1px solid var(--ua-line);background:transparent;font:400 12.5px/1.5 var(--ua-font);color:var(--ua-muted);-webkit-font-smoothing:antialiased}
-.ua-copy span:first-child{color:var(--ua-ink);font-weight:500}
+.ua-copy-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.ua-copy-b{color:var(--ua-ink);font:700 20px/1.3 "Dancing Script","Segoe Script","Brush Script MT",cursive;word-spacing:.12em} /* stesso corsivo del marchio nella barra */
+.ua-copy-sep{margin:0 .42em 0 .3em}
 .ua-copy-dock{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 @media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
 

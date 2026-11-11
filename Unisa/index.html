@@ -134,8 +134,11 @@ h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
   transition:transform .25s var(--ua-ease),border-color .25s,box-shadow .25s}
 .course:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));box-shadow:0 14px 34px -18px color-mix(in srgb,var(--c) 60%,transparent)}
 .course::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
+/* sigla grande contornata: prima il contorno, poi il riempimento col colore della scheda (paint-order).
+   Così non si vedono le parti interne delle lettere (la barra della A, l'incrocio della M) né i punti dove due lettere si toccano.
+   Il contorno è doppio perché metà resta sotto il riempimento; in em, così resta proporzionato anche su telefono. */
 .code{position:absolute;right:16px;top:6px;z-index:-1;font-size:76px;line-height:1;letter-spacing:-.04em;padding:0;
-  color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--c) 40%,transparent);opacity:.9}
+  color:var(--surface);-webkit-text-stroke:.04em color-mix(in srgb,var(--c) 40%,transparent);paint-order:stroke fill;opacity:.9}
 .code::before{content:none}
 .course h2{font-size:24px;padding-right:118px}
 .docs{border:0;border-radius:12px;background:transparent;gap:6px;overflow:visible}

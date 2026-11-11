@@ -105,7 +105,7 @@
     if (document.querySelector(".ua-copy")) return;
     const y = new Date().getFullYear(), years = y > COPY_START ? `${COPY_START}–${y}` : `${COPY_START}`;
     const foot = el("footer", { class: "ua-copy" + (IS_HOME ? "" : " ua-copy-dock") });
-    foot.innerHTML = `<span>© ${years} Culobomb-Labs · Appunti Unisa</span><span>Appunti personali per lo studio. Vietata la copia o la vendita senza permesso.</span>`;
+    foot.innerHTML = `<div class="ua-copy-in"><span class="ua-copy-b">© ${years} Culobomb-Labs<span class="ua-copy-sep" aria-hidden="true">·</span>Appunti Unisa</span></div>`;
     document.body.append(foot);
     /* alcune pagine hanno un margine laterale sul body: il piè di pagina va da bordo a bordo, come la barra */
     const fit = () => {
