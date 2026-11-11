@@ -2,6 +2,15 @@
   "_come_si_usa": "Le notizie per documenti nuovi o aggiornati si creano da sole (per evitarlo scrivi [no news] nel messaggio del commit). Il modo comodo per scriverne una: Actions → Pubblica una news (un modulo da compilare). A mano: aggiungi la notizia IN CIMA alla lista news. Campi: id (unico, es. 2026-10-28-quiz), data (AAAA-MM-GG), titolo, testo (facoltativo), corso (facoltativo: IS, MP, PD), link (facoltativo: percorso di una pagina del sito o indirizzo web), immagine (facoltativa: news/img/nome.jpg, dopo averla caricata in Unisa/news/img). Chi ha le notifiche attive la riceve subito dopo la pubblicazione.",
   "news": [
     {
+      "id": "2026-11-11-oggi-seminario-regione-campania",
+      "data": "2026-11-11",
+      "titolo": "Oggi seminario Regione Campania (matricole dispari): lavorare nel digitale pubblico",
+      "tipo": "avviso",
+      "testo": "Oggi, 11 novembre, dalle 13:30 alle 15:30 in aula P1 (edificio F3): tecnologie, competenze e progetti della Regione Campania. Seminario di orientamento in uscita.",
+      "corso": "AL",
+      "immagine": "news/img/seminario-regione-campania.jpg"
+    },
+    {
       "id": "auto-2026-11-11-66a38020",
       "data": "2026-11-11",
       "titolo": "Nuovo materiale sul sito",
