@@ -165,6 +165,13 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-copy-dock{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))} /* spazio per la barra in basso */
 @media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
 
+/* passaggio morbido tra le pagine (Safari 18.2+, Chrome): la pagina sfuma nella nuova, la barra in basso resta ferma */
+@view-transition{navigation:auto}
+.ua-dock{view-transition-name:ua-dock}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.2s}
+::view-transition-group(ua-dock){animation-duration:.2s}
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
 /* ---------- barra in basso: schede in vetro, stile iOS ("liquid glass") ----------
    Vetro fumé poco sfocato (il testo sotto si intravede, come in iOS), bordo che riflette la luce in alto a sinistra e in basso a destra, scheda attiva su una
    pillola più scura. Icone e scritte monocromatiche. I colori del vetro sono le variabili --ua-glass… del tema. */

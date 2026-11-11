@@ -41,10 +41,21 @@ self.addEventListener("fetch", event => {
   // pagine e dati: prima la rete (così vedi sempre la versione nuova), senza rete la copia salvata
   const fresh = req.mode === "navigate" || url.pathname.endsWith(".html") || url.pathname.endsWith(".json") || url.pathname.endsWith("/");
   if (fresh) {
-    event.respondWith(
-      fetch(req).then(r => { if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return r; })
-        .catch(() => caches.match(req, { ignoreSearch: true }).then(hit => hit || caches.match("./index.html")))
-    );
+    const net = fetch(req).then(r => { if (r.ok) { const copy = r.clone(); return caches.open(CACHE).then(c => c.put(req, copy)).then(() => r, () => r); } return r; });
+    event.waitUntil(net.catch(() => {})); // la copia nuova si salva anche se intanto è stata mostrata quella vecchia
+    const saved = () => caches.match(req, { ignoreSearch: true });
+    if (req.mode === "navigate") {
+      // aprendo una pagina non si aspetta una rete lenta: se entro 350 ms non risponde, si mostra la copia salvata
+      // (la nuova arriva in sottofondo e si vede alla visita dopo). Senza copia salvata si aspetta la rete.
+      const slow = new Promise(res => setTimeout(() => res(null), 350));
+      event.respondWith(
+        Promise.race([net.catch(() => null), slow])
+          .then(r => r || saved().then(hit => hit || net))
+          .catch(() => saved().then(hit => hit || caches.match("./index.html")))
+      );
+      return;
+    }
+    event.respondWith(net.catch(() => saved().then(hit => hit || caches.match("./index.html"))));
     return;
   }
 

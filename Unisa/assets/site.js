@@ -207,6 +207,8 @@
     const local = e => e.clientX - press.left; // misurata dal bordo della barra preso alla pressione
     const clampX = x => Math.min(Math.max(x, press.w / 2 - PAD), bar.clientWidth - press.w / 2 + PAD);
     const mark = t => { if (t !== press.on) { if (press.on) press.on.classList.remove("is-under"); t.classList.add("is-under"); press.on = t; } };
+    const warmed = new Set();
+    const warm = href => { if (warmed.has(href)) return; warmed.add(href); fetch(href, { credentials: "same-origin" }).catch(() => warmed.delete(href)); };
     const open = t => {
       if (t.matches('a[aria-current="page"]')) window.scrollTo({ top: 0, behavior: "smooth" }); // la scheda della pagina in cui sei: torna in cima
       else if (t.tagName === "A") location.href = t.href; // i link si aprono direttamente: più affidabile su iPhone
@@ -218,6 +220,7 @@
       press = { id: e.pointerId, left, x0: x, moved: false, last: t, on: null, w: t.offsetWidth + PAD * 2 };
       try { bar.setPointerCapture(e.pointerId); } catch (_) {}
       snap(centerOf(t), press.w); // la goccia nasce subito sotto il dito, senza attese
+      if (t.tagName === "A" && !t.matches('[aria-current="page"]')) warm(t.href); // la pagina inizia a caricarsi già al tocco
       bar.classList.add("is-pressing");
       mark(t);
     });
