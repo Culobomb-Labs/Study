@@ -28,6 +28,7 @@
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
   const THEME_KEY = "ua-theme";
+  const GLASS_KEY = "ua-glass"; // trasparenza della barra in basso: trasparente (predefinita), leggero, vetro, denso, pieno
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
   const enc = p => p.split("/").map(encodeURIComponent).join("/");
@@ -72,6 +73,22 @@
     applyTheme(next);
   }
   window.addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(getTheme()); });
+
+  /* ---------------- trasparenza della barra in basso ----------------
+     Cinque livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi" e salvati su questo
+     dispositivo come il tema. L'avvio nella pagina li applica prima che compaia (attributo data-glass). */
+  const GLASSES = [["trasparente", "Trasparente"], ["leggero", "Leggero"], ["vetro", "Vetro"], ["denso", "Denso"], ["pieno", "Pieno"]];
+  const getGlass = () => { try { return localStorage.getItem(GLASS_KEY) || "trasparente"; } catch (e) { return "trasparente"; } };
+  function applyGlass(g) {
+    if (g === "trasparente") document.documentElement.removeAttribute("data-glass");
+    else document.documentElement.setAttribute("data-glass", g);
+    document.querySelectorAll(".ua-glass-seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.glass === g)));
+  }
+  function setGlass(g) {
+    try { g === "trasparente" ? localStorage.removeItem(GLASS_KEY) : localStorage.setItem(GLASS_KEY, g); } catch (e) {}
+    applyGlass(g);
+  }
+  window.addEventListener("storage", e => { if (e.key === GLASS_KEY) applyGlass(getGlass()); });
 
   /* ---------------- barra in alto ---------------- */
   function buildBar() {
@@ -424,7 +441,7 @@
   /* ---------------- sposta i progressi tra dispositivi ----------------
      Le spunte (piano di studio, capitoli fatti) stanno nel browser. Qui le impacchettiamo
      in un link /QR: aprendolo sull'altro dispositivo vengono copiate lì. */
-  const SKIP_KEYS = [THEME_KEY];
+  const SKIP_KEYS = [THEME_KEY, GLASS_KEY]; // preferenze del dispositivo, non spunte
   const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
 
@@ -880,6 +897,9 @@
     ap.querySelector(".ua-np-in").innerHTML = `
       <div class="ua-np-head"><h2>I tuoi progressi</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
       <div class="ua-ap-body">${top}</div>
+      <div class="ua-ap-glass"><div class="ua-ap-glass-h"><b id="ua-glass-t">Aspetto della barra</b><span>Quanto è trasparente il vetro in basso</span></div>
+        <div class="ua-glass-seg" role="radiogroup" aria-labelledby="ua-glass-t">${GLASSES.map(([k, t]) =>
+          `<button type="button" role="radio" data-glass="${k}" aria-checked="${getGlass() === k}">${t}</button>`).join("")}</div></div>
       <ul class="ua-ap-menu">
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
@@ -896,6 +916,7 @@
       sw.closest("li").append(swErr);
       sw.addEventListener("click", () => switchAccount(sw, swErr));
     }
+    ap.querySelectorAll(".ua-glass-seg button").forEach(b => b.addEventListener("click", () => setGlass(b.dataset.glass)));
     const out = ap.querySelector(".ua-do-logout");
     if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
     const exp = ap.querySelector(".ua-do-export"), move = ap.querySelector(".ua-ap-move");

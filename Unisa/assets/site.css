@@ -165,12 +165,27 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-copy-dock{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))} /* spazio per la barra in basso */
 @media print{.ua-copy{margin-top:24px;border-top:1px solid #ccc}}
 
-/* passaggio morbido tra le pagine (Safari 18.2+, Chrome): la pagina sfuma nella nuova, la barra in basso resta ferma */
+/* passaggio morbido tra le pagine (Safari 18.2+, Chrome): la pagina sfuma nella nuova. La barra in basso è uguale su tutte
+   le pagine, quindi sembra ferma; niente view-transition-name sulla barra, perché spegnerebbe la sfocatura del vetro. */
 @view-transition{navigation:auto}
-.ua-dock{view-transition-name:ua-dock}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.2s}
-::view-transition-group(ua-dock){animation-duration:.2s}
 @media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+
+/* livelli di trasparenza della barra in basso (data-glass su <html>, scelti in "I tuoi progressi") */
+:root{--ua-glass-fx:blur(1.5px) saturate(1.6) brightness(.92)}
+:root[data-glass="leggero"]{--ua-glass:rgba(247,247,249,.38);--ua-glass-fx:blur(3.5px) saturate(1.7)}
+:root[data-glass="vetro"]{--ua-glass:rgba(248,248,250,.66);--ua-glass-fx:blur(18px) saturate(1.8)}
+:root[data-glass="denso"]{--ua-glass:rgba(248,248,250,.74);--ua-glass-fx:blur(14px) saturate(2.2)}
+:root[data-glass="pieno"]{--ua-glass:#f6f6f8;--ua-glass-fx:none}
+@media (prefers-color-scheme:dark){
+  :root[data-glass="leggero"]:not([data-theme="light"]){--ua-glass:rgba(38,38,42,.36)}
+  :root[data-glass="vetro"]:not([data-theme="light"]){--ua-glass:rgba(36,36,40,.62)}
+  :root[data-glass="denso"]:not([data-theme="light"]){--ua-glass:rgba(34,34,38,.72)}
+  :root[data-glass="pieno"]:not([data-theme="light"]){--ua-glass:#1f2125}}
+:root[data-glass="leggero"][data-theme="dark"]{--ua-glass:rgba(38,38,42,.36)}
+:root[data-glass="vetro"][data-theme="dark"]{--ua-glass:rgba(36,36,40,.62)}
+:root[data-glass="denso"][data-theme="dark"]{--ua-glass:rgba(34,34,38,.72)}
+:root[data-glass="pieno"][data-theme="dark"]{--ua-glass:#1f2125}
 
 /* ---------- barra in basso: schede in vetro, stile iOS ("liquid glass") ----------
    Vetro fumé poco sfocato (il testo sotto si intravede, come in iOS), bordo che riflette la luce in alto a sinistra e in basso a destra, scheda attiva su una
@@ -178,7 +193,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-dock{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
   font:500 11.5px/1 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
 .ua-tabs,.ua-dock .ua-up{position:relative;isolation:isolate;background:var(--ua-glass);
-  -webkit-backdrop-filter:blur(1.5px) saturate(1.6) brightness(.92);backdrop-filter:blur(1.5px) saturate(1.6) brightness(.92);box-shadow:var(--ua-glass-shadow)}
+  -webkit-backdrop-filter:var(--ua-glass-fx);backdrop-filter:var(--ua-glass-fx);box-shadow:var(--ua-glass-shadow)}
 .ua-tabs::before,.ua-dock .ua-up::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;
   background:linear-gradient(135deg,var(--ua-glass-rim),var(--ua-glass-rim2) 35%,var(--ua-glass-rim2) 65%,var(--ua-glass-rim));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude} /* bordo che rifrange */
@@ -314,6 +329,15 @@ a.ua-ni.has-thumb{flex-direction:row;align-items:center;gap:12px}
 /* tendina "I tuoi progressi" (stessa base della tendina News) */
 .ua-ap-body{display:flex;flex-direction:column;gap:10px;padding:2px 16px 12px}
 .ua-ap-p{margin:0;color:var(--ua-muted);font-size:14px}
+/* scelta della trasparenza nella tendina "I tuoi progressi" */
+.ua-ap-glass{padding:14px 16px 16px;border-top:1px solid var(--ua-line)}
+.ua-ap-glass-h{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.ua-ap-glass-h b{font:600 15px/1.3 var(--ua-font);color:var(--ua-ink)}
+.ua-ap-glass-h span{font-size:13px;color:var(--ua-muted)}
+.ua-glass-seg{display:flex;gap:2px;padding:4px;border-radius:12px;background:var(--ua-soft);border:1px solid var(--ua-line)}
+.ua-glass-seg button{flex:1 1 auto;min-width:0;appearance:none;border:0;background:transparent;color:var(--ua-muted);font:600 12.5px/1 var(--ua-font);padding:10px 7px;white-space:nowrap;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
+.ua-glass-seg button[aria-checked="true"]{background:var(--ua-bg);color:var(--ua-ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.ua-glass-seg button:focus-visible{outline:2px solid var(--ua-ink);outline-offset:1px}
 .ua-ap-p b{color:var(--ua-ink)}
 .ua-ap-note{margin:0;color:var(--ua-muted);font-size:12.5px}
 .ua-ap .ua-acct-ok{margin-right:2px}
