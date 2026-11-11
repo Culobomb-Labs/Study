@@ -38,6 +38,7 @@
   const ICON = {
     search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
     home: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg>',
+    list: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/></svg>',
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>',
@@ -116,16 +117,25 @@
     fit(); window.addEventListener("resize", fit);
   }
 
-  /* ---------------- pulsanti fluttuanti ---------------- */
+  /* ---------------- pulsanti fluttuanti ----------------
+     Nelle pagine di appunti la barra in alto scorre via: qui restano Home, Cerca e, quando servono,
+     Indice (telefono, nei quaderni), News (solo con notizie da leggere) e Torna su (dopo un po' di scorrimento). */
   function buildDock() {
+    const idx = document.querySelector("nav.idx");
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
-    dock.innerHTML = `<a href="${ROOT}index.html" aria-label="Torna alla home">${ICON.home}<span class="ua-label">Home</span></a>
+    dock.innerHTML = `<a href="${ROOT}index.html" class="ua-dock-home" aria-label="Torna alla home">${ICON.home}<span class="ua-label">Home</span></a>
+      ${idx ? `<button type="button" class="ua-dock-idx" aria-label="Indice dei capitoli">${ICON.list}<span class="ua-label">Indice</span></button>` : ""}
       <button type="button" class="ua-open-search" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-label">Cerca</span></button>
-      <button type="button" class="ua-news-btn" aria-label="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
+      <button type="button" class="ua-news-btn" hidden aria-label="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
       <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
+    const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    if (idx) dock.querySelector(".ua-dock-idx").addEventListener("click", () => {
+      const d = idx.querySelector("details"); if (d) d.open = true;
+      idx.scrollIntoView({ behavior: smooth(), block: "start" });
+    });
     const up = dock.querySelector(".ua-up");
-    up.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+    up.addEventListener("click", () => window.scrollTo({ top: 0, behavior: smooth() }));
     let ticking = false;
     window.addEventListener("scroll", () => {
       if (ticking) return; ticking = true;
@@ -945,6 +955,7 @@
     const k = unread().length;
     document.querySelectorAll(".ua-news-btn").forEach(b => {
       const dot = b.querySelector(".ua-news-dot"); if (dot) dot.hidden = !k;
+      if (b.closest(".ua-dock")) b.hidden = !k;
       const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
       b.setAttribute("aria-label", l); b.title = l;
     });
