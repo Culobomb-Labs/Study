@@ -143,6 +143,7 @@
       const d = idx.querySelector("details"); if (d) d.open = true;
       idx.scrollIntoView({ behavior: smooth(), block: "start" });
     });
+    lensTabs(dock.querySelector(".ua-tabs"));
     const up = dock.querySelector(".ua-up");
     up.addEventListener("click", toTop);
     let ticking = false;
@@ -150,6 +151,60 @@
       if (ticking) return; ticking = true;
       requestAnimationFrame(() => { const far = scrollY > 700; dock.classList.toggle("ua-scrolled", far); up.tabIndex = far ? 0 : -1; ticking = false; });
     }, { passive: true });
+  }
+
+  /* Lente delle schede, come in iOS: a riposo è la pillola scura sotto la scheda della pagina in cui sei.
+     Premendo la barra diventa una lente di vetro più grande che ingrandisce la scheda sotto; trascinando il dito
+     la segue, e al rilascio scivola sulla scheda scelta, che poi si apre. Da tastiera le schede funzionano come sempre. */
+  function lensTabs(bar) {
+    const tabs = [...bar.querySelectorAll(".ua-tab")];
+    const lens = el("span", { class: "ua-lens", "aria-hidden": "true" });
+    bar.prepend(lens);
+    tabs.forEach(t => t.setAttribute("draggable", "false"));
+    bar.addEventListener("dragstart", e => e.preventDefault()); // altrimenti il browser trascina il link e annulla il gesto
+    const home = () => bar.querySelector(".ua-tab.is-on");
+    const box = t => ({ x: t.offsetLeft, w: t.offsetWidth });
+    const put = (x, w) => { bar.style.setProperty("--lx", x + "px"); bar.style.setProperty("--lw", w + "px"); };
+    const rest = () => { const h = home(); bar.classList.toggle("has-on", !!h); if (h) { const b = box(h); put(b.x, b.w); } };
+    const under = x => tabs.reduce((a, t) => Math.abs(t.offsetLeft + t.offsetWidth / 2 - x) < Math.abs(a.offsetLeft + a.offsetWidth / 2 - x) ? t : a);
+    const PAD = 8; // la lente premuta sporge un po' ai lati
+    let press = null, swallow = false;
+    const follow = x => {
+      const t = under(x), w = t.offsetWidth + PAD * 2;
+      put(Math.min(Math.max(x - w / 2, -PAD), bar.clientWidth - w + PAD), w);
+      tabs.forEach(o => o.classList.toggle("is-under", o === t));
+      return t;
+    };
+    bar.addEventListener("pointerdown", e => {
+      if (e.button) return;
+      const x = e.clientX - bar.getBoundingClientRect().left;
+      press = { id: e.pointerId, x0: x, moved: false };
+      bar.setPointerCapture(e.pointerId);
+      bar.classList.add("is-pressing");
+      follow(x);
+    });
+    bar.addEventListener("pointermove", e => {
+      if (!press || e.pointerId !== press.id) return;
+      const x = e.clientX - bar.getBoundingClientRect().left;
+      if (!press.moved && Math.abs(x - press.x0) > 6) { press.moved = true; bar.classList.add("is-dragging"); }
+      if (press.moved) follow(x);
+    });
+    const end = (e, cancel) => {
+      if (!press || e.pointerId !== press.id) return;
+      const x = e.clientX - bar.getBoundingClientRect().left, t = cancel ? null : under(x);
+      press = null; bar.classList.remove("is-dragging");
+      if (t) { const b = box(t); put(b.x - PAD, b.w + PAD * 2); swallow = true; } // la lente si posa sulla scheda scelta
+      setTimeout(() => {
+        bar.classList.remove("is-pressing"); tabs.forEach(o => o.classList.remove("is-under")); rest();
+        if (t) t.click();
+      }, t ? 200 : 0);
+    };
+    bar.addEventListener("pointerup", e => end(e, false));
+    bar.addEventListener("pointercancel", e => end(e, true));
+    // il clic "vero" del dito arriva subito dopo il rilascio: lo fermiamo, la scheda si apre a fine animazione
+    bar.addEventListener("click", e => { if (swallow && e.isTrusted) { e.preventDefault(); e.stopImmediatePropagation(); } swallow = false; }, true);
+    new ResizeObserver(rest).observe(bar);
+    rest();
   }
 
   /* ---------------- ricerca ---------------- */

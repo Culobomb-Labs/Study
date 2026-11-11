@@ -175,12 +175,27 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-tabs::before,.ua-dock .ua-up::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;
   background:linear-gradient(135deg,var(--ua-glass-rim),var(--ua-glass-rim2) 35%,var(--ua-glass-rim2) 65%,var(--ua-glass-rim));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude} /* bordo che rifrange */
-.ua-tabs{display:flex;gap:2px;padding:5px;border-radius:999px}
-.ua-tab{appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;font:inherit;
+.ua-tabs{display:flex;gap:2px;padding:5px;border-radius:999px;touch-action:none;-webkit-user-select:none;user-select:none;transition:transform .3s var(--ua-ease)}
+.ua-tabs.is-pressing{transform:scale(1.03)}
+/* lente: a riposo la pillola scura della scheda attiva; premuta, vetro chiaro più grande con bordo iridescente */
+.ua-lens{position:absolute;z-index:0;top:5px;bottom:5px;left:0;width:var(--lw,0);transform:translateX(var(--lx,0));border-radius:999px;
+  background:var(--ua-glass-on);opacity:0;pointer-events:none;
+  transition:transform .38s cubic-bezier(.3,1.35,.5,1),width .3s var(--ua-ease),top .25s var(--ua-ease),bottom .25s var(--ua-ease),background .25s,box-shadow .25s,opacity .2s}
+.ua-tabs.has-on .ua-lens,.ua-tabs.is-pressing .ua-lens{opacity:1}
+.ua-tabs.is-pressing .ua-lens{top:-7px;bottom:-7px;background:rgba(255,255,255,.06);
+  box-shadow:inset 0 1px 8px rgba(255,255,255,.28),inset 0 -2px 8px rgba(255,255,255,.12),0 8px 22px -6px rgba(0,0,0,.45)}
+.ua-lens::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;opacity:0;transition:opacity .25s;
+  background:conic-gradient(from 200deg,rgba(255,255,255,.9),#7ee8fa 15%,rgba(255,255,255,.5) 25%,#f9a8d4 40%,rgba(255,255,255,.85) 55%,#fde68a 70%,rgba(255,255,255,.5) 85%,rgba(255,255,255,.9));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ua-tabs.is-pressing .ua-lens::before{opacity:.85}
+.ua-tabs.is-dragging .ua-lens{transition:transform .08s linear,width .2s var(--ua-ease),top .25s,bottom .25s,background .25s,box-shadow .25s}
+.ua-tab{position:relative;z-index:1;appearance:none;border:0;background:transparent;color:inherit;text-decoration:none;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:66px;height:56px;padding:0 12px;border-radius:999px;
-  transition:background .2s var(--ua-ease)}
-.ua-tab:hover{background:color-mix(in srgb,var(--ua-glass-on) 60%,transparent)}
-.ua-tab.is-on{background:var(--ua-glass-on);font-weight:600}
+  transition:background .2s var(--ua-ease),transform .3s cubic-bezier(.3,1.35,.5,1)}
+.ua-tab:hover{background:color-mix(in srgb,var(--ua-glass-on) 45%,transparent)}
+.ua-tabs.is-pressing .ua-tab:hover,.ua-tab.is-on:hover{background:transparent}
+.ua-tab.is-on{font-weight:600}
+.ua-tab.is-under{transform:scale(1.14)} /* la lente ingrandisce la scheda sotto */
 .ua-tab-ic{position:relative;display:grid;place-items:center;height:24px}
 .ua-tab-ic svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8}
 .ua-dock :focus-visible{outline:2px solid var(--ua-ink);outline-offset:-3px}
@@ -258,7 +273,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 @keyframes ua-fade{from{opacity:0}}
 @keyframes ua-pop{from{opacity:0;transform:translateY(-6px) scale(.985)}}
 @keyframes ua-rise{from{opacity:0;transform:translateY(10px)}}
-@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-tab,.ua-theme svg{transition:none}}
+@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-tab,.ua-tabs,.ua-lens,.ua-theme svg{transition:none}}
 
 /* ---------- news: immagini ---------- */
 .ua-ni-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
