@@ -46,48 +46,36 @@
 .ua-crumb{color:var(--ua-muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis}
 .ua-crumb.ua-here{color:var(--ua-ink)}
 .ua-dot{width:7px;height:7px;border-radius:50%;background:var(--c,var(--ua-muted));flex:none}
-.ua-actions{display:flex;align-items:center;gap:6px;flex:none}
 .ua-btn{appearance:none;border:1px solid var(--ua-line);background:var(--ua-bg);color:var(--ua-ink);border-radius:8px;
   height:34px;min-width:34px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
   font:500 13px/1 var(--ua-font);cursor:pointer;transition:background .15s,border-color .15s}
 .ua-btn:hover{background:var(--ua-soft);border-color:var(--ua-muted)}
 .ua-btn:focus-visible{outline:2px solid var(--ua-ink);outline-offset:2px}
-/* barra in alto: ogni pulsante ha il suo gradiente (definiti una volta sola in site.js)
-   - Cerca: il gradiente dei corsi, come il sigillo della home, sulla lente e su un bordo sottile (è l'azione principale)
-   - campanello: caldo, ambra → rosso; tema: sole giallo-arancio, luna indaco-viola, automatico dal sole alla luna */
-.ua-actions .ua-btn svg{stroke:url(#uaGrad)}
-.ua-actions .ua-btn svg [fill="currentColor"]{fill:url(#uaGrad)}
-.ua-actions .ua-news-btn svg{stroke:url(#uaBell)}
-.ua-nt-bell svg{stroke:url(#uaBell)} /* campanello della riga Notifiche (tendina e pagina News): stesso gradiente ambra → arancio */
-.ua-field > svg{stroke:url(#uaGrad)} /* lente della finestra di ricerca: stesso gradiente dei corsi del pulsante Cerca */
-.ua-actions .ua-theme[data-mode="light"] svg{stroke:url(#uaSun)}
-.ua-actions .ua-theme[data-mode="dark"] svg{stroke:url(#uaMoon)}
-.ua-actions .ua-theme[data-mode="auto"] svg{stroke:url(#uaAuto)}
-.ua-actions .ua-theme[data-mode="auto"] svg [fill="currentColor"]{fill:url(#uaAuto)}
-.ua-btn.ua-open-search{border-color:transparent;
+.ua-btn svg{flex:none}
+/* lente nella barra in alto (solo PC): bordo col gradiente dei corsi, come il sigillo della home */
+.ua-bar-search{flex:none;margin-left:auto;border-color:transparent;
   background:linear-gradient(var(--ua-bg),var(--ua-bg)) padding-box,
     linear-gradient(90deg,color-mix(in srgb,var(--ua-c-is) 55%,var(--ua-line)),color-mix(in srgb,var(--ua-c-bd) 55%,var(--ua-line)) 55%,color-mix(in srgb,var(--ua-c-mp) 55%,var(--ua-line))) border-box}
-.ua-btn.ua-open-search:hover,.ua-btn.ua-open-search:focus-visible{
+.ua-bar-search:hover,.ua-bar-search:focus-visible{
   background:linear-gradient(var(--ua-soft),var(--ua-soft)) padding-box,
     linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box}
-.ua-kbd{opacity:.7}
-.ua-btn svg{flex:none}
-.ua-kbd{font:500 11px/1 var(--ua-mono);color:var(--ua-muted);border:1px solid var(--ua-line);border-radius:4px;padding:3px 5px}
-.ua-theme svg{transition:transform .4s var(--ua-ease)}
-.ua-theme:active svg{transform:rotate(-30deg) scale(.9)}
+.ua-bar-search{width:300px;height:38px;padding:0 8px 0 12px;gap:10px;justify-content:flex-start;border-radius:10px} /* più grande: sembra un campo di ricerca */
+.ua-bar-search svg{width:17px;height:17px;stroke:url(#uaGrad)}
+.ua-bar-search-t{flex:1;text-align:left;font-size:14px;color:var(--ua-muted)}
+@media (max-width:900px){.ua-bar-search{width:220px}}
+/* icone con i gradienti definiti una volta sola nella barra in alto (site.js) */
+.ua-nt-bell svg{stroke:url(#uaBell)} /* campanello della riga Notifiche (pagina News): ambra → arancio */
+.ua-field > svg{stroke:url(#uaGrad)} /* lente della finestra di ricerca: gradiente dei corsi */
 @media (max-width:640px){
   .ua-crumb,.ua-sep{display:none}
   .ua-crumb.ua-here{display:block}
   .ua-crumbs .ua-sep:last-of-type{display:inline}
-  .ua-search-label,.ua-kbd{display:none}
+  .ua-bar-search{display:none} /* su telefono Cerca sta nella barra in basso */
 }
 
-/* ---------- news: campanello, tendina, pagina ---------- */
-.ua-news-btn{position:relative}
-.ua-news-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 2px var(--ua-bg);pointer-events:none}
-.ua-dock .ua-news-dot{top:-2px;right:-5px;box-shadow:0 0 0 2px var(--ua-bg)}
+/* ---------- news: pallino sulla scheda, tendine, pagina ---------- */
+.ua-news-dot{position:absolute;top:-2px;right:-5px;width:8px;height:8px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 2px var(--ua-bg);pointer-events:none}
 .ua-news-dot[hidden]{display:none}
-.ua-btn[aria-expanded="true"]{background:var(--ua-soft);border-color:var(--ua-muted)}
 
 .ua-np{position:fixed;inset:0;z-index:150;pointer-events:none;font:400 15px/1.45 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
 .ua-np[hidden]{display:none!important}
@@ -97,11 +85,9 @@
   background:var(--ua-bg);border:1px solid var(--ua-line);border-radius:14px;box-shadow:var(--ua-shadow);outline:0;animation:ua-pop .18s var(--ua-ease) both}
 .ua-np-grip{display:none}
 .ua-np-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
-.ua-np-head h2.ua-np-news{background:linear-gradient(90deg,var(--ua-g-bell1),var(--ua-g-bell2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content} /* "News": stesso gradiente del campanello */
 .ua-np-head h2{margin:0;font:600 12px/1 var(--ua-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ua-muted)}
 .ua-np-close{appearance:none;border:0;background:transparent;color:var(--ua-muted);width:30px;height:30px;border-radius:8px;font:400 22px/1 var(--ua-font);cursor:pointer}
 .ua-np-close:hover{background:var(--ua-soft);color:var(--ua-ink)}
-.ua-np-body{padding:0 8px}
 .ua-np-nt{margin:8px 16px 0;padding:12px 0;border-top:1px solid var(--ua-line)}
 .ua-np-all{display:block;margin:0 8px 8px;padding:11px 10px;border-radius:9px;text-align:center;font-weight:600;font-size:14px;color:var(--ua-ink);text-decoration:none;background:var(--ua-soft)}
 .ua-np-all:hover{background:color-mix(in srgb,var(--ua-soft) 70%,var(--ua-line))}
@@ -119,7 +105,6 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-ni-empty svg{width:20px;height:20px;margin-top:2px;color:var(--ua-ink)}
 .ua-ni-empty p{margin:0}
 .ua-ni-empty b{color:var(--ua-ink);font-weight:600}
-.ua-ni-wait{margin:6px 8px 12px;color:var(--ua-muted);font-size:14px}
 
 .ua-nt{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
 .ua-nt-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--ua-soft);color:var(--ua-ink)}
@@ -171,7 +156,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.2s}
 @media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
 
-/* livelli di trasparenza della barra in basso (data-glass su <html>, scelti in "I tuoi progressi") */
+/* livelli di trasparenza della barra in basso (data-glass su <html>, scelti nella tendina Profilo) */
 :root{--ua-glass-fx:blur(1.5px) saturate(1.6) brightness(.92)}
 :root[data-glass="leggero"]{--ua-glass:rgba(247,247,249,.38);--ua-glass-fx:blur(3.5px) saturate(1.7)}
 :root[data-glass="vetro"]{--ua-glass:rgba(248,248,250,.58);--ua-glass-fx:blur(16px) saturate(1.9)}
@@ -221,6 +206,13 @@ a.ua-ni:hover{background:var(--ua-soft)}
 .ua-dock :focus-visible{outline:2px solid var(--ua-ink);outline-offset:-3px}
 .ua-dock.ua-pointer :focus-visible{outline:none} /* con il dito il bordo di selezione si sommerebbe alla lente */
 .ua-dock [hidden]{display:none}
+/* col mouse, sopra Cerca compare la scorciatoia da tastiera (Ctrl K o ⌘ K) */
+@media (hover:hover) and (pointer:fine){
+  .ua-tab[data-kbd]::after{content:attr(data-kbd);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translate(-50%,4px);
+    font:500 11px/1 var(--ua-mono);color:var(--ua-muted);background:var(--ua-bg);border:1px solid var(--ua-line);border-radius:6px;padding:5px 7px;white-space:nowrap;
+    box-shadow:var(--ua-shadow);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s var(--ua-ease)}
+  .ua-tab[data-kbd]:hover::after{opacity:1;transform:translate(-50%,0)}
+}
 /* Torna su: bottone rotondo di vetro sopra la barra, compare dopo un po' di scorrimento */
 .ua-dock .ua-up{position:absolute;right:0;bottom:calc(100% + 10px);width:48px;height:48px;border:0;border-radius:50%;color:inherit;cursor:pointer;
   display:grid;place-items:center;opacity:0;transform:translateY(8px) scale(.9);pointer-events:none;transition:opacity .2s,transform .25s var(--ua-ease)}
@@ -294,7 +286,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
 @keyframes ua-fade{from{opacity:0}}
 @keyframes ua-pop{from{opacity:0;transform:translateY(-6px) scale(.985)}}
 @keyframes ua-rise{from{opacity:0;transform:translateY(10px)}}
-@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-tab,.ua-lens,.ua-theme svg{transition:none}}
+@media (prefers-reduced-motion:reduce){.ua-veil,.ua-panel{animation:none}.ua-dock .ua-up,.ua-tab,.ua-lens,.ua-seg button{transition:none}}
 
 /* ---------- news: immagini ---------- */
 .ua-ni-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
@@ -306,7 +298,6 @@ a.ua-ni.has-thumb{flex-direction:row;align-items:center;gap:12px}
 .ua-avatar{position:relative;overflow:hidden;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;flex:none;
   background:var(--ua-ink);color:var(--ua-bg);font:600 17px/1 var(--ua-font)}
 .ua-avatar-sm{width:24px;height:24px;font-size:12.5px}
-.ua-bar .ua-open-sync:has(.ua-avatar-sm){padding:0 4px}
 .ua-acct-box{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--ua-line);border-radius:12px;background:var(--ua-soft)}
 .ua-acct-box-out{padding:0;border:0;background:none}
 .ua-acct-who{display:flex;flex-direction:column;min-width:0}
@@ -324,19 +315,27 @@ a.ua-ni.has-thumb{flex-direction:row;align-items:center;gap:12px}
 .ua-acct-alt:hover{color:var(--ua-ink);background:var(--ua-soft)}
 .ua-acct-alt:focus-visible{outline:2px solid var(--ua-ink);outline-offset:-2px}
 
-/* tendina "I tuoi progressi" (stessa base della tendina News) */
+/* tendina Profilo (base .ua-np) */
 .ua-ap-body{display:flex;flex-direction:column;gap:10px;padding:2px 16px 12px}
 .ua-ap-p{margin:0;color:var(--ua-muted);font-size:14px}
-/* scelta della trasparenza nella tendina "I tuoi progressi" */
-.ua-ap-glass{padding:14px 16px 16px;border-top:1px solid var(--ua-line)}
-.ua-ap-glass-h{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
-.ua-ap-glass-h b{font:600 15px/1.3 var(--ua-font);color:var(--ua-ink)}
-.ua-ap-glass-h span{font-size:13px;color:var(--ua-muted)}
-.ua-glass-seg{display:flex;gap:2px;padding:4px;border-radius:12px;background:var(--ua-soft);border:1px solid var(--ua-line)}
-.ua-glass-seg button{flex:1 1 auto;min-width:0;appearance:none;border:0;background:transparent;color:var(--ua-muted);font:600 12.5px/1 var(--ua-font);padding:10px 7px;white-space:nowrap;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
-.ua-glass-seg button[aria-checked="true"]{background:var(--ua-bg);color:var(--ua-ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
-.ua-glass-seg button:focus-visible{outline:2px solid var(--ua-ink);outline-offset:1px}
-.ua-ap-glass .ua-ap-note{margin:8px 2px 0}
+/* sezione "Aspetto" nella tendina Profilo: tema e trasparenza della barra in basso */
+.ua-ap-look{display:flex;flex-direction:column;padding:14px 16px 16px;border-top:1px solid var(--ua-line)}
+.ua-ap-look-t{font:600 15px/1.3 var(--ua-font);color:var(--ua-ink);margin-bottom:10px}
+.ua-ap-look-l{font-size:13px;color:var(--ua-muted);margin:0 2px 6px}
+.ua-ap-look .ua-seg + .ua-ap-look-l{margin-top:12px}
+.ua-ap-look .ua-ap-note{margin:8px 2px 0}
+/* scelta a segmenti (Tema, Barra in basso) */
+.ua-seg{display:flex;gap:2px;padding:4px;border-radius:12px;background:var(--ua-soft);border:1px solid var(--ua-line)}
+.ua-seg button{flex:1 1 auto;min-width:0;appearance:none;border:0;background:transparent;color:var(--ua-muted);font:600 12.5px/1 var(--ua-font);padding:10px 7px;white-space:nowrap;border-radius:9px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .15s,color .15s}
+.ua-seg button[aria-checked="true"]{background:var(--ua-bg);color:var(--ua-ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.ua-seg button:focus-visible{outline:2px solid var(--ua-ink);outline-offset:1px}
+.ua-seg svg{width:14px;height:14px;flex:none}
+/* icone del tema coi gradienti di sempre: sole giallo-arancio, luna indaco-viola, automatico dal sole alla luna */
+.ua-theme-seg [data-theme="light"] svg{stroke:url(#uaSun)}
+.ua-theme-seg [data-theme="dark"] svg{stroke:url(#uaMoon)}
+.ua-theme-seg [data-theme="auto"] svg{stroke:url(#uaAuto)}
+.ua-theme-seg [data-theme="auto"] svg [fill="currentColor"]{fill:url(#uaAuto)}
 .ua-ap-p b{color:var(--ua-ink)}
 .ua-ap-note{margin:0;color:var(--ua-muted);font-size:12.5px}
 .ua-ap .ua-acct-ok{margin-right:2px}
@@ -413,21 +412,8 @@ html.ua-qs-open,html.ua-qs-open body{overflow:hidden}
 /* quaderno dentro il pannello: niente barra né pulsanti del sito */
 html.ua-embed #ua-bar,html.ua-embed .ua-bar,html.ua-embed .ua-dock,html.ua-embed .ua-copy{display:none !important}
 
-/* ricerca che si apre dal pulsante "Cerca" della barra (PC/Mac): il pulsante si allarga e diventa il campo */
-.ua-pal.is-anchored{padding:0;display:block}
-.ua-pal.is-anchored .ua-veil{background:color-mix(in srgb,var(--ua-veil) 55%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
-.ua-pal.is-anchored .ua-panel{position:absolute;top:var(--ay);right:var(--ar);width:min(600px,calc(100vw - 24px));
-  max-height:min(560px,calc(100vh - var(--ay) - 16px));border-radius:12px;transform-origin:top right;animation:ua-grow .26s var(--ua-ease) both}
-.ua-pal.is-anchored .ua-field{height:48px;padding:0 10px 0 14px;gap:10px}
-.ua-pal.is-anchored .ua-field input{font-size:15.5px}
-.ua-pal.is-anchored .ua-field svg{width:17px;height:17px}
-.ua-pal.is-anchored .ua-results,.ua-pal.is-anchored .ua-foot{animation:ua-fade .22s .08s ease both}
-@keyframes ua-grow{from{width:var(--aw);max-height:48px;box-shadow:none}}
-@media (prefers-reduced-motion:reduce){.ua-pal.is-anchored .ua-panel,.ua-pal.is-anchored .ua-results,.ua-pal.is-anchored .ua-foot{animation:none}}
-
-/* tendina di ricerca con la stessa struttura delle tendine News e "I tuoi progressi":
-   intestazione col titolo "Cerca" (gradiente dei corsi, come il pulsante) e la ×,
-   campo arrotondato col bordo sfumato del pulsante Cerca, righe uguali a quelle delle News */
+/* finestra di ricerca al centro (scheda Cerca della barra in basso, oppure Ctrl/⌘ K), stessa struttura della tendina Profilo:
+   intestazione col titolo "Cerca" (gradiente dei corsi) e la ×, campo arrotondato col bordo sfumato, righe uguali a quelle delle News */
 .ua-pal .ua-panel{border-radius:14px}
 .ua-pal-head{flex:none}
 .ua-pal-head h2.ua-pal-t{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
@@ -448,15 +434,7 @@ html.ua-embed #ua-bar,html.ua-embed .ua-bar,html.ua-embed .ua-dock,html.ua-embed
 .ua-pal .ua-hit-x{font-size:14px}
 .ua-pal .ua-hit:hover{background:var(--ua-soft)}
 .ua-pal .ua-foot{margin:0 16px;padding:10px 0 12px;font-size:11.5px}
-.ua-pal .ua-foot .ua-kbd{opacity:1}
-/* PC/Mac: tendina sotto il pulsante, pagina sotto visibile, si apre come le altre */
-.ua-pal.is-anchored .ua-veil{background:transparent}
-.ua-pal.is-anchored .ua-panel{top:var(--ay);right:var(--ar);width:min(460px,calc(100vw - 24px));
-  max-height:min(560px,calc(100vh - var(--ay) - 16px));border-radius:14px;transform-origin:top right;animation:ua-pop .18s var(--ua-ease) both}
-.ua-pal.is-anchored .ua-field{height:42px;padding:0 12px;gap:10px}
-.ua-pal.is-anchored .ua-field input{font-size:15px}
-.ua-pal.is-anchored .ua-field svg{width:16px;height:16px}
-.ua-pal.is-anchored .ua-results,.ua-pal.is-anchored .ua-foot{animation:none}
+.ua-kbd{font:500 11px/1 var(--ua-mono);color:var(--ua-muted);border:1px solid var(--ua-line);border-radius:4px;padding:3px 5px}
 
 /* ---------- avvisi: etichetta e filo colorato a sinistra ---------- */
 .ua-ni-avv{display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;font:600 10.5px/1 var(--ua-mono);letter-spacing:.06em;text-transform:uppercase;

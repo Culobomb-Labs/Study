@@ -26,7 +26,7 @@ OUT = "_site"
 SITE_URL = "https://culobomb-labs.github.io/Study/"
 EXT = {"png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "webp": "webp", "svg+xml": "svg"}
 
-THEME_BOOT = '<script>try{var d=document.documentElement,t=localStorage.getItem("ua-theme"),g=localStorage.getItem("ua-glass");if(t)d.setAttribute("data-theme",t);if(g)d.setAttribute("data-glass",g)}catch(e){}</script>'
+THEME_BOOT = '<script>try{var d=document.documentElement,t=localStorage.getItem("ua-theme"),g=localStorage.getItem("ua-glass");if(t&&t!="auto")d.setAttribute("data-theme",t);if(g)d.setAttribute("data-glass",g)}catch(e){}</script>'
 
 
 def site_version():

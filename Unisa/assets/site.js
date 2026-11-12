@@ -27,8 +27,9 @@
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
   const THEME_KEY = "ua-theme";
+  const KBD = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘ K" : "Ctrl K"; // scorciatoia della ricerca
+  const KBD_ARIA = KBD === "⌘ K" ? "Meta+K" : "Control+K";
   const GLASS_KEY = "ua-glass"; // trasparenza della barra in basso: trasparente (predefinita), leggero, vetro, pieno
-  const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
   const enc = p => p.split("/").map(encodeURIComponent).join("/");
   const url = (p, hash) => ROOT + enc(p) + (hash ? "#" + hash : "");
@@ -58,23 +59,22 @@
   for (const c of CORSI) for (const d of c.docs) if (d.path === PAGE) here = { c, d };
 
   /* ---------------- tema ---------------- */
-  const THEMES = ["auto", "light", "dark"];
-  const LABEL = { auto: "Tema automatico (segue il sistema)", light: "Tema chiaro", dark: "Tema scuro" };
+  /* scelto nella tendina Profilo (sezione Aspetto); con l'accesso Google si sincronizza come la barra */
+  const THEMES = [["auto", "Automatico"], ["light", "Chiaro"], ["dark", "Scuro"]];
   const getTheme = () => { try { return localStorage.getItem(THEME_KEY) || "auto"; } catch (e) { return "auto"; } };
   function applyTheme(t) {
     if (t === "auto") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", t);
-    document.querySelectorAll(".ua-theme").forEach(b => { b.innerHTML = ICON[t]; b.dataset.mode = t; b.setAttribute("aria-label", LABEL[t] + ". Clicca per cambiare"); b.title = LABEL[t]; });
+    document.querySelectorAll(".ua-theme-seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.theme === t)));
   }
-  function cycleTheme() {
-    const next = THEMES[(THEMES.indexOf(getTheme()) + 1) % THEMES.length];
-    try { next === "auto" ? localStorage.removeItem(THEME_KEY) : localStorage.setItem(THEME_KEY, next); } catch (e) {}
-    applyTheme(next);
+  function setTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {} // salvato sempre, anche "auto": così il cambio arriva agli altri dispositivi
+    applyTheme(t);
   }
   window.addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(getTheme()); });
 
   /* ---------------- trasparenza della barra in basso ----------------
-     Quattro livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi". Salvati sul dispositivo e,
+     Quattro livelli, dal più trasparente al pieno, scelti nella tendina Profilo. Salvati sul dispositivo e,
      con l'accesso Google, anche sull'account insieme alle spunte (così valgono su PC e telefono). L'avvio nella pagina li applica prima che compaia (attributo data-glass). */
   const GLASSES = [["trasparente", "Trasparente"], ["leggero", "Leggero"], ["vetro", "Vetro"], ["pieno", "Pieno"]];
   const getGlass = () => {
@@ -107,12 +107,8 @@
     }
     bar.innerHTML = `<div class="ua-bar-in"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="uaGrad" gradientUnits="userSpaceOnUse" x1="2" y1="0" x2="22" y2="0"><stop offset="0" style="stop-color:var(--ua-c-is)"/><stop offset=".55" style="stop-color:var(--ua-c-bd)"/><stop offset="1" style="stop-color:var(--ua-c-mp)"/></linearGradient><linearGradient id="uaBell" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-bell1)"/><stop offset="1" style="stop-color:var(--ua-g-bell2)"/></linearGradient><linearGradient id="uaSun" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-sun1)"/><stop offset="1" style="stop-color:var(--ua-g-sun2)"/></linearGradient><linearGradient id="uaMoon" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-moon1)"/><stop offset="1" style="stop-color:var(--ua-g-moon2)"/></linearGradient><linearGradient id="uaAuto" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-auto1)"/><stop offset="1" style="stop-color:var(--ua-g-auto2)"/></linearGradient></defs></svg>
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
-      <div class="ua-actions">
-        <button class="ua-btn ua-open-search" type="button" aria-label="Cerca negli appunti">${ICON.search}<span class="ua-search-label">Cerca</span><span class="ua-kbd">${isMac ? "⌘" : "Ctrl"} K</span></button>
-        <button class="ua-btn ua-news-btn" type="button" aria-label="News" title="News" aria-haspopup="dialog" aria-expanded="false">${ICON.bell}<span class="ua-news-dot" hidden></span></button>
-        <button class="ua-btn ua-theme" type="button"></button>
-        <button class="ua-btn ua-open-sync" type="button" aria-label="Accedi per salvare i progressi" title="Accedi per salvare i progressi">${ICON.user}</button>
-      </div></div>`;
+      <button class="ua-btn ua-open-search ua-bar-search" type="button" aria-label="Cerca nel sito" title="Cerca nel sito (${KBD})" aria-keyshortcuts="${KBD_ARIA}">${ICON.search}<span class="ua-bar-search-t">Cerca nel sito</span><span class="ua-kbd">${KBD}</span></button></div>`;
+    // la lente resta in alto solo su PC; News e Profilo (e Cerca su telefono) stanno nella barra in basso
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
     const fit = () => {
       bar.style.marginLeft = bar.style.marginRight = "0px"; bar.style.width = "";
@@ -153,7 +149,7 @@
     dock.innerHTML = `<div class="ua-tabs">
       ${tab("a", "ua-dock-home" + (IS_HOME ? " is-on" : ""), `href="${ROOT}index.html"` + (IS_HOME ? ` ${on}` : ""), ICON.home, "Home")}
       ${idx ? tab("button", "ua-dock-idx", 'type="button"', ICON.book, "Indice") : ""}
-      ${tab("button", "ua-open-search", 'type="button"', ICON.search, "Cerca")}
+      ${tab("button", "ua-open-search", `type="button" data-kbd="${KBD}" aria-keyshortcuts="${KBD_ARIA}"`, ICON.search, "Cerca")}
       ${tab("a", "ua-dock-news" + (IS_NEWS_PAGE ? " is-on" : ""), `href="${ROOT}news.html"` + (IS_NEWS_PAGE ? ` ${on}` : ""), ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
       ${tab("button", "ua-open-sync", 'type="button" aria-haspopup="dialog"', ICON.user, "Profilo")}
     </div>
@@ -319,29 +315,8 @@
     return loading;
   }
 
-  /* Su PC/Mac la ricerca è una tendina sotto il pulsante Cerca, come News e "I tuoi progressi".
-     Su telefono (o se la barra non si vede) resta la finestra al centro. */
-  function searchAnchor() {
-    if (innerWidth <= 640) return null;
-    const b = document.querySelector(".ua-bar .ua-open-search");
-    if (!b || !b.offsetWidth) return null;
-    const r = b.getBoundingClientRect();
-    return r.top >= 0 && r.bottom <= innerHeight ? r : null;
-  }
-  function placeSearch() {
-    const r = searchAnchor();
-    pal.classList.toggle("is-anchored", !!r);
-    if (!r) return;
-    // come le tendine News e Progressi: si apre sotto il pulsante, allineata al suo bordo destro
-    pal.style.setProperty("--ay", (r.bottom + 8) + "px");
-    pal.style.setProperty("--ar", Math.max(12, document.documentElement.clientWidth - r.right) + "px");
-  }
-  window.addEventListener("resize", () => { if (pal && !pal.hidden) placeSearch(); });
-
   function openSearch(prefill) {
-    closeNewsPanel(true);
     lastFocus = document.activeElement;
-    placeSearch();
     pal.hidden = false;
     document.documentElement.style.overflow = "hidden";
     if (typeof prefill === "string") input.value = prefill;
@@ -415,8 +390,21 @@
       secs.sort((a, b) => b.score - a.score);
     }
 
+    // news e avvisi (già scaricati per il pallino rosso): titolo e testo, si aprono sulla notizia nella pagina News
+    const hits = [];
+    if (terms.length) for (const n of news) {
+      if (!n._t) { n._t = norm(n.titolo); n._x = n.testo || ""; n._n = norm(n._x); }
+      if (!terms.every(t => n._t.includes(t) || n._n.includes(t))) continue;
+      const c = n.corso && CORSI.find(k => k.code === n.corso);
+      hits.push({ score: terms.filter(t => n._t.includes(t)).length, href: NEWS_PAGE + "#" + encodeURIComponent(n.id), path: "news.html", hash: n.id,
+        color: c ? c.color : "", tag: c ? c.code : "",
+        title: esc(n.titolo) + ` <small>${esc(fmtDay(n.data))}</small>`, text: snippet(n._x, n._n, terms) });
+    }
+    hits.sort((a, b) => b.score - a.score); // a parità, resta l'ordine di news.json (dalla più recente)
+
     add(terms.length ? "Documenti" : "Tutti i documenti", docs.slice(0, 8));
     add("Nei capitoli", secs.slice(0, 40));
+    add("News", hits.slice(0, 6));
     if (!items.length) {
       html = terms.length && !index && loading ? `<p class="ua-empty">Carico gli appunti…</p>`
         : `<p class="ua-empty">Nessun risultato per “${esc(input.value)}”. Prova con un'altra parola.</p>`;
@@ -590,8 +578,10 @@
   const CLOUD_ON = "ua-cloud", CLOUD_UID = "ua-cloud-uid", CLOUD_DIRTY = "ua-cloud-dirty", CLOUD_MSG = "ua-cloud-msg";
   const PROGRESS_KEYS = new Set();
   CORSI.forEach(c => c.docs.forEach(d => { if (d.progressKey) PROGRESS_KEYS.add(d.progressKey); }));
-  // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-...") e la trasparenza della barra
-  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || k === GLASS_KEY);
+  // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-...") e l'aspetto (tema e barra)
+  const isPref = k => k === THEME_KEY || k === GLASS_KEY;
+  const applyPref = k => k === THEME_KEY ? applyTheme(getTheme()) : applyGlass(getGlass()); // cambia subito, senza ricaricare
+  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || isPref(k));
   const IS_QUIZ = !!(here && here.d.kind === "Quiz");
   const usesKey = k => IS_HOME || (here && here.d.progressKey === k) || (IS_QUIZ && k.startsWith("quiz-"));
 
@@ -703,7 +693,7 @@
         const m = mergeVal(rawGet(k), remote[k]);
         if (m === null) return;
         out[k] = m;
-        if (rawGet(k) !== m) { rawSet(k, m); if (k === GLASS_KEY) applyGlass(getGlass()); else if (usesKey(k)) touched = true; }
+        if (rawGet(k) !== m) { rawSet(k, m); if (isPref(k)) applyPref(k); else if (usesKey(k)) touched = true; }
       });
       await fs.setDoc(cloudRef, { progressi: out, aggiornato: fs.serverTimestamp() }, { merge: true });
       rawSet(CLOUD_UID, user.uid);
@@ -741,8 +731,8 @@
           rawSet(k, remote[k]);
           changed.push(k);
         }
-        if (changed.includes(GLASS_KEY)) applyGlass(getGlass()); // la barra cambia subito, senza ricaricare
-        if (changed.some(k => k !== GLASS_KEY && usesKey(k))) remoteChanged(first);
+        changed.filter(isPref).forEach(applyPref);
+        if (changed.some(k => !isPref(k) && usesKey(k))) remoteChanged(first);
         first = false;
       }, () => {});
     });
@@ -867,7 +857,7 @@
         const ic = b.querySelector(".ua-tab-ic") || b; // nella barra in basso la foto prende il posto dell'icona, la scritta resta
         ic.innerHTML = avatarOf(cloudUser, true);
         installAvatarFallbacks(ic);
-        b.setAttribute("aria-label", `I tuoi progressi: accesso fatto come ${who}, spunte sincronizzate`);
+        b.setAttribute("aria-label", `Profilo: accesso fatto come ${who}, spunte sincronizzate`);
         b.title = `Accesso fatto come ${who}`;
       } else {
         (b.querySelector(".ua-tab-ic") || b).innerHTML = ICON.user;
@@ -877,11 +867,10 @@
     });
   }
 
-  /* scheda "I tuoi progressi": tendina come quella delle News
-     (sotto il pulsante su PC, dal basso su telefono) */
+  /* tendina Profilo (accesso, aspetto, spunte): sopra la scheda Profilo su PC, dal basso su telefono */
   let ap = null, apTrigger = null;
   function buildAccountPanel() {
-    ap = el("div", { class: "ua-np ua-ap", role: "dialog", "aria-modal": "false", "aria-label": "I tuoi progressi", hidden: "" });
+    ap = el("div", { class: "ua-np ua-ap", role: "dialog", "aria-modal": "false", "aria-label": "Profilo", hidden: "" });
     ap.innerHTML = `<div class="ua-np-veil"></div><div class="ua-np-box" tabindex="-1"><span class="ua-np-grip" aria-hidden="true"></span><div class="ua-np-in"></div></div>`;
     document.body.append(ap);
     ap.querySelector(".ua-np-veil").addEventListener("click", () => closeAccount());
@@ -897,18 +886,22 @@
     const top = u
       ? `<div class="ua-acct-box">${avatarOf(u)}
           <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
-        <p class="ua-ap-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Spunte del piano di studio, dei quaderni, risultati dei quiz e aspetto della barra si aggiornano da soli su ogni dispositivo dove accedi.</p>`
+        <p class="ua-ap-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Spunte del piano di studio, dei quaderni, risultati dei quiz, tema e barra si aggiornano da soli su ogni dispositivo dove accedi.</p>`
       : `<p class="ua-ap-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
         <button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login">Accedi con Google</button>
         <p class="ua-ap-p ua-acct-err" role="alert" hidden></p>
         <p class="ua-ap-note">Le spunte già presenti qui vengono unite a quelle del tuo account.</p>`;
     ap.querySelector(".ua-np-in").innerHTML = `
-      <div class="ua-np-head"><h2>I tuoi progressi</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
+      <div class="ua-np-head"><h2>Profilo</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
       <div class="ua-ap-body">${top}</div>
-      <div class="ua-ap-glass"><div class="ua-ap-glass-h"><b id="ua-glass-t">Aspetto della barra</b><span>Quanto è trasparente il vetro in basso</span></div>
-        <div class="ua-glass-seg" role="radiogroup" aria-labelledby="ua-glass-t">${GLASSES.map(([k, t]) =>
+      <div class="ua-ap-look"><b class="ua-ap-look-t">Aspetto</b>
+        <span class="ua-ap-look-l" id="ua-theme-t">Tema</span>
+        <div class="ua-seg ua-theme-seg" role="radiogroup" aria-labelledby="ua-theme-t">${THEMES.map(([k, t]) =>
+          `<button type="button" role="radio" data-theme="${k}" aria-checked="${getTheme() === k}">${ICON[k]}${t}</button>`).join("")}</div>
+        <span class="ua-ap-look-l" id="ua-glass-t">Barra in basso</span>
+        <div class="ua-seg ua-glass-seg" role="radiogroup" aria-labelledby="ua-glass-t">${GLASSES.map(([k, t]) =>
           `<button type="button" role="radio" data-glass="${k}" aria-checked="${getGlass() === k}">${t}</button>`).join("")}</div>
-        <p class="ua-ap-note">${u ? "Salvata sul tuo account: vale su tutti i dispositivi dove accedi." : "Salvata su questo dispositivo. Accedi per averla su tutti."}</p></div>
+        <p class="ua-ap-note">${u ? "Tema e barra sono salvati sul tuo account: valgono su tutti i dispositivi dove accedi." : "Salvati su questo dispositivo. Accedi per averli uguali su tutti."}</p></div>
       <ul class="ua-ap-menu">
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
@@ -925,6 +918,7 @@
       sw.closest("li").append(swErr);
       sw.addEventListener("click", () => switchAccount(sw, swErr));
     }
+    ap.querySelectorAll(".ua-theme-seg button").forEach(b => b.addEventListener("click", () => setTheme(b.dataset.theme)));
     ap.querySelectorAll(".ua-glass-seg button").forEach(b => b.addEventListener("click", () => setGlass(b.dataset.glass)));
     const out = ap.querySelector(".ua-do-logout");
     if (out) out.addEventListener("click", () => { out.disabled = true; signOutNow(); });
@@ -940,7 +934,6 @@
     if (!cloudUser) fbAuth().catch(() => {}); // la libreria arriva mentre leggi: il tocco su "Accedi" apre subito Google
     if (!ap) buildAccountPanel();
     if (pal && !pal.hidden) closeSearch();
-    closeNewsPanel(true);
     apTrigger = trigger || document.querySelector(".ua-open-sync");
     renderAccount(); ap.hidden = false; placeBox(ap.querySelector(".ua-np-box"), apTrigger);
     document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "true"));
@@ -1057,17 +1050,15 @@
 
   /* ---------------- news e notifiche ----------------
      Le notizie stanno in news.json (nella cartella Unisa). Per pubblicarne una basta aggiungerla in cima alla lista.
-     - il campanello (barra in alto, e pulsanti in basso sulle pagine di appunti) apre una tendina con le ultime notizie
-       e l'interruttore delle notifiche; su telefono la tendina sale dal basso
-     - "Tutte le notizie" porta alla pagina news.html, con l'elenco completo
+     - la scheda News della barra in basso porta alla pagina news.html (elenco completo e interruttore delle notifiche);
+       il pallino rosso sulla scheda segnala le notizie non ancora lette
      - con le notifiche attive, ogni notizia nuova arriva come notifica del sistema quando apri il sito
        (e, se il sito è installato come app su Android/PC, anche controllando in sottofondo) */
   const NEWS_SEEN = "news-lette", NEWS_ON = "news-notifiche";
   const NEWS_STATE = "ua-news-stato", NEWS_STATE_URL = ROOT + "__news-notificate";
   const NEWS_PAGE = ROOT + "news.html";
   const IS_NEWS_PAGE = PAGE === "news.html";
-  const PANEL_MAX = 4;
-  let news = [], newsLoaded = false, np = null, npTrigger = null, npFresh = new Set();
+  let news = [], newsLoaded = false, newsFresh = new Set();
   const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const notifSupported = () => "Notification" in window && "serviceWorker" in navigator;
@@ -1090,14 +1081,13 @@
     } catch (e) { news = []; }
     newsLoaded = true;
     paintNewsDot();
-    if (np && !np.hidden) { npFresh = new Set(unread().map(n => n.id)); renderPanel(); markRead(); }
     renderNewsPage();
     notifyNew();
   }
   function unread() { const seen = new Set(lsGet(NEWS_SEEN, [])); return news.filter(n => !seen.has(n.id)); }
   function paintNewsDot() {
     const k = unread().length;
-    document.querySelectorAll(".ua-news-btn, .ua-dock-news").forEach(b => { // campanello in alto e scheda News in basso
+    document.querySelectorAll(".ua-dock-news").forEach(b => { // scheda News della barra in basso
       const dot = b.querySelector(".ua-news-dot"); if (dot) dot.hidden = !k;
       const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
       b.setAttribute("aria-label", l); b.title = l;
@@ -1228,37 +1218,20 @@
   function newsItem(n, full) {
     const c = NEWS_CORSI.find(x => x.code === n.corso);
     const tag = c ? `<span class="ua-ni-tag" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}</span>` : "";
-    const fresh = npFresh.has(n.id) ? `<span class="ua-ni-new">nuova</span>` : "";
+    const fresh = newsFresh.has(n.id) ? `<span class="ua-ni-new">nuova</span>` : "";
     const avv = n.tipo === "avviso" ? `<span class="ua-ni-avv">Avviso</span>` : "";
     const meta = `<span class="ua-ni-meta">${avv}${tag}<time datetime="${esc(n.data || "")}">${esc(fmtDay(n.data || ""))}</time>${fresh}</span>`;
     if (full) {
       const link = n.link ? `<a class="ua-ni-link" href="${esc(newsHref(n))}">Apri →</a>` : "";
       const img = n.immagine ? `<img class="ua-ni-img" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
-      return `<li class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" id="${esc(n.id || "")}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
+      return `<li class="ua-ni${newsFresh.has(n.id) ? " is-new" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" id="${esc(n.id || "")}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
     }
     const thumb = n.immagine ? `<img class="ua-ni-thumb" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
-    return `<li><a class="ua-ni${npFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
+    return `<li><a class="ua-ni${newsFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
   }
   const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
 
-  /* tendina */
-  function buildNewsPanel() {
-    np = el("div", { class: "ua-np", role: "dialog", "aria-modal": "false", "aria-label": "News", hidden: "" });
-    np.innerHTML = `<div class="ua-np-veil"></div><div class="ua-np-box" tabindex="-1"><span class="ua-np-grip" aria-hidden="true"></span><div class="ua-np-in"></div></div>`;
-    document.body.append(np);
-    np.querySelector(".ua-np-veil").addEventListener("click", closeNewsPanel);
-    np.addEventListener("click", e => { if (e.target.closest(".ua-np-close")) closeNewsPanel(); });
-    sheetSwipe(np.querySelector(".ua-np-box"), () => closeNewsPanel());
-  }
-  function renderPanel() {
-    const list = news.slice(0, PANEL_MAX);
-    const more = news.length > PANEL_MAX ? `Tutte le notizie (${news.length}) →` : "Tutte le notizie →";
-    np.querySelector(".ua-np-in").innerHTML = `
-      <div class="ua-np-head"><h2 class="ua-np-news">News</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
-      <div class="ua-np-body">${!newsLoaded ? `<p class="ua-ni-wait">Carico…</p>` : list.length ? `<ul class="ua-ni-list">${list.map(n => newsItem(n, false)).join("")}</ul>` : emptyNews}</div>
-      <div class="ua-np-nt" data-ua-nt>${notifControl()}</div>
-      <a class="ua-np-all" href="${NEWS_PAGE}">${more}</a>`;
-  }
+  /* tendine (Profilo) */
   // su telefono: trascina in giù la maniglia per chiudere
   function sheetSwipe(box, close) {
     let y0 = null;
@@ -1275,38 +1248,12 @@
     if (r.top < vh / 2) box.style.top = (r.bottom + 8) + "px";
     else box.style.bottom = (vh - r.top + 8) + "px";
   }
-  const placePanel = () => placeBox(np.querySelector(".ua-np-box"), npTrigger);
-  function openNewsPanel(trigger) {
-    if (!np) buildNewsPanel();
-    if (pal && !pal.hidden) closeSearch();
-    closeAccount(true);
-    npTrigger = trigger;
-    npFresh = new Set(unread().map(n => n.id));
-    renderPanel(); np.hidden = false; placePanel();
-    document.querySelectorAll(".ua-news-btn").forEach(b => b.setAttribute("aria-expanded", "true"));
-    np.querySelector(".ua-np-box").focus({ preventScroll: true });
-    if (newsLoaded) markRead(); // aperta la tendina, le notizie contano come lette (l'etichetta "nuova" resta finché è aperta)
-  }
-  function closeNewsPanel(noFocus) {
-    if (!np || np.hidden) return;
-    np.hidden = true;
-    document.querySelectorAll(".ua-news-btn").forEach(b => b.setAttribute("aria-expanded", "false"));
-    if (!noFocus && npTrigger && document.contains(npTrigger)) npTrigger.focus({ preventScroll: true });
-  }
-  document.addEventListener("click", e => {
-    const b = e.target.closest && e.target.closest(".ua-news-btn");
-    if (b) { e.preventDefault(); (np && !np.hidden && npTrigger === b) ? closeNewsPanel() : openNewsPanel(b); return; }
-    if (np && !np.hidden && !e.target.closest(".ua-np-box") && !phone()) closeNewsPanel();
-  });
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && np && !np.hidden) { e.preventDefault(); closeNewsPanel(); } });
-  window.addEventListener("resize", () => { if (np && !np.hidden) placePanel(); });
-  window.addEventListener("scroll", () => { if (np && !np.hidden && !phone()) closeNewsPanel(); }, { passive: true });
 
   /* pagina news.html: elenco completo */
   function renderNewsPage() {
     const box = document.getElementById("ua-news-page");
     if (!box) return;
-    npFresh = new Set(unread().map(n => n.id));
+    newsFresh = new Set(unread().map(n => n.id));
     box.innerHTML = `<div id="ua-news-admin"></div><div class="ua-np-nt ua-np-nt-card" data-ua-nt>${notifControl()}</div>
       ${news.length ? `<ul class="ua-ni-list ua-ni-full">${news.map(n => newsItem(n, true)).join("")}</ul>` : emptyNews}`;
     if (location.hash) { const t = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t) t.scrollIntoView({ block: "center" }); }
@@ -1609,10 +1556,9 @@
   applyTheme(getTheme());
   applyGlass(getGlass()); // corregge anche una scelta non più valida salvata in passato
   document.addEventListener("click", e => {
-    const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme, .ua-open-sync");
+    const b = e.target.closest && e.target.closest(".ua-open-search, .ua-open-sync");
     if (!b) return;
-    if (b.classList.contains("ua-theme")) cycleTheme();
-    else if (b.classList.contains("ua-open-sync")) (ap && !ap.hidden && apTrigger === b) ? closeAccount() : openAccount(b);
+    if (b.classList.contains("ua-open-sync")) (ap && !ap.hidden && apTrigger === b) ? closeAccount() : openAccount(b);
     else openSearch();
   });
   paintAccount();
@@ -1629,5 +1575,5 @@
   });
   if (IS_HOME) homeEffects();
 
-  window.UA = { openSearch, closeSearch, cycleTheme, findPassage, switchAccount };
+  window.UA = { openSearch, closeSearch, setTheme, findPassage, switchAccount };
 })();
