@@ -131,9 +131,11 @@ a.ua-ni:hover{background:var(--ua-soft)}
   .ua-np{pointer-events:auto}
   .ua-np-veil{display:block;position:absolute;inset:0;background:var(--ua-veil);animation:ua-fade .18s ease both}
   .ua-np-box{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:100%;max-height:82vh;border-radius:18px 18px 0 0;border-bottom:0;
-    padding-bottom:max(10px,env(safe-area-inset-bottom,0px));animation:ua-sheet .26s var(--ua-ease) both;transition:transform .2s}
-  .ua-np-grip{display:block;width:40px;height:5px;border-radius:3px;background:var(--ua-line);margin:8px auto 0}
-  .ua-np-head{padding-top:8px}
+    padding-bottom:max(10px,env(safe-area-inset-bottom,0px));animation:ua-sheet .26s var(--ua-ease) backwards;transition:transform .2s}
+  /* maniglia con area di tocco ampia; touch-action:none la rende trascinabile col dito */
+  .ua-np-grip{position:relative;display:block;height:26px;touch-action:none;cursor:grab}
+  .ua-np-grip::before{content:"";position:absolute;left:50%;top:8px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--ua-line)}
+  .ua-np-head{padding-top:0;touch-action:none}
   .ua-ni{padding:12px 10px}
 }
 @keyframes ua-sheet{from{transform:translateY(100%)}to{transform:none}}

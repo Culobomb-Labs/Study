@@ -1234,12 +1234,33 @@
   const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
 
   /* tendine (Profilo) */
-  // su telefono: trascina in giù la maniglia per chiudere
+  // su telefono: trascina in giù la maniglia (o l'intestazione) per chiudere. Pointer events + touch-action:none (vedi site.css),
+  // se no il browser prende il gesto per scorrere il contenuto e il trascinamento non parte.
   function sheetSwipe(box, close) {
-    let y0 = null;
-    box.addEventListener("touchstart", e => { if (phone() && (e.target.closest(".ua-np-grip,.ua-np-head") || box.scrollTop <= 0)) y0 = e.touches[0].clientY; }, { passive: true });
-    box.addEventListener("touchmove", e => { if (y0 === null) return; const dy = e.touches[0].clientY - y0; if (dy > 0) box.style.transform = `translateY(${dy}px)`; }, { passive: true });
-    box.addEventListener("touchend", e => { if (y0 === null) return; const dy = (e.changedTouches[0].clientY - y0); y0 = null; box.style.transform = ""; if (dy > 90) close(); });
+    let y0 = null, id = null, t0 = 0, dy = 0;
+    const reset = () => { box.style.transition = ""; box.style.transform = ""; };
+    box.addEventListener("pointerdown", e => {
+      if (!phone() || e.button > 0 || !e.target.closest(".ua-np-grip,.ua-np-head") || e.target.closest(".ua-np-close")) return;
+      y0 = e.clientY; id = e.pointerId; t0 = Date.now(); dy = 0;
+      try { box.setPointerCapture(id); } catch (err) {}
+      box.style.transition = "none";
+    });
+    box.addEventListener("pointermove", e => {
+      if (y0 === null || e.pointerId !== id) return;
+      dy = Math.max(0, e.clientY - y0);
+      box.style.transform = `translateY(${dy}px)`;
+    });
+    const end = e => {
+      if (y0 === null || e.pointerId !== id) return;
+      const fast = dy / Math.max(1, Date.now() - t0) > 0.6; // trascinata veloce: chiude anche se breve
+      y0 = null;
+      if (e.type === "pointerup" && (dy > 90 || (fast && dy > 30))) {
+        box.style.transition = "transform .18s ease-out"; box.style.transform = "translateY(100%)";
+        setTimeout(() => { close(); reset(); }, 170);
+      } else reset();
+    };
+    box.addEventListener("pointerup", end);
+    box.addEventListener("pointercancel", end);
   }
   // su PC: la tendina si apre sotto (o sopra) il pulsante che l'ha aperta
   function placeBox(box, trigger) {
