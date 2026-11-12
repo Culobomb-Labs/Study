@@ -74,14 +74,14 @@ window.CORSI =
     ]
   },
   {
-    "code": "POO",
+    "code": "PO",
     "resto": "1",
-    "name": "Programmazione Orientata agli Oggetti",
+    "name": "Programmazione ad Oggetti",
     "meta": "2° anno · Java",
     "stato": "aggiornato",
     "color": "poo",
     "docs": [
-      { "name": "Quaderno di Programmazione Orientata agli Oggetti", "kind": "Quaderno", "path": "Programmazione Orientata agli Oggetti/Quaderno di Programmazione Orientata agli Oggetti.html", "progressKey": "quaderno-poo-done" },
+      { "name": "Quaderno di Programmazione ad Oggetti", "kind": "Quaderno", "path": "Programmazione Orientata agli Oggetti/Quaderno di Programmazione Orientata agli Oggetti.html", "progressKey": "quaderno-poo-done" },
       { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione Orientata agli Oggetti/Piano di studio POO.html", "progressKey": "piano-esame-poo" }
     ]
   },
