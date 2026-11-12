@@ -5,7 +5,7 @@
   --ua-bg:#f4f3f0; --ua-ink:#111418; --ua-muted:#5d636b; --ua-line:#d6d5cf; --ua-soft:#e7e6e1;
   --ua-shadow:0 18px 50px -12px rgba(17,20,24,.28),0 2px 6px rgba(17,20,24,.06);
   --ua-mark:#fff1b8; --ua-warn:#c4232b; --ua-warn-soft:#fdeced; --ua-warn-line:#f2c2c5; --ua-veil:rgba(17,20,24,.32);
-  --ua-c-is:#5b3fa3; --ua-c-mp:#2f7d52; --ua-c-pd:#8a5a00; --ua-c-bd:#2350c8; --ua-c-so:#a4471f; --ua-c-al:#b0306f; --ua-c-poo:#0e7c86;
+  --ua-c-is:#5b3fa3; --ua-c-mp:#2f7d52; --ua-c-pd:#8a5a00; --ua-c-bd:#2350c8; --ua-c-so:#a4471f; --ua-c-al:#b0306f; --ua-c-poo:#d1271b;
   --ua-font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --ua-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --ua-ease:cubic-bezier(.2,.7,.2,1);
@@ -17,7 +17,7 @@
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
-  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4; --ua-c-poo:#4fd1c5;
+  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4; --ua-c-poo:#ff6f61;
   --ua-g-bell1:#fbbf24; --ua-g-bell2:#fb923c; --ua-g-sun1:#fde047; --ua-g-sun2:#fbbf24;
   --ua-g-moon1:#818cf8; --ua-g-moon2:#c084fc; --ua-g-auto1:#fbbf24; --ua-g-auto2:#818cf8;
   --ua-glass:rgba(40,40,44,.30); --ua-glass-rim:rgba(255,255,255,.34); --ua-glass-rim2:rgba(255,255,255,.06); --ua-glass-on:rgba(0,0,0,.42); --ua-glass-shadow:0 12px 34px -8px rgba(0,0,0,.6),0 0 0 .5px rgba(0,0,0,.5);
@@ -29,7 +29,7 @@
   --ua-bg:#15181b; --ua-ink:#eceef0; --ua-muted:#9aa1a9; --ua-line:#2a2e33; --ua-soft:#1d2125;
   --ua-shadow:0 18px 50px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.4);
   --ua-mark:#5a4a12; --ua-warn:#ee4b52; --ua-warn-soft:#2d1416; --ua-warn-line:#5e2328; --ua-veil:rgba(0,0,0,.55);
-  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4; --ua-c-poo:#4fd1c5;}
+  --ua-c-is:#a58bf0; --ua-c-mp:#5fc48c; --ua-c-pd:#e3b14f; --ua-c-bd:#7ea6ff; --ua-c-so:#f09a6c; --ua-c-al:#f07ab4; --ua-c-poo:#ff6f61;}
 
 /* ---------- barra in alto ---------- */
 .ua-bar{position:relative;z-index:30;min-height:52px;background:var(--ua-bg);border-bottom:1px solid var(--ua-line);
