@@ -335,6 +335,7 @@ a.ua-ni.has-thumb{flex-direction:row;align-items:center;gap:12px}
 .ua-glass-seg button{flex:1 1 auto;min-width:0;appearance:none;border:0;background:transparent;color:var(--ua-muted);font:600 12.5px/1 var(--ua-font);padding:10px 7px;white-space:nowrap;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
 .ua-glass-seg button[aria-checked="true"]{background:var(--ua-bg);color:var(--ua-ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
 .ua-glass-seg button:focus-visible{outline:2px solid var(--ua-ink);outline-offset:1px}
+.ua-ap-glass .ua-ap-note{margin:8px 2px 0}
 .ua-ap-p b{color:var(--ua-ink)}
 .ua-ap-note{margin:0;color:var(--ua-muted);font-size:12.5px}
 .ua-ap .ua-acct-ok{margin-right:2px}

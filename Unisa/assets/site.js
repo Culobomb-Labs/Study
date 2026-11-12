@@ -75,8 +75,8 @@
   window.addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(getTheme()); });
 
   /* ---------------- trasparenza della barra in basso ----------------
-     Quattro livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi" e salvati su questo
-     dispositivo come il tema. L'avvio nella pagina li applica prima che compaia (attributo data-glass). */
+     Quattro livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi". Salvati sul dispositivo e,
+     con l'accesso Google, anche sull'account insieme alle spunte (così valgono su PC e telefono). L'avvio nella pagina li applica prima che compaia (attributo data-glass). */
   const GLASSES = [["trasparente", "Trasparente"], ["leggero", "Leggero"], ["vetro", "Vetro"], ["pieno", "Pieno"]];
   const getGlass = () => {
     let g = "trasparente";
@@ -90,7 +90,7 @@
     document.querySelectorAll(".ua-glass-seg button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.glass === g)));
   }
   function setGlass(g) {
-    try { g === "trasparente" ? localStorage.removeItem(GLASS_KEY) : localStorage.setItem(GLASS_KEY, g); } catch (e) {}
+    try { localStorage.setItem(GLASS_KEY, g); } catch (e) {} // salvata sempre, anche "trasparente": così il cambio arriva agli altri dispositivi
     applyGlass(g);
   }
   window.addEventListener("storage", e => { if (e.key === GLASS_KEY) applyGlass(getGlass()); });
@@ -446,7 +446,7 @@
   /* ---------------- sposta i progressi tra dispositivi ----------------
      Le spunte (piano di studio, capitoli fatti) stanno nel browser. Qui le impacchettiamo
      in un link /QR: aprendolo sull'altro dispositivo vengono copiate lì. */
-  const SKIP_KEYS = [THEME_KEY, GLASS_KEY]; // preferenze del dispositivo, non spunte
+  const SKIP_KEYS = [THEME_KEY, GLASS_KEY]; // preferenze, non spunte: non vanno nel link "Sposta le spunte"
   const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
 
@@ -589,8 +589,8 @@
   const CLOUD_ON = "ua-cloud", CLOUD_UID = "ua-cloud-uid", CLOUD_DIRTY = "ua-cloud-dirty", CLOUD_MSG = "ua-cloud-msg";
   const PROGRESS_KEYS = new Set();
   CORSI.forEach(c => c.docs.forEach(d => { if (d.progressKey) PROGRESS_KEYS.add(d.progressKey); }));
-  // cosa si sincronizza: le spunte (progressKey in corsi.js) e i risultati dei quiz (chiavi "quiz-...")
-  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-"));
+  // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-...") e la trasparenza della barra
+  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || k === GLASS_KEY);
   const IS_QUIZ = !!(here && here.d.kind === "Quiz");
   const usesKey = k => IS_HOME || (here && here.d.progressKey === k) || (IS_QUIZ && k.startsWith("quiz-"));
 
@@ -702,7 +702,7 @@
         const m = mergeVal(rawGet(k), remote[k]);
         if (m === null) return;
         out[k] = m;
-        if (rawGet(k) !== m) { rawSet(k, m); if (usesKey(k)) touched = true; }
+        if (rawGet(k) !== m) { rawSet(k, m); if (k === GLASS_KEY) applyGlass(getGlass()); else if (usesKey(k)) touched = true; }
       });
       await fs.setDoc(cloudRef, { progressi: out, aggiornato: fs.serverTimestamp() }, { merge: true });
       rawSet(CLOUD_UID, user.uid);
@@ -740,7 +740,8 @@
           rawSet(k, remote[k]);
           changed.push(k);
         }
-        if (changed.some(usesKey)) remoteChanged(first);
+        if (changed.includes(GLASS_KEY)) applyGlass(getGlass()); // la barra cambia subito, senza ricaricare
+        if (changed.some(k => k !== GLASS_KEY && usesKey(k))) remoteChanged(first);
         first = false;
       }, () => {});
     });
@@ -894,7 +895,7 @@
     const top = u
       ? `<div class="ua-acct-box">${avatarOf(u)}
           <div class="ua-acct-who"><b>${esc(u.displayName || "Account Google")}</b><span>${esc(u.email || "")}</span></div></div>
-        <p class="ua-ap-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Spunte del piano di studio, dei quaderni e risultati dei quiz si aggiornano da sole su ogni dispositivo dove accedi.</p>`
+        <p class="ua-ap-p"><span class="ua-acct-ok">Sincronizzate ✓</span> Spunte del piano di studio, dei quaderni, risultati dei quiz e aspetto della barra si aggiornano da soli su ogni dispositivo dove accedi.</p>`
       : `<p class="ua-ap-p">Accedi con Google per ritrovare <b>le stesse spunte su PC e telefono</b>, sempre aggiornate. Ognuno vede solo le proprie.</p>
         <button type="button" class="ua-btn ua-btn-solid ua-btn-wide ua-do-login">Accedi con Google</button>
         <p class="ua-ap-p ua-acct-err" role="alert" hidden></p>
@@ -904,7 +905,8 @@
       <div class="ua-ap-body">${top}</div>
       <div class="ua-ap-glass"><div class="ua-ap-glass-h"><b id="ua-glass-t">Aspetto della barra</b><span>Quanto è trasparente il vetro in basso</span></div>
         <div class="ua-glass-seg" role="radiogroup" aria-labelledby="ua-glass-t">${GLASSES.map(([k, t]) =>
-          `<button type="button" role="radio" data-glass="${k}" aria-checked="${getGlass() === k}">${t}</button>`).join("")}</div></div>
+          `<button type="button" role="radio" data-glass="${k}" aria-checked="${getGlass() === k}">${t}</button>`).join("")}</div>
+        <p class="ua-ap-note">${u ? "Salvata sul tuo account: vale su tutti i dispositivi dove accedi." : "Salvata su questo dispositivo. Accedi per averla su tutti."}</p></div>
       <ul class="ua-ap-menu">
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
