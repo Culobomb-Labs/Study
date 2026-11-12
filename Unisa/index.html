@@ -215,9 +215,9 @@ footer a{text-underline-offset:3px}
   .hero .wrap{grid-template-columns:1fr;padding-block:36px 26px}
   .stats{grid-column:1;grid-row:auto;max-width:360px}
   .course{grid-template-columns:1fr;gap:12px}
-  .code{display:flex;align-items:center;gap:10px;font-size:15px}
-  .code::before{margin:0;width:18px}
-  .course:hover .code::before{width:18px}
+  /* la sigla resta il grande watermark in alto a destra (non una sigla piccola): un po' più piccola che su PC, ma ben leggibile */
+  .code{font-size:clamp(56px,16vw,76px);right:14px}
+  .course h2{padding-right:100px}
 }
 
 /* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive) */

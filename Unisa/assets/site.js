@@ -1228,7 +1228,7 @@
     if (full) {
       const link = n.link ? `<a class="ua-ni-link" href="${esc(newsHref(n))}">Apri →</a>` : "";
       const img = n.immagine ? `<img class="ua-ni-img" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
-      return `<li class="ua-ni${newsFresh.has(n.id) ? " is-new" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" id="${esc(n.id || "")}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
+      return `<li class="ua-ni${newsFresh.has(n.id) ? " is-new" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" id="${esc(n.id || "")}" data-corso="${esc(n.corso || "")}">${meta}<p class="ua-ni-t">${esc(n.titolo)}</p>${n.testo ? `<p class="ua-ni-x">${esc(n.testo)}</p>` : ""}${img}${link}</li>`;
     }
     const thumb = n.immagine ? `<img class="ua-ni-thumb" src="${esc(newsImg(n))}" alt="" loading="lazy" decoding="async">` : "";
     return `<li><a class="ua-ni${newsFresh.has(n.id) ? " is-new" : ""}${thumb ? " has-thumb" : ""}${n.tipo === "avviso" ? " is-avv" : ""}" href="${esc(newsHref(n))}"><span class="ua-ni-main">${meta}<span class="ua-ni-t">${esc(n.titolo)}</span>${n.testo ? `<span class="ua-ni-x">${esc(n.testo)}</span>` : ""}</span>${thumb}</a></li>`;
@@ -1279,13 +1279,29 @@
     else box.style.bottom = (vh - r.top + 8) + "px";
   }
 
+  /* pagina news.html: filtro per corso (solo i corsi che hanno notizie; con un solo corso non serve) */
+  function newsFilters() {
+    const cnt = new Map();
+    news.forEach(n => { if (n.corso) cnt.set(n.corso, (cnt.get(n.corso) || 0) + 1); });
+    if (cnt.size < 2) return "";
+    const chips = NEWS_CORSI.filter(c => cnt.has(c.code)).sort((a, b) => cnt.get(b.code) - cnt.get(a.code))
+      .map(c => `<button type="button" data-f="${esc(c.code)}" aria-pressed="false" style="--c:var(--ua-c-${esc(c.color)})">${esc(c.code)}<i>${cnt.get(c.code)}</i></button>`).join("");
+    return `<div class="ua-nf" role="group" aria-label="Filtra per corso"><button type="button" data-f="" aria-pressed="true">Tutte<i>${news.length}</i></button>${chips}</div>`;
+  }
+  function applyNewsFilter(box, f) {
+    box.querySelectorAll(".ua-nf button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === f)));
+    box.querySelectorAll(".ua-ni-full > li").forEach(li => { li.hidden = !!f && li.dataset.corso !== f; });
+  }
+
   /* pagina news.html: elenco completo */
   function renderNewsPage() {
     const box = document.getElementById("ua-news-page");
     if (!box) return;
     newsFresh = new Set(unread().map(n => n.id));
     box.innerHTML = `<div id="ua-news-admin"></div><div class="ua-np-nt ua-np-nt-card" data-ua-nt>${notifControl()}</div>
-      ${news.length ? `<ul class="ua-ni-list ua-ni-full">${news.map(n => newsItem(n, true)).join("")}</ul>` : emptyNews}`;
+      ${newsFilters()}${news.length ? `<ul class="ua-ni-list ua-ni-full">${news.map(n => newsItem(n, true)).join("")}</ul>` : emptyNews}`;
+    box.querySelectorAll(".ua-nf button").forEach(b => b.addEventListener("click", () => applyNewsFilter(box, b.dataset.f)));
+    if (location.hash) { const t0 = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t0 && t0.dataset.corso) applyNewsFilter(box, ""); } // un link a una notizia la mostra sempre
     if (location.hash) { const t = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t) t.scrollIntoView({ block: "center" }); }
     markRead();
     paintNewsAdmin();
