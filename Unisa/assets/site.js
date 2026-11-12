@@ -28,7 +28,7 @@
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
   const THEME_KEY = "ua-theme";
-  const GLASS_KEY = "ua-glass"; // trasparenza della barra in basso: trasparente (predefinita), leggero, vetro, denso, pieno
+  const GLASS_KEY = "ua-glass"; // trasparenza della barra in basso: trasparente (predefinita), leggero, vetro, pieno
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
   const enc = p => p.split("/").map(encodeURIComponent).join("/");
@@ -75,10 +75,15 @@
   window.addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(getTheme()); });
 
   /* ---------------- trasparenza della barra in basso ----------------
-     Cinque livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi" e salvati su questo
+     Quattro livelli, dal più trasparente al pieno, scelti nella tendina "I tuoi progressi" e salvati su questo
      dispositivo come il tema. L'avvio nella pagina li applica prima che compaia (attributo data-glass). */
-  const GLASSES = [["trasparente", "Trasparente"], ["leggero", "Leggero"], ["vetro", "Vetro"], ["denso", "Denso"], ["pieno", "Pieno"]];
-  const getGlass = () => { try { return localStorage.getItem(GLASS_KEY) || "trasparente"; } catch (e) { return "trasparente"; } };
+  const GLASSES = [["trasparente", "Trasparente"], ["leggero", "Leggero"], ["vetro", "Vetro"], ["pieno", "Pieno"]];
+  const getGlass = () => {
+    let g = "trasparente";
+    try { g = localStorage.getItem(GLASS_KEY) || g; } catch (e) {}
+    if (g === "denso") g = "vetro"; // livello tolto: chi l'aveva scelto passa a Vetro
+    return GLASSES.some(([k]) => k === g) ? g : "trasparente";
+  };
   function applyGlass(g) {
     if (g === "trasparente") document.documentElement.removeAttribute("data-glass");
     else document.documentElement.setAttribute("data-glass", g);
@@ -1598,6 +1603,7 @@
   loadNews();
   buildSyncDialog();
   applyTheme(getTheme());
+  applyGlass(getGlass()); // corregge anche una scelta non più valida salvata in passato
   document.addEventListener("click", e => {
     const b = e.target.closest && e.target.closest(".ua-open-search, .ua-theme, .ua-open-sync");
     if (!b) return;

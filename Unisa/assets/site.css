@@ -174,17 +174,14 @@ a.ua-ni:hover{background:var(--ua-soft)}
 /* livelli di trasparenza della barra in basso (data-glass su <html>, scelti in "I tuoi progressi") */
 :root{--ua-glass-fx:blur(1.5px) saturate(1.6) brightness(.92)}
 :root[data-glass="leggero"]{--ua-glass:rgba(247,247,249,.38);--ua-glass-fx:blur(3.5px) saturate(1.7)}
-:root[data-glass="vetro"]{--ua-glass:rgba(248,248,250,.66);--ua-glass-fx:blur(18px) saturate(1.8)}
-:root[data-glass="denso"]{--ua-glass:rgba(248,248,250,.74);--ua-glass-fx:blur(14px) saturate(2.2)}
+:root[data-glass="vetro"]{--ua-glass:rgba(248,248,250,.58);--ua-glass-fx:blur(16px) saturate(1.9)}
 :root[data-glass="pieno"]{--ua-glass:#f6f6f8;--ua-glass-fx:none}
 @media (prefers-color-scheme:dark){
   :root[data-glass="leggero"]:not([data-theme="light"]){--ua-glass:rgba(38,38,42,.36)}
-  :root[data-glass="vetro"]:not([data-theme="light"]){--ua-glass:rgba(36,36,40,.62)}
-  :root[data-glass="denso"]:not([data-theme="light"]){--ua-glass:rgba(34,34,38,.72)}
+  :root[data-glass="vetro"]:not([data-theme="light"]){--ua-glass:rgba(36,36,40,.56)}
   :root[data-glass="pieno"]:not([data-theme="light"]){--ua-glass:#1f2125}}
 :root[data-glass="leggero"][data-theme="dark"]{--ua-glass:rgba(38,38,42,.36)}
-:root[data-glass="vetro"][data-theme="dark"]{--ua-glass:rgba(36,36,40,.62)}
-:root[data-glass="denso"][data-theme="dark"]{--ua-glass:rgba(34,34,38,.72)}
+:root[data-glass="vetro"][data-theme="dark"]{--ua-glass:rgba(36,36,40,.56)}
 :root[data-glass="pieno"][data-theme="dark"]{--ua-glass:#1f2125}
 
 /* ---------- barra in basso: schede in vetro, stile iOS ("liquid glass") ----------
