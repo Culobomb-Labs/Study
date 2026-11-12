@@ -1,0 +1,1764 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Appunti interattivi di Programmazione Orientata agli Oggetti (Java), dispense 03–30"><title>Quaderno di Programmazione Orientata agli Oggetti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@500;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f7f4ee;--grid:rgba(35,38,43,.055);--ink:#23262b;--soft:#646b75;--rule:#d8d6cf;--surface:#fffdfa;--acc:#0e7c86;--tint:#dcf0f1;--red:#b8322a;--hl:rgba(240,190,0,.28);--code:#eeece7;--ok:#26704a;--study:#fffdfa;--display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;--body:"Atkinson Hyperlegible","Segoe UI",Verdana,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--paper:#0e1011;--grid:rgba(255,255,255,.018);--ink:#f1f2f4;--soft:#a1a6ae;--rule:#282b2f;--surface:#151719;--acc:#4fd1c5;--tint:#12302f;--red:#ff8a7a;--hl:rgba(79,209,197,.28);--code:#1d2023;--ok:#7fc69a;--study:#191c1f;}}:root[data-theme="dark"]{color-scheme:dark;--paper:#0e1011;--grid:rgba(255,255,255,.018);--ink:#f1f2f4;--soft:#a1a6ae;--rule:#282b2f;--surface:#151719;--acc:#4fd1c5;--tint:#12302f;--red:#ff8a7a;--hl:rgba(79,209,197,.28);--code:#1d2023;--ok:#7fc69a;--study:#191c1f;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;padding:0 18px 80px;background:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;color:var(--ink);font:17px/1.62 var(--body)}a{color:var(--acc)}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:3px}.wrap{max-width:1220px;margin:auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:52px}.cover{grid-column:1/-1;padding:54px 0 34px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}.kicker,.mono{font-family:var(--mono)}.kicker{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft)}h1,h2,h3,h4{font-family:var(--display)}.cover h1{font-size:clamp(42px,7vw,82px);line-height:.94;letter-spacing:-.035em;margin:12px 0 14px}.cover h1 span{color:var(--acc)}.cover p{margin:0;max-width:68ch;color:var(--soft)}.stamp{width:100%;max-width:380px;text-align:right;color:var(--acc);font:700 30px/1.2 "Caveat",cursive;transform:rotate(-4deg);transform-origin:center}.cover>div:last-child{align-self:center;padding-right:clamp(24px,5vw,80px)}nav.idx{position:sticky;top:0;align-self:start;padding-top:24px;z-index:20;max-height:100vh;overflow:auto}.idx h2{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 20px}.idx ol{list-style:none;padding:0;margin:0;display:grid;gap:2px}.idx a{display:grid;grid-template-columns:28px 1fr 26px;gap:6px;padding:5px 7px;color:var(--ink);text-decoration:none;border-radius:3px;font-size:14px;line-height:1.3}.idx a:hover{background:var(--tint)}.idx a.done{background:transparent}.idx a.done .t{color:var(--soft)}.idx a.done .cnt::after{content:"✓";color:var(--ok);font:600 14px var(--mono)}.idx .n{font:11px var(--mono);color:var(--soft)}.idx .cnt{font:11px var(--mono);color:var(--acc);text-align:right}.idx .part{padding:12px 6px 3px;color:var(--acc);font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}.idx a.miss{opacity:.36}.progress{font:12px var(--mono);color:var(--soft);margin:14px 0 6px}.bar{height:6px;background:var(--rule);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}.search{position:relative;margin:0 0 16px}.slbl{display:block;margin-bottom:5px;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}.sbox{position:relative}.sbox input{width:100%;padding:9px 34px 9px 10px;border:1.5px solid var(--ink);border-radius:4px;background:var(--surface);color:var(--ink);font:14px var(--body)}.sbox input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}.sbox input[type="search"]::-ms-clear{display:none}.sclr{position:absolute;right:2px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--soft);font-size:19px;cursor:pointer}.sres{position:absolute;top:calc(100% + 5px);left:0;width:min(460px,calc(100vw - 36px));max-height:65vh;overflow:auto;background:var(--surface);border:1.5px solid var(--ink);z-index:30;box-shadow:0 10px 28px #10102030}.sres p{margin:0;padding:8px 11px;border-bottom:1px solid var(--rule);font-size:13px;color:var(--soft)}.sres a{display:block;padding:8px 11px;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);font-size:14px}.sres a:hover,.sres a.on{background:var(--tint)}.sres small{display:block;color:var(--acc);font:10px var(--mono);margin-bottom:3px}main{min-width:0}.partbreak{margin-top:58px;padding-top:14px;border-top:2px solid var(--ink);font:12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}main>.partbreak:first-child{border-top:0;padding-top:0}section.ch{padding:42px 0 8px;border-bottom:1px dashed var(--rule);scroll-margin-top:20px}.ch-head{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;align-items:baseline;margin-bottom:16px}.ch-num{font:600 13px var(--mono);color:var(--acc)}.ch h2{font-size:clamp(27px,4vw,39px);line-height:1.05;letter-spacing:-.02em;margin:0}.ch-sub{grid-column:2;color:var(--soft);font-size:15px}.ch h3{font-size:21px;line-height:1.15;margin:30px 0 7px}.ch h4{font-size:16px;margin:0 0 5px}.ch p,.ch li{max-width:72ch}.ch ul,.ch ol{padding-left:1.25em;margin:8px 0}.ch li{margin:4px 0}.ch li::marker{color:var(--acc)}.def,.note,.exam{max-width:75ch;margin:15px 0;padding:13px 17px;border-radius:3px}.def{background:var(--tint)}.def b.lbl,.exam b.lbl{display:block;margin-bottom:4px;color:var(--acc);font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}.note{border-left:3px solid var(--red);background:var(--surface);padding-left:15px}.exam{border:1px solid var(--acc);background:var(--surface)}.exam b.lbl{color:var(--red)}code{font:.86em var(--mono);background:var(--code);padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}pre{overflow:auto;background:var(--code);padding:13px 16px;border-radius:4px;font:13px/1.5 var(--mono)}.tbl{max-width:100%;overflow:auto;margin:14px 0}table{border-collapse:collapse;width:100%;min-width:460px;font-size:14.5px}th{padding:8px 10px;border-bottom:2px solid var(--ink);text-align:left;color:var(--soft);font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.08em}td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.vs>div{padding:12px 15px;border:1px solid var(--rule);background:var(--surface);min-width:0}.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:18px 0;padding:14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px}.flow span{padding:7px 10px;border:1px solid var(--rule);background:var(--tint);font:12px var(--mono);text-align:center}.flow i{font-style:normal;color:var(--soft)}figure.diagram{margin:18px 0;padding:14px;background:var(--surface);border:1px solid var(--rule);max-width:850px}figure.diagram svg,figure.diagram img{display:block;width:100%;height:auto}figure.diagram img{max-width:100%;object-fit:contain}figcaption{margin-top:7px;color:var(--soft);font-size:13px}.quiz{max-width:72ch;margin:20px 0}.quiz details{padding:9px 0;border-top:1px solid var(--rule)}.quiz details:last-child{border-bottom:1px solid var(--rule)}.quiz summary{display:flex;align-items:center;gap:6px;list-style:none;font:700 16px/1.4 var(--display);cursor:pointer}.quiz summary::-webkit-details-marker{display:none}.quiz summary::marker{content:""}.quiz summary::before{content:"?";flex:0 0 16px;color:var(--acc);font:700 18px/1 var(--display)}.quiz details p{margin:6px 0 0;color:var(--soft)}.check{display:inline-flex;gap:8px;align-items:center;margin:20px 0 26px;color:var(--soft);font:12px var(--mono);cursor:pointer}.check input{width:18px;height:18px;accent-color:var(--ok)}.widget{max-width:720px;margin:18px 0;padding:17px 19px;background:var(--surface);border:1px solid var(--ink)}.widget h4{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}.widget label{display:grid;grid-template-columns:170px 1fr 70px;align-items:center;gap:10px;margin:8px 0;font-size:14px}.widget input{width:100%;accent-color:var(--acc)}.widget output{font:13px var(--mono);text-align:right}.widget .answer{font:700 31px var(--display);color:var(--acc)}section.ch.study{margin:58px 0 0;padding:36px 34px;background:var(--study);color:var(--ink);border:1px solid var(--rule)}.study .review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 42px;max-width:none;padding:0;margin:26px 0;list-style:none}.study .review-grid li{max-width:none;margin:0;padding:0}.review-grid h3{margin:0 0 8px!important;font-size:20px!important}.study .review-grid p{margin:0;color:var(--soft)}.study .quiz{max-width:none}.study .quiz>h4{margin:0;padding:0 0 10px;border-bottom:1px solid var(--rule);color:var(--soft);font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase}.study .oral-grid{display:block}.study .oral-grid details{padding:15px 0;border:0;border-bottom:1px solid var(--rule);background:transparent}.study .resource-list{padding-left:1.3em}.study .resource-list li{margin:13px 0}.resources{margin:76px 0 0!important;padding:32px 34px!important;background:var(--study);border:1px solid var(--rule)}.resources .ch-head{display:block;margin:0 0 22px}.resources .ch-head .ch-num,.resources .ch-head .ch-sub{display:none}.resources .ch-head h2{font-size:30px}.resources .resource-list{margin:0}.resources .resource-list li{margin:15px 0}.study .resource-list a{color:var(--ink)}.study h2,.study h3,.study h4,.study p,.study li{color:var(--ink)}.study .ch-num{color:var(--acc)}.study .check{color:var(--soft)}
+@media(max-width:900px){.wrap{grid-template-columns:1fr;gap:0}.cover{padding-top:35px}.stamp{font-size:30px}nav.idx{position:static;padding-top:15px;max-height:none;overflow:visible}.idx ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 8px}.partbreak{margin-top:44px}}@media(max-width:640px){body{padding-inline:12px}.cover{grid-template-columns:1fr;gap:13px}.stamp{text-align:right}.cover>div:last-child{padding-right:clamp(24px,14vw,80px)}.vs{grid-template-columns:1fr}.idx ol{grid-template-columns:1fr}.widget label{grid-template-columns:1fr 60px}.widget label span{grid-column:1/-1}section.ch.study{margin-inline:0;padding:26px 18px}.study .review-grid{grid-template-columns:1fr}.study .oral-grid{display:block}table{min-width:410px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="../assets/quaderno.css">
+<style>
+.widget input[type=number]{padding:6px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);font:14px var(--mono)}
+figure.diagram svg{color:var(--ink)}
+pre u{text-decoration-thickness:1.5px}
+.exam pre{margin:8px 0}
+.vs pre{font-size:12px}
+</style>
+
+</head><body><div class="wrap">
+<header class="cover"><div><div class="kicker">Programmazione Orientata agli Oggetti · Quaderno d’esame · Dispense 03–30</div><h1>Dalle <span>classi</span><br>agli stream</h1><p>Appunti guidati su Java: classi e oggetti, memoria e garbage collector, ereditarietà, polimorfismo, interfacce, collezioni, generics, I/O, interfacce grafiche, lambda, stream ed eccezioni. Definizioni, esempi dalle slide, output da prevedere e tranelli da riconoscere all’esame.</p></div><div><div class="stamp">Un oggetto derivato è anche un oggetto base: il resto viene da qui.</div></div></header>
+<nav class="idx" aria-label="Indice degli appunti"><div class="search" role="search"><label for="q" class="slbl">Cerca negli appunti</label><div class="sbox"><input id="q" type="search" placeholder="es. static, upcasting, HashMap, lambda…" autocomplete="off" aria-controls="sres"><button class="sclr" type="button" id="qclr" aria-label="Cancella ricerca" hidden>×</button></div><div class="sres" id="sres" role="region" aria-label="Risultati della ricerca" aria-live="polite" hidden></div></div><h2 class="index-title">Indice</h2><ol id="toc"></ol><div class="progress"><span id="pc">0</span> capitoli ripassati su <span id="pt">29</span></div><div class="bar"><i id="pb"></i></div></nav>
+<main>
+<div class="partbreak">Parte I · Il linguaggio Java</div>
+<section class="ch" id="intro" data-t="Java: introduzione" data-part="Parte I · Il linguaggio Java"><div class="ch-head"><span class="ch-num">03</span><h2>Java: introduzione</h2><span class="ch-sub">Da dove viene Java, perché è portabile, compilazione e interpretazione, le caratteristiche del linguaggio.</span></div>
+<h3>Da C++ a Java</h3>
+<p><b>C++</b> è un linguaggio general-purpose <b>ibrido</b>: supporta più paradigmi insieme, cioè la programmazione <b>procedurale</b> (è un “C migliore”), quella <b>orientata agli oggetti</b> e quella <b>generica</b>.</p>
+<p><b>Java</b> nasce nel <b>1995</b> alla <b>Sun Microsystems</b> (James Gosling) come evoluzione del C++. Offre meccanismi per applicazioni <b>distribuite su rete</b>, facili da integrare con il web e i browser, e una <b>vasta libreria</b> (grafica, rete, basi di dati…).</p>
+<h3>Le caratteristiche di Java</h3>
+<div class="tbl"><table><tr><th>Caratteristica</th><th>Che cosa vuol dire</th></tr>
+<tr><td><b>Semplice</b> e orientato agli oggetti</td><td>Sintassi simile a C/C++ ma senza i costrutti “pericolosi”: niente aritmetica dei puntatori, niente (de)allocazione esplicita della memoria, niente <i>aliasing</i>, <code>struct</code>, <code>typedef</code>, preprocessore (<code>#define</code>), interrupt, array senza controllo dei limiti (buffer overflow). In più aggiunge la <b>garbage collection</b> automatica.</td></tr>
+<tr><td><b>Interpretato</b></td><td>Il compilatore produce <b>bytecode</b> per la Java Virtual Machine, che poi viene interpretato.</td></tr>
+<tr><td><b>Architetturalmente neutro</b> e <b>portabile</b></td><td>Il bytecode non dipende dall’hardware (formato ANDF, <i>Architecture Neutral Distribution Format</i>): gira ovunque ci sia una JVM. Il compilatore è scritto in Java, l’ambiente run-time in ANSI C con interfacce POSIX: nessuna dipendenza dall’implementazione.</td></tr>
+<tr><td><b>Robusto</b></td><td>Controlli estesi a compile-time e a run-time (es. type checking); niente puntatori espliciti, garbage collection, array e stringhe “veri”, verifica del bytecode al caricamento.</td></tr>
+<tr><td><b>Distribuito</b></td><td>Pensato per la rete: il run-time ha funzioni di rete di basso (TCP/IP) e alto livello (HTTP).</td></tr>
+<tr><td><b>Sicuro</b></td><td>Il bytecode viene <b>verificato</b> prima dell’interpretazione; gli indirizzamenti alla memoria sono risolti sotto il controllo dell’interprete.</td></tr>
+<tr><td><b>Dinamico</b></td><td>Le classi vengono caricate e collegate <b>quando servono</b> (anche dalla rete).</td></tr>
+<tr><td><b>Concorrente</b></td><td>Il multithreading fa parte del linguaggio: applicazioni interattive più reattive.</td></tr>
+<tr><td><b>Ricco</b></td><td>Standard Library: supporto al linguaggio, utility, I/O, networking, AWT.</td></tr></table></div>
+<h3>Platform dependent e platform independent</h3>
+<div class="vs"><div><h4>C e C++</h4><p>Il codice va <b>compilato su ogni piattaforma</b> su cui deve girare: l’eseguibile è in linguaggio macchina di quel processore.</p></div><div><h4>Java</h4><p><code>javac</code> traduce il sorgente <code>.java</code> in <b>bytecode</b> <code>.class</code>, il linguaggio di un processore <b>virtuale</b>. Ogni JVM ha un interprete che traduce il bytecode nel linguaggio macchina locale. <b>Vantaggio:</b> portabilità. <b>Svantaggio:</b> velocità.</p></div></div>
+<div class="flow"><span>Sorgente .java</span><i>→ javac →</i><span>Bytecode .class</span><i>→</i><span>Class loader</span><i>→</i><span>Verifica del bytecode</span><i>→</i><span class="hot">Interprete (JVM)</span><i>→</i><span>Hardware</span></div>
+<p>Esempio dalle slide: il ciclo <code>for (i = 0; i &lt; 100; i++);</code> diventa una sequenza di istruzioni bytecode come <code>iconst_0</code>, <code>istore_1</code>, <code>iinc</code>, <code>bipush 100</code>, <code>if_icmplt</code>, <code>return</code>.</p>
+<h3>Compilatore e interprete</h3>
+<p>Per sviluppare servono <b>editor</b>, <b>compilatore</b> e/o <b>interprete</b>.</p>
+<div class="vs"><div><h4>Compilazione</h4><p>Traduce <b>l’intero programma</b> in linguaggio macchina prima di eseguirlo. Se ci sono più sorgenti, si compilano separatamente e un <b>linker</b> li collega; il <b>loader</b> li carica.</p></div><div><h4>Interpretazione</h4><p>È il ciclo fetch-execute portato ad alto livello: prende <b>un’istruzione alla volta</b>, la traduce in una o più istruzioni macchina, le esegue subito, passa alla successiva.</p></div></div>
+<ul><li>L’interpretazione è <b>meno efficiente</b> a run-time (più memoria, overhead dell’interprete che deve analizzare ogni istruzione).</li>
+<li>L’interpretazione rende <b>più facile trovare le cause degli errori</b> a run-time, perché resta il legame con il sorgente.</li>
+<li>La compilazione può fare <b>ottimizzazioni</b>, perché vede tutto il programma.</li></ul>
+<h3>Cosa serve</h3>
+<p>Il <b>JDK</b> (Java Development Kit, comprende anche il <b>JRE</b>), la documentazione <b>Javadoc</b> e un editor o IDE (Eclipse, JCreator, JBuilder…). Il sistema operativo può essere qualunque.</p>
+<div class="exam"><b class="lbl">Da non confondere</b>Java è <b>compilato e interpretato</b>: <code>javac</code> compila in bytecode, la JVM lo interpreta. “Portabile” non vuol dire che il bytecode sia codice macchina: è codice per un processore virtuale.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che cosa produce javac?</summary><p>Bytecode (file .class) per la Java Virtual Machine, non linguaggio macchina.</p></details><details><summary>Vantaggio e svantaggio del bytecode interpretato?</summary><p>Vantaggio: portabilità. Svantaggio: velocità.</p></details><details><summary>Perché Java è “sicuro”?</summary><p>Il bytecode viene verificato prima dell’interpretazione e gli accessi alla memoria sono risolti dall’interprete.</p></details><details><summary>Quali costrutti di C/C++ elimina Java?</summary><p>Aritmetica dei puntatori, deallocazione esplicita, struct, typedef, #define, array senza controllo dei limiti.</p></details><details><summary>Che cosa vuol dire “dinamico”?</summary><p>Le classi vengono caricate e collegate a run-time, quando servono.</p></details></div></section>
+
+<div class="partbreak">Parte II · Classi e oggetti</div>
+<section class="ch" id="classi" data-t="Classi e oggetti" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">04</span><h2>Classi e oggetti</h2><span class="ch-sub">Tipo di dato astratto, attributi, metodi, variabili locali, passaggio dei parametri, varargs, il main.</span></div>
+<div class="def"><b class="lbl">Definizione</b>Una <b>classe</b> realizza un <b>tipo di dato astratto (ADT)</b>: ha un <b>nome</b> e contiene due tipi di membri, gli <b>attributi</b> (i dati) e i <b>metodi</b> (le funzioni che operano sui dati). Un <b>oggetto</b> è un’istanza della classe, creata con <code>new</code>.</div>
+<p>Esempio: un’<b>automobile</b> ha dati (targa, colore, velocità, livello benzina) e funzioni (avviati, fermati, accelera).</p>
+<h3>La classe in Java</h3>
+<ul><li>È identificata da un <b>nome</b> che, per una classe <code>public</code>, deve coincidere con il nome del file (<code>Prova.java</code> contiene <code>class Prova</code>).</li>
+<li>Il corpo è tra parentesi graffe e contiene dichiarazioni e istruzioni.</li>
+<li>Il nome può essere preceduto da <b>modificatori</b>: <code>public</code>, <code>private</code>, <code>static</code>…</li></ul>
+<pre>public class Auto {
+    public int cilindri = 4;     // inizializzato esplicitamente
+    public int speed = 0;
+    public String targa;         // inizializzato automaticamente a null
+
+    public int getSpeed() { return speed; }
+    public void setSpeed(int s) { speed = s; }
+    public void accelera() { speed++; }
+}
+
+Auto panda = new Auto();   // creazione dell'oggetto
+panda.setSpeed(100);
+int s = panda.getSpeed();   // il tipo restituito deve essere compatibile con s</pre>
+<p>Una classe vuota non serve a niente: bisogna aggiungere attributi e metodi. Con soli attributi si può solo leggerli e modificarli (<code>panda.speed = 10;</code>).</p>
+<h3>Attributi e metodi</h3>
+<p>Sintassi di un attributo: <code>[modificatore] Tipo nome [= valore];</code>. Un metodo ha un nome, un tipo di ritorno, una lista di parametri e un corpo tra graffe.</p>
+<div class="note">La slide dice che l’attributo senza modificatore è <i>public per default</i>. In realtà, come si vede nel cap. 14, senza modificatore l’accesso è <b>package</b> (“friendly”): visibile solo nel package.</div>
+<p><code>return</code> ha due funzioni: <b>termina</b> il metodo e <b>restituisce</b> il valore di ritorno. In un metodo <code>void</code> si può scrivere <code>return;</code> o niente.</p>
+<pre>public boolean flag() { return true; }
+public float naturalLogBase() { return 2.718f; }
+public void nothing() { return; }
+public void nothing2() {}</pre>
+<h3>Variabili locali</h3>
+<p>Le variabili locali a un metodo:</p>
+<ul><li>sono visibili <b>solo nel corpo del metodo</b>;</li>
+<li>sono allocate nello <b>stack</b> alla chiamata e deallocate all’uscita;</li>
+<li><b>non vengono inizializzate automaticamente</b> (a differenza degli attributi di una classe).</li></ul>
+<pre>int i;
+if (cond) { i = 55; }
+i++;     // errore di compilazione: i potrebbe non essere inizializzata</pre>
+<p>Nell’esempio <code>foo()</code> chiama <code>multiply(x, y)</code>: nello stack compare prima il record di <code>foo</code> con <code>x = 5</code> e <code>y = 12</code>, poi quello di <code>multiply</code> con <code>num1</code>, <code>num2</code> e <code>result</code>; all’uscita di <code>multiply</code> il suo record sparisce.</p>
+<h3>Passaggio dei parametri: tutto per valore</h3>
+<ul><li>La lista dei parametri specifica <b>tipo e ordine</b>; il compilatore dà errore se il tipo passato non corrisponde.</li>
+<li>Dei <b>tipi semplici</b> (<code>int</code>, <code>boolean</code>, <code>char</code>…) viene passato il <b>valore</b>.</li>
+<li>Degli <b>oggetti</b> (array, stringhe, oggetti dell’utente) viene passato il <b>riferimento</b>, sempre per valore.</li></ul>
+<div class="exam"><b class="lbl">Domanda tipica</b>Come si ottiene un parametro di uscita? <b>Solo con un oggetto</b>: il metodo riceve una copia del riferimento e può <b>modificare lo stato</b> dell’oggetto puntato. Non può invece far puntare la variabile del chiamante a un altro oggetto.</div>
+<h3>Varargs</h3>
+<p>Da Java 1.5 un metodo può accettare <b>zero o più</b> parametri di un tipo:</p>
+<pre>public static int somma(int... args) {
+    int sum = 0;
+    for (int arg : args) sum += arg;
+    return sum;
+}</pre>
+<p>Internamente viene creato un <b>array</b> con gli argomenti. Ogni chiamata quindi alloca e inizializza un array: se il numero di parametri è prevedibile conviene l’<b>overloading</b>.</p>
+<h3>Hello World e il main</h3>
+<pre>class Hello {
+    public static void main(String args[]) {
+        System.out.println("Hello World!");
+    }
+}</pre>
+<div class="tbl"><table><tr><th>Parola</th><th>Perché c’è</th></tr>
+<tr><td><code>public</code></td><td>Rende il main visibile alle altre classi e al comando <code>java</code>.</td></tr>
+<tr><td><code>static</code></td><td>Associa il main alla <b>classe</b>, non alle istanze: si può chiamare senza creare oggetti.</td></tr>
+<tr><td><code>void</code></td><td>Il main non restituisce nulla.</td></tr>
+<tr><td><code>String args[]</code></td><td>Gli argomenti passati da shell: <code>java Hello arg1 … argn</code>.</td></tr>
+<tr><td><code>System.out.println</code></td><td>Chiama il metodo <code>println</code> dell’oggetto <code>out</code> della classe <code>System</code>, che scrive su stdout.</td></tr></table></div>
+<h3>Esempio: copiare un riferimento</h3>
+<pre>class Contatore {
+    int cont = 0;
+    public void incr() { cont++; }
+    public static void main(String args[]) {
+        Contatore a = new Contatore();
+        Contatore b = new Contatore();
+        a.incr();
+        System.out.println(a.cont);   // 1
+        System.out.println(b.cont);   // 0
+        b = a;                        // copia i riferimenti
+        System.out.println(a.cont);   // 1
+        System.out.println(b.cont);   // 1
+        b.incr();
+        System.out.println(a.cont);   // 2
+        System.out.println(b.cont);   // 2
+    }
+}</pre>
+<p>Dopo <code>b = a</code> le due variabili puntano allo <b>stesso oggetto</b>: l’oggetto creato prima per <code>b</code> non è più raggiungibile e verrà raccolto dal garbage collector.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Le variabili locali sono inizializzate a 0?</summary><p>No: vanno inizializzate prima dell’uso, altrimenti errore di compilazione. Gli attributi invece sì.</p></details><details><summary>In Java il passaggio è per valore o per riferimento?</summary><p>Sempre per valore: dei tipi semplici si copia il valore, degli oggetti si copia il riferimento.</p></details><details><summary>Perché il main è static?</summary><p>Perché deve poter partire senza che esista un oggetto della classe.</p></details><details><summary>Cosa crea Java per un metodo con varargs?</summary><p>Un array con gli argomenti, a ogni chiamata.</p></details><details><summary>A cosa serve return?</summary><p>A terminare il metodo e a restituire il valore di ritorno.</p></details></div></section>
+
+<section class="ch" id="composte" data-t="Classi composte" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">05</span><h2>Classi composte</h2><span class="ch-sub">Classi fatte di altri oggetti, struttura di un’applicazione, compilazione, stack e heap, classi interne.</span></div>
+<p>Una classe può essere <b>costituita da altri oggetti</b>: un’automobile è fatta di ruote, carrozzeria, motore.</p>
+<h3>Struttura di un’applicazione</h3>
+<ul><li>Il sorgente è fatto di uno o più file, le <b>unità di compilazione</b>.</li>
+<li>Ogni file contiene una o più classi (o interfacce), <b>al più una</b> dichiarata <code>public</code>.</li>
+<li>Il file deve chiamarsi come la sua classe <code>public</code>, con estensione <code>.java</code>.</li>
+<li><code>javac a.java</code> produce <b>un file .class per ogni classe</b> (<code>a.class</code>, <code>b.class</code>…).</li>
+<li><code>java a args</code> esegue: la classe <code>a</code> deve avere un metodo <code>public static</code> di nome <code>main</code>.</li></ul>
+<pre>public class Test {
+    public static void main(String args[]) {
+        Auto myCar = new Auto();
+        myCar.setSpeed(10);
+        System.out.println("speed=" + myCar.getSpeed());
+    }
+}
+class Auto {
+    int cilindri = 4;
+    int speed = 0;
+    public int getSpeed() { return speed; }
+    public void setSpeed(int s) { speed = s; }
+}</pre>
+<h3>Compilazione ed esecuzione</h3>
+<p>Le classi vanno compilate secondo l’<b>ordine di dipendenza</b>: la classe che dipende dalle altre va compilata per ultima. Esecuzione di <code>ShirtTest</code>:</p>
+<div class="flow"><span>java ShirtTest</span><i>→</i><span>caricata ShirtTest</span><i>→</i><span>esegue il main</span><i>→</i><span>caricata Shirt</span><i>→</i><span class="hot">new Shirt()</span><i>→</i><span>modifica colorCode</span><i>→</i><span>fine</span></div>
+<h3>Stack e heap</h3>
+<div class="vs"><div><h4>Stack</h4><p>Contiene le <b>variabili locali</b> e i parametri dei metodi, compresi i <b>riferimenti</b> agli oggetti.</p></div><div><h4>Heap</h4><p>Contiene gli <b>oggetti</b> creati con <code>new</code>, con i loro attributi.</p></div></div>
+<p>Se a un riferimento si assegna un altro oggetto, il primo oggetto resta nell’heap senza riferimenti. Nelle slide: <i>in C++ non andrebbe mai fatto</i>, perché si perde ogni riferimento e quindi la possibilità di fare <code>delete</code>; in Java ci pensa il garbage collector.</p>
+<h3>Classi interne</h3>
+<p>Una <b>classe interna</b> è definita dentro un’altra: serve a raggruppare classi logicamente correlate e a controllarne la visibilità.</p>
+<pre>public class Document {
+    private String title = "Titolo";
+    class Destination {
+        private String label;
+        Destination(String whereTo) { label = whereTo; }
+        String readLabel() { return label; }
+        String returnTitolo() { return Document.this.title; }
+    }
+    public void ship(String dest) {
+        Destination d = new Destination(dest);
+        System.out.println(d.readLabel());
+    }
+    public static void main(String[] args) {
+        Document doc = new Document();
+        Document.Destination dec = doc.new Destination("Tanzania");
+        String str = dec.returnTitolo();
+    }
+}</pre>
+<ul><li>La classe interna ha <b>completa visibilità</b> di attributi e metodi della classe esterna, anche privati (<code>Document.this.title</code>).</li>
+<li>Un’istanza della classe interna si ottiene <b>solo a partire da un’istanza della classe esterna</b>: <code>doc.new Destination(...)</code>.</li>
+<li>Fuori da <code>Document</code> (o nei metodi statici) il nome è <code>Document.Destination</code>.</li>
+<li>Con <code>private</code>, <code>protected</code>, <code>public</code> si disciplina la visibilità: una classe interna <code>private</code> non si può istanziare dall’esterno.</li></ul>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quante classi public può avere un file?</summary><p>Al più una, e il file deve avere il suo nome.</p></details><details><summary>Quanti .class produce un file con tre classi?</summary><p>Tre, uno per classe.</p></details><details><summary>Dove stanno gli oggetti e dove i riferimenti locali?</summary><p>Oggetti nell’heap, variabili locali (riferimenti compresi) nello stack.</p></details><details><summary>Come si crea un oggetto di una classe interna dal main?</summary><p>A partire da un oggetto della classe esterna: <code>doc.new Destination("…")</code>.</p></details></div></section>
+
+<section class="ch" id="modificatori" data-t="Modificatori e information hiding" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">06</span><h2>Modificatori e information hiding</h2><span class="ch-sub">Ruolo cliente e servente, specifica e implementazione, public, private, get e set.</span></div>
+<p>Una classe può avere un doppio ruolo:</p>
+<div class="vs"><div><h4>Cliente</h4><p>Usa le risorse messe a disposizione da altre classi.</p></div><div><h4>Servente</h4><p>È usata da altre classi o da un programma utente.</p></div></div>
+<p>Esempio: l’automobile ha un’<b>interfaccia pubblica</b> (volante, blocchetto di accensione, acceleratore: “ciò che l’auto può fare”) e un’<b>implementazione privata</b> (meccanica dello sterzo, avviamento, alimentazione: “come lo fa”).</p>
+<div class="def"><b class="lbl">Specifica della classe</b>È l’<b>interfaccia</b> della classe: descrive le risorse offerte agli utenti e le regole sintattiche per usarle. È <b>separata dall’implementazione</b>, così si può usare la classe senza conoscerne i dettagli. La scrive lo sviluppatore della classe.</div>
+<pre>public class C {
+    // public: prototipi delle funzioni membro (la specifica)
+    public T1 f1(...);
+    public T2 f2(...);
+    // private: struttura dati
+    private int i;
+    private char c;
+}</pre>
+<h3>public e private</h3>
+<pre>public class Customer {
+    private String name;
+    public void setName(String customerName) {
+        name = customerName.toUpperCase();
+    }
+}
+Customer cust = new Customer();
+cust.setName("John Phillips");   // OK
+cust.name = "Jack Phillips";     // errore: name è private</pre>
+<p>Con <code>public</code> l’assegnamento diretto <code>cust.name = …</code> funziona e salta i controlli del metodo (qui il maiuscolo); con <code>private</code> è vietato.</p>
+<h3>I metodi get e set</h3>
+<p>Gli attributi privati si leggono e si scrivono con metodi pubblici <b>get/set</b>, che possono <b>validare</b> i valori:</p>
+<pre>public class PrivateShirt1 {
+    private char colorCode = 'U';
+    public char getColorCode() { return colorCode; }
+    public void setColorCode(char newCode) {
+        switch (newCode) {
+            case 'R': case 'G': case 'B': case 'U':
+                colorCode = newCode; break;
+            default:
+                System.out.println("Invalid Color Code");
+        }
+    }
+}</pre>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che differenza c’è tra specifica e implementazione?</summary><p>La specifica dice cosa offre la classe e come si usa; l’implementazione come lo fa. Sono separate.</p></details><details><summary>Perché usare un setter invece di un attributo public?</summary><p>Perché il setter può controllare il valore (es. solo codici colore validi).</p></details><details><summary>Ruolo cliente o servente: chi usa le risorse di altre classi?</summary><p>Il cliente.</p></details></div></section>
+
+<section class="ch" id="static" data-t="Il modificatore static" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">07</span><h2>Il modificatore static</h2><span class="ch-sub">Attributi e metodi di classe, cosa può fare un metodo statico, classi interne statiche.</span></div>
+<p>Di solito un attributo esiste solo quando si crea un oggetto con <code>new</code>. Due situazioni in cui non basta:</p>
+<ul><li>si vuole un’area di memoria <b>comune a tutti gli oggetti</b> della classe;</li>
+<li>si vuole chiamare un metodo o leggere un attributo <b>senza un oggetto</b>.</li></ul>
+<div class="def"><b class="lbl">Definizione</b>Un membro <b>static</b> appartiene alla <b>classe</b>, non a un oggetto in particolare. Esiste in <b>una sola copia</b> condivisa da tutti gli oggetti, e si può usare sia tramite la classe (<code>Alpha.y</code>) sia tramite un oggetto (<code>a.y</code>).</div>
+<pre>public class Alpha {
+    int x = 0;           // uno per ogni oggetto
+    static int y = 0;    // uno per tutta la classe
+    public void beta() { /* modifica x */ }
+    public static void gamma() { /* modifica y */ }
+}
+Alpha.y = 7;
+Alpha.gamma();
+Alpha a = new Alpha();
+a.x = 5;
+a.beta();</pre>
+<p>Con <code>Alpha A = new Alpha(); Alpha B = new Alpha();</code> ciascun oggetto ha la sua <code>x</code>, ma <code>y</code> è una sola e <code>gamma()</code> lavora su quella.</p>
+<div class="exam"><b class="lbl">Regola d’esame</b>Un metodo <b>static non può accedere a membri non static</b> (senza un oggetto): quei membri non esistono finché non si crea un oggetto. Un metodo non static invece può usare tutto.</div>
+<h3>Esempio</h3>
+<pre>class StaticTest {
+    static int i = 47;
+    int j = 0;
+    static void incr() { i++; }
+}
+public class Test {
+    public static void main(String args[]) {
+        System.out.println(StaticTest.i);   // 47
+        StaticTest st1 = new StaticTest();
+        StaticTest st2 = new StaticTest();
+        st1.j++; st2.j++;                   // ogni oggetto ha la sua j: valgono 1 e 1
+        st1.i++; st2.i++;                   // la stessa i: 49
+        System.out.println(st1.i);          // 49
+        System.out.println(st2.i);          // 49
+    }
+}</pre>
+<p><code>st1.i++</code> equivale a <code>StaticTest.i++</code>, a <code>StaticTest.incr()</code> e a <code>st1.incr()</code>.</p>
+<h3>Quali operazioni sono consentite?</h3>
+<div class="tbl"><table><tr><th>Dentro il main (statico)</th><th>Esito</th></tr>
+<tr><td><code>StaticTest.j</code></td><td>❌ non consentita: j non è statica, serve un oggetto</td></tr>
+<tr><td><code>StaticTest.incr()</code>, <code>StaticTest.i</code></td><td>✅ consentite</td></tr>
+<tr><td><code>st.i</code>, <code>st.j</code>, <code>st.incr()</code> con <code>st = new StaticTest()</code></td><td>✅ consentite</td></tr>
+<tr><td><code>j</code> scritto direttamente nel main della stessa classe</td><td>❌ non consentita</td></tr>
+<tr><td><code>i</code>, <code>i++</code>, <code>incr()</code> nella stessa classe</td><td>✅ consentite, senza il punto: siamo dentro la classe</td></tr></table></div>
+<h3>Classi interne statiche</h3>
+<ul><li>Un’istanza di una classe interna normale tiene un <b>riferimento implicito</b> all’oggetto esterno che l’ha creata; una classe interna <b>static</b> no.</li>
+<li>Per creare un oggetto della classe interna statica <b>non serve un oggetto</b> della classe esterna.</li>
+<li>Da un oggetto della classe interna statica <b>non si accede</b> a un oggetto della classe esterna.</li>
+<li>Può contenere attributi statici.</li>
+<li>Una classe interna statica può far parte di un’<b>interfaccia</b>.</li></ul>
+<div class="note">Le slide dicono che le classi interne non possono dichiarare metodi statici: era vero fino a Java 15; da Java 16 è permesso.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quante copie esistono di un attributo static?</summary><p>Una sola, condivisa da tutti gli oggetti.</p></details><details><summary>Un metodo static può usare this?</summary><p>No: non è legato ad alcun oggetto.</p></details><details><summary>st1.i++ e st2.i++ partendo da 47: quanto vale i?</summary><p>49, perché è la stessa variabile.</p></details><details><summary>Serve un oggetto esterno per creare una classe interna static?</summary><p>No.</p></details></div></section>
+
+<section class="ch" id="overloading" data-t="Overloading" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">08</span><h2>Overloading</h2><span class="ch-sub">Lo stesso nome con più significati, su cosa si distingue, polimorfismo statico.</span></div>
+<p>I nomi sono importanti: un oggetto dà un nome a una zona di memoria, un metodo a un’azione. Un nome è <b>overloaded</b> quando assume <b>più significati</b>: “lavare la maglia, il cane, la macchina”: è l’oggetto a dare il significato al verbo.</p>
+<div class="def"><b class="lbl">Definizione</b>L’<b>overloading</b> è la definizione di più metodi con lo <b>stesso nome</b> ma <b>parametri diversi</b> nel <b>tipo</b>, nel <b>numero</b> o nell’<b>ordine</b>.</div>
+<div class="exam"><b class="lbl">Trabocchetto</b>Non si può fare overloading <b>sul solo tipo di ritorno</b>: <code>int f()</code> e <code>float f()</code> non possono convivere, perché in una chiamata come <code>f();</code> il compilatore non saprebbe quale scegliere.</div>
+<pre>class Tree {
+    int height = 0;
+    void info() { System.out.println("Tree is " + height + " feet tall"); }
+    void info(String s) { System.out.println(s + ": Tree is " + height + " feet tall"); }
+}
+
+public class OverloadingOrder {
+    static void print(String s, int i) { System.out.println("String: " + s + ", int: " + i); }
+    static void print(int i, String s) { System.out.println("int: " + i + ", String: " + s); }
+    public static void main(String[] args) {
+        print("String first", 11);
+        print(99, "Int first");
+    }
+}</pre>
+<p>Il secondo esempio distingue i metodi <b>solo per l’ordine</b> dei parametri.</p>
+<h3>Overloading e polimorfismo</h3>
+<p>L’overloading è un esempio di <b>polimorfismo statico</b>: il metodo da chiamare si sceglie in <b>fase di compilazione</b> (associazione statica, early binding).</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Su cosa si distinguono due metodi in overload?</summary><p>Sul tipo, sul numero o sull’ordine dei parametri.</p></details><details><summary>Posso distinguerli solo per il tipo di ritorno?</summary><p>No.</p></details><details><summary>L’overloading è polimorfismo statico o dinamico?</summary><p>Statico: risolto a compile-time.</p></details></div></section>
+
+<section class="ch" id="costruttori" data-t="Costruttori e garbage collector" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">09</span><h2>Costruttori e garbage collector</h2><span class="ch-sub">Costruttore, overload del costruttore, garbage collection generazionale, finalize, persistenza e visibilità.</span></div>
+<h3>Il costruttore</h3>
+<p>Molti errori nascono da variabili non inizializzate. Il <b>costruttore</b> permette di <b>non separare creazione e inizializzazione</b> dell’oggetto.</p>
+<ul><li>Ha lo <b>stesso nome della classe</b>.</li>
+<li><b>Non restituisce niente</b>, neanche <code>void</code>.</li>
+<li>Può avere o no parametri.</li>
+<li>Viene chiamato da <code>new</code>, che restituisce il riferimento all’oggetto: <code>Albero a = new Albero();</code></li>
+<li>Se non se ne definisce nessuno, Java crea quello <b>di default</b> (senza parametri), che alloca semplicemente l’oggetto.</li></ul>
+<pre>public class Albero {
+    int altezza = 0;
+    public Albero() {
+        System.out.println("Costruito un albero di altezza " + altezza);
+    }
+    public Albero(int h) {     // overload del costruttore
+        altezza = h;
+        System.out.println("Costruito un albero di altezza " + altezza);
+    }
+}</pre>
+<div class="exam"><b class="lbl">Trabocchetto</b>Il costruttore di default esiste <b>solo se non ne scrivi nessuno</b>. Se definisci solo <code>Albero(int h)</code>, <code>new Albero()</code> non compila più.</div>
+<p>Esempio di overload: <code>new Shirt()</code>, <code>new Shirt('G')</code>, <code>new Shirt('B', 1000)</code> chiamano tre costruttori diversi.</p>
+<h3>Il “distruttore” e il garbage collector</h3>
+<p>Gli oggetti sono creati dinamicamente e, finito il loro uso, la memoria va liberata. In Java se ne occupa il <b>garbage collector</b>:</p>
+<ul><li>un oggetto può essere deallocato quando <b>nessun riferimento punta più</b> a lui;</li>
+<li><b>non si sa a priori</b> quando interverrà il garbage collector.</li></ul>
+<p>Il GC è un <b>thread daemon</b> in background che libera l’heap dagli oggetti non più raggiungibili. Nelle slide è descritto con il <b>reference counting</b>: ogni oggetto ha un contatore dei riferimenti; quando arriva a zero l’oggetto è candidato alla deallocazione.</p>
+<pre>String s1 = new String("casa1");
+String s2 = new String("casa2");
+s1 = s2;     // "casa1" non ha più riferimenti
+s1 = null;   // s2 punta ancora a "casa2"
+s2 = null;   // ora anche "casa2" può essere distrutto</pre>
+<div class="note">Le JVM moderne in pratica non contano i riferimenti: partono dalle radici (stack, variabili statiche) e marcano ciò che è raggiungibile. Così vengono raccolti anche gli oggetti che si puntano a vicenda. All’esame usa la descrizione delle slide.</div>
+<h3>Le fasi della garbage collection</h3>
+<div class="flow"><span>1. Marking</span><i>→</i><span>2. Cancellazione normale</span><i>→</i><span class="hot">2b. Compattazione</span></div>
+<ol><li><b>Marking:</b> si identificano i pezzi di heap in uso e quelli no, scansionando tutti gli oggetti (può richiedere molto tempo).</li>
+<li><b>Cancellazione normale:</b> si rimuovono gli oggetti senza riferimenti; l’allocatore tiene i riferimenti ai blocchi liberi.</li>
+<li><b>Compattazione:</b> si avvicinano gli oggetti rimasti, così le nuove allocazioni sono più semplici e veloci.</li></ol>
+<p>Scorrere tutti gli oggetti dà una latenza crescente. Ma <b>la maggior parte degli oggetti ha vita breve</b>: da qui la <b>garbage collection generazionale</b>.</p>
+<h3>GC generazionale</h3>
+<div class="tbl"><table><tr><th>Generazione</th><th>Cosa contiene</th><th>Raccolta</th></tr>
+<tr><td><b>Giovane</b> (eden + due spazi survivor S0, S1)</td><td>Tutti i nuovi oggetti</td><td><b>Minor GC</b> quando l’eden si riempie: veloce (alta mortalità, poca memoria)</td></tr>
+<tr><td><b>Vecchia</b></td><td>Gli oggetti sopravvissuti oltre una soglia di età (es. 8)</td><td><b>Major GC</b>: più lenta, attivata più di rado</td></tr>
+<tr><td><b>Permanente</b> (fino a Java 7)</td><td>Metadati di classi e metodi usati dalla JVM</td><td>Rimossa in Java 8</td></tr></table></div>
+<ol><li>I nuovi oggetti vanno nell’<b>eden</b>; i due spazi survivor sono vuoti.</li>
+<li>Quando l’eden si riempie parte una <b>minor GC</b>: gli oggetti referenziati vanno in <b>S0</b>, gli altri vengono eliminati con l’eden.</li>
+<li>Alla minor GC successiva gli oggetti vivi di eden e S0 passano in <b>S1</b> con età incrementata; eden e S0 vengono svuotati.</li>
+<li>Alla successiva si ripete <b>invertendo</b> i survivor (si torna in S0).</li>
+<li>Superata la soglia di età, gli oggetti sono <b>promossi</b> alla vecchia generazione; prima o poi una <b>major GC</b> la ripulisce e la compatta.</li></ol>
+<p>Sia la minor sia la major GC sono eventi <b>“Stop the World”</b>: tutti i thread dell’applicazione si fermano fino alla fine.</p>
+<div class="vs"><div><h4>CMS · Concurrent Mark Sweep</h4><p>Minimizza le pause lavorando <b>insieme ai thread</b> dell’applicazione. Di norma non compatta: rischio di frammentazione, compensato con un heap più grande. Per applicazioni che chiedono pause brevi.</p></div><div><h4>G1 · Garbage-First</h4><p>Per heap <b>oltre 4 GB</b>: divide l’heap in <b>regioni</b> da 1 a 32 MB; dopo una marcatura globale raccoglie <b>prima</b> le regioni più vuote (da qui il nome). Usa un modello di previsione.</p></div></div>
+<h3>finalize</h3>
+<p>Java non distrugge l’oggetto quando finisce il suo ambito di visibilità, ma più tardi, in un momento non prevedibile. Per fare operazioni prima della distruzione si può definire <code>finalize()</code>, chiamato <b>appena prima della deallocazione</b>.</p>
+<pre>public class Oggetto {
+    static int n_obj = 0;           // conta le istanze vive
+    public Oggetto() { n_obj++; }
+    public void finalize() { n_obj--; }
+}</pre>
+<p>Problemi dei finalizzatori:</p>
+<ul><li>non si sa <b>quando</b> verranno eseguiti: le risorse potrebbero finire prima;</li>
+<li><b>portabilità</b>: l’algoritmo di GC dipende dalla JVM;</li>
+<li><b>prestazioni</b>: distruggere un oggetto con finalize non vuoto costa di più;</li>
+<li>niente <b>gestione delle eccezioni</b>: se finalize lancia un’eccezione la finalizzazione si interrompe e l’oggetto resta in uno stato improprio.</li></ul>
+<div class="note"><code>finalize</code> è deprecato da Java 9. <code>System.gc()</code> chiede di far partire la raccolta, ma non la garantisce.</div>
+<h3>Persistenza e visibilità</h3>
+<div class="vs"><div><h4>Variabile di un metodo</h4><p>Vale finché il metodo non termina.</p></div><div><h4>Attributo di un oggetto</h4><p>Vale finché l’oggetto è vivo, cioè finché qualche riferimento punta a lui.</p></div></div>
+<div class="vs"><div><h4>Vantaggi del GC</h4><p>Più produttività; <b>integrità</b>: non si può far andare in crash la JVM liberando male la memoria.</p></div><div><h4>Svantaggi</h4><p>Un <b>overhead</b> considerevole che può pesare sulle prestazioni.</p></div></div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Il costruttore restituisce void?</summary><p>No, non restituisce niente, neanche void.</p></details><details><summary>Quando un oggetto può essere raccolto?</summary><p>Quando nessun riferimento punta più a lui.</p></details><details><summary>Perché la GC generazionale funziona?</summary><p>Perché la maggior parte degli oggetti muore giovane: la minor GC lavora su poca memoria e trova molti oggetti morti.</p></details><details><summary>Minor GC: “Stop the World” o concorrente?</summary><p>Stop the World, come la major.</p></details><details><summary>Perché non fidarsi di finalize?</summary><p>Perché non si sa quando (né se) verrà eseguito.</p></details></div></section>
+
+<section class="ch" id="array" data-t="Array" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">10</span><h2>Array</h2><span class="ch-sub">Dichiarazione, creazione, inizializzazione, valori di default, array multidimensionali.</span></div>
+<h3>Dichiarazione</h3>
+<pre>type[] array_identifier;      // oppure  type array_identifier[];
+type[][] matrice;             // oppure  type matrice[][];
+
+char[] status;
+int[] ages;
+Shirt[] shirts;
+String[] names;</pre>
+<p>La dichiarazione crea solo il <b>riferimento</b> nello stack: l’array non esiste ancora.</p>
+<h3>Creazione</h3>
+<pre>status = new char[5];
+ages = new int[5];
+names = new String[7];
+shirts = new Shirt[3];</pre>
+<p><code>new</code> crea l’array nell’<b>heap</b> e mette nella variabile il suo indirizzo. Gli elementi sono inizializzati ai <b>valori di default</b>: <code>'\u0000'</code> per i char, <code>0</code> per i numeri, <code>null</code> per i riferimenti.</p>
+<div class="exam"><b class="lbl">Trabocchetto</b><code>new Shirt[3]</code> crea un array di <b>3 riferimenti null</b>, non 3 camicie. Le camicie vanno create una per una: <code>shirts[0] = new Shirt();</code></div>
+<h3>Inizializzazione</h3>
+<pre>ages[0] = 19; ages[1] = 42; ages[2] = 92; ages[3] = 33; ages[4] = 46;
+shirts[0] = new Shirt();
+shirts[1] = new Shirt('G');
+shirts[2] = new Shirt('G', 1000);
+
+// in una riga sola, solo nella dichiarazione:
+int[] ages = {19, 42, 92, 33, 46};
+Shirt[] shirts = { new Shirt(), new Shirt('G'), new Shirt('G', 1000) };
+
+int[] ages;
+ages = {19, 42, 92, 33, 46};   // errore: l'inizializzatore va solo nella dichiarazione</pre>
+<h3>Array multidimensionali</h3>
+<p>In Java un array a due dimensioni è un <b>array di array</b>: <code>yearlySales[0]</code> è il primo array (la prima riga).</p>
+<pre>int[][] yearlySales = new int[5][4];
+yearlySales[3][2] = 10;                 // un elemento [riga][colonna]
+yearlySales[3] = new int[]{10, 15, 20, 25};   // un'intera riga
+int nrighe = yearlySales.length;
+int ncolonne = yearlySales[0].length;</pre>
+<div class="note">Nelle slide la riga si assegna con <code>yearlySales[3] = {10, 15, 20, 25};</code>: fuori da una dichiarazione serve <code>new int[]{...}</code>.</div>
+<p>Secondo le slide, in Java l’allocazione nell’heap è <b>per righe</b> (ogni riga è un oggetto separato), in C++ per colonne.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che valore hanno gli elementi di new int[5]?</summary><p>Tutti 0.</p></details><details><summary>E quelli di new String[7]?</summary><p>Tutti null.</p></details><details><summary>Come si conta il numero di colonne di una matrice?</summary><p><code>matrice[0].length</code>.</p></details><details><summary>ages = {1, 2, 3}; dopo la dichiarazione compila?</summary><p>No: serve <code>new int[]{1, 2, 3}</code>.</p></details></div></section>
+
+<section class="ch" id="cpp" data-t="Classi in C++" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">11</span><h2>Classi in C++</h2><span class="ch-sub">Programmazione generica, dalle struct alle classi, operatore di scope, new e delete, puntatori e freccia, file .h e .cpp.</span></div>
+<h3>Programmazione generica</h3>
+<p>Consiste nel creare costrutti utilizzabili con <b>molti tipi di dati diversi</b>. Esempio: la classe <code>ArrayList</code> permette di creare vettori di qualsiasi tipo di elemento.</p>
+<h3>Dalla struct alla classe</h3>
+<div class="vs"><div><h4>C: struct + funzioni</h4><pre>struct stack {
+    int TOS;
+    data *buffer;
+    int size;
+};
+boolean push(struct stack *ptr, data value);</pre><p>I dati stanno nella struct, le funzioni fuori e ricevono il puntatore.</p></div><div><h4>C++: classe</h4><pre>class stack {
+    int TOS;
+    data *buffer;
+    int size;
+    boolean push(data value);
+    boolean pop(data *value);
+};
+boolean stack::push(data value) { ... }</pre><p>Dati e funzioni stanno insieme nella classe.</p></div></div>
+<p>Un metodo si implementa fuori dalla classe con l’<b>operatore di scope</b> <code>::</code>: <code>tipo_restituito nome_classe::nome_metodo(parametri) {…}</code>.</p>
+<h3>Creazione e distruzione</h3>
+<div class="vs"><div><h4>Variabile struct</h4><p><code>stack s;</code> è allocata <b>staticamente nello stack</b> e vive quanto la funzione in cui è dichiarata.</p></div><div><h4>Oggetto con new</h4><p><code>sptr = new stack();</code> alloca nell’<b>heap</b>; l’oggetto viene distrutto solo <b>esplicitamente</b> con <code>delete sptr;</code> (o alla fine del programma).</p></div></div>
+<ul><li><code>new</code> alloca la memoria per l’oggetto e ne restituisce l’indirizzo.</li>
+<li><code>delete</code> libera la memoria quando l’oggetto non serve più.</li></ul>
+<h3>Punto e freccia</h3>
+<div class="tbl"><table><tr><th>Riferimento statico</th><th>Puntatore all’oggetto</th></tr>
+<tr><td><code>oggetto.attributo;</code></td><td><code>oggetto-&gt;attributo;</code></td></tr>
+<tr><td><code>oggetto.metodo();</code></td><td><code>oggetto-&gt;metodo();</code></td></tr></table></div>
+<h3>File .h e .cpp</h3>
+<p>È buona norma mettere la <b>definizione della classe</b> (l’interfaccia) in un file di header <code>.h</code> (es. <code>Cliente.h</code>) e l’<b>implementazione dei metodi</b> in un file <code>.cpp</code> (es. <code>cliente.cpp</code>), che include l’header.</p>
+<div class="exam"><b class="lbl">Confronto con Java</b>In C++ la memoria degli oggetti creati con <code>new</code> si libera a mano con <code>delete</code>; in Java non esiste <code>delete</code>, c’è il garbage collector. In Java ci sono solo riferimenti e si usa sempre il punto.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>A cosa serve l’operatore ::?</summary><p>È l’operatore di scope: dice a quale classe appartiene il metodo implementato.</p></details><details><summary>Con un puntatore all’oggetto si usa il punto?</summary><p>No, la freccia <code>-&gt;</code>.</p></details><details><summary>Dove va la definizione della classe in C++?</summary><p>Nel file header .h; i metodi nel .cpp.</p></details></div></section>
+
+<section class="ch" id="this" data-t="La keyword this" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">12</span><h2>La keyword this</h2><span class="ch-sub">Il riferimento all’oggetto corrente, distinguere attributi e parametri, restituire this, chiamare un costruttore da un altro.</span></div>
+<p>Dentro una classe si richiamano metodi e attributi senza indicare un oggetto. Ma se <code>a.incr()</code> e <code>b.incr()</code> eseguono lo stesso codice, come fa <code>incr</code> a sapere su quale <code>i</code> lavorare?</p>
+<div class="def"><b class="lbl">Definizione</b>Il compilatore passa <b>segretamente</b> al metodo il riferimento all’<b>oggetto corrente</b>, accessibile con la parola <b>this</b>. <code>this</code> si usa solo dentro un metodo (non statico), come un qualunque riferimento. Chiamare <code>pick()</code> o <code>this.pick()</code> è la stessa cosa.</div>
+<h3>Distinguere attributo e parametro</h3>
+<pre>public class Contatore {
+    int i = 0;
+    public void incr(int i) { this.i = i; }   // this.i è l'attributo, i il parametro
+}</pre>
+<h3>Restituire l’oggetto stesso</h3>
+<pre>public class Contatore {
+    int cont = 0;
+    public Contatore incr() {
+        cont++;
+        return this;
+    }
+}
+c.incr().incr().incr();   // chiamate in catena</pre>
+<h3>Chiamare un costruttore da un altro</h3>
+<pre>public class Flower {
+    int petalCount = 0;
+    String s = "null";
+    Flower(int petals) { petalCount = petals; }
+    Flower(String ss) { s = ss; }
+    Flower(String s, int petals) {
+        this(petals);
+        //! this(s);      // non se ne possono chiamare due
+        this.s = s;       // altro uso di this
+    }
+    Flower() { this("hi", 47); }
+}</pre>
+<div class="exam"><b class="lbl">Regole</b><code>this(...)</code> chiama un altro costruttore della stessa classe: si può usare <b>solo dentro un costruttore</b>, deve essere la <b>prima istruzione</b> e se ne può chiamare <b>uno solo</b>.</div>
+<p>Esercizi delle slide: classi <code>Triangolo</code> e <code>Cerchio</code> con area, perimetro e costruttore; una classe <code>Studente</code> con get/set e una <code>Segreteria</code> che registra e stampa n studenti.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che cosa contiene this?</summary><p>Il riferimento all’oggetto su cui è stato chiamato il metodo.</p></details><details><summary>Si può usare this in un metodo static?</summary><p>No.</p></details><details><summary>Dove deve stare this(...) in un costruttore?</summary><p>Come prima istruzione, e una volta sola.</p></details></div></section>
+
+<section class="ch" id="packages" data-t="Packages" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">13</span><h2>Packages</h2><span class="ch-sub">A cosa servono, come si dichiarano, import, relazione con le cartelle e il CLASSPATH.</span></div>
+<p>I package servono a:</p>
+<ul><li><b>evitare confusioni</b> tra classi con lo stesso nome;</li><li><b>organizzare</b> il codice;</li><li>sviluppare e <b>riusare librerie</b>.</li></ul>
+<h3>Definizione</h3>
+<ul><li>Le classi Java sono raggruppate in <b>package</b>, strutturati ad <b>albero</b>: <code>aaa.bbb.ccc.MyClass</code>.</li>
+<li>Il nome può avere più identificatori separati da punti: <code>roberto.utilities.internet</code>.</li>
+<li>Senza dichiarazione, la classe finisce nel <b>default package</b>.</li>
+<li><code>package mypackage;</code> va <b>all’inizio del file</b> (prima riga) e compare <b>una sola volta</b>.</li></ul>
+<p>Il nome completo di una classe è qualificato dal package: <code>java.util.Date</code>, <code>javax.swing.JOptionPane</code>. Il prefisso si può omettere <b>nello stesso package</b> oppure con <b>import</b>.</p>
+<pre>System.out.println(new java.util.Date());   // nome qualificato
+
+import java.util.Date;    // importa solo la classe Date
+import java.util.*;       // importa tutto il package
+System.out.println(new Date());</pre>
+<h3>Esempio</h3>
+<pre>package geometria;
+public class Triangolo {
+    float base = 0, altezza = 0;
+    public Triangolo(float b, float h) { base = b; altezza = h; }
+    public float area() { return (base * altezza) / 2; }
+}
+
+import geometria.*;
+public class Test {
+    public static void main(String args[]) {
+        Triangolo t = new Triangolo(5, 3);
+        System.out.println(t.area());
+    }
+}</pre>
+<h3>Package e cartelle</h3>
+<p>Il nome del package corrisponde al <b>percorso nel file system</b> a partire da una cartella del <b>CLASSPATH</b>. Per evitare nomi uguali tra produttori diversi si usa il <b>dominio Internet invertito</b> (es. <code>it.unisa.utilities</code>).</p>
+<p><b>Criterio di raggruppamento:</b> nello stesso package vanno classi <b>correlate</b>, che così interagiscono facilmente (con l’accesso package); si escludono le classi che non devono dipendere da queste.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Dove va l’istruzione package?</summary><p>Prima riga del file, una sola volta.</p></details><details><summary>Senza package dove finisce la classe?</summary><p>Nel default package.</p></details><details><summary>import java.util.* importa anche i sottopackage?</summary><p>No, solo le classi di java.util.</p></details></div></section>
+
+<section class="ch" id="hiding" data-t="Information hiding" data-part="Parte II · Classi e oggetti"><div class="ch-head"><span class="ch-num">14</span><h2>Information hiding</h2><span class="ch-sub">Accesso package, public, private, come garantire l’accesso, costruttori privati, metodi di utilità.</span></div>
+<div class="def"><b class="lbl">Definizione</b>L’<b>information hiding</b> è il meccanismo che permette di <b>nascondere l’implementazione</b> di una classe, regolando l’accesso ai suoi membri da parte di oggetti di altre classi. Gli specificatori (<code>public</code>, <code>private</code>…) vanno messi su <b>ogni</b> attributo e <b>ogni</b> metodo.</div>
+<h3>Accesso package (“friendly”)</h3>
+<p>Se non si specifica niente:</p>
+<ul><li>tutte le classi del <b>package corrente</b> possono accedere al membro;</li>
+<li>le classi <b>fuori dal package</b> no.</li></ul>
+<p>Un file appartiene a <b>un solo package</b>, quindi le classi dello stesso file si vedono a vicenda i membri senza specificatore.</p>
+<h3>Come garantire l’accesso a un membro</h3>
+<ol><li>Renderlo <b>public</b>: tutti, ovunque, possono usarlo.</li>
+<li>Non mettere specificatore e tenere le classi <b>nello stesso package</b>.</li>
+<li>Scrivere metodi <b>get/set</b> per gli attributi privati: è la scelta <b>consigliata</b>.</li></ol>
+<h3>public</h3>
+<pre>package c05.dessert;
+public class Cookie {
+    public Cookie() { System.out.println("Cookie constructor"); }
+    void bite() { System.out.println("bite"); }   // accesso package
+}
+
+import c05.dessert.*;
+public class Dinner {
+    public static void main(String[] args) {
+        Cookie x = new Cookie();
+        //! x.bite();   // non accessibile: Dinner è in un altro package
+    }
+}</pre>
+<p><code>Cookie.class</code> deve stare in <code>c05/dessert</code> sotto una cartella del CLASSPATH. Se nel CLASSPATH manca <code>.</code>, Java non cerca nella cartella corrente.</p>
+<h3>private</h3>
+<p>Solo la <b>classe stessa</b> può accedere ai suoi membri privati: nemmeno le classi dello stesso package. Così si possono cambiare quei membri senza che le altre classi se ne accorgano, utile quando più persone lavorano allo stesso package.</p>
+<pre>class Sundae {
+    private Sundae() {}
+    static Sundae makeASundae() { return new Sundae(); }
+}
+public class IceCream {
+    public static void main(String[] args) {
+        //! Sundae x = new Sundae();      // costruttore privato
+        Sundae x = Sundae.makeASundae();   // creazione controllata
+    }
+}</pre>
+<p>Un <b>costruttore privato</b> permette di controllare come si creano gli oggetti. Anche i <b>metodi di utilità</b> interni conviene renderli private: chi ha scritto la classe può cambiarli o toglierli quando vuole.</p>
+<div class="exam"><b class="lbl">Da non confondere</b>Accesso package e <code>private</code>: con il primo le classi dello stesso package vedono il membro, con il secondo no.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Senza specificatore, chi vede il membro?</summary><p>Le classi dello stesso package.</p></details><details><summary>Una classe dello stesso package vede un membro private?</summary><p>No.</p></details><details><summary>Perché rendere private un costruttore?</summary><p>Per controllare come vengono creati gli oggetti (es. con un metodo statico).</p></details><details><summary>Qual è il modo consigliato per dare accesso a un attributo privato?</summary><p>I metodi get e set.</p></details></div></section>
+<div class="partbreak">Parte III · Ereditarietà e polimorfismo</div>
+<section class="ch" id="ereditarieta" data-t="Ereditarietà" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">15</span><h2>Ereditarietà</h2><span class="ch-sub">Composizione ed ereditarietà, extends, overriding, super, protected, costruttori, ereditarietà multipla in C++.</span></div>
+<h3>Due modi di riusare il codice</h3>
+<div class="vs"><div><h4>Composizione</h4><p>Gli <b>attributi</b> della nuova classe sono <b>oggetti di classi già esistenti</b>. Relazione “ha un”. Si usa quando la classe deve <b>fornire le funzionalità</b> di classi esistenti.</p></div><div><h4>Ereditarietà</h4><p>La nuova classe <b>estende</b> una classe esistente. Relazione “è un”. Si usa quando la classe deve presentare un’<b>estensione dell’interfaccia</b> della vecchia classe.</p></div></div>
+<pre>public class Car {
+    public Engine engine = new Engine();
+    public Wheel[] wheel = new Wheel[4];   // 4 riferimenti null, non 4 ruote!
+    public Door left, right;
+    public Car() {
+        left = new Door(); right = new Door();
+        for (int i = 0; i &lt; 4; i++) wheel[i] = new Wheel();
+    }
+    public static void main(String[] args) {
+        Car car = new Car();
+        car.left.window.rollup();
+        car.wheel[0].inflate(72);
+    }
+}</pre>
+<p>Gli oggetti componenti si inizializzano: <b>nella dichiarazione</b>, <b>nel costruttore</b> oppure <b>appena prima di usarli</b>.</p>
+<h3>Che cos’è l’ereditarietà</h3>
+<div class="def"><b class="lbl">Definizione</b>L’ereditarietà descrive una nuova classe <b>nei termini di una già esistente</b>. Se B eredita da A, B ha sicuramente <b>tutti gli attributi e i metodi di A</b> e può estenderla. Equivale all’<b>inclusione tra insiemi</b>: ogni B è anche un A. A è la classe <b>base</b> (superclasse, ereditata), B la classe <b>derivata</b> (sottoclasse, ereditante).</div>
+<p>Esempio: <code>Veicolo</code> (pilota, ruote) → <code>Auto</code> (volante, motore, targa) e <code>Bici</code> (manubrio, pedali); <code>Autotreno</code> eredita da <code>Auto</code> (rimorchio).</p>
+<div class="vs"><div><h4>Generalizzazione</h4><p>Dal <b>particolare al generale</b>: risalendo la gerarchia.</p></div><div><h4>Specializzazione</h4><p>Dal <b>generale al particolare</b>: scendendo la gerarchia.</p></div></div>
+<div class="note">Una slide scrive “specializzazione: dal particolare al generale”: è un refuso, la specializzazione va dal generale al particolare.</div>
+<p>Vantaggi: si riducono i <b>tempi di sviluppo</b>, perché si scrive meno codice quando si definisce un sottotipo o si adatta una classe esistente. Non serve conoscere in dettaglio il codice riusato: si modifica solo la parte di interesse.</p>
+<h3>Cosa può fare la classe derivata</h3>
+<p>Una sottoclasse si ottiene per <b>aggiunta</b>, <b>occultamento</b> o <b>ridefinizione</b> di membri. Può:</p>
+<ul><li><b>usare</b> i metodi della classe base;</li><li><b>modificare</b> i metodi della classe base (overriding);</li><li><b>definire nuovi</b> metodi propri.</li></ul>
+<p>Se <code>base</code> ha <code>f()</code> e <code>f1()</code> e <code>derivata</code> ridefinisce <code>f1()</code> e aggiunge <code>g()</code>: <code>b.f()</code>, <code>d.f()</code>, <code>b.f1()</code>, <code>d.f1()</code>, <code>d.g()</code> sono validi, <code>b.g()</code> no. L’oggetto derivato contiene un <b>sotto-oggetto</b> della classe base più la sua parte propria.</p>
+<div class="tbl"><table><tr><th>Meccanismo</th><th>Cosa fa</th></tr>
+<tr><td><b>extends</b> (Java), <b>:</b> (C++)</td><td>Indica la classe da ereditare. <b>Java permette di ereditare una sola classe</b>; il C++ ha l’ereditarietà multipla.</td></tr>
+<tr><td><b>Overriding</b></td><td>Si <b>ridefinisce</b> un metodo della classe base con la stessa firma, specializzandone o sostituendone il comportamento.</td></tr>
+<tr><td><b>Overloading</b></td><td>In Java un overload, nella classe derivata, di un metodo della classe base <b>non lo oscura</b>: restano disponibili entrambi.</td></tr>
+<tr><td><b>Shadowing</b></td><td>Oscurare un metodo o un attributo della classe madre.</td></tr></table></div>
+<p>In Java la derivazione è <b>sempre pubblica</b>: non si può scegliere la modalità (public, protected, private) come in C++.</p>
+<h3>Come si cerca un metodo</h3>
+<p>L’interprete cerca il metodo <b>prima nella classe dell’oggetto</b>; se non c’è, nella superclasse, e così via risalendo la gerarchia. Viene eseguito il <b>primo trovato</b> con la stessa firma (nome e parametri).</p>
+<pre>class BaseNonno { public void stampa() { System.out.println("stampa()"); } }
+class BasePadre extends BaseNonno { public void stampa(int i) { System.out.println("stampa(int)"); } }
+public class Derivata extends BasePadre {
+    public void stampa(float f) { System.out.println("stampa(float)"); }
+    public static void main(String args[]) {
+        Derivata f = new Derivata();
+        f.stampa(5);      // stampa(int)
+        f.stampa();       // stampa()
+        f.stampa(3.5f);   // stampa(float)
+    }
+}</pre>
+<div class="note">Nella slide c’è <code>f.stampa(3.5)</code>: 3.5 è un <code>double</code> e non esiste <code>stampa(double)</code>, quindi non compila. Con <code>3.5f</code> funziona. L’esempio mostra che i tre overload convivono.</div>
+<h3>Esempio: Struccante e Detergente</h3>
+<pre>class Struccante {
+    private String s = "Detersivo";
+    public String toString() { return s; }
+    public void append(String a) { s += a; }
+    public void dilute() { append(" dilute()"); }
+    public void apply() { append(" apply()"); }
+    public void pulisci() { append(" pulisci()"); }
+}
+public class Detergente extends Struccante {
+    public void pulisci() { append(" Detergente.pulisci()"); }   // overriding
+    public void spuma() { append(" spuma()"); }                   // nuovo metodo
+    public void pulisciOld() {
+        super.pulisci();   // chiama il metodo della classe base: non è ricorsione
+    }
+}</pre>
+<p><b>super</b> si riferisce alla parte della classe base: <code>super.pulisci()</code> esegue la versione di <code>Struccante</code>.</p>
+<div class="note">La slide prova a “occultare” <code>dilute()</code> ridefinendolo <code>private</code>: in Java non compila, perché un override non può ridurre la visibilità. Anche <code>pulisci-old</code> non è un nome valido (niente trattino).</div>
+<h3>Visibilità: protected</h3>
+<p><code>protected</code> consente l’accesso a tutte le classi <b>del package</b> e alle <b>sottoclassi</b>.</p>
+<div class="tbl"><table><tr><th>Specificatore</th><th>Stessa classe</th><th>Stesso package</th><th>Sottoclassi</th><th>Tutti</th></tr>
+<tr><td><code>private</code></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>default (package)</td><td>✅</td><td>✅</td><td>❌ (fuori dal package)</td><td>❌</td></tr>
+<tr><td><code>protected</code></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+<tr><td><code>public</code></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr></table></div>
+<h3>Ereditarietà e costruttori</h3>
+<p>L’oggetto derivato contiene un <b>sotto-oggetto della classe base</b>, che va inizializzato chiamando il suo costruttore con <code>super(...)</code>:</p>
+<ul><li><b>implicita</b>, se la classe base ha un costruttore <b>senza argomenti</b>: il compilatore mette <code>super()</code> in testa al costruttore derivato;</li>
+<li><b>esplicita</b>, se il costruttore della base vuole almeno un argomento.</li></ul>
+<pre>class Art { Art() { System.out.println("Art constructor"); } }
+class Drawing extends Art { Drawing() { System.out.println("Drawing constructor"); } }
+public class Cartoon extends Drawing {
+    public Cartoon() { System.out.println("Cartoon constructor"); }
+    public static void main(String[] args) { new Cartoon(); }
+}
+// Output: Art constructor / Drawing constructor / Cartoon constructor
+
+class Game { Game(int i) { System.out.println("Game constructor " + i); } }
+class BoardGame extends Game {
+    BoardGame(int i) { super(i); System.out.println("BoardGame constructor " + i); }
+}
+public class Chess extends BoardGame {
+    Chess() { super(11); System.out.println("Chess constructor"); }
+}</pre>
+<h3>Ordine di costruzione</h3>
+<ol><li>si chiama ricorsivamente il costruttore della classe base, partendo dalla <b>radice</b> della gerarchia;</li>
+<li>si inizializzano gli <b>attributi</b> nell’ordine di dichiarazione;</li>
+<li>si esegue il <b>corpo</b> del costruttore.</li></ol>
+<p>La <b>distruzione</b> avviene al contrario: prima la parte della classe derivata.</p>
+<pre>class Meal { Meal() { System.out.println("Meal()"); } }
+class Lunch extends Meal { Lunch() { System.out.println("Lunch()"); } }
+class PortableLunch extends Lunch { PortableLunch() { System.out.println("PortableLunch()"); } }
+public class Sandwich extends PortableLunch {
+    private Bread b = new Bread();
+    private Cheese c = new Cheese();
+    private Lettuce l = new Lettuce();
+    public Sandwich() { System.out.println("Sandwich()"); }
+}
+// Output: Meal() Lunch() PortableLunch() Bread() Cheese() Lettuce() Sandwich()</pre>
+<div class="exam"><b class="lbl">Esercizio tipico</b>Ti danno una gerarchia e chiedono l’output di <code>new</code>: prima tutti i costruttori delle superclassi dall’alto, poi gli attributi della classe nell’ordine in cui sono scritti, poi il corpo del costruttore.</div>
+<h3>Sviluppo incrementale</h3>
+<p>Ogni nuova classe completa quella ereditata <b>senza modificarne il codice</b>: se la base funzionava, un errore può stare solo nel codice nuovo, e non compromette la classe base.</p>
+<h3>Cosa accade in C++: ereditarietà multipla</h3>
+<p>Se <code>C</code> deriva da <code>B1</code> e <code>B2</code>, che derivano entrambe da <code>A</code> (il “diamante”), A viene <b>replicata</b>:</p>
+<ul><li><b>memoria doppia</b> per i membri di A;</li>
+<li><b>ambiguità</b>: accedendo a un membro di A il compilatore non sa se passare da B1 o da B2. Si risolve qualificando: <code>ogg.B1::ma</code>, <code>ogg.B2::ma</code>.</li></ul>
+<p>Entrambi i problemi si risolvono dichiarando A classe base <b>virtuale</b>: <code>class B1 : virtual protected A</code>, <code>class B2 : virtual public A</code>. Così in C c’è <b>una sola copia</b> di A, e il costruttore di C deve chiamare anche quello di A (la “nipote” si occupa della “nonna”).</p>
+<h3>Modalità di derivazione in C++</h3>
+<p>In C++ i membri possono essere privati, protetti o pubblici, e in più si sceglie <b>come si trasmettono</b> i diritti di accesso (P base, F figlia, N nipote, U utente):</p>
+<div class="tbl"><table><tr><th>F deriva da P in modalità</th><th>Effetto</th></tr>
+<tr><td><b>pubblica</b></td><td>La parte pubblica di P è accessibile a N e U, quella protetta solo a N.</td></tr>
+<tr><td><b>protetta</b></td><td>Parte pubblica e protetta accessibili a N, ma non a U.</td></tr>
+<tr><td><b>privata</b> (default in C++)</td><td>I diritti non vengono trasmessi.</td></tr></table></div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quante classi può estendere una classe Java?</summary><p>Una sola.</p></details><details><summary>Composizione o ereditarietà per “un’auto ha un motore”?</summary><p>Composizione.</p></details><details><summary>Quando la chiamata super(...) è obbligatoria?</summary><p>Quando la classe base non ha un costruttore senza argomenti.</p></details><details><summary>In che ordine si costruisce un oggetto derivato?</summary><p>Costruttori dalla radice, poi attributi nell’ordine di dichiarazione, poi corpo del costruttore.</p></details><details><summary>protected: chi vede il membro?</summary><p>La classe, le classi del package e le sottoclassi.</p></details><details><summary>Come risolve il C++ il problema del diamante?</summary><p>Con la classe base virtuale: una sola copia di A.</p></details></div></section>
+
+<section class="ch" id="upcasting" data-t="Upcasting" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">16</span><h2>Upcasting</h2><span class="ch-sub">Un oggetto derivato è anche un oggetto base, la classe Object e i suoi metodi.</span></div>
+<div class="def"><b class="lbl">Definizione</b>La cosa più importante dell’ereditarietà non è aggiungere funzionalità, ma che <b>un oggetto della classe derivata è anche un oggetto della classe base</b>. Il linguaggio lo supporta: <code>Padre p = new Figlio();</code>. Convertire un riferimento derivato in uno base si chiama <b>upcasting</b> ed è sempre <b>sicuro e implicito</b>.</div>
+<pre>class Instrument {
+    public void play() { System.out.println("Play Instrument"); }
+    static void tune(Instrument i) { i.play(); }
+}
+public class Wind extends Instrument {
+    public void play() { System.out.println("Play Wind"); }
+    public static void main(String[] args) {
+        Instrument flute2 = new Wind();   // upcasting
+        flute2.play();                    // "Play Wind"
+        Instrument.tune(flute2);          // "Play Wind"
+        Instrument.tune(new Wind());      // upcasting nel passaggio del parametro: "Play Wind"
+        Instrument.tune(new Instrument());// "Play Instrument"
+    }
+}</pre>
+<p>Un messaggio che si può inviare alla classe base si può inviare anche alla derivata: <code>Wind</code> eredita l’interfaccia di <code>Instrument</code>. Con <code>flute2.play()</code> viene eseguito il <code>play</code> di <code>Wind</code>, perché l’oggetto è un <code>Wind</code> (vedi polimorfismo, cap. 17).</p>
+<h3>La classe java.lang.Object</h3>
+<ul><li>In Java la gerarchia è a <b>ereditarietà semplice</b>: ogni classe ha una sola superclasse.</li>
+<li>Se non si indica la superclasse, il compilatore usa <b>Object</b>.</li>
+<li><b>Object non ha superclasse</b>: è la radice.</li></ul>
+<div class="tbl"><table><tr><th>Metodo</th><th>Comportamento di base</th></tr>
+<tr><td><code>public boolean equals(Object o)</code></td><td>Vero se i due oggetti sono <b>lo stesso</b> (stesso riferimento). Ogni sottoclasse dovrebbe ridefinirlo.</td></tr>
+<tr><td><code>public String toString()</code></td><td>Una rappresentazione stampabile: nome della classe e codice, es. <code>java.lang.Object@10878cd</code>.</td></tr>
+<tr><td><code>public int hashCode()</code></td><td>Un intero legato al contenuto; oggetti “uguali” devono dare lo stesso valore. Serve per le tabelle hash.</td></tr></table></div>
+<p>Approfondimento completo nel capitolo <a href="#object">La classe Object</a>.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Padre p = new Figlio(); compila?</summary><p>Sì: è un upcasting, sempre lecito.</p></details><details><summary>Qual è la superclasse di Object?</summary><p>Nessuna.</p></details><details><summary>Cosa confronta equals di Object?</summary><p>I riferimenti: è vero solo se sono lo stesso oggetto.</p></details></div></section>
+
+<section class="ch" id="polimorfismo" data-t="Polimorfismo e classi astratte" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">17</span><h2>Polimorfismo e classi astratte</h2><span class="ch-sub">Binding statico e dinamico, estensibilità, toString, clone, @Override, classi astratte, metodi polimorfi nel costruttore.</span></div>
+<p>Il polimorfismo è il terzo meccanismo fondamentale della programmazione a oggetti, dopo <b>data abstraction / information hiding</b> ed <b>ereditarietà</b> (riuso). Permette di <b>estendere</b> un progetto aggiungendo funzionalità.</p>
+<div class="def"><b class="lbl">Definizione</b>Il <b>polimorfismo</b> è la capacità di oggetti di classi derivate da una base comune di <b>rispondere in modo diverso allo stesso messaggio</b>. Un’entità è polimorfa se può riferirsi, nel tempo, a classi diverse.</div>
+<div class="vs"><div><h4>Polimorfismo statico</h4><p>A <b>tempo di compilazione</b>: <b>early binding</b>, binding statico. Esempio: l’overloading.</p></div><div><h4>Polimorfismo dinamico</h4><p>A <b>tempo di esecuzione</b>: <b>late binding</b>, binding dinamico. Esempio: l’overriding chiamato tramite un riferimento alla base.</p></div></div>
+<p>Il <b>binding</b> è il collegamento tra la chiamata di un metodo e il codice che la esegue.</p>
+<h3>Perché serve: le figure</h3>
+<p>Una gerarchia <code>Figura</code> con <code>Triangolo</code>, <code>Rettangolo</code>, <code>Quadrato</code>, tutte con <code>disegna()</code>, e un array <code>Figura A[N]</code> di figure miste.</p>
+<div class="vs"><div><h4>Senza polimorfismo</h4><pre>for i = 1 to N
+  switch (A[i].tipo)
+    case Triangolo: A[i].DisegnaTriangolo()
+    case Rettangolo: A[i].DisegnaRettangolo()
+    case Quadrato: A[i].DisegnaQuadrato()</pre><p>Per ogni nuova figura va cambiato lo switch.</p></div><div><h4>Con polimorfismo</h4><pre>for i = 1 to N
+  A[i].disegna()</pre><p>A run-time si sceglie il <code>disegna()</code> giusto. Aggiungendo <code>Cerchio</code> il ciclo <b>non cambia</b>.</p></div></div>
+<p>Il polimorfismo dà <b>estensibilità</b>: minimizza il codice da modificare quando si aggiungono classi e funzionalità.</p>
+<pre>class Shape { void draw() {} void erase() {} }
+class Circle extends Shape { void draw() { System.out.println("Circle.draw()"); } }
+class Square extends Shape { void draw() { System.out.println("Square.draw()"); } }
+class Triangle extends Shape { void draw() { System.out.println("Triangle.draw()"); } }
+
+Shape[] s = new Shape[9];
+for (int i = 0; i &lt; s.length; i++) s[i] = gen.next();   // classi note solo a run-time
+for (int i = 0; i &lt; s.length; i++) s[i].draw();         // chiamata polimorfa</pre>
+<h3>Strumenti musicali</h3>
+<pre>class Instrument { public void play(Note n) { System.out.println("Instrument.play() " + n); } }
+class Wind extends Instrument { public void play(Note n) { System.out.println("Wind.play() " + n); } }
+class Stringed extends Instrument { public void play(Note n) { System.out.println("Stringed.play() " + n); } }
+class Brass extends Instrument { public void play(Note n) { System.out.println("Brass.play() " + n); } }
+
+public class Music {
+    public static void tune(Instrument i) { i.play(Note.MIDDLE_C); }   // polimorfo
+    public static void main(String[] args) {
+        tune(new Wind());       // upcasting
+        tune(new Stringed());
+        tune(new Brass());
+    }
+}</pre>
+<div class="note">Nella slide <code>Instrument</code> ha <code>play()</code> senza parametri e le sottoclassi <code>play(Note n)</code>: sarebbe un overload, non un override, e <code>i.play(Note.MIDDLE_C)</code> non compilerebbe. Perché funzioni il polimorfismo la firma deve essere la stessa.</div>
+<p>L’alternativa senza upcasting è scrivere un <code>tune</code> per ogni strumento (<code>tune(Wind)</code>, <code>tune(Stringed)</code>, <code>tune(Brass)</code>): codice ripetuto da aggiornare per ogni nuovo strumento.</p>
+<p>Il polimorfismo <b>separa il “cosa” dal “come”</b>: si esegue il codice specifico della classe derivata <b>senza conoscerne il tipo</b>.</p>
+<h3>Early e late binding nei linguaggi</h3>
+<div class="tbl"><table><tr><th>Linguaggio</th><th>Binding</th></tr>
+<tr><td>C</td><td>Solo early binding.</td></tr>
+<tr><td>C++</td><td>Early binding per default; late binding per i metodi <code>virtual</code>.</td></tr>
+<tr><td>Java</td><td>Late binding per i metodi d’istanza (tutti sono “virtuali”). Early binding per i metodi <code>final</code>, <code>private</code>, <code>static</code> e per la scelta dell’overload.</td></tr></table></div>
+<h3>Object, toString e println</h3>
+<p><code>System.out.println(Object x)</code> chiama <code>x.toString()</code>. Grazie al <b>subtyping</b> gli si può passare qualunque oggetto (tutti discendono da Object); grazie al <b>polimorfismo</b> viene chiamato il <code>toString()</code> ridefinito.</p>
+<pre>public class Deposito {
+    private float soldi;
+    public Deposito(float s) { soldi = s; }
+    public String toString() { return "Soldi: " + soldi; }   // overriding
+}
+System.out.println(new Deposito(312));   // senza toString: Deposito@712c1a3c ; con toString: Soldi: 312.0</pre>
+<h3>Il metodo clone</h3>
+<p><code>protected Object clone() throws CloneNotSupportedException</code> crea un oggetto <b>indipendente</b> dall’originale. Restituisce un <code>Object</code> (serve un cast) ed è <code>protected</code>: va ridefinito <code>public</code>.</p>
+<pre>class Studente implements Cloneable {   // interfaccia "marcatore"
+    String nome; int anno;
+    public Object clone() {
+        try { return super.clone(); }
+        catch (CloneNotSupportedException e) { System.exit(1); }
+        return null;   // qui non arriva mai
+    }
+}
+Studente q = (Studente) p.clone();   // cast obbligatorio</pre>
+<div class="vs"><div><h4>Copia superficiale (shallow)</h4><p>È quella di <code>super.clone()</code>: si copiano i valori degli attributi; per gli attributi oggetto si copia <b>solo il riferimento</b>, quindi le modifiche all’oggetto interno si vedono in entrambi. Più veloce.</p></div><div><h4>Copia profonda (deep)</h4><p>Si duplicano anche gli <b>oggetti interni</b> (es. un nuovo array). Più lenta e costosa, ma più sicura.</p></div></div>
+<pre>class V implements Cloneable {
+    int x[];
+    public Object clone() {
+        try {
+            V tmp = (V) super.clone();
+            tmp.x = x.clone();         // copia profonda dell'array
+            return tmp;
+        } catch (CloneNotSupportedException e) { return null; }
+    }
+}
+V p1 = new V(5); V p2 = (V) p1.clone();
+p1.x[0] = 9;   // con la copia superficiale lo vedrebbe anche p2; con quella profonda no</pre>
+<p>La scelta dipende dai campi: <code>int</code> e <code>String</code> (immutabile) vanno bene in copia superficiale; un campo mutabile come <code>Date hireDate</code> va copiato in profondità (<code>e.hireDate = (Date) hireDate.clone();</code>); per <code>boss</code> dipende dal contesto, di solito superficiale. Non tutti gli oggetti sono clonabili: <code>String</code> non lo è.</p>
+<div class="exam"><b class="lbl">Esercizio tipico</b>Con <code>P p2 = p1;</code> e <code>P p3 = (P) p1.clone();</code>, dopo <code>p1.x = 7</code>: <code>p2.x</code> vale 7 (stesso oggetto), <code>p3.x</code> resta 5 (oggetto clonato).</div>
+<h3>Controllo dell’override: @Override</h3>
+<pre>public class Animale {
+    private String nome;
+    @Override
+    public boolean equals(Animale a) { ... }   // errore: non fa override di niente!
+}
+public class Animale {
+    private String nome;
+    @Override
+    public boolean equals(Object a) { return nome.equals(((Animale) a).nome); }   // corretto
+}</pre>
+<p>Senza annotazione <code>equals(Animale)</code> sarebbe un <b>overload</b> silenzioso. Con <code>@Override</code> il compilatore controlla che il metodo ridefinisca davvero un metodo della superclasse.</p>
+<h3>Classi astratte</h3>
+<p>Problemi che si vogliono evitare a compile-time: sbagliare il prototipo e creare un metodo nuovo invece di ridefinirlo; dimenticare l’overriding; chiamare un metodo base solo fittizio; istanziare per errore una classe base fittizia.</p>
+<div class="def"><b class="lbl">Definizione</b>Una classe è <b>astratta</b> (<code>abstract</code>) quando uno o più metodi <b>non sono implementati</b>: definisce l’interfaccia delle classi derivate ed eventualmente un’implementazione parziale. <b>Non si può istanziare</b>.</div>
+<pre>abstract class Instrument {
+    private int i;
+    public String what() { return "Instrument"; }
+    public abstract void play(Note n);
+    public abstract void adjust();
+}</pre>
+<ul><li>La presenza di un metodo astratto <b>obbliga</b> a dichiarare la classe <code>abstract</code>.</li>
+<li><code>what()</code> è implementato e può non essere ridefinito.</li>
+<li>Una sottoclasse concreta che non ridefinisce i metodi astratti dà <b>errore di compilazione</b> (o deve essere a sua volta astratta).</li>
+<li>Si può dichiarare <code>abstract</code> anche una classe <b>senza metodi astratti</b>, per impedire che venga istanziata.</li>
+<li>Un metodo astratto è per definizione <b>polimorfo</b>.</li></ul>
+<h3>Metodi polimorfi nel costruttore: pericolo</h3>
+<pre>abstract class Glyph {
+    abstract void draw();
+    Glyph() {
+        System.out.println("Glyph() before draw()");
+        draw();
+        System.out.println("Glyph() after draw()");
+    }
+}
+class RoundGlyph extends Glyph {
+    private int radius = 1;
+    RoundGlyph(int r) { radius = r; System.out.println("RoundGlyph.RoundGlyph(), radius = " + radius); }
+    void draw() { System.out.println("RoundGlyph.draw(), radius = " + radius); }
+}
+new RoundGlyph(5);
+// Glyph() before draw()
+// RoundGlyph.draw(), radius = 0      ← l'attributo non è ancora inizializzato!
+// Glyph() after draw()
+// RoundGlyph.RoundGlyph(), radius = 5</pre>
+<ol><li>La memoria dell’oggetto è <b>azzerata</b> prima di tutto.</li>
+<li>Si chiamano i costruttori delle superclassi: <code>draw()</code> ridefinito viene eseguito <b>prima</b> del costruttore di RoundGlyph, e vede <code>radius = 0</code>.</li>
+<li>Si inizializzano gli attributi nell’ordine di dichiarazione.</li>
+<li>Si esegue il corpo del costruttore derivato.</li></ol>
+<div class="exam"><b class="lbl">Regola</b>Nel costruttore conviene chiamare <b>solo metodi final o private</b>, che non possono essere ridefiniti.</div>
+<p>Esercizio delle slide: gestione delle camere di un albergo (normale, lusso, extralusso, con prezzo, stato e funzioni crescenti) occupate da una lista di clienti (adulto, ragazzo, bambino), ciascuno con le sue informazioni.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Late binding: quando si decide quale metodo eseguire?</summary><p>A tempo di esecuzione, in base al tipo effettivo dell’oggetto.</p></details><details><summary>Quando Java usa l’early binding?</summary><p>Per i metodi final, private, static e per la scelta dell’overload.</p></details><details><summary>Si può istanziare una classe astratta?</summary><p>No.</p></details><details><summary>Una classe abstract deve avere metodi abstract?</summary><p>No, si può dichiarare abstract anche per impedirne l’istanza.</p></details><details><summary>Copia superficiale: cosa succede a un array interno?</summary><p>Viene copiato solo il riferimento: originale e clone condividono l’array.</p></details><details><summary>A cosa serve @Override?</summary><p>A far controllare al compilatore che il metodo ridefinisca davvero un metodo della superclasse.</p></details></div></section>
+
+<section class="ch" id="final" data-t="Il costrutto final" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">18</span><h2>Il costrutto final</h2><span class="ch-sub">final su tipi semplici, riferimenti, parametri, metodi e classi; blank final; private e final; funzioni inline.</span></div>
+<p><code>final</code> ha significati diversi a seconda di dove si usa: <b>tipi semplici</b>, <b>riferimenti</b>, <b>metodi</b>, <b>classi</b>.</p>
+<h3>final su tipi semplici</h3>
+<ul><li>Una <b>costante a tempo di compilazione</b>: il valore può essere sostituito direttamente nel bytecode.</li>
+<li>Oppure un valore calcolato <b>a run-time</b> che, una volta inizializzato, non cambia più.</li>
+<li><code>static final</code>: <b>una sola locazione</b> comune a tutti gli oggetti, che non può cambiare.</li></ul>
+<h3>final sui riferimenti</h3>
+<p>Un riferimento <code>final</code> si inizializza <b>una volta</b> e poi <b>non può puntare a un altro oggetto</b>. Ma l’oggetto puntato <b>può cambiare</b>: renderlo immutabile dipende da come è scritta la sua classe.</p>
+<pre>public class FinalData {
+    private final int VAL_ONE = 9;                  // costante di compilazione
+    public static final int VAL_THREE = 39;
+    static final int i5 = rand.nextInt(20);          // costante di run-time
+    private static final Value v = new Value(33);
+    private final int[] a = {1, 2, 3, 4, 5, 6};
+
+    void prova() {
+        v.i++;                  // OK: cambia l'oggetto, non il riferimento
+        //! v = new Value(5);   // errore: v è final
+        a[0]++;                 // OK: l'array non è costante
+        //! a = new int[3];     // errore
+    }
+}</pre>
+<h3>Blank final</h3>
+<p>Variabili <code>final</code> <b>non inizializzate nella dichiarazione</b>: devono essere inizializzate <b>in ogni costruttore</b>, altrimenti errore di compilazione. Così ogni oggetto può avere un valore diverso ma immutabile.</p>
+<pre>public class BlankFinal {
+    private final int j;
+    private final Poppet p;
+    public BlankFinal(int x) {
+        j = x;
+        p = new Poppet(x);
+    }
+}</pre>
+<h3>Parametri final</h3>
+<pre>void with(final Gizmo g) {
+    //! g = new Gizmo();   // errore: g è final
+}</pre>
+<h3>Metodi final</h3>
+<ul><li>Un metodo <code>final</code> <b>non può essere ridefinito</b> (overriding) nelle classi derivate.</li>
+<li>Può diventare <b>inline</b>: il compilatore copia il corpo al posto della chiamata (più efficienza).</li>
+<li>Un metodo <code>private</code> è <b>implicitamente final</b>: non essendo visibile non può essere ereditato. <code>private</code> è “più forte” di <code>final</code>.</li></ul>
+<div class="note"><b>Funzioni inline</b> in C/C++: il codice della funzione viene inserito nel punto della chiamata invece del salto a sottoprogramma. Va usato solo per funzioni brevissime, altrimenti il guadagno è irrilevante e il codice cresce. In Java non si può chiedere l’inlining: le ottimizzazioni le fa la JVM a run-time.</div>
+<h3>“Override” di un metodo privato</h3>
+<pre>class WithFinals {
+    private final void f() { System.out.println("WithFinals.f()"); }
+    public void g() { System.out.println("WithFinals.g()"); }
+}
+class OverridingPrivate extends WithFinals {
+    public final void f() { System.out.println("OverridingPrivate.f()"); }
+    public void g() { System.out.println("OverridingPrivate.g()"); }
+}
+OverridingPrivate op = new OverridingPrivate();
+op.f(); op.g();             // OverridingPrivate.f(), OverridingPrivate.g()
+WithFinals wf = op;         // upcast
+//! wf.f();                 // errore: f() è private in WithFinals
+wf.g();                     // OverridingPrivate.g() (override vero)</pre>
+<p>Il compilatore non dà errore su <code>f()</code> della derivata, ma <b>non è un override</b>: è un <b>nuovo metodo</b> che ha per caso lo stesso nome, perché quello privato della base non è visibile.</p>
+<div class="exam"><b class="lbl">Caso delle slide</b><pre>public class PrivateOverride {
+    private void f() { System.out.println("private f()"); }
+    public static void main(String args[]) {
+        PrivateOverride po = new Derived();
+        po.f();    // stampa "private f()"
+    }
+}
+class Derived extends PrivateOverride {
+    public void f() { System.out.println("Derived f()"); }
+}</pre>Stampa <b>“private f()”</b>: il metodo privato non partecipa al polimorfismo, <code>f()</code> di Derived è un metodo nuovo.</div>
+<h3>Classi final</h3>
+<p>Una classe <code>final</code> <b>non può essere ereditata</b>. Dichiarare final i suoi metodi è inutile: lo sono già di fatto. Esempio: <code>String</code>.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Un riferimento final impedisce di modificare l’oggetto?</summary><p>No: impedisce solo di farlo puntare a un altro oggetto.</p></details><details><summary>Dove va inizializzato un blank final?</summary><p>In ogni costruttore.</p></details><details><summary>Un metodo final si può ridefinire?</summary><p>No.</p></details><details><summary>Un metodo private è anche final?</summary><p>Sì, implicitamente.</p></details><details><summary>Si può estendere una classe final?</summary><p>No.</p></details></div></section>
+
+<section class="ch" id="downcasting" data-t="Downcasting" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">19</span><h2>Downcasting</h2><span class="ch-sub">Ereditarietà pura ed estensione, cosa si perde con l’upcasting, recuperarlo con un cast esplicito.</span></div>
+<div class="vs"><div><h4>Ereditarietà pura (“is-a”)</h4><p>Le sottoclassi (<code>Circle</code>, <code>Square</code>, <code>Triangle</code>) ridefiniscono <b>solo</b> i metodi della base (<code>draw</code>, <code>erase</code>): chi parla con <code>Shape</code> può usare qualunque figura, anche nuova.</p></div><div><h4>Estensione (“is-like-a”)</h4><p><code>MoreUseful</code> estende <code>Useful</code> (<code>f</code>, <code>g</code>) <b>aggiungendo</b> metodi (<code>u</code>, <code>v</code>, <code>w</code>).</p></div></div>
+<p><b>Contro dell’upcasting:</b> chi vede l’oggetto come <code>Useful</code> vede solo la parte Useful; la parte MoreUseful è <b>inaccessibile</b>.</p>
+<div class="def"><b class="lbl">Definizione</b>Il <b>downcasting</b> converte un riferimento della classe base in uno della classe derivata, per recuperare le caratteristiche perse con l’upcasting. Va <b>forzato</b> con un cast esplicito perché <b>non è sempre lecito</b>: tocca al programmatore sapere cosa sta facendo. Se il tipo è sbagliato si ha un’<b>eccezione a run-time</b> (<code>ClassCastException</code>).</div>
+<pre>class Useful { public void f() {} public void g() {} }
+class MoreUseful extends Useful {
+    public void f() {} public void g() {}
+    public void u() {} public void v() {} public void w() {}
+}
+public class RTTI {
+    public static void main(String[] args) {
+        Useful[] x = { new Useful(), new MoreUseful() };
+        x[0].f(); x[0].g();
+        x[1].f(); x[1].g();
+        //! x[1].u();                     // compile time: u() non esiste in Useful
+        MoreUseful mu = (MoreUseful) x[1];
+        mu.u();
+        ((MoreUseful) x[1]).u();          // downcast / RTTI: OK
+        ((MoreUseful) x[0]).u();          // ClassCastException a run-time
+    }
+}</pre>
+<p>Il controllo a run-time del tipo si chiama <b>RTTI</b> (Run-Time Type Identification). Per evitare l’eccezione si può controllare prima con <code>instanceof</code>: <code>if (x[0] instanceof MoreUseful) …</code></p>
+<div class="exam"><b class="lbl">Da non confondere</b>Upcasting: implicito e sempre sicuro. Downcasting: esplicito, controllato a run-time, può lanciare <code>ClassCastException</code>. L’errore “metodo non trovato” su <code>x[1].u()</code> è invece di <b>compilazione</b>.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Perché il downcast va scritto esplicitamente?</summary><p>Perché non è sempre lecito: l’oggetto potrebbe non essere della sottoclasse.</p></details><details><summary>((MoreUseful) x[0]).u() con x[0] = new Useful()?</summary><p>Compila, ma a run-time lancia ClassCastException.</p></details><details><summary>“is-a” o “is-like-a” per una sottoclasse che aggiunge metodi?</summary><p>is-like-a (estensione).</p></details></div></section>
+
+<section class="ch" id="interfacce" data-t="Interfacce" data-part="Parte III · Ereditarietà e polimorfismo"><div class="ch-head"><span class="ch-num">20</span><h2>Interfacce</h2><span class="ch-sub">Classi completamente astratte, implements, ereditarietà multipla, collisioni di nomi, costanti, metodi default e static.</span></div>
+<div class="def"><b class="lbl">Definizione</b>Un’<b>interfaccia</b> definisce una classe <b>completamente astratta</b>: dichiara metodi senza implementazione. I metodi sono <b>automaticamente public</b> (e abstract); gli attributi sono solo <b>costanti</b>: <b>static, final e inizializzate</b> (niente blank final).</div>
+<pre>interface Instrument {
+    int i = 5;              // static e final
+    void play(Note n);      // automaticamente public
+    String what();
+    void adjust();
+}
+class Wind implements Instrument {
+    public void play(Note n) { System.out.println("Wind.play() " + n); }
+    public String what() { return "Wind"; }
+    public void adjust() { }
+}
+class Woodwind extends Wind {
+    public void play(Note n) { System.out.println("Woodwind.play() " + n); }
+    public String what() { return "Woodwind"; }
+}</pre>
+<div class="exam"><b class="lbl">Trabocchetto</b>La classe che implementa deve dichiarare i metodi <b>public</b>: se li lascia senza specificatore sono “friendly”, cioè <b>meno visibili</b> di quelli dell’interfaccia, e il compilatore dà errore.</div>
+<h3>Ereditarietà multipla</h3>
+<p>Il C++ permette di ereditare più classi, ma ciò causa <b>collisioni</b>. Java permette di <b>estendere una sola classe e implementare più interfacce</b> (<code>implements</code>), così un oggetto può subire l’<b>upcasting verso più tipi</b>.</p>
+<pre>interface CanFight { void fight(); }
+interface CanSwim { void swim(); }
+interface CanFly { void fly(); }
+class ActionCharacter { public void actionFight() { } }
+class Hero extends ActionCharacter implements CanFight, CanSwim, CanFly {
+    public void fight() { } public void swim() { } public void fly() { }
+}
+public class Adventure {
+    static void t(CanFight x) { x.fight(); }
+    static void u(CanSwim x) { x.swim(); }
+    static void v(CanFly x) { x.fly(); }
+    static void w(ActionCharacter x) { x.actionFight(); }
+    public static void main(String[] args) {
+        Hero h = new Hero();
+        t(h); u(h); v(h); w(h);   // Hero trattato come quattro tipi diversi
+    }
+}</pre>
+<h3>Collisioni di nomi</h3>
+<pre>interface I1 { void f(); }
+interface I2 { int f(int i); }
+interface I3 { int f(); }
+class C { public int f() { return 1; } }
+
+class C2 implements I1, I2 { public void f() {} public int f(int i) { return 1; } }   // OK: overload
+class C3 extends C implements I2 { public int f(int i) { return 1; } }                 // OK: overload
+class C4 extends C implements I3 { public int f() { return 1; } }                      // OK: identici
+class C5 extends C implements I1 { }      // ERRORE: f() con tipi di ritorno incompatibili (int e void)
+interface I4 extends I1, I3 { }           // ERRORE: I1 e I3 incompatibili</pre>
+<p>Due metodi con lo stesso nome e parametri ma <b>tipo di ritorno diverso</b> non possono convivere.</p>
+<h3>Ereditare interfacce</h3>
+<p><b>Solo un’interfaccia</b> può ereditare (<code>extends</code>) interfacce, anche <b>più di una</b>; <b>solo una classe</b> può implementarle.</p>
+<pre>interface Monster { void menace(); }
+interface DangerousMonster extends Monster { void destroy(); }
+interface Lethal { void kill(); }
+interface Vampire extends DangerousMonster, Lethal { void drinkBlood(); }
+class DragonZilla implements DangerousMonster {
+    public void menace() { } public void destroy() { }
+}</pre>
+<h3>Costanti</h3>
+<pre>public interface Months {
+    int JANUARY = 1, FEBRUARY = 2, MARCH = 3;   // implicitamente static e final
+}
+public interface RandVals {
+    Random rand = new Random();
+    int randomInt = rand.nextInt(10);   // non blank, ma inizializzata a run-time
+}</pre>
+<h3>Metodi default e static (Java 8)</h3>
+<p>Per far evolvere le API senza rompere le classi esistenti, da Java 8 un’interfaccia può avere:</p>
+<ul><li>metodi <b>default</b>, con un’implementazione predefinita. Una classe può ridefinirli; l’implementazione della classe ha la <b>precedenza</b>.</li>
+<li>metodi <b>static</b> con implementazione, utili come metodi di utilità: <code>MyInterface.print("Hello");</code></li></ul>
+<pre>public interface ResourceLoader {
+    Resource load(String resourcePath);
+    default Resource load(Path resourcePath) { /* implementazione di default */ }
+}</pre>
+<p>Le interfacce sono un modo per ottenere il <b>polimorfismo</b>.</p>
+<div class="vs"><div><h4>Classe astratta</h4><p>Può avere attributi normali, costruttori, metodi implementati. Si <b>estende</b> (una sola).</p></div><div><h4>Interfaccia</h4><p>Solo costanti; metodi astratti (più default e static da Java 8). Si <b>implementa</b> (anche più di una).</p></div></div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Di che tipo sono gli attributi di un’interfaccia?</summary><p>Costanti: static, final e inizializzati.</p></details><details><summary>Quante interfacce può implementare una classe?</summary><p>Quante vuole; ma estende una sola classe.</p></details><details><summary>Un’interfaccia può estendere più interfacce?</summary><p>Sì, con extends.</p></details><details><summary>Perché C5 extends C implements I1 non compila?</summary><p>Perché f() di C restituisce int e f() di I1 void: tipi di ritorno incompatibili.</p></details><details><summary>A cosa servono i metodi default?</summary><p>A dare un’implementazione predefinita, così le classi esistenti non devono cambiare quando l’interfaccia cresce.</p></details></div></section>
+<div class="partbreak">Parte IV · Collezioni e generics</div>
+<section class="ch" id="collections" data-t="Classi contenitore (Collections)" data-part="Parte IV · Collezioni e generics"><div class="ch-head"><span class="ch-num">21</span><h2>Classi contenitore (Collections)</h2><span class="ch-sub">String e StringBuffer, il collection framework: Collection, List, Set, Map, iteratori, implementazioni e costi, Collections.</span></div>
+<p>Gli array hanno <b>lunghezza fissa</b>, decisa alla creazione. Per i casi in cui non bastano Java offre classi apposite.</p>
+<h3>String e StringBuffer</h3>
+<div class="vs"><div><h4>String</h4><p>Stringhe <b>non modificabili</b> (immutabili): ogni concatenazione o modifica crea una <b>nuova</b> stringa. Si creano con <code>"…"</code> o con i costruttori (<code>new String()</code>, <code>new String(char[] value)</code>).</p></div><div><h4>StringBuffer</h4><p>Stringhe <b>modificabili ed estendibili</b>. Costruttori: <code>StringBuffer()</code> (capacità iniziale 16), <code>StringBuffer(int length)</code>, <code>StringBuffer(String str)</code>. Metodi: <code>append(…)</code>, <code>toString()</code>.</p></div></div>
+<p>Il compilatore usa StringBuffer per l’operatore <code>+</code>: <code>x = "a" + 4 + 'c';</code> diventa <code>new StringBuffer().append("a").append(4).append('c').toString();</code></p>
+<h3>Il collection framework</h3>
+<p>Il package <code>java.util</code> offre classi contenitore che <b>si ridimensionano da sole</b>. Un <b>contenitore</b> (container, collezione) raggruppa più elementi in un’unica unità per memorizzarli, recuperarli, manipolarli e passarli tra metodi. Il framework è nato con Java <b>1.2</b> ed è fatto di <b>interfacce</b> organizzate in gerarchia (tipi astratti, indipendenti dalla rappresentazione) e di <b>implementazioni</b>.</p>
+<div class="vs"><div><h4>Collection</h4><p>Una raccolta <b>sequenziale</b> di singoli elementi, con regole: <b>List</b> e <b>Set</b> (e Queue).</p></div><div><h4>Map</h4><p>Un gruppo di coppie <b>chiave-valore</b>: si recupera il valore tramite la chiave.</p></div></div>
+<div class="tbl"><table><tr><th>Interfaccia</th><th>Regola</th><th>Implementazioni</th></tr>
+<tr><td><b>Collection</b></td><td>Radice per le sequenze: il minimo comun denominatore. Il JDK non la implementa direttamente.</td><td>(tramite List e Set)</td></tr>
+<tr><td><b>List</b></td><td>Sequenza <b>ordinata</b>, ammette <b>duplicati</b>, accesso per <b>indice</b> (da 0).</td><td><b>ArrayList</b>, LinkedList, Vector</td></tr>
+<tr><td><b>Set</b></td><td><b>Niente duplicati</b>: l’insieme matematico.</td><td><b>HashSet</b>, TreeSet, LinkedHashSet</td></tr>
+<tr><td><b>SortedSet</b></td><td>Set in ordine <b>ascendente</b>.</td><td>TreeSet</td></tr>
+<tr><td><b>Map</b></td><td>Chiave → valore, <b>niente chiavi duplicate</b>.</td><td><b>HashMap</b>, TreeMap, Hashtable</td></tr>
+<tr><td><b>SortedMap</b></td><td>Map con chiavi in ordine ascendente.</td><td>TreeMap</td></tr></table></div>
+<p>L’ordinamento si stabilisce con il metodo <code>compareTo</code> se la classe degli elementi implementa <b>Comparable</b>, oppure fornendo un oggetto <b>Comparator</b>. <b>Vector</b> e <b>Hashtable</b> sono classi precedenti al framework, adattate per implementarne le interfacce.</p>
+<h3>Metodi di Collection</h3>
+<div class="tbl"><table><tr><th>Metodo</th><th>Cosa fa</th></tr>
+<tr><td><code>size()</code>, <code>isEmpty()</code></td><td>Dimensione; vero se è vuota.</td></tr>
+<tr><td><code>contains(o)</code>, <code>add(o)</code>, <code>remove(o)</code></td><td>Verifica, aggiunge, rimuove un elemento.</td></tr>
+<tr><td><code>containsAll(c)</code>, <code>addAll(c)</code>, <code>removeAll(c)</code></td><td>Le stesse operazioni con un’altra collezione.</td></tr>
+<tr><td><code>retainAll(c)</code></td><td>Tiene solo gli elementi che sono anche in c.</td></tr>
+<tr><td><code>clear()</code>, <code>toArray()</code></td><td>Svuota; restituisce gli elementi in un array.</td></tr>
+<tr><td><code>iterator()</code></td><td>Restituisce un <b>Iterator</b>: <code>hasNext()</code>, <code>next()</code>, <code>remove()</code> (opzionale). Per le liste c’è <code>ListIterator</code>.</td></tr></table></div>
+<p>List aggiunge: <code>get(int index)</code>, <code>indexOf(Object o)</code>, <code>subList(from, to)</code>. Due liste sono uguali se hanno gli stessi elementi <b>nello stesso ordine</b>. LinkedList ha metodi per realizzare <b>pile e code</b> (c’è anche l’interfaccia <b>Deque</b>).</p>
+<h3>ArrayList, Vector e LinkedList</h3>
+<ul><li><b>ArrayList</b> e <b>Vector</b> usano internamente un <b>array</b> che cresce da solo: ArrayList lo aumenta del <b>50%</b>, Vector lo <b>raddoppia</b>. Conviene fissare una dimensione iniziale per non pagare i ridimensionamenti. Vector permette di scegliere l’incremento nel costruttore.</li>
+<li>Entrambe: accesso per posizione e aggiunta/rimozione <b>in coda</b> in <b>O(1)</b>; aggiunta/rimozione in altre posizioni <b>O(n)</b> (shift).</li>
+<li>Se domina l’inserimento/rimozione in mezzo, meglio <b>LinkedList</b>: O(1) per aggiungere o togliere, ma indicizzazione più lenta e più garbage (un nodo per elemento).</li></ul>
+<h3>Contenitori di Object: il problema del tipo</h3>
+<p>Senza generics le collezioni contengono <code>Object</code>: si possono mettere <b>tipi eterogenei</b> e quando si estrae un elemento serve un <b>cast</b>.</p>
+<pre>List cats = new ArrayList();
+for (int i = 0; i &lt; 7; i++) cats.add(new Cat(i));
+cats.add(new Dog(7));                 // nessun errore: è un Object
+for (int i = 0; i &lt; cats.size(); i++)
+    ((Cat) cats.get(i)).id();         // il cane si scopre solo a run-time: ClassCastException</pre>
+<p>Si <b>perde l’informazione sul tipo</b>. Java 5 risolve con i <b>generics</b>: <code>List&lt;Integer&gt; l = new ArrayList&lt;Integer&gt;();</code> (cap. 22).</p>
+<pre>Collection c = new ArrayList();
+c.add("ten"); c.add("eleven");
+for (Iterator i = c.iterator(); i.hasNext(); ) {
+    String element = (String) i.next();
+    System.out.println("Elemento: " + element);
+}</pre>
+<p>Per convenzione ogni implementazione ha un costruttore che riceve un’altra Collection, per copiarne gli elementi.</p>
+<h3>Set</h3>
+<p>Stessi metodi di Collection, ma <b>niente duplicati</b> (<code>add</code> restituisce false se l’elemento c’è già).</p>
+<ul><li><b>HashSet</b>: quando conta la <b>velocità</b> di consultazione;</li>
+<li><b>TreeSet</b>: Set <b>ordinato</b>, basato su un albero;</li>
+<li><b>LinkedHashSet</b>: veloce come HashSet ma mantiene l’<b>ordine di inserimento</b>.</li></ul>
+<pre>Set s = new HashSet();
+for (int i = 0; i &lt; args.length; i++)
+    if (!s.add(args[i])) System.out.println("Duplicate detected: " + args[i]);
+System.out.println(s.size() + " distinct words detected: " + s);
+// java FindDups i came i saw i left
+// Duplicate detected: i  (due volte)
+// 4 distinct words detected: [came, left, saw, i]</pre>
+<p>Con <b>TreeSet</b> al posto di HashSet le parole escono <b>ordinate</b>. Nella variante FindDups2, con due set <code>uniques</code> e <code>dups</code> e <code>uniques.removeAll(dups)</code>, si ottengono le parole uniche <code>[came, left, saw]</code> e quelle duplicate <code>[i]</code>.</p>
+<h3>Map</h3>
+<div class="tbl"><table><tr><th>Implementazione</th><th>Caratteristiche</th></tr>
+<tr><td><b>HashMap</b></td><td>Prestazioni costanti per inserimento e ricerca; <b>nessun ordine</b>; ammette <code>null</code> come chiave e valore; non sincronizzata.</td></tr>
+<tr><td><b>Hashtable</b></td><td>Simile, ma <b>sincronizzata</b> (thread-safe). Secondo le slide va meglio con carichi medio-bassi, HashMap con carichi alti.</td></tr>
+<tr><td><b>TreeMap</b></td><td>Basata su un albero: <b>chiavi ordinate</b>, operazioni in tempo <b>logaritmico</b>. Es. coppie cognome-nome ordinate per cognome.</td></tr></table></div>
+<p>Metodi: <code>put(k, v)</code>, <code>get(k)</code>, <code>remove(k)</code>, <code>containsKey(k)</code>, <code>containsValue(v)</code>, <code>size()</code>, <code>isEmpty()</code>, <code>putAll(m)</code>, <code>clear()</code>, <code>keySet()</code> (insieme delle chiavi), <code>values()</code> (i valori), <code>entrySet()</code> (le coppie <code>Map.Entry</code> con <code>getKey()</code>, <code>getValue()</code>, <code>setValue()</code>).</p>
+<pre>Map&lt;String, Integer&gt; m = new HashMap&lt;String, Integer&gt;();
+for (String w : args) {
+    Integer freq = m.get(w);
+    m.put(w, freq == null ? 1 : freq + 1);
+}
+// java Freq if it is to be it is up to me to delegate
+// 8 distinct words detected: {to=3, me=1, delegate=1, it=2, is=2, if=1, be=1, up=1}
+
+for (Map.Entry&lt;String, Integer&gt; e : m.entrySet())
+    System.out.println(e.getKey() + ": " + e.getValue());</pre>
+<p>Per sapere se <code>m2</code> è una sotto-mappa di <code>m1</code>: <code>m1.entrySet().containsAll(m2.entrySet())</code>.</p>
+<h3>La classe Collections</h3>
+<p>Metodi <b>statici</b> di utilità: <code>addAll</code>, <code>binarySearch</code>, <code>copy</code>, <code>disjoint</code> (nessun elemento in comune), <code>fill</code>, <code>frequency</code>, <code>max</code>/<code>min</code>, <code>replaceAll</code>, <code>reverse</code>, <code>sort</code> (anche con Comparator), <code>swap</code>.</p>
+<div class="exam"><b class="lbl">Da non confondere</b><b>Collection</b> è l’interfaccia radice; <b>Collections</b> (con la s) è la classe di metodi statici di utilità.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>List o Set se servono duplicati?</summary><p>List.</p></details><details><summary>Quale Set mantiene l’ordine di inserimento?</summary><p>LinkedHashSet.</p></details><details><summary>Di quanto cresce l’array interno di ArrayList? E di Vector?</summary><p>ArrayList del 50%, Vector raddoppia.</p></details><details><summary>Inserimenti frequenti in mezzo alla lista: quale classe?</summary><p>LinkedList.</p></details><details><summary>HashMap o Hashtable: quale è sincronizzata?</summary><p>Hashtable.</p></details><details><summary>Perché String è “lenta” nelle concatenazioni ripetute?</summary><p>Perché è immutabile: ogni modifica crea una nuova stringa.</p></details></div></section>
+
+<section class="ch" id="generics" data-t="Programmazione generica" data-part="Parte IV · Collezioni e generics"><div class="ch-head"><span class="ch-num">22</span><h2>Programmazione generica</h2><span class="ch-sub">Il problema (void*, macro), i generics di Java, classi e interfacce generiche, metodi generici, parametri limitati.</span></div>
+<div class="def"><b class="lbl">Definizione</b>Se un algoritmo o una struttura dati si possono descrivere <b>indipendentemente dal tipo dei dati</b>, si possono scrivere come concetto generale <b>parametrizzato sul tipo</b>. Questa è la <b>programmazione generica</b>.</div>
+<h3>Il problema</h3>
+<ul><li>In C (corso di PSD) si usava <code>void*</code> e un’interfaccia in un header (<code>typedef void *Item;</code>): molto lavoro e <b>nessun controllo del compilatore</b> sulla type safety, quindi errori a run-time.</li>
+<li>Una funzione <code>max</code> per int, char e float richiede <b>tre funzioni</b> con lo stesso corpo.</li>
+<li>Una macro <code>#define MAX(a,b) (((a)&gt;(b))?(a):(b))</code> non controlla i tipi e <b>non valuta</b> i parametri: con <code>MAX(++i, ++j)</code> e i = 10, j = 5 il risultato è <b>12</b>, non 11, perché <code>++i</code> viene eseguito due volte (nel test e nel ramo scelto).</li></ul>
+<h3>I generics di Java</h3>
+<p>Da <b>JDK 5.0</b> classi, interfacce e metodi possono avere <b>parametri di tipo</b>: come i parametri formali dei metodi, ma ricevono <b>tipi</b> invece di valori. Assomigliano ai <b>template</b> del C++.</p>
+<ul><li><b>Controllo dei tipi più forte a compile-time</b>: gli errori si scoprono prima, quando è più facile correggerli.</li>
+<li><b>Niente cast</b> quando si estrae un elemento.</li>
+<li>Algoritmi <b>generici</b>, type safe e leggibili.</li></ul>
+<pre>List list = new ArrayList();
+list.add("hello");
+String s = (String) list.get(0);      // cast necessario
+
+List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+list.add("hello");
+String s = list.get(0);               // niente cast: il compilatore conosce il tipo</pre>
+<h3>Classi generiche</h3>
+<pre>public class Box {             // versione con Object: nessun controllo
+    private Object object;
+    public void set(Object object) { this.object = object; }
+    public Object get() { return object; }
+}
+
+public class Box&lt;T&gt; {          // versione generica
+    private T t;
+    public void set(T t) { this.t = t; }
+    public T get() { return t; }
+}
+
+Box&lt;Integer&gt; integerBox = new Box&lt;Integer&gt;();   // invocazione: tipo parametrizzato</pre>
+<p>Con la versione Object qualcuno potrebbe mettere un Integer e qualcun altro aspettarsi una String: errore a run-time. <code>T</code> può essere qualunque tipo <b>non primitivo</b>: classe, interfaccia, array o un’altra variabile di tipo. <code>Box&lt;Integer&gt; integerBox;</code> non crea un oggetto: dichiara un riferimento a un Box di Integer.</p>
+<p>Sintassi con n parametri: <code>class Nome&lt;T1, T2, …, Tn&gt; { }</code>. Per convenzione i nomi sono <b>una lettera maiuscola</b>:</p>
+<div class="tbl"><table><tr><th>Lettera</th><th>Significato</th></tr><tr><td>E</td><td>Elemento</td></tr><tr><td>K</td><td>Chiave</td></tr><tr><td>N</td><td>Numero</td></tr><tr><td>T</td><td>Tipo</td></tr><tr><td>V</td><td>Valore</td></tr><tr><td>S, U, V…</td><td>Secondo, terzo, quarto tipo</td></tr></table></div>
+<h3>ArrayList&lt;T&gt; e Vector&lt;T&gt;</h3>
+<ul><li><code>ArrayList</code> ha lo scopo di un array ma <b>cambia dimensione</b> durante l’esecuzione; è meno efficiente di un array. Sta in <code>java.util</code>.</li>
+<li>Il tipo base <code>T</code> deve essere un tipo <b>strutturato</b>: per i tipi semplici si usano le classi <b>wrapper</b> (Integer, Double…).</li>
+<li>Indici da 0 a <code>size() - 1</code>, errore fuori range. Metodi: <code>get(i)</code>, <code>set(i, v)</code> (sovrascrive), <code>add(v)</code> / <code>add(i, v)</code>, <code>remove(i)</code>, <code>size()</code>.</li>
+<li><code>Vector&lt;T&gt;</code> fa le stesse cose con qualche metodo in più, ma è più vecchia e meno efficiente.</li></ul>
+<h3>Interfacce e più parametri di tipo</h3>
+<pre>public interface Pair&lt;K, V&gt; {
+    public K getKey();
+    public V getValue();
+}
+public class OrderedPair&lt;K, V&gt; implements Pair&lt;K, V&gt; {
+    private K key; private V value;
+    public OrderedPair(K key, V value) { this.key = key; this.value = value; }
+    public K getKey() { return key; }
+    public V getValue() { return value; }
+}
+Pair&lt;String, Integer&gt; p1 = new OrderedPair&lt;String, Integer&gt;("Even", 8);
+Pair&lt;String, String&gt;  p2 = new OrderedPair&lt;String, String&gt;("hello", "world");</pre>
+<p>Passare <code>8</code> (un int) dove serve un Integer funziona grazie all’<b>autoboxing</b>: la conversione automatica tra tipi primitivi e classi wrapper.</p>
+<h3>Metodi generici</h3>
+<p>Un metodo generico introduce <b>propri</b> parametri di tipo, validi solo nel metodo. La lista va tra parentesi angolari <b>prima del tipo di ritorno</b>. Possono essere statici o no, anche costruttori.</p>
+<pre>public class Util {
+    public static &lt;K, V&gt; boolean compare(Pair&lt;K, V&gt; p1, Pair&lt;K, V&gt; p2) {
+        return p1.getKey().equals(p2.getKey()) &amp;&amp; p1.getValue().equals(p2.getValue());
+    }
+}
+Pair&lt;Integer, String&gt; p1 = new Pair&lt;&gt;(1, "apple");
+Pair&lt;Integer, String&gt; p2 = new Pair&lt;&gt;(2, "pear");
+boolean same = Util.&lt;Integer, String&gt;compare(p1, p2);   // tipo esplicito
+boolean same2 = Util.compare(p1, p2);                    // di solito si omette: lo deduce il compilatore</pre>
+<h3>Parametri limitati (bounded)</h3>
+<p>Per accettare solo certi tipi si mette un <b>limite superiore</b> con <code>extends</code> (vale sia per le classi sia per le interfacce):</p>
+<pre>public &lt;U extends Number&gt; void inspect(U u) {
+    System.out.println("T: " + t.toString());
+    System.out.println("U: " + u.toString());
+}
+integerBox.inspect("some text");   // errore di compilazione: String non è un Number</pre>
+<p>Più vincoli: <code>&lt;T extends B1 &amp; B2 &amp; B3&gt;</code>. T deve essere sottotipo di tutti; se uno è una <b>classe</b>, va scritto <b>per primo</b>, altrimenti errore di compilazione.</p>
+<pre>class D &lt;T extends A &amp; B &amp; C&gt; { }   // OK se A è una classe e B, C interfacce
+class D &lt;T extends B &amp; A &amp; C&gt; { }   // errore: la classe A deve essere la prima</pre>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Due vantaggi dei generics?</summary><p>Controllo dei tipi a compile-time ed eliminazione dei cast.</p></details><details><summary>Si può scrivere ArrayList&lt;int&gt;?</summary><p>No: servono tipi non primitivi, cioè ArrayList&lt;Integer&gt;.</p></details><details><summary>Che cos’è l’autoboxing?</summary><p>La conversione automatica tra un tipo primitivo e la sua classe wrapper.</p></details><details><summary>Dove si scrivono i parametri di tipo di un metodo generico?</summary><p>Tra parentesi angolari prima del tipo di ritorno.</p></details><details><summary>MAX(++i, ++j) con i = 10 e j = 5: quanto vale?</summary><p>12, perché la macro valuta ++i due volte.</p></details></div></section>
+
+<div class="partbreak">Parte V · File e I/O</div>
+<section class="ch" id="filesystem" data-t="Gestione del filesystem" data-part="Parte V · File e I/O"><div class="ch-head"><span class="ch-num">23</span><h2>Gestione del filesystem</h2><span class="ch-sub">La classe File: costruttori e metodi; FileDialog per scegliere un file.</span></div>
+<p>Il filesystem è la parte del sistema operativo che gestisce i dati, organizzati in <b>file e cartelle</b>. In Java si usano con la classe <b>File</b> di <code>java.io</code>.</p>
+<div class="def"><b class="lbl">La classe File</b>Rappresenta un elemento del file system <b>astratto</b>, creato a partire dal suo <b>percorso</b>. Attenzione: l’oggetto File <b>può non esistere</b> su disco. Permette di controllare se esiste, se è un file o una cartella, leggerne le proprietà, crearlo.</div>
+<div class="tbl"><table><tr><th>Costruttore</th><th>Crea un File da</th></tr>
+<tr><td><code>File(String pathname)</code></td><td>il percorso completo</td></tr>
+<tr><td><code>File(File parent, String child)</code></td><td>un File genitore e un nome</td></tr>
+<tr><td><code>File(String parent, String child)</code></td><td>il percorso della cartella genitore e un nome</td></tr></table></div>
+<div class="tbl"><table><tr><th>Metodo</th><th>Cosa fa</th></tr>
+<tr><td><code>canRead()</code>, <code>canWrite()</code></td><td>Diritti di lettura / scrittura</td></tr>
+<tr><td><code>exists()</code></td><td>Il file o la cartella esiste?</td></tr>
+<tr><td><code>isFile()</code>, <code>isDirectory()</code></td><td>È un file? È una cartella?</td></tr>
+<tr><td><code>getName()</code>, <code>getPath()</code></td><td>Nome senza percorso; percorso completo</td></tr>
+<tr><td><code>length()</code></td><td>Lunghezza del file</td></tr>
+<tr><td><code>list()</code></td><td>Array di stringhe con i file e le cartelle figli</td></tr>
+<tr><td><code>mkdir()</code>, <code>mkdirs()</code></td><td>Crea la cartella; <code>mkdirs</code> crea anche le cartelle genitore mancanti</td></tr>
+<tr><td><code>createNewFile()</code></td><td>Crea un file vuoto</td></tr>
+<tr><td><code>delete()</code>, <code>renameTo(File dest)</code></td><td>Cancella; rinomina</td></tr>
+<tr><td><code>setReadOnly()</code></td><td>Rende il file di sola lettura</td></tr></table></div>
+<pre>File dir = new File("dati");
+if (!dir.exists()) dir.mkdir();
+File f = new File(dir, "prova.txt");
+System.out.println(f.getName() + " " + f.isFile() + " " + f.length());
+for (String nome : dir.list()) System.out.println(nome);</pre>
+<h3>FileDialog</h3>
+<p>Finestra che permette all’utente di <b>scegliere visualmente</b> un file da aprire o la cartella in cui salvare. <b>Blocca l’applicazione</b> finché non viene chiusa.</p>
+<ul><li>Costruttori: <code>FileDialog(Frame f)</code>, <code>FileDialog(Frame f, String title)</code>, <code>FileDialog(Frame f, String title, int type)</code> con type <code>FileDialog.LOAD</code> o <code>FileDialog.SAVE</code>.</li>
+<li>Metodi: <code>getDirectory()</code>, <code>getFile()</code> (null se non è stato scelto niente), <code>getMode()</code>, <code>setDirectory()</code>, <code>setFile()</code>, <code>setMode()</code>.</li></ul>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>new File("x.txt") crea il file su disco?</summary><p>No: crea solo l’oggetto astratto. Per crearlo serve createNewFile().</p></details><details><summary>mkdir o mkdirs per creare a/b/c se a non esiste?</summary><p>mkdirs.</p></details><details><summary>Cosa restituisce getFile() se l’utente annulla?</summary><p>null.</p></details></div></section>
+
+<section class="ch" id="io" data-t="Java I/O" data-part="Parte V · File e I/O"><div class="ch-head"><span class="ch-num">24</span><h2>Java I/O</h2><span class="ch-sub">Stream, file di testo e binari, buffering, stream di byte e di caratteri, incapsulamento, console, Scanner.</span></div>
+<p><b>Input</b>: dati che arrivano al programma (da tastiera o file). <b>Output</b>: dati che escono dal programma (a video o su file). I file danno una <b>copia permanente</b>, permettono lo scambio tra programmi e l’input automatico.</p>
+<div class="def"><b class="lbl">Stream</b>Uno <b>stream</b> è un canale di comunicazione <b>monodirezionale</b> (o di input o di output), di uso generale, che trasferisce byte o caratteri. È un oggetto che fa da buffer tra sorgente e destinazione. <code>System.in</code> è un input stream (tastiera), <code>System.out</code> un output stream (video). In C++: <code>std::cin</code>, <code>std::cout</code>.</div>
+<p>Il package <code>java.io</code> permette di <b>aprire</b>, <b>usare</b> (read/write) e <b>chiudere</b> uno stream. La difficoltà non è usare una classe, ma <b>capire quale classe</b> usare.</p>
+<h3>File di testo e file binari</h3>
+<div class="vs"><div><h4>Testo</h4><p>I bit rappresentano <b>caratteri stampabili</b> (ASCII: un byte per carattere). Leggibili da una persona. Es. i sorgenti .java. Il numero 127 occupa <b>3 byte</b>: “1”, “2”, “7” (49, 50, 55).</p></div><div><h4>Binari</h4><p>I bit codificano altre informazioni (istruzioni, numeri). Leggibili solo dal computer, <b>più efficienti</b>. Es. i .class. Il numero 127 occupa 1 byte (byte), 2 (short) o 4 (int).</p></div></div>
+<h3>Buffering</h3>
+<div class="vs"><div><h4>Non bufferizzato</h4><p>Ogni byte letto o scritto sul disco appena possibile: <b>un’operazione su disco per byte</b>, overhead alto.</p></div><div><h4>Bufferizzato</h4><p>Lettura/scrittura <b>a blocchi</b> (es. 16 byte): un po’ di attesa, ma <b>un’operazione su disco per buffer</b>, overhead basso.</p></div></div>
+<h3>Le quattro classi base astratte</h3>
+<div class="tbl"><table><tr><th></th><th>Input</th><th>Output</th></tr>
+<tr><td><b>Stream di byte</b> (come i file binari del C)</td><td><code>InputStream</code></td><td><code>OutputStream</code></td></tr>
+<tr><td><b>Stream di caratteri</b> (come i file di testo, da Java 1.1)</td><td><code>Reader</code></td><td><code>Writer</code></td></tr></table></div>
+<p>Regola dei nomi: le classi che trattano <b>byte</b> contengono <b>InputStream/OutputStream</b>; quelle che trattano <b>caratteri</b> contengono <b>Reader/Writer</b>. Le classi base sono <b>astratte</b>: <code>read()</code> e <code>write()</code> li definiscono le sottoclassi per il dispositivo specifico.</p>
+<ul><li><b>OutputStream</b>: il costruttore apre lo stream; <code>write()</code> scrive uno o più byte; <code>flush()</code> svuota il buffer; <code>close()</code> chiude.</li>
+<li><b>InputStream</b>: <code>read()</code> legge uno o più byte.</li>
+<li><code>System.out</code> è un <b>PrintStream</b> (<code>print</code>, <code>println</code>, <code>write</code>).</li></ul>
+<h3>Byte su file: FileOutputStream e FileInputStream</h3>
+<p>Al costruttore si passa il <b>nome del file</b> (o un oggetto File). Un secondo parametro <code>true</code> apre in modalità <b>append</b>. <code>write(int)</code> scrive un byte (0–255); <code>read()</code> restituisce il byte come int tra 0 e 255, <b>-1 a fine stream</b>, e se non ci sono byte ma lo stream non è finito <b>aspetta</b>.</p>
+<p>Le operazioni di I/O possono fallire e lanciano <b>IOException</b>, che non si può ignorare: o si gestisce con <b>try/catch</b>, o si rimanda con <b>throws</b>.</p>
+<pre>FileOutputStream os = null;
+try {
+    os = new FileOutputStream(args[0]);        // (args[0], true) per l'append
+    for (int x = 0; x &lt; 10; x += 3) os.write(x);   // scrive 0, 3, 6, 9: file di 4 byte
+    os.close();
+} catch (IOException e) {
+    System.out.println("Errore di output");
+}
+
+FileInputStream is = new FileInputStream(args[0]);
+int x = is.read(), n = 0;
+while (x &gt;= 0) {                  // read() restituisce -1 a fine stream
+    System.out.print(" " + x); n++;
+    x = is.read();
+}
+System.out.println("\nTotale byte: " + n);</pre>
+<h3>L’approccio “a cipolla”: stream di incapsulamento</h3>
+<p>Leggere un byte per volta è scomodo. Gli <b>stream di incapsulamento</b> (filtri) <b>avvolgono</b> un altro stream per aggiungere funzionalità: il loro costruttore riceve un InputStream o un OutputStream. Si configura il canale con <b>tutte e sole</b> le funzionalità che servono, senza reimplementarle: massima flessibilità, minimo sforzo. Base: <code>FilterInputStream</code> / <code>FilterOutputStream</code> (“I/O filtrato”).</p>
+<div class="tbl"><table><tr><th>Classe</th><th>Cosa aggiunge</th></tr>
+<tr><td><b>DataOutputStream</b> / <b>DataInputStream</b></td><td>Scrive/legge i <b>tipi primitivi in forma binaria</b>: <code>writeInt</code>, <code>writeFloat</code>, <code>readDouble</code>…</td></tr>
+<tr><td><b>BufferedOutputStream</b> / <b>BufferedInputStream</b></td><td>Un <b>buffer</b>: la scrittura fisica avviene con <code>flush()</code>.</td></tr>
+<tr><td><b>PrintStream</b></td><td>Stampa come stringhe valori primitivi (<code>print</code>) e oggetti (<code>toString</code>).</td></tr>
+<tr><td>PushbackInputStream</td><td>Un buffer di un byte per “rimettere” l’ultimo byte letto.</td></tr>
+<tr><td>LineNumberInputStream</td><td>Tiene il numero di riga.</td></tr>
+<tr><td><b>ObjectInputStream</b> / ObjectOutputStream</td><td>Legge/scrive oggetti <b>serializzati</b> (anche primitivi e wrapper).</td></tr></table></div>
+<pre>DataOutputStream os = new DataOutputStream(new FileOutputStream("Prova.dat"));
+os.writeFloat(3.1415F); os.writeBoolean(true); os.writeDouble(1.4142);
+os.writeChar('X'); os.writeInt(12);
+os.close();
+
+DataInputStream is = new DataInputStream(
+        new BufferedInputStream(new FileInputStream("Prova.dat")));
+float f = is.readFloat(); boolean b = is.readBoolean();
+double d = is.readDouble(); char c = is.readChar(); int i = is.readInt();   // stesso ordine!
+is.close();</pre>
+<div class="exam"><b class="lbl">Regola</b>Un file binario si rilegge <b>nello stesso ordine e con gli stessi tipi</b> con cui è stato scritto.</div>
+<h3>RandomAccessFile</h3>
+<p>Fa input/output su <b>porzioni specifiche</b> di un file invece che in un flusso continuo. <b>Non deriva</b> da InputStream/OutputStream. Modalità come <code>"rw"</code>; <code>seek(pos)</code> si sposta, <code>readByte()</code>, <code>readLine()</code>, <code>writeBytes()</code>.</p>
+<pre>RandomAccessFile raf = new RandomAccessFile(file, "rw");
+byte ch = raf.readByte();
+raf.seek(file.length());          // in fondo al file
+raf.writeBytes("This will complete the Demo");
+raf.close();</pre>
+<h3>Stream di caratteri: Reader e Writer</h3>
+<p>Sono <b>più efficienti</b> per il testo e convertono correttamente la codifica <b>Unicode</b> di Java in quella locale (piattaforma e lingua). Classi: <code>FileReader</code>/<code>FileWriter</code>, <code>BufferedReader</code>/<code>BufferedWriter</code>, <code>PrintWriter</code>, <code>InputStreamReader</code>/<code>OutputStreamWriter</code>, <code>StringReader</code>, <code>CharArrayReader</code>…</p>
+<p><code>read()</code> e <code>write()</code> lavorano con un <b>int</b> che rappresenta un carattere Unicode (2 byte); <code>read()</code> dà -1 a fine stream. Serve un <b>cast</b> a char, ma solo se non si è letto -1.</p>
+<pre>FileReader r = new FileReader(args[0]);
+int x = r.read();
+while (x &gt;= 0) { char ch = (char) x; System.out.print(ch); x = r.read(); }
+
+BufferedReader br = new BufferedReader(new FileReader("nomefile"));
+String s = br.readLine();
+while (s != null) { System.out.println(s); s = br.readLine(); }   // null a fine stream
+
+PrintWriter p = new PrintWriter(new FileWriter("nomefile"));
+p.println("ciao");    // con un oggetto chiama toString()
+p.close();</pre>
+<p>Con <code>FileWriter</code> si scrivono solo caratteri o stringhe: i numeri vanno convertiti prima (<code>Float.toString(f)</code>, <code>Integer.toString(12)</code>). Per ogni tipo primitivo c’è una <b>classe wrapper</b>.</p>
+<h3>Il ponte tra byte e caratteri</h3>
+<p>Gli stream di byte esistono da Java 1.0, quelli di caratteri da Java 1.1: alcune classi vecchie usano byte anche per il testo. Le classi <b>InputStreamReader</b> (fa apparire un InputStream come un Reader) e <b>OutputStreamWriter</b> (un OutputStream come un Writer) servono a reinterpretarli.</p>
+<p><code>System.in</code> e <code>System.out</code> sono <b>formalmente stream di byte</b> ma in realtà trasportano caratteri: vanno incapsulati.</p>
+<pre>BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+int a = Integer.parseInt(br.readLine());
+String b = br.readLine();</pre>
+<div class="tbl"><table><tr><th>Azione</th><th>Origine</th><th>Filtro</th><th>Oggetto</th></tr>
+<tr><td>Lettura da console</td><td>System.in</td><td>InputStreamReader</td><td>BufferedReader</td></tr>
+<tr><td>Lettura da file di testo</td><td>FileReader</td><td>–</td><td>BufferedReader</td></tr>
+<tr><td>Lettura di oggetti</td><td>FileInputStream</td><td>–</td><td>ObjectInputStream</td></tr>
+<tr><td>Lettura dati da file binario</td><td>FileInputStream</td><td>–</td><td>DataInputStream</td></tr>
+<tr><td>Scrittura a video</td><td>System.out</td><td>–</td><td>PrintStream</td></tr>
+<tr><td>Scrittura su file di testo</td><td>FileWriter</td><td>–</td><td>PrintWriter</td></tr>
+<tr><td>Scrittura di oggetti</td><td>FileOutputStream</td><td>–</td><td>ObjectOutputStream</td></tr>
+<tr><td>Scrittura dati su file binario</td><td>FileOutputStream</td><td>–</td><td>DataOutputStream</td></tr></table></div>
+<h3>StreamTokenizer</h3>
+<p>Spezza un flusso di input in <b>token</b> (segmenti lessicali). Non deriva da InputStream (per le stringhe c’è <code>StringTokenizer</code>). Costanti: <code>TT_EOF</code> (fine flusso), <code>TT_EOL</code> (fine riga), <code>TT_NUMBER</code> (il token è un numero, in <code>nval</code>), <code>TT_WORD</code> (una parola, in <code>sval</code>). Il tipo del token corrente è in <code>ttype</code>; <code>ordinaryChar('.')</code> dice di trattare il punto come carattere normale.</p>
+<pre>StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+while (st.nextToken() != StreamTokenizer.TT_EOF) {
+    switch (st.ttype) {
+        case StreamTokenizer.TT_NUMBER: System.out.println(st.nval); break;
+        case StreamTokenizer.TT_WORD:   System.out.println(st.sval); break;
+        default: System.out.println((char) st.ttype);
+    }
+}</pre>
+<h3>Scanner</h3>
+<p><code>java.util.Scanner</code> analizza testo (da String o da stream) in tipi primitivi e stringhe, usando espressioni regolari e lo spazio come delimitatore. È più flessibile e intuitivo di StreamTokenizer e <code>split()</code>, ma <b>più lento</b> (nelle slide: Scanner 10642 ms, split 715 ms, StringTokenizer 544 ms).</p>
+<div class="exam"><b class="lbl">Trabocchetto: nextInt seguito da nextLine</b><pre>Scanner scn = new Scanner(System.in);
+int a = scn.nextInt();       // input: 50 e Invio
+String b = scn.nextLine();   // NON aspetta: legge il resto della riga, cioè ""
+// Output: You have entered:- 50 and name as</pre><code>nextInt()</code> (e gli altri <code>nextXXX()</code>) lasciano nel buffer il carattere di nuova riga; <code>nextLine()</code> legge fino al primo a capo e trova subito quello. Soluzioni: un <code>nextLine()</code> in più dopo <code>nextInt()</code>, oppure <code>next()</code>, oppure BufferedReader. È lo stesso problema di <code>scanf()</code> seguito da <code>gets()</code> in C.</div>
+<div class="vs"><div><h4>BufferedReader</h4><p>Sincronizzato (adatto a più thread), buffer più grande, un po’ più veloce: legge solo caratteri.</p></div><div><h4>Scanner</h4><p>Non sincronizzato; fa il parsing dei dati (più lento).</p></div></div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Byte o caratteri: quali classi hanno Reader/Writer nel nome?</summary><p>Quelle a caratteri.</p></details><details><summary>Che cosa restituisce read() a fine stream?</summary><p>-1 (readLine() invece restituisce null).</p></details><details><summary>Come si apre un FileOutputStream in append?</summary><p>Con il secondo parametro true.</p></details><details><summary>Quale classe scrive int e double in binario?</summary><p>DataOutputStream.</p></details><details><summary>Come si legge da tastiera una riga intera?</summary><p>new BufferedReader(new InputStreamReader(System.in)).readLine().</p></details><details><summary>Perché nextLine() dopo nextInt() restituisce una stringa vuota?</summary><p>Perché nextInt() lascia nel buffer l’a capo.</p></details></div></section>
+
+<div class="partbreak">Parte VI · Interfacce grafiche</div>
+<section class="ch" id="gui" data-t="Interfacce grafiche: AWT e Swing" data-part="Parte VI · Interfacce grafiche"><div class="ch-head"><span class="ch-num">25</span><h2>Interfacce grafiche: AWT e Swing</h2><span class="ch-sub">Da AWT a Swing, JFrame, chiusura della finestra, look and feel, pannelli e componenti.</span></div>
+<h3>AWT</h3>
+<p>Con Java 1.0 Sun fornisce l’<b>Abstract Window Toolkit (AWT)</b>: la creazione e il comportamento degli elementi grafici sono <b>delegati al toolkit nativo</b> della piattaforma. Il programmatore indica posizione e comportamento, Java crea i <b>peer</b> nativi.</p>
+<p>Limiti: comportamenti diversi sulle varie piattaforme, esperienza poco coerente, libreria ridotta al <b>minimo comune denominatore</b> dei componenti, aspetto meno curato delle app native, <b>bug diversi</b> su piattaforme diverse.</p>
+<h3>Swing</h3>
+<p>Nel 1996 Netscape crea le <b>Internet Foundation Classes (IFC)</b>: gli elementi (pulsanti, menu…) vengono <b>dipinti</b> in finestre vuote; dal sistema serve solo costruire le finestre e disegnarci. Sun, con Netscape, ne ricava <b>Swing</b>: i “widget” hanno lo <b>stesso aspetto e comportamento su ogni piattaforma</b>.</p>
+<ul><li>Swing <b>non sostituisce</b> del tutto AWT: offre componenti alternativi più ricchi (<code>JButton</code> rispetto a <code>Button</code>), ma l’architettura, in particolare la <b>gestione degli eventi</b>, resta quella di AWT.</li>
+<li>I componenti Swing sono <b>un po’ più lenti</b> da visualizzare di quelli con peer (oggi trascurabile).</li>
+<li>I nomi aggiungono una <b>J</b> davanti: <code>JTextArea</code> è la controparte di <code>TextArea</code>.</li>
+<li>Vantaggi: più componenti, meno dipendenza dalla piattaforma, meno bug specifici, risultato coerente. Svantaggio: l’aspetto non è quello nativo; per questo Sun ha creato il look and feel indipendente <b>Metal</b>.</li></ul>
+<h3>Creare una finestra</h3>
+<p>Si importa <code>import javax.swing.*;</code>. Si può mescolare AWT e Swing, ma è consigliato usare solo Swing. Una finestra top-level è un <b>frame</b>: in AWT <code>Frame</code>, in Swing <code>JFrame</code> (che estende Frame ed è uno dei pochi componenti Swing non disegnati su un canvas). I frame sono <b>contenitori</b>: insieme ai <b>layout manager</b> decidono come disporre i componenti.</p>
+<pre>public class Semplice {
+    public Semplice(String titolo) {
+        JFrame frame = new JFrame(titolo);
+        frame.setSize(500, 300);                                 // in pixel
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    // evento di chiusura
+        frame.setVisible(true);                                  // non è visibile per default
+    }
+    public static void main(String[] args) { new Semplice("Titolo"); }
+}</pre>
+<p>A ogni finestra è associato un <b>thread</b>: quando finisce il main <b>il programma non termina</b>.</p>
+<div class="tbl"><table><tr><th>setDefaultCloseOperation</th><th>Alla chiusura del frame</th></tr>
+<tr><td><code>EXIT_ON_CLOSE</code></td><td>Termina il programma.</td></tr>
+<tr><td><code>DISPOSE_ON_CLOSE</code></td><td>Chiude e libera solo il frame; il processo continua.</td></tr>
+<tr><td><code>DO_NOTHING_ON_CLOSE</code></td><td>Ignora l’evento: il frame resta aperto.</td></tr>
+<tr><td><code>HIDE_ON_CLOSE</code></td><td>Nasconde il frame (resta in memoria) e continua (es. Messenger).</td></tr></table></div>
+<p>Altri metodi: <code>setVisible(true/false)</code> (o i vecchi <code>show()</code>/<code>hide()</code>), <code>setBounds(x, y, larghezza, altezza)</code>.</p>
+<p><b>Look and feel</b>: si cambia con <code>UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel")</code>; la classe deve essere disponibile sul sistema.</p>
+<h3>Pannelli</h3>
+<p>In Swing <b>non si aggiungono componenti direttamente al frame</b>: vanno in un <b>pannello</b>. Il frame ha diversi pannelli; quello che interessa è il <b>content pane</b>. I pannelli (<code>JPanel</code>) hanno una superficie su cui disegnare e sono a loro volta <b>contenitori</b>, anche di altri sottopannelli.</p>
+<pre>public class FramePulsanti {
+    JButton pulsanteUno = new JButton("Pulsante uno");
+    JButton pulsanteDue = new JButton("Pulsante due");
+    public FramePulsanti() {
+        JFrame frame = new JFrame("FrameDemo");
+        frame.setSize(300, 80);
+        JPanel pannello = new JPanel();
+        pannello.add(pulsanteUno);
+        pannello.add(pulsanteDue);
+        pulsanteDue.setEnabled(false);
+        frame.setContentPane(pannello);
+        frame.setVisible(true);
+    }
+}</pre>
+<p>Componenti: pulsanti, combo box, liste, menu, campi di testo, etichette, tooltip, barre di avanzamento, selettori di colore e di file, tabelle, alberi. Operazioni: <code>setEnabled</code>, <code>setVisible</code>, <code>setSize</code>, <code>isEnabled</code>, <code>isVisible</code>, <code>getSize</code>.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che differenza c’è tra AWT e Swing nel disegnare i componenti?</summary><p>AWT delega ai componenti nativi (peer); Swing li disegna da sé, uguali su ogni piattaforma.</p></details><details><summary>Con quale lettera iniziano i componenti Swing?</summary><p>J (JButton, JFrame…).</p></details><details><summary>Un JFrame è visibile appena creato?</summary><p>No: serve setVisible(true).</p></details><details><summary>Dove vanno messi i componenti di un JFrame?</summary><p>In un pannello, il content pane.</p></details><details><summary>DISPOSE_ON_CLOSE termina il programma?</summary><p>No, libera solo il frame.</p></details></div></section>
+
+<section class="ch" id="layout" data-t="Layout e componenti" data-part="Parte VI · Interfacce grafiche"><div class="ch-head"><span class="ch-num">26</span><h2>Layout e componenti</h2><span class="ch-sub">FlowLayout, GridLayout, BorderLayout, BoxLayout, layout di default, JLabel, JTextField, JPasswordField, JTextArea.</span></div>
+<div class="def"><b class="lbl">Layout manager</b>Il modo di posizionare i componenti in un pannello o in un altro contenitore. Si imposta con <code>setLayout</code> del container. Tutti implementano l’interfaccia <code>java.awt.LayoutManager</code>.</div>
+<div class="tbl"><table><tr><th>Layout</th><th>Come dispone</th><th>Dimensioni dei componenti</th></tr>
+<tr><td><b>FlowLayout</b></td><td>In <b>linea</b> finché c’è spazio, poi va a capo; allineamento centrato per default. Usato spesso per i pulsanti.</td><td>Conservano la dimensione <b>naturale</b> (preferred).</td></tr>
+<tr><td><b>GridLayout</b></td><td>Una <b>griglia</b> di righe × colonne, una cella per componente; si possono aggiungere spazi tra le celle.</td><td>Occupano <b>tutta la cella</b>.</td></tr>
+<tr><td><b>BorderLayout</b></td><td><b>5 regioni</b>: NORTH, SOUTH, EAST, WEST, CENTER.</td><td>Occupano <b>tutta la regione</b>.</td></tr>
+<tr><td><b>BoxLayout</b></td><td>Una <b>riga</b> (box orizzontale, da sinistra a destra) o una <b>colonna</b> (box verticale, dall’alto in basso).</td><td>Con spaziatori (strut).</td></tr></table></div>
+<pre>Container c = getContentPane();
+c.setLayout(new FlowLayout());
+c.add(new JButton("Next Slide"));
+
+c.setLayout(new GridLayout(3, 2, 10, 20));    // 3 righe, 2 colonne, spazio 10 orizzontale e 20 verticale
+
+c.setLayout(new BorderLayout());
+c.add(new JButton("Next Slide"), BorderLayout.NORTH);
+c.add(new JButton("Exit"), BorderLayout.CENTER);
+
+Box box = Box.createVerticalBox();
+box.add(new JButton("Next Slide"));
+box.add(Box.createVerticalStrut(20));          // spaziatore di 20 pixel
+box.add(new JButton("Exit"));
+c.add(box);</pre>
+<p>“Orizzontale” e “verticale” in BoxLayout si riferiscono alla <b>direzione</b> in cui si dispongono i componenti, non alla forma del box.</p>
+<div class="tbl"><table><tr><th>Contenitore</th><th>Layout di default</th></tr>
+<tr><td>Content pane</td><td><b>BorderLayout</b></td></tr>
+<tr><td>JPanel</td><td><b>FlowLayout</b></td></tr>
+<tr><td>Box</td><td><b>BoxLayout</b></td></tr></table></div>
+<h3>Componenti principali</h3>
+<ul><li><b>Pulsante con immagine</b>: <code>new JButton(new ImageIcon("img1.gif"))</code>.</li>
+<li><b>JLabel</b>: testo informativo di sola uscita, anche con icona. <code>JLabel(String)</code>, <code>JLabel(String, int)</code>, <code>JLabel(String, Icon, int)</code>; allineamento <code>SwingConstants.LEFT</code>, <code>RIGHT</code>, <code>CENTER</code> (default).</li>
+<li><b>JTextField</b>: <b>una riga</b> di input. <code>JTextField()</code>, <code>JTextField(int larghezza)</code>, <code>JTextField(String, int)</code>; metodi <code>setEditable</code>, <code>isEditable</code>, <code>setText</code>, <code>getText</code>, <code>getSelectedText</code>.</li>
+<li><b>JPasswordField</b>: nasconde ciò che si scrive con un carattere: <code>pf.setEchoChar('*')</code>.</li>
+<li><b>JTextArea</b>: testo su <b>più righe</b> (righe × colonne). <code>append</code>, <code>insert(String, int)</code>, <code>setLineWrap(true)</code> (va a capo da sola), <code>setWrapStyleWord(true)</code> (va a capo per parola).</li></ul>
+<p>Swing è vastissimo: per gli altri componenti (JComboBox, JList, JTable, JTree, JSlider, JOptionPane, JFileChooser…) si consulta la documentazione.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quale layout rispetta la dimensione naturale dei componenti?</summary><p>FlowLayout.</p></details><details><summary>Quante regioni ha BorderLayout?</summary><p>Cinque: NORTH, SOUTH, EAST, WEST, CENTER.</p></details><details><summary>Layout di default di un JPanel? E del content pane?</summary><p>FlowLayout; BorderLayout.</p></details><details><summary>JTextField o JTextArea per più righe?</summary><p>JTextArea.</p></details></div></section>
+
+<section class="ch" id="eventi" data-t="Gestione degli eventi" data-part="Parte VI · Interfacce grafiche"><div class="ch-head"><span class="ch-num">27</span><h2>Gestione degli eventi</h2><span class="ch-sub">Sorgenti e ricevitori, tipi di eventi, interfacce Listener, ActionListener, MouseListener, Adapter.</span></div>
+<p>Ogni azione dell’utente su un elemento grafico (click, tasto, finestra ridimensionata, voce di menu) genera un <b>evento</b>.</p>
+<div class="vs"><div><h4>Sorgente (source)</h4><p>Il componente grafico che <b>genera</b> l’evento (es. un JButton).</p></div><div><h4>Ricevitore (listener)</h4><p>L’oggetto che <b>reagisce</b> all’evento con i suoi metodi.</p></div></div>
+<p>Si implementa un ricevitore per ogni evento da gestire e lo si <b>collega</b> alla sorgente; quando l’evento si verifica, vengono attivati <b>tutti i ricevitori</b> di quel tipo collegati alla sorgente.</p>
+<p>Il package <code>java.awt.event</code> contiene le <b>classi degli eventi</b>, le <b>interfacce Listener</b> e alcune classi <b>Adapter</b>.</p>
+<div class="tbl"><table><tr><th>Evento</th><th>Generato da</th><th>Listener</th></tr>
+<tr><td><b>ActionEvent</b></td><td>Azione di un componente, es. pressione di un pulsante (anche con la barra spaziatrice)</td><td>ActionListener</td></tr>
+<tr><td><b>MouseEvent</b></td><td>Click, spostamento del mouse</td><td>MouseListener</td></tr>
+<tr><td>KeyEvent</td><td>Tasto premuto su un componente (es. JTextField)</td><td>KeyListener</td></tr>
+<tr><td>FocusEvent</td><td>Guadagnare/perdere il focus</td><td>FocusListener</td></tr>
+<tr><td>ItemEvent</td><td>Selezione/deselezione di un elemento</td><td>ItemListener</td></tr>
+<tr><td>AdjustmentEvent</td><td>Valore numerico modificabile (es. JScrollBar)</td><td>AdjustmentListener</td></tr>
+<tr><td>WindowEvent</td><td>Cambio di stato di una finestra</td><td>WindowListener</td></tr></table></div>
+<h3>ActionListener e JButton</h3>
+<pre>public class ClickListener implements ActionListener {
+    public void actionPerformed(ActionEvent event) {   // eseguito al click
+        System.out.println("I was clicked.");
+    }
+}
+JButton b1 = new JButton("Button 1");
+b1.addActionListener(new ClickListener());   // collega il ricevitore alla sorgente</pre>
+<p>Il parametro <code>event</code> contiene i dettagli dell’evento (es. il momento; <code>e.getSource()</code> dà la sorgente). Se il listener deve usare variabili della finestra, conviene una <b>classe interna</b>. In alternativa la finestra stessa implementa ActionListener:</p>
+<pre>public class ActionButton2 extends JFrame implements ActionListener {
+    JButton b1 = new JButton("Button 1");
+    JButton b2 = new JButton("Button 2");
+    public ActionButton2() {
+        super("ActionButton2");
+        JPanel p = new JPanel();
+        p.add(b1); p.add(b2);
+        setContentPane(p);
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+    }
+    public void actionPerformed(ActionEvent e) {
+        String name = ((JButton) e.getSource()).getText();   // quale pulsante?
+        System.out.println("You have clicked " + name);
+    }
+}</pre>
+<h3>Eventi del mouse e Adapter</h3>
+<p>Si usa un <b>MouseListener</b>, aggiunto con <code>addMouseListener</code>. L’interfaccia ha cinque metodi (<code>mouseClicked</code>, <code>mousePressed</code>, <code>mouseReleased</code>, <code>mouseEntered</code>, <code>mouseExited</code>): vanno <b>implementati tutti</b>, anche vuoti.</p>
+<p>Per non doverli scrivere tutti, per ogni listener con più metodi esiste un <b>Adapter</b>, una classe che implementa l’interfaccia con <b>tutti i metodi vuoti</b>: si estende e si ridefinisce solo quello che serve.</p>
+<pre>class MyMouseListener extends MouseAdapter {
+    public void mouseClicked(MouseEvent e) { /* risponde al click */ }
+}</pre>
+<div class="exam"><b class="lbl">In tre passi</b>Per gestire un evento: 1) definire una classe che <b>implementa un’interfaccia Listener</b> (o estende un Adapter); 2) <b>ridefinire i metodi</b> dell’interfaccia; 3) <b>aggiungere il listener</b> al componente con <code>addXxxListener</code>.</div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quale metodo ha ActionListener?</summary><p>actionPerformed(ActionEvent e).</p></details><details><summary>Come si collega un listener a un pulsante?</summary><p>Con b.addActionListener(listener).</p></details><details><summary>A cosa serve un Adapter?</summary><p>Implementa un listener con tutti i metodi vuoti: si ridefinisce solo quello che serve.</p></details><details><summary>Come si sa quale pulsante ha generato l’evento?</summary><p>Con e.getSource().</p></details></div></section>
+
+<div class="partbreak">Parte VII · Programmazione funzionale</div>
+<section class="ch" id="lambda" data-t="Classi anonime ed espressioni lambda" data-part="Parte VII · Programmazione funzionale"><div class="ch-head"><span class="ch-num">28</span><h2>Classi anonime ed espressioni lambda</h2><span class="ch-sub">Classi anonime interne, interfacce funzionali, sintassi delle lambda, gli otto approcci, cattura delle variabili, riferimenti a metodi.</span></div>
+<h3>Classi anonime interne</h3>
+<p>Permettono di implementare una classe usata <b>una sola volta</b>, senza darle un nome né un file a parte. Uso tipico: i gestori di eventi nelle interfacce grafiche.</p>
+<pre>testButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        System.out.println("Test Button clicked");
+    }
+});</pre>
+<p>Evitano di scrivere n classi che implementano ActionListener e definiscono la classe dove serve. Ma per un’interfaccia con <b>un solo metodo</b> la sintassi resta pesante.</p>
+<h3>Interfacce funzionali</h3>
+<div class="def"><b class="lbl">Definizione</b>Un’<b>interfaccia funzionale</b> (Java 8) ha <b>un solo metodo astratto</b> (può avere anche metodi default e static). Esempi: ActionListener, Runnable, Comparator, Consumer, Predicate, FileFilter. Sono le interfacce usate dalle <b>espressioni lambda</b>.</div>
+<h3>Le espressioni lambda</h3>
+<p>Introdotte in <b>Java SE 8</b>, portano uno stile di programmazione <b>funzionale</b> (derivano dal lambda calcolo). Una lambda è una <b>funzione anonima</b>: un metodo senza dichiarazione, scritto dove serve, che si può <b>passare come argomento</b> o restituire. Rende il codice più chiaro e meno verboso, soprattutto per funzioni brevi usate una volta.</p>
+<pre>(lista degli argomenti) -&gt; espressione
+(lista degli argomenti) -&gt; { istruzioni; }
+
+(int x, int y) -&gt; x + y                 // somma di due interi
+s -&gt; s.length()                         // lunghezza di una stringa
+() -&gt; 50                                // nessun argomento, restituisce 50
+(String s) -&gt; { System.out.println("Benvenuto"); System.out.println(s); }
+
+testButton.addActionListener(e -&gt; System.out.println("Click Detected by Lambda Listener"));</pre>
+<ul><li>Il <b>tipo dei parametri</b> si può omettere; con <b>un solo parametro</b> anche le parentesi.</li>
+<li>Con una sola espressione il valore viene restituito da solo; con un blocco servono le <b>graffe</b> e il <b>return</b>.</li></ul>
+<div class="exam"><b class="lbl">Quali sono valide?</b><div class="tbl"><table><tr><th>Lambda</th><th>Valida?</th></tr>
+<tr><td><code>() -&gt; {}</code></td><td>✅ corpo vuoto</td></tr>
+<tr><td><code>() -&gt; "Raoul"</code></td><td>✅ restituisce una stringa</td></tr>
+<tr><td><code>() -&gt; { return "Mario"; }</code></td><td>✅</td></tr>
+<tr><td><code>(Integer i) -&gt; return "Alan" + i;</code></td><td>❌ il return vuole le graffe: <code>(Integer i) -&gt; { return "Alan" + i; }</code></td></tr>
+<tr><td><code>(String s) -&gt; { "Iron Man"; }</code></td><td>❌ togli le graffe: <code>(String s) -&gt; "Iron Man"</code></td></tr></table></div></div>
+<div class="tbl"><table><tr><th>Caso d’uso</th><th>Lambda</th></tr>
+<tr><td>Espressione booleana</td><td><code>(List&lt;String&gt; list) -&gt; list.isEmpty()</code></td></tr>
+<tr><td>Creazione di oggetti</td><td><code>() -&gt; new Apple(10)</code></td></tr>
+<tr><td>Consumo di oggetti</td><td><code>(Apple a) -&gt; System.out.println(a.getWeight())</code></td></tr>
+<tr><td>Estrazione da un oggetto</td><td><code>(String s) -&gt; s.length()</code></td></tr>
+<tr><td>Combinazione di due valori</td><td><code>(int a, int b) -&gt; a * b</code></td></tr>
+<tr><td>Confronto di due oggetti</td><td><code>(Apple a1, Apple a2) -&gt; a1.getWeight().compareTo(a2.getWeight())</code></td></tr></table></div>
+<h3>Dal codice rigido alle lambda: gli otto approcci</h3>
+<p>Caso d’uso: in un social network l’amministratore vuole eseguire un’azione sui membri (<code>Person</code>, in una <code>List&lt;Person&gt;</code>) che soddisfano un criterio.</p>
+<div class="tbl"><table><tr><th>Approccio</th><th>Idea</th><th>Limite</th></tr>
+<tr><td>1. Un metodo per caratteristica</td><td><code>printPersonsOlderThan(roster, age)</code></td><td>Fragile: cambia Person o il criterio, va riscritto.</td></tr>
+<tr><td>2. Metodi più generali</td><td><code>printPersonsWithinAgeRange(roster, low, high)</code></td><td>Ogni criterio nuovo è un metodo nuovo; difficile combinarli.</td></tr>
+<tr><td>3. Criterio in una classe locale</td><td><code>printPersons(roster, CheckPerson tester)</code> con <code>interface CheckPerson { boolean test(Person p); }</code></td><td>Un’interfaccia e una classe per ogni criterio.</td></tr>
+<tr><td>4. Classe anonima</td><td><code>printPersons(roster, new CheckPerson() { … })</code></td><td>Sintassi ingombrante per un solo metodo.</td></tr>
+<tr><td>5. Lambda</td><td><code>printPersons(roster, p -&gt; p.getGender() == Person.Sex.MALE &amp;&amp; p.getAge() &gt;= 18 &amp;&amp; p.getAge() &lt;= 25)</code></td><td>Serve ancora l’interfaccia CheckPerson.</td></tr>
+<tr><td>6. Interfacce funzionali standard</td><td><code>Predicate&lt;Person&gt;</code> al posto di CheckPerson</td><td>L’azione è ancora fissa (printPerson).</td></tr>
+<tr><td>7. Anche l’azione come lambda</td><td><code>processPersons(roster, tester, Consumer&lt;Person&gt; block)</code>; con <code>Function&lt;Person, String&gt; mapper</code> si estrae un dato (es. l’e-mail)</td><td>Funziona solo con Person.</td></tr>
+<tr><td>8. Generics</td><td><code>&lt;X, Y&gt; processElements(Iterable&lt;X&gt; source, Predicate&lt;X&gt; tester, Function&lt;X, Y&gt; mapper, Consumer&lt;Y&gt; block)</code></td><td>Il passo successivo sono gli stream (cap. 29).</td></tr></table></div>
+<pre>processElements(roster,
+    p -&gt; p.getGender() == Person.Sex.MALE &amp;&amp; p.getAge() &gt;= 18 &amp;&amp; p.getAge() &lt;= 25,
+    p -&gt; p.getEmailAddress(),
+    email -&gt; System.out.println(email));</pre>
+<p>Le lambda sono <b>controllate nel tipo</b>: si possono assegnare a una variabile o passare a un metodo che vuole un’interfaccia funzionale se hanno la <b>stessa firma</b> del suo metodo astratto. <code>() -&gt; void</code> è la firma di <code>Runnable</code>.</p>
+<pre>interface IntegerMath { int operation(int a, int b); }
+IntegerMath addition = (a, b) -&gt; a + b;
+IntegerMath subtraction = (a, b) -&gt; a - b;
+operateBinary(40, 2, addition);      // 42
+operateBinary(20, 10, subtraction);  // 10</pre>
+<h3>Le interfacce funzionali standard (java.util.function)</h3>
+<div class="tbl"><table><tr><th>Interfaccia</th><th>Metodo</th><th>Cosa rappresenta</th></tr>
+<tr><td><b>Predicate&lt;T&gt;</b></td><td><code>boolean test(T t)</code></td><td>Una condizione su un argomento</td></tr>
+<tr><td><b>Consumer&lt;T&gt;</b></td><td><code>void accept(T t)</code></td><td>Un’operazione che non restituisce niente</td></tr>
+<tr><td><b>Function&lt;T,R&gt;</b></td><td><code>R apply(T t)</code></td><td>Da un argomento a un risultato</td></tr>
+<tr><td><b>Supplier&lt;T&gt;</b></td><td><code>T get()</code></td><td>Un fornitore di risultati, senza argomenti</td></tr>
+<tr><td>UnaryOperator&lt;T&gt;</td><td><code>T apply(T t)</code></td><td>Function con risultato dello stesso tipo dell’operando</td></tr>
+<tr><td>BiFunction&lt;T,U,R&gt;</td><td><code>R apply(T t, U u)</code></td><td>Da due argomenti a un risultato</td></tr>
+<tr><td>BinaryOperator&lt;T&gt;</td><td><code>T apply(T t, T u)</code></td><td>Due operandi e risultato dello stesso tipo</td></tr>
+<tr><td><b>Comparator&lt;T&gt;</b></td><td><code>int compare(T o1, T o2)</code></td><td>Negativo, zero o positivo se o1 è minore, uguale o maggiore</td></tr></table></div>
+<h3>Cattura delle variabili</h3>
+<p>Una lambda accede a campi, metodi e variabili locali del contesto che la contiene. Ma a differenza delle classi interne <b>non crea un nuovo livello di scope</b>: è valutata <b>lessicalmente</b>, come il codice intorno.</p>
+<ul><li>Non si può chiamare un parametro della lambda come una variabile locale già esistente: errore “variable x is already defined”.</li>
+<li><code>this</code> dentro una lambda è l’oggetto che la contiene, non la lambda.</li>
+<li>Le variabili locali e i parametri usati dalla lambda devono essere <b>final</b> o <b>effettivamente final</b> (assegnati una sola volta). Altrimenti: “local variables referenced from a lambda expression must be final or effectively final”.</li></ul>
+<p>Perché: le variabili locali stanno nello <b>stack</b> e possono sparire quando il metodo finisce, mentre la lambda (es. in un altro thread) può essere eseguita dopo. La lambda lavora quindi su una <b>copia</b>, che deve restare uguale all’originale.</p>
+<div class="note">Ombreggiamento nelle classi interne (esempio ShadowTest con x = 0 nella classe esterna, x = 1 nella interna e il parametro x = 23): <code>x</code> → 23, <code>this.x</code> → 1, <code>ShadowTest.this.x</code> → 0.</div>
+<h3>Riferimenti a metodi</h3>
+<p>Quando una lambda si limita a <b>chiamare un metodo esistente</b>, si può scrivere direttamente il riferimento al metodo con <code>::</code>.</p>
+<pre>Arrays.sort(rosterAsArray, (a, b) -&gt; Person.compareByAge(a, b));
+Arrays.sort(rosterAsArray, Person::compareByAge);    // equivalente</pre>
+<div class="tbl"><table><tr><th>Tipo</th><th>Sintassi</th></tr>
+<tr><td>Metodo statico</td><td><code>ContainingClass::staticMethodName</code></td></tr>
+<tr><td>Metodo d’istanza di un oggetto particolare</td><td><code>containingObject::instanceMethodName</code> (es. <code>myComparisonProvider::compareByName</code>)</td></tr>
+<tr><td>Metodo d’istanza di un oggetto arbitrario di un tipo</td><td><code>ContainingType::methodName</code> (es. <code>String::compareToIgnoreCase</code>)</td></tr>
+<tr><td>Costruttore</td><td><code>ClassName::new</code></td></tr></table></div>
+<h3>Quando usare cosa</h3>
+<ul><li><b>Classe interna</b> non statica per accedere a campi e metodi non pubblici dell’oggetto esterno; statica se non serve.</li>
+<li><b>Classe locale</b> per creare più istanze, usare un costruttore, introdurre un nuovo tipo.</li>
+<li><b>Classe anonima</b> se servono campi o metodi aggiuntivi.</li>
+<li><b>Lambda</b> per passare una singola unità di comportamento, o una singola istanza di un’interfaccia funzionale.</li></ul>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Che cos’è un’interfaccia funzionale?</summary><p>Un’interfaccia con un solo metodo astratto.</p></details><details><summary>(Integer i) -&gt; return "Alan" + i; è valida?</summary><p>No: con return servono le graffe.</p></details><details><summary>Quale interfaccia standard per una condizione booleana?</summary><p>Predicate&lt;T&gt; con test(T t).</p></details><details><summary>E per un’azione senza risultato?</summary><p>Consumer&lt;T&gt; con accept(T t).</p></details><details><summary>Perché una variabile locale usata in una lambda deve essere effettivamente final?</summary><p>Perché la lambda ne usa una copia: la variabile nello stack potrebbe non esistere più quando la lambda viene eseguita.</p></details><details><summary>A cosa equivale Person::compareByAge?</summary><p>A (a, b) -&gt; Person.compareByAge(a, b).</p></details></div></section>
+
+<section class="ch" id="stream" data-t="Stream" data-part="Parte VII · Programmazione funzionale"><div class="ch-head"><span class="ch-num">29</span><h2>Stream</h2><span class="ch-sub">Creare uno stream, pipeline, operazioni intermedie e terminali, lazy, Optional, reduce, collect, groupingBy, partitioning, ricerca.</span></div>
+<div class="def"><b class="lbl">Definizione</b>Uno <b>stream</b> (Java 8) è una <b>sequenza di oggetti</b> presi da una sorgente a cui si applica una <b>sequenza di operazioni</b>, con un approccio <b>dichiarativo</b> (simile a SQL). Consente l’accesso sequenziale agli elementi, supporta operazioni di aggregazione e molte operazioni restituiscono stream, quindi si <b>concatenano</b>.</div>
+<ul><li>Non c’entrano niente con InputStream e OutputStream.</li>
+<li><b>Non sono strutture dati</b>: avvolgono la sorgente e trasportano i valori lungo una pipeline.</li>
+<li>Sono pensati per le <b>lambda</b>, usano la <b>valutazione lazy</b> e sono <b>parallelizzabili</b>.</li></ul>
+<h3>Creare uno stream</h3>
+<pre>Stream.of(val1, val2, ...);          // da valori
+Stream.of(someArray);  Arrays.stream(someArray);   // da array
+someList.stream();                   // da una Collection
+Stream&lt;String&gt; empty = Stream.empty();
+
+IntStream intStream = IntStream.range(1, 10);      // per i primitivi: IntStream, LongStream, DoubleStream
+IntStream chars = "rosso".chars();                  // niente CharStream: i char sono IntStream
+DoubleStream casuali = new Random().doubles();      // infinito
+Stream&lt;String&gt; righe = Files.lines(Paths.get("data.txt"));   // da file (NIO)
+Stream.iterate(0, n -&gt; n + 2).limit(10);            // infinito, da un seme
+Stream.generate(Math::random).limit(5);             // infinito, da un Supplier
+Stream.ofNullable(System.getProperty("home"));      // Java 9: vuoto se il valore è null</pre>
+<h3>La pipeline</h3>
+<div class="flow"><span>Sorgente</span><i>→</i><span>0 o più operazioni intermedie</span><i>→</i><span class="hot">1 operazione terminale</span></div>
+<div class="vs"><div><h4>Operazioni intermedie</h4><p>Restituiscono uno <b>Stream</b>, quindi si concatenano. Sono <b>lazy</b>: non vengono eseguite finché non c’è un’operazione terminale. <code>filter</code>, <code>map</code>, <code>flatMap</code>, <code>distinct</code>, <code>sorted</code>, <code>peek</code>, <code>limit</code>, <code>skip</code>, <code>parallel</code>.</p></div><div><h4>Operazioni terminali</h4><p>Restituiscono un tipo definito (primitivo, collezione, void) e <b>consumano</b> lo stream: dopo non si può più usare. <code>forEach</code>, <code>toArray</code>, <code>reduce</code>, <code>collect</code>, <code>min</code>, <code>max</code>, <code>count</code>, <code>anyMatch</code>, <code>allMatch</code>, <code>noneMatch</code>, <code>findFirst</code>, <code>findAny</code>.</p></div></div>
+<p><b>Short-circuit</b>: <code>anyMatch</code>, <code>allMatch</code>, <code>noneMatch</code>, <code>findFirst</code>, <code>findAny</code>, <code>limit</code> fanno elaborare gli elementi precedenti solo finché non hanno la risposta.</p>
+<h3>Le operazioni principali</h3>
+<div class="tbl"><table><tr><th>Operazione</th><th>Riceve</th><th>Cosa fa</th></tr>
+<tr><td><code>filter</code></td><td>Predicate</td><td>Tiene solo gli elementi che passano il test.</td></tr>
+<tr><td><code>map</code></td><td>Function</td><td>Trasforma ogni elemento in un altro (es. stringa → lunghezza).</td></tr>
+<tr><td><code>flatMap</code></td><td>Function che restituisce uno stream</td><td>Appiattisce: ogni elemento diventa uno stream e i risultati si uniscono.</td></tr>
+<tr><td><code>mapToInt</code></td><td>ToIntFunction</td><td>Produce un IntStream (con <code>sum</code>, <code>average</code>…).</td></tr>
+<tr><td><code>limit(n)</code> / <code>skip(n)</code></td><td>un intero</td><td>Tiene i primi n / scarta i primi n.</td></tr>
+<tr><td><code>sorted</code></td><td>niente o Comparator</td><td>Ordina (naturale o con il comparatore).</td></tr>
+<tr><td><code>distinct</code></td><td>–</td><td>Toglie i duplicati.</td></tr>
+<tr><td><code>forEach</code></td><td>Consumer</td><td>Esegue un’azione su ogni elemento (terminale). <code>peek</code> fa lo stesso ma restituisce lo stream.</td></tr>
+<tr><td><code>count</code>, <code>min</code>, <code>max</code></td><td>– / Comparator</td><td>Contano, trovano minimo e massimo.</td></tr></table></div>
+<pre>roster.stream()
+      .filter(p -&gt; p.getGender() == Person.Sex.MALE &amp;&amp; p.getAge() &gt;= 18 &amp;&amp; p.getAge() &lt;= 25)
+      .map(p -&gt; p.getEmailAddress())
+      .forEach(email -&gt; System.out.println(email));
+
+albums.stream()
+      .filter(album -&gt; album.getYear() &lt; 2000)
+      .flatMap(album -&gt; album.getSongs().stream().filter(s -&gt; s.startsWith("D")))
+      .distinct()
+      .sorted()
+      .limit(10)
+      .forEach(System.out::println);</pre>
+<p>Con gli stream il codice dice <b>cosa</b> fare, non <b>come</b>: niente variabili intermedie né cicli, e quando il problema cambia poco si cambia poco codice (si evita l’“effetto farfalla”).</p>
+<pre>double average = roster.stream()
+      .filter(p -&gt; p.getGender() == Person.Sex.MALE)
+      .mapToInt(Person::getAge)
+      .average()            // OptionalDouble, vuoto se non ci sono elementi
+      .getAsDouble();       // NoSuchElementException se è vuoto</pre>
+<h3>Iterazione interna ed esterna</h3>
+<div class="vs"><div><h4>Esterna (for-each, Iterator)</h4><p>L’applicazione decide <b>quale</b> collezione e <b>come</b> iterarla (<code>next()</code>). Solo accesso sequenziale.</p></div><div><h4>Interna (operazioni aggregate)</h4><p>L’applicazione decide quale collezione, il <b>JDK decide come</b>. Può sfruttare l’elaborazione <b>parallela</b>.</p></div></div>
+<h3>Collezioni immutabili</h3>
+<p>Prima di Java 9 serviva <code>Collections.unmodifiableList(lista)</code>. Da Java 9: <code>List.of(…)</code>. Aggiungere, togliere o modificare lancia <code>UnsupportedOperationException</code>; i <code>null</code> lanciano <code>NullPointerException</code>.</p>
+<h3>Optional</h3>
+<p>Un contenitore che può avere un valore o essere vuoto, per non riempire il codice di controlli sul null.</p>
+<pre>Optional&lt;User&gt; user = Optional.ofNullable(getUser(name));
+Optional&lt;Location&gt; location = user.map(u -&gt; getLocation(u));</pre>
+<ul><li><code>isPresent()</code>: c’è un valore? <code>ifPresent(Consumer)</code>: esegue la lambda se c’è.</li>
+<li><code>get()</code>: il valore, o <code>NoSuchElementException</code>. <code>orElse(other)</code>: il valore o un default.</li>
+<li>Regole: <b>non</b> usarli per i campi delle classi né per i parametri dei metodi; <b>considerarli</b> come valori di ritorno.</li></ul>
+<h3>Riduzioni: reduce e collect</h3>
+<p>Le operazioni terminali come <code>sum</code>, <code>average</code>, <code>min</code>, <code>max</code> si chiamano <b>operazioni di riduzione</b>. Quelle generiche sono <code>reduce</code> e <code>collect</code>.</p>
+<pre>Integer totalAge = roster.stream().mapToInt(Person::getAge).sum();
+Integer totalAge2 = roster.stream().map(Person::getAge).reduce(0, (a, b) -&gt; a + b);</pre>
+<p><code>reduce(identity, accumulator)</code>: <b>identity</b> è il valore di partenza e il risultato se lo stream è vuoto; <b>accumulator</b> prende il risultato parziale e l’elemento corrente e restituisce il nuovo risultato parziale.</p>
+<pre>List&lt;String&gt; nomi = roster.stream().map(p -&gt; p.getName()).collect(Collectors.toList());
+
+Map&lt;Person.Sex, List&lt;Person&gt;&gt; byGender =
+    roster.stream().collect(Collectors.groupingBy(Person::getGender));
+
+Map&lt;Person.Sex, List&lt;String&gt;&gt; namesByGender =
+    roster.stream().collect(Collectors.groupingBy(Person::getGender,
+                            Collectors.mapping(Person::getName, Collectors.toList())));
+
+Map&lt;Boolean, List&lt;Dish&gt;&gt; partitioned =
+    menu.stream().collect(Collectors.partitioningBy(Dish::isVegetarian));
+// {false=[pork, beef, salmon], true=[french fries, rice, fruit]}</pre>
+<ul><li><code>groupingBy</code> crea una mappa le cui chiavi sono i valori della <b>funzione di classificazione</b>. Con un secondo argomento (<b>downstream collector</b>) si fa una riduzione a più livelli.</li>
+<li><code>partitioningBy</code> è un caso speciale con chiave <b>booleana</b>: a differenza di <code>filter</code> dà <b>entrambe</b> le liste.</li></ul>
+<h3>Slicing e ricerca</h3>
+<ul><li><code>takeWhile(pred)</code> (Java 9) prende gli elementi <b>finché</b> il predicato è vero e poi si ferma, invece di scorrere tutto come <code>filter</code>; <code>dropWhile(pred)</code> scarta quelli iniziali finché è vero.</li>
+<li><code>anyMatch</code> (almeno uno), <code>allMatch</code> (tutti), <code>noneMatch</code> (nessuno) restituiscono un boolean.</li>
+<li><code>findFirst</code> (il primo), <code>findAny</code> (uno qualsiasi) restituiscono un <b>Optional</b>.</li></ul>
+<h3>Stream e Collection</h3>
+<div class="vs"><div><h4>Collection</h4><p>Struttura dati in memoria con <b>tutti</b> i valori; costruita in modo <b>eager</b>; si può attraversare <b>più volte</b>.</p></div><div><h4>Stream</h4><p>Elementi <b>calcolati su richiesta</b> (lazy), non si aggiungono né tolgono; si attraversa <b>una sola volta</b>, poi è consumato.</p></div></div>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Le operazioni intermedie vengono eseguite subito?</summary><p>No, sono lazy: partono solo con l’operazione terminale.</p></details><details><summary>Si può riusare uno stream dopo forEach?</summary><p>No: è consumato.</p></details><details><summary>Che cosa fa flatMap?</summary><p>Trasforma ogni elemento in uno stream e unisce tutto in un unico stream.</p></details><details><summary>reduce(0, (a, b) -&gt; a + b): cos’è lo 0?</summary><p>L’identity: valore di partenza e risultato se lo stream è vuoto.</p></details><details><summary>partitioningBy o filter se servono entrambi i gruppi?</summary><p>partitioningBy.</p></details><details><summary>Che tipo restituisce findAny?</summary><p>Un Optional.</p></details></div></section>
+
+<div class="partbreak">Parte VIII · Eccezioni</div>
+<section class="ch" id="eccezioni" data-t="Gestione delle eccezioni" data-part="Parte VIII · Eccezioni"><div class="ch-head"><span class="ch-num">30</span><h2>Gestione delle eccezioni</h2><span class="ch-sub">Checked e unchecked, gerarchia, try, catch, finally, throw e throws, eccezioni personalizzate, printStackTrace, System.err.</span></div>
+<p>In C e in altri linguaggi gli errori si segnalano per <b>convenzione</b> (un valore di ritorno, un flag) e si spera che chi chiama controlli. Ma chi usa una libreria tende a non farlo.</p>
+<p>Il momento ideale per trovare un errore è la <b>compilazione</b>; gli altri vanno gestiti a <b>run-time</b>, altrimenti producono risultati sbagliati o comportamenti imprevisti. Cause frequenti: <b>memoria</b> (null pointer, memory leak), <b>file system</b> (disco pieno, file mancante), <b>rete</b>, <b>calcolo</b> (divisione per zero), <b>array</b> (indice -1), <b>conversione</b> (‘q’ in numero).</p>
+<p>Esempio: chi implementa la divisione non sa cosa fare se il divisore è zero, perché non conosce il contesto: <b>lancia un’eccezione</b> invece di continuare.</p>
+<h3>La gerarchia</h3>
+<div class="flow"><span>Object</span><i>→</i><span class="hot">Throwable</span><i>→</i><span>Error</span><i>·</i><span>Exception</span><i>→</i><span>RuntimeException</span></div>
+<ul><li><b>Throwable</b>: in cima alla gerarchia delle eccezioni, sottoclasse diretta di Object.</li>
+<li><b>Error</b>: problemi gravi dell’ambiente (es. <code>StackOverflowError</code>), <b>non recuperabili</b>: non si gestiscono nel codice.</li>
+<li><b>Exception</b>: condizioni che l’applicazione può dover gestire.</li></ul>
+<div class="vs"><div><h4>Checked (controllate)</h4><p>Tutte le sottoclassi di <b>Exception</b> tranne RuntimeException. Condizioni <b>recuperabili</b> (es. <code>IOException</code>). <b>Devono</b> essere gestite: o in un <b>try-catch</b>, o delegate al chiamante con <b>throws</b>. Il compilatore lo controlla.</p></div><div><h4>Unchecked (non controllate)</h4><p>Sottoclassi di <b>Error</b> e <b>RuntimeException</b> (es. <code>NullPointerException</code>, <code>ArrayIndexOutOfBoundsException</code>). Di solito <b>errori di programmazione</b>; possono capitare ovunque, quindi gestirle sempre appesantirebbe il codice senza renderlo più robusto. Gestirle non è obbligatorio.</p></div></div>
+<h3>try, catch, finally</h3>
+<p>Il blocco <b>try</b> contiene il codice che può lanciare eccezioni. Se un’istruzione lancia un’eccezione, le istruzioni <b>successive del try non vengono eseguite</b> e si salta all’<b>exception handler</b>, il blocco <b>catch</b> che segue.</p>
+<pre>try {
+    // codice che può generare eccezioni
+} catch (Type1 id1) {
+    // gestisce Type1
+} catch (Type2 id2) {
+    // gestisce Type2
+} finally {
+    // eseguito SEMPRE, che ci sia stata un'eccezione o no
+}</pre>
+<ul><li>Viene eseguito <b>un solo</b> catch: il <b>primo</b> compatibile con l’eccezione.</li>
+<li>Ordine: dal <b>particolare al generale</b>, con <code>catch (Exception e)</code> per ultimo.</li>
+<li><b>finally</b> (che il C++ non ha) serve a <b>rilasciare le risorse</b>: file, socket… Il garbage collector libera solo la memoria.</li></ul>
+<div class="exam"><b class="lbl">Trabocchetto: l’ordine dei catch</b><pre>try { do_smtg(); }               // lancia MyException extends Exception
+catch (Exception ex) { ... }
+catch (MyException my_ex) { ... }</pre>Le slide dicono che il primo catch viene sempre eseguito e il secondo mai. In Java, di più: il codice <b>non compila</b> (“exception MyException has already been caught”). Il catch più specifico va prima.</div>
+<p>Con il <b>try-with-resources</b> la risorsa viene chiusa da sola alla fine:</p>
+<pre>try (BufferedWriter bw = new BufferedWriter(new FileWriter("myFile.txt"))) {
+    bw.write("Test");
+} catch (IOException ioe) {
+    ioe.printStackTrace();
+}</pre>
+<h3>Cosa succede quando si lancia un’eccezione</h3>
+<ol><li>Si crea un <b>oggetto eccezione</b>, come qualunque oggetto (<code>new Exception()</code>).</li>
+<li>Il percorso di esecuzione si ferma e il riferimento all’eccezione viene <b>espulso</b> dal contesto corrente: si dice che il codice <b>solleva</b> (throw) l’eccezione.</li>
+<li>Il meccanismo cerca un <b>exception handler</b> da cui riprendere, risalendo lo stack delle chiamate (“srotolamento”) fino a un catch adatto.</li>
+<li>Se non lo trova, il programma termina.</li></ol>
+<h3>throw e throws</h3>
+<div class="vs"><div><h4>throw</h4><p><b>Lancia</b> un’eccezione: <code>throw new ErroreStringaVuota();</code></p></div><div><h4>throws</h4><p>Nella firma: <b>dichiara</b> che il metodo può lanciare quelle eccezioni (controllate) e ne <b>delega</b> la gestione al chiamante.</p></div></div>
+<pre>public void stampa(String a) throws ErroreStringaVuota {
+    if (a == null) throw new ErroreStringaVuota();
+    else System.out.println(a);
+}</pre>
+<p>Un catch che non riesce a gestire tutto l’errore può fare quel che può e <b>rilanciare</b> l’eccezione al livello esterno: in Java con <code>throw e;</code>.</p>
+<div class="note">Alcune slide mescolano sintassi C++: <code>throw;</code> senza argomenti, <code>catch (…)</code>, <code>std::unexpected()</code> e <code>std::terminate()</code> sono del C++. In Java si rilancia con <code>throw e;</code> e si cattura tutto con <code>catch (Exception e)</code> (o <code>Throwable</code>).</div>
+<h3>Creare una propria eccezione</h3>
+<p>Si estende <code>Exception</code> (eccezione controllata) definendo due costruttori: quello di default e quello con una stringa.</p>
+<pre>class SimpleException extends Exception {
+    public SimpleException() {}
+    public SimpleException(String msg) { super(msg); }
+}
+public class SimpleExceptionDemo {
+    public void f(int i) throws SimpleException {
+        if (i &gt; 0) throw new SimpleException("Throw SimpleException from f()");
+    }
+    public static void main(String[] args) {
+        try { new SimpleExceptionDemo().f(5); }
+        catch (SimpleException e) { System.err.println("Caught it!"); }
+    }
+}</pre>
+<div class="note">Le slide dicono che le eccezioni lanciate “da noi” sono controllate e quelle di Java no. Più precisamente: è controllata ogni eccezione che estende <code>Exception</code> ma non <code>RuntimeException</code>, chiunque la lanci (<code>IOException</code> è di Java ed è controllata).</div>
+<h3>Eccezioni predefinite</h3>
+<p>La JVM ne lancia alcune da sola: <code>NullPointerException</code> (riferimento null), <code>ArrayIndexOutOfBoundsException</code> (indice oltre la lunghezza). Si possono catturare come le altre. Tutte le eccezioni standard hanno due costruttori: quello di default e quello con un messaggio (<code>new NullPointerException("t = null")</code>).</p>
+<h3>Metodi di Throwable</h3>
+<ul><li><code>getMessage()</code>: la descrizione dell’eccezione.</li>
+<li><code>printStackTrace()</code> (anche su un PrintStream o PrintWriter): stampa lo <b>stack delle chiamate</b> dal punto più esterno fino a quello dell’eccezione, con i numeri di riga. Molto utile per il debug.</li></ul>
+<h3>System.err</h3>
+<p>È lo standard di uscita per gli <b>errori</b>, simile a <code>System.out</code>. Avere due stream permette di <b>redirigere l’output</b> lasciando invariati gli errori (o viceversa): <code>System.setErr(new PrintStream(new FileOutputStream("file.txt")));</code>, e <code>System.setOut()</code> per l’output normale.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>IOException è checked o unchecked?</summary><p>Checked: va gestita o dichiarata con throws.</p></details><details><summary>NullPointerException?</summary><p>Unchecked (è una RuntimeException).</p></details><details><summary>Quando viene eseguito finally?</summary><p>Sempre, che ci sia un’eccezione o no.</p></details><details><summary>throw o throws nella firma del metodo?</summary><p>throws dichiara; throw lancia.</p></details><details><summary>In che ordine si scrivono i catch?</summary><p>Dal più specifico al più generale.</p></details><details><summary>Da quale classe si estende per un’eccezione controllata?</summary><p>Da Exception.</p></details><details><summary>Error va gestito nel codice?</summary><p>No: indica problemi non recuperabili.</p></details></div></section>
+
+<div class="partbreak">Approfondimento</div>
+<section class="ch" id="object" data-t="La classe Object" data-part="Approfondimento"><div class="ch-head"><span class="ch-num">Obj</span><h2>La classe Object</h2><span class="ch-sub">Dispensa senza numero: toString, equals e le sue proprietà, hashCode, getClass, finalize, instanceof, clone e Cloneable.</span></div>
+<p>Object è la superclasse, diretta o indiretta, di <b>ogni classe</b>. Definisce il comportamento base di ogni oggetto: confrontarsi con un altro oggetto, convertirsi in stringa, restituire la propria classe, attendere e notificare su una variabile condition.</p>
+<div class="vs"><div><h4>Si possono ridefinire</h4><p><code>clone</code>, <code>equals</code> / <code>hashCode</code>, <code>finalize</code>, <code>toString</code>.</p></div><div><h4>Non si possono ridefinire (final)</h4><p><code>getClass</code>, <code>notify</code>, <code>notifyAll</code>, <code>wait</code>.</p></div></div>
+<h3>toString</h3>
+<p>Restituisce una rappresentazione testuale; viene chiamato da solo quando serve una stringa (<code>"…" + object</code>, <code>System.out.println(object)</code>). La versione di Object restituisce <code>getClass().getName() + '@' + Integer.toHexString(hashCode())</code>, es. <code>BankAccount@7ced01</code>. Si consiglia di ridefinirlo sempre: è comodo per il debug.</p>
+<pre>public String toString() { return "BankAccount[balance=" + balance + "]"; }</pre>
+<h3>equals</h3>
+<p>La versione di Object usa <code>==</code>: vero solo se è <b>lo stesso oggetto</b>. Ma l’uguaglianza dipende dall’applicazione: due conti sono uguali se hanno lo stesso saldo.</p>
+<pre>public boolean equals(Object obj) {
+    if (!(obj instanceof BankAccount)) return false;
+    return ((BankAccount) obj).balance == balance;
+}</pre>
+<p>equals deve essere una <b>relazione di equivalenza</b> sui riferimenti non null:</p>
+<div class="tbl"><table><tr><th>Proprietà</th><th>Regola</th></tr>
+<tr><td><b>Riflessiva</b></td><td><code>x.equals(x)</code> è true.</td></tr>
+<tr><td><b>Simmetrica</b></td><td><code>x.equals(y)</code> è true se e solo se <code>y.equals(x)</code> è true.</td></tr>
+<tr><td><b>Transitiva</b></td><td>Se <code>x.equals(y)</code> e <code>y.equals(z)</code>, allora <code>x.equals(z)</code>.</td></tr>
+<tr><td><b>Consistente</b></td><td>Chiamate ripetute danno sempre lo stesso risultato, se gli oggetti non cambiano.</td></tr>
+<tr><td>Con null</td><td><code>x.equals(null)</code> è false.</td></tr></table></div>
+<h3>hashCode</h3>
+<p><b>Se ridefinisci equals, devi ridefinire hashCode.</b> hashCode restituisce un codice per le tabelle hash; quello di Object deriva dall’indirizzo interno dell’oggetto.</p>
+<ul><li>Chiamato più volte nella stessa esecuzione, dà <b>sempre lo stesso valore</b> se non cambiano le informazioni usate da equals (può cambiare tra esecuzioni diverse).</li>
+<li>Se due oggetti sono <b>uguali per equals</b>, devono avere lo <b>stesso hashCode</b>.</li>
+<li>Non è obbligatorio, ma consigliato, che oggetti diversi abbiano hashCode diversi.</li></ul>
+<pre>public int hashCode() { return (int) balance; }</pre>
+<h3>getClass e instanceof</h3>
+<p><code>public final Class getClass()</code> restituisce un oggetto <code>Class</code> che descrive la classe a run-time: nome della classe, della superclasse, interfacce implementate. <code>obj.getClass().getName()</code>; <code>obj.getClass().newInstance()</code> crea un oggetto della stessa classe.</p>
+<p><code>espressione instanceof TipoRiferimento</code> è vero se il valore <b>non è null</b> e si può fare il cast a quel tipo <b>senza ClassCastException</b>; altrimenti falso. Se l’espressione non è di tipo riferimento, errore di compilazione.</p>
+<h3>finalize</h3>
+<p>Quando il GC raccoglie l’oggetto chiama <code>finalize</code> per il <b>cleanup</b> delle risorse diverse dalla memoria (connessioni, file). Si può ridefinire, ma <b>non è consigliato</b> per gestire risorse scarse.</p>
+<h3>clone e Cloneable</h3>
+<p><code>protected Object clone() throws CloneNotSupportedException</code>. La versione di Object:</p>
+<ul><li>controlla che l’oggetto implementi <b>Cloneable</b>, altrimenti lancia <code>CloneNotSupportedException</code>;</li>
+<li>crea un nuovo oggetto dello stesso tipo e copia gli attributi uno a uno (<b>shallow copy</b>).</li></ul>
+<ul><li>Object <b>non implementa Cloneable</b>: una classe che non lo implementa non è clonabile.</li>
+<li><b>Cloneable non contiene il metodo clone</b>: dice solo che la copia campo per campo è lecita. Per convenzione la classe ridefinisce clone come <b>public</b>.</li>
+<li>Chi usa <code>Object.clone</code> deve catturare l’eccezione.</li></ul>
+<pre>public class Stack implements Cloneable {
+    private Vector items;
+    public Object clone() {
+        try {
+            Stack s = (Stack) super.clone();        // copia superficiale
+            s.items = (Vector) items.clone();       // copia profonda del campo mutabile
+            return s;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();              // non succede: Stack è Cloneable
+        }
+    }
+}</pre>
+<p>Regole empiriche: una classe deve clonare i riferimenti a oggetti <b>mutabili</b> che <b>distribuisce</b> (es. <code>getAccount()</code> restituisce <code>conto.clone()</code>) e quelli che <b>riceve</b> (il costruttore salva <code>unConto.clone()</code>).</p>
+<div class="tbl"><table><tr><th>Regola di progettazione</th><th></th></tr>
+<tr><td><code>x.clone() != x</code></td><td>DEVE essere vera</td></tr>
+<tr><td><code>x.clone().getClass() == x.getClass()</code></td><td>DEVE essere vera</td></tr>
+<tr><td><code>x.clone().equals(x)</code></td><td>PUÒ essere vera</td></tr></table></div>
+<p>Per convenzione clone <b>non usa new</b> e <b>non chiama costruttori</b>, ma <code>super.clone()</code>: se tutta la gerarchia lo rispetta, il clone ha la classe giusta.</p>
+<div class="quiz"><h4>Domande lampo</h4><details><summary>Quali metodi di Object non si possono ridefinire?</summary><p>getClass, notify, notifyAll, wait.</p></details><details><summary>Se ridefinisco equals cosa devo ridefinire?</summary><p>hashCode.</p></details><details><summary>Due oggetti equals possono avere hashCode diversi?</summary><p>No.</p></details><details><summary>Cloneable contiene il metodo clone?</summary><p>No: è un’interfaccia marcatore.</p></details><details><summary>x.clone().equals(x) deve essere vera?</summary><p>No, può esserlo.</p></details><details><summary>null instanceof Object?</summary><p>false.</p></details></div></section>
+
+<section class="ch study" id="ripasso" data-t="Ripasso finale" data-part="Ripasso"><div class="ch-head"><span class="ch-num">✓</span><h2>Ripasso finale</h2><span class="ch-sub">Come allenarsi sugli esercizi tipici e le domande da saper dire a voce.</span></div>
+<div class="review-grid"><article><h3>1. Prevedi l’output</h3><p>Rifai a mano Contatore (cap. 04), StaticTest (cap. 07), Sandwich (cap. 15), Glyph (cap. 17) e PrivateOverride (cap. 18). Scrivi l’output prima di guardare la soluzione.</p></article><article><h3>2. Compila o no?</h3><p>Metodo statico che usa un attributo non statico, overload sul solo tipo di ritorno, override che riduce la visibilità, interfacce con f() di ritorni diversi, catch generico prima di quello specifico.</p></article><article><h3>3. Gerarchie</h3><p>Disegna una gerarchia con classe astratta e interfacce (es. le camere dell’albergo). Indica dove c’è upcasting, dove serve il downcasting e dove il binding è dinamico.</p></article><article><h3>4. Collezioni e generics</h3><p>Scegli la collezione giusta per ogni caso (duplicati, ordine, chiavi). Riscrivi FindDups e Freq con i generics e il for-each.</p></article><article><h3>5. Da ciclo a stream</h3><p>Prendi un ciclo con if e add e riscrivilo con filter, map, collect. Poi con groupingBy e partitioningBy. Allenati sulle lambda valide e non valide.</p></article><article><h3>6. I/O ed eccezioni</h3><p>Scrivi a memoria la lettura di un file riga per riga con BufferedReader, la scrittura binaria con DataOutputStream e un’eccezione personalizzata con throws e try-catch-finally.</p></article></div>
+<div class="quiz"><h4>Domande lampo</h4><div class="oral-grid"><details><summary>Overloading e overriding: differenza?</summary><p>Overloading: stesso nome, parametri diversi, risolto a compile-time. Overriding: stessa firma in una sottoclasse, risolto a run-time.</p></details><details><summary>Classe astratta o interfaccia?</summary><p>La classe astratta può avere attributi e codice e se ne estende una sola; l’interfaccia ha costanti e metodi astratti (più default/static) e se ne implementano molte.</p></details><details><summary>Upcasting e downcasting?</summary><p>Upcasting implicito e sempre sicuro; downcasting esplicito, controllato a run-time, può lanciare ClassCastException.</p></details><details><summary>Che cosa garantisce il polimorfismo?</summary><p>Che lo stesso messaggio esegua il metodo della classe effettiva dell’oggetto: il codice si estende senza modificarlo.</p></details><details><summary>Copia superficiale o profonda?</summary><p>Superficiale: copia i riferimenti agli oggetti interni. Profonda: duplica anche quelli.</p></details><details><summary>Checked o unchecked?</summary><p>Checked: Exception tranne RuntimeException, vanno gestite o dichiarate. Unchecked: RuntimeException ed Error.</p></details><details><summary>Perché lo stream si dice lazy?</summary><p>Perché le operazioni intermedie partono solo quando c’è un’operazione terminale.</p></details><details><summary>A cosa serve final su metodo e classe?</summary><p>Metodo: non si può ridefinire. Classe: non si può estendere.</p></details></div></div></section>
+<section class="ch study resources" id="risorse" data-t="Risorse" data-part="Risorse"><div class="ch-head"><span class="ch-num">↗</span><h2>Risorse</h2><span class="ch-sub">Le fonti di questo quaderno.</span></div><ul class="resource-list"><li><b>Slide del corso</b> di Programmazione ad Oggetti, a.a. 2025/2026, prof. Massimo Ficco: 03 Java Introduzione · 04 Classi e Oggetti · 05 Classi Composte · 06 Modificatori · 07 Modificatore static · 08 Overloading · 09 Costruttori e Garbage Collector · 10 Array · 11 C++ · 12 This · 13 Packages · 14 Information Hiding · 15 Ereditarietà · 16 Upcasting · 17 Polimorfismo e Classi Astratte · 18 Costrutto Final · 19 Downcasting · 20 Interfacce · 21 Classi Contenitore · 22 Programmazione Generica · 23 Gestione del filesystem · 24 Java I/O · 25 Interfacciamento grafico · 26 Layout · 27 Gestione degli eventi · 28 Classi anonime ed Espressioni Lambda · 29 Stream · 30 Gestione delle eccezioni. I numeri dei capitoli sono quelli delle dispense. In più la dispensa senza numero “Il linguaggio Java: la superclasse universale Object”.</li><li><b>Correzioni rispetto alle slide</b> (segnate nei capitoli con un riquadro): attributo senza modificatore = accesso package, non public (cap. 04); assegnamento di una riga di matrice con <code>new int[]{…}</code> (cap. 10); specializzazione dal generale al particolare, <code>stampa(3.5)</code> non compila, un override non può ridurre la visibilità (cap. 15); nell’esempio Music il metodo della base deve avere la stessa firma (cap. 17); sintassi C++ nelle eccezioni e ordine dei catch che in Java non compila (cap. 30).</li></ul></section>
+
+</main></div>
+<script>
+(function(){
+var key='quaderno-poo-done',done={};try{done=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch(e){done={}}var chapters=[].slice.call(document.querySelectorAll('section.ch:not(.study)')),toc=document.getElementById('toc'),links={},last=null;
+chapters.forEach(function(sec){var part=sec.dataset.part;if(part!==last){var h=document.createElement('li');h.className='part';h.textContent=part;toc.appendChild(h);last=part}var a=document.createElement('a');a.href='#'+sec.id;a.innerHTML='<span class="n"></span><span class="t"></span><span class="cnt"></span>';a.querySelector('.n').textContent=sec.querySelector('.ch-num').textContent;a.querySelector('.t').textContent=sec.dataset.t;var li=document.createElement('li');li.appendChild(a);toc.appendChild(li);links[sec.id]=a;var lab=document.createElement('label');lab.className='check';var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!done[sec.id];lab.appendChild(cb);lab.appendChild(document.createTextNode('Capitolo ripassato'));sec.appendChild(lab);cb.addEventListener('change',function(){done[sec.id]=cb.checked;save();update()})});function save(){try{localStorage.setItem(key,JSON.stringify(done))}catch(e){}}function update(){var n=0;chapters.forEach(function(s){var yes=!!done[s.id];if(yes)n++;links[s.id].classList.toggle('done',yes)});document.getElementById('pc').textContent=n;document.getElementById('pt').textContent=chapters.length;document.getElementById('pb').style.width=(chapters.length?n/chapters.length*100:0)+'%'}update();
+var q=document.getElementById('q'),res=document.getElementById('sres'),clr=document.getElementById('qclr'),items=[];document.querySelectorAll('section.ch').forEach(function(s){s.querySelectorAll('h2,h3,h4,p,li,td,summary,.def,.exam,.note').forEach(function(el){var t=el.textContent.replace(/\s+/g,' ').trim();if(t)items.push({el:el,sec:s,text:t})})});var cur=[],sel=-1;function fold(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}function esc(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function run(){var raw=q.value.trim();clr.hidden=!raw;if(raw.length<2){res.hidden=true;res.innerHTML='';cur=[];chapters.forEach(function(s){links[s.id].querySelector('.cnt').textContent='';links[s.id].classList.remove('miss')});return}var terms=fold(raw).split(/\s+/);cur=items.filter(function(it){var f=fold(it.text);return terms.every(function(t){return f.indexOf(t)>=0})});var counts={};cur.forEach(function(it){counts[it.sec.id]=(counts[it.sec.id]||0)+1});chapters.forEach(function(s){var n=counts[s.id]||0;links[s.id].querySelector('.cnt').textContent=n||'';links[s.id].classList.toggle('miss',!n)});if(!cur.length){res.innerHTML='<p>Nessun risultato per “'+esc(raw)+'”. Prova con una parola più corta.</p>';res.hidden=false;return}var html='<p>'+cur.length+' risultati · frecce per scegliere, Invio per aprire</p>';cur.slice(0,50).forEach(function(it,i){html+='<a href="#'+esc(it.sec.id)+'" data-i="'+i+'"><small>'+esc(it.sec.querySelector('.ch-num').textContent+' · '+it.sec.dataset.t)+'</small>'+esc(it.text.slice(0,210))+'</a>'});if(cur.length>50)html+='<p>Altri '+(cur.length-50)+' risultati: aggiungi parole alla ricerca.</p>';res.innerHTML=html;res.hidden=false;sel=-1}
+function go(i){var it=cur[i];if(!it)return;res.hidden=true;it.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});it.el.setAttribute('tabindex','-1');it.el.focus({preventScroll:true})}q.addEventListener('input',run);q.addEventListener('keydown',function(e){var n=res.querySelectorAll('a').length;if(e.key==='ArrowDown'&&n){e.preventDefault();sel=Math.min(n-1,sel+1)}else if(e.key==='ArrowUp'&&n){e.preventDefault();sel=Math.max(0,sel-1)}else if(e.key==='Enter'){e.preventDefault();go(sel<0?0:sel)}else if(e.key==='Escape'){q.value='';run();res.hidden=true}Array.prototype.forEach.call(res.querySelectorAll('a'),function(a,i){a.classList.toggle('on',i===sel)});var active=res.querySelector('a.on');if(active)active.scrollIntoView({block:'nearest'})});res.addEventListener('click',function(e){var a=e.target.closest('a');if(a){e.preventDefault();go(+a.dataset.i)}});document.addEventListener('click',function(e){if(!e.target.closest('.search'))res.hidden=true});document.addEventListener('keydown',function(e){var ae=document.activeElement;if(e.key==='/'&&ae!==q&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))){e.preventDefault();q.focus()}});clr.addEventListener('click',function(){q.value='';run();q.focus()});
+
+})();
+</script></body></html>
