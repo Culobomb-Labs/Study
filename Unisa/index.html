@@ -158,19 +158,33 @@ h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
 
 
 
-/* riprendi da dove eri */
-.resume-wrap{padding-block:0 22px}
-.resume{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:14px 18px;border:1px solid var(--line);
-  border-radius:10px;background:var(--surface);text-decoration:none;transition:border-color .2s,transform .2s var(--ua-ease)}
-.resume:hover{border-color:var(--c)}
+/* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
+.resume-wrap{padding-block:0 18px}
+.resume{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:16px 22px;
+  border:1px solid var(--line);border-radius:18px;text-decoration:none;
+  background:radial-gradient(420px 180px at 0 0,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--surface);
+  transition:transform .25s var(--ua-ease),border-color .25s,box-shadow .25s}
+.resume::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
+.resume:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));box-shadow:0 14px 34px -18px color-mix(in srgb,var(--c) 60%,transparent)}
 .resume:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.resume-dot{grid-row:1 / span 2;width:10px;height:10px;border-radius:50%;background:var(--c)}
+/* tessera con la lettera del tipo di documento, come quella dei documenti dei corsi (Q quaderno, P piano di studio, ? quiz) */
+.resume-dot{grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
+  font:700 14px/1 var(--f-display);color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
+.resume-dot::before{content:"Q"}
+.resume-dot[data-kind="Piano di studio"]::before{content:"P"}
+.resume-dot[data-kind="Quiz"]::before{content:"?"}
 .resume-k,.resume-t{grid-column:2}
 .resume-k{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.resume-t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.resume-t small{font-weight:400;color:var(--muted);margin-left:6px}
+.resume-t{font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.25;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resume-t small{font-family:var(--f-body);font-weight:400;font-size:14px;letter-spacing:0;color:var(--muted);margin-left:8px}
 .resume .arrow{grid-row:1 / span 2;grid-column:3}
 .resume:hover .arrow{transform:translateX(4px);color:var(--c)}
+@media (max-width:520px){
+  .resume{grid-template-columns:30px minmax(0,1fr) auto;gap:2px 12px;padding:14px 16px}
+  .resume-dot{width:30px;height:30px;border-radius:9px}
+  .resume-k{font-size:10.5px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resume-t{font-size:17px}
+}
 
 /* avanzamento */
 .prog{grid-column:1;display:block;height:3px;margin-top:8px;border-radius:2px;background:var(--line);overflow:hidden}
@@ -250,7 +264,7 @@ body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,va
 }
 .f-links a[href="news.html"] .f-dot{background:linear-gradient(135deg,var(--ua-g-bell1),var(--ua-g-bell2))}
 .f-links a[href="segnalazioni.html"] .f-dot{background:var(--ua-warn)}
-@media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before{transition:none}.state.wip::before{animation:none}}
+@media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before,.resume{transition:none}.state.wip::before{animation:none}}
 .hero .wrap{position:relative}
 .stats{grid-row:3 !important;align-self:start}
 .lede{align-self:start}
@@ -441,6 +455,7 @@ fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
   // ?riprendi=1: la pagina torna al paragrafo dove eri rimasto (vedi trackLast in assets/site.js)
   box.href = last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "?riprendi=1#" + last.i : "");
   box.style.setProperty("--c", `var(--ua-c-${found.c.color})`);
+  box.querySelector(".resume-dot").dataset.kind = found.d.kind || "";
   const t = document.getElementById("resume-t");
   t.textContent = found.d.name;
   if (last.t) { const s = document.createElement("small"); s.textContent = (last.n ? last.n + " · " : "") + last.t; t.append(s); }
