@@ -2,6 +2,14 @@
   "_come_si_usa": "Le notizie per documenti nuovi o aggiornati si creano da sole (per evitarlo scrivi [no news] nel messaggio del commit). Il modo comodo per scriverne una: Actions → Pubblica una news (un modulo da compilare). A mano: aggiungi la notizia IN CIMA alla lista news. Campi: id (unico, es. 2026-10-28-quiz), data (AAAA-MM-GG), titolo, testo (facoltativo), corso (facoltativo: IS, MP, PD), link (facoltativo: percorso di una pagina del sito o indirizzo web), immagine (facoltativa: news/img/nome.jpg, dopo averla caricata in Unisa/news/img). Chi ha le notifiche attive la riceve subito dopo la pubblicazione.",
   "news": [
     {
+      "id": "auto-2026-11-12-1c049477",
+      "data": "2026-11-12",
+      "titolo": "Aggiornati: Quaderno IS, Piano di studio IS e Quiz IS",
+      "testo": "Quaderno IS: Rivisti i capitoli 00 Il Java minimo, 09 System design, 10 Riuso: ereditarietà e delega, 11 Design pattern e altri 8. Piano di studio IS: IS: System design aggiornato con la dispensa L15 e spostato al cap. 09. Quiz IS: 63 domande nuove (cap…",
+      "corso": "IS",
+      "auto": true
+    },
+    {
       "id": "auto-2026-11-12-83c404a5",
       "data": "2026-11-12",
       "titolo": "Nuovo: Quaderno POO e Piano di studio POO",
