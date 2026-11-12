@@ -381,6 +381,10 @@ tr.ua-spot > td,tr.ua-spot > th{background:var(--ua-mark) !important;transition:
 tr.ua-spot.ua-spot-fade{background:transparent !important;box-shadow:none}
 tr.ua-spot.ua-spot-fade > td,tr.ua-spot.ua-spot-fade > th{background:color-mix(in srgb,var(--ua-mark) 45%,transparent) !important}
 @media (prefers-reduced-motion:reduce){.ua-spot,tr.ua-spot > td{transition:none}}
+/* capitolo di un quiz aperto dalla ricerca: bordo colorato che pulsa un attimo */
+.chap.ua-chap-spot{outline:2px solid var(--c,var(--ua-ink));outline-offset:3px;animation:ua-chap-spot 1.3s ease 2}
+@keyframes ua-chap-spot{50%{outline-offset:7px}}
+@media (prefers-reduced-motion:reduce){.chap.ua-chap-spot{animation:none}}
 
 /* ---------- pannello del quaderno sopra il quiz ---------- */
 html.ua-qs-open,html.ua-qs-open body{overflow:hidden}

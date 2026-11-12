@@ -93,6 +93,27 @@ def sections(path, page_html, doc_name):
     return out
 
 
+QUIZ_CH = re.compile(r'\{\s*"?id"?\s*:\s*"([^"]+)"\s*,\s*"?n"?\s*:\s*"([^"]*)"\s*,\s*"?t"?\s*:\s*"((?:[^"\\]|\\.)*)"')
+QUIZ_Q = re.compile(r'\{\s*"?c"?\s*:\s*"([^"]+)"\s*,\s*"?q"?\s*:\s*"((?:[^"\\]|\\.)*)"')
+
+
+def quiz_sections(path, page_html):
+    """Domande di un quiz per la ricerca, una voce per capitolo: solo il testo delle domande, mai le risposte.
+    Le prende dalle liste CHAPTERS e Q dello script della pagina (l'id del capitolo diventa l'ancora del link)."""
+    try:
+        a = page_html.index("const CHAPTERS")
+        b = page_html.index("const Q =", a)
+        e = page_html.index("\n];", b)
+    except ValueError:
+        return []
+    unq = lambda x: json.loads('"' + x + '"')
+    qs = {}
+    for c, q in QUIZ_Q.findall(page_html[b:e]):
+        qs.setdefault(c, []).append(unq(q))
+    return [{"p": path, "i": cid, "t": unq(t), "n": n, "x": " · ".join(qs[cid])}
+            for cid, n, t in QUIZ_CH.findall(page_html[a:b]) if qs.get(cid)]
+
+
 def extract_images(page_html, page_dir):
     """Sposta le immagini incorporate in file a parte (cartella _img accanto alla pagina)."""
     count = 0
@@ -191,6 +212,7 @@ def main():
     doc_names = {d["path"]: d["name"] for c in courses for d in c["docs"]}
     doc_course = {d["path"]: c for c in courses for d in c["docs"]}
     doc_progress = {d["path"]: d.get("progressKey") for c in courses for d in c["docs"]}
+    doc_kind = {d["path"]: d.get("kind") for c in courses for d in c["docs"]}
 
     updates, index_secs, progress = {}, [], {}
     for root_dir, _, files in os.walk(OUT):
@@ -211,6 +233,8 @@ def main():
                 if doc_progress.get(rel):
                     ids = [x["i"] for x in secs if x["i"]]
                     progress[rel] = {"ids": ids} if ids else {"total": plan_total(page)}
+                if doc_kind.get(rel) == "Quiz":
+                    index_secs += quiz_sections(rel, page)
             root = "../" * rel.count("/")
             c = doc_course.get(rel)
             title = doc_names.get(rel) or (re.search(r"<title>(.*?)</title>", page, re.S | re.I) or [None, "Appunti Unisa"])[1]

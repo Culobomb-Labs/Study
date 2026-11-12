@@ -371,7 +371,7 @@
         docs.push({ href: url(d.path), path: d.path, color: c.color, title: esc(d.name), tag: c.code, text: esc(c.name + " · " + d.kind + (c.resto ? " · Resto " + c.resto : "")) });
     }
 
-    const secs = [];
+    const secs = [], quiz = [];
     if (terms.length && index) {
       for (const s of index.secs) {
         if (!terms.every(t => s._t.includes(t) || s._x.includes(t))) continue;
@@ -383,11 +383,12 @@
           score += n;
         }
         const info = courseOf(s.p);
-        secs.push({ score, href: url(s.p, s.i), path: s.p, hash: s.i, color: info ? info.c.color : "",
+        (info && info.d.kind === "Quiz" && s.i ? quiz : secs).push({ score, href: url(s.p, s.i), path: s.p, hash: s.i, color: info ? info.c.color : "",
           title: (s.n ? `<span style="color:var(--ua-muted)">${esc(s.n)}</span>&nbsp; ` : "") + esc(s.t),
           tag: info ? info.c.code : "", text: snippet(s.x, s._x, terms) });
       }
       secs.sort((a, b) => b.score - a.score);
+      quiz.sort((a, b) => b.score - a.score);
     }
 
     // news e avvisi (già scaricati per il pallino rosso): titolo e testo, si aprono sulla notizia nella pagina News
@@ -404,6 +405,7 @@
 
     add(terms.length ? "Documenti" : "Tutti i documenti", docs.slice(0, 8));
     add("Nei capitoli", secs.slice(0, 40));
+    add("Nei quiz", quiz.slice(0, 8)); // capitoli dei quiz con domande che contengono la parola (le risposte non sono indicizzate)
     add("News", hits.slice(0, 6));
     if (!items.length) {
       html = terms.length && !index && loading ? `<p class="ua-empty">Carico gli appunti…</p>`
@@ -1436,6 +1438,21 @@
     return best && best.v > 1.5 ? best.b : null;
   }
 
+  /* pagina di un quiz aperta dalla ricerca (Quiz.html#capitolo): evidenzia il capitolo da fare nell'elenco */
+  function quizChapter() {
+    if (!IS_QUIZ) return;
+    const show = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      const b = id && [...document.querySelectorAll(".chap[data-c]")].find(x => x.dataset.c === id);
+      if (!b) return;
+      b.scrollIntoView({ block: "center", behavior: "smooth" });
+      b.classList.add("ua-chap-spot");
+      setTimeout(() => b.classList.remove("ua-chap-spot"), 2600);
+    };
+    show();
+    window.addEventListener("hashchange", show);
+  }
+
   function quizTarget() {
     const qs = new URLSearchParams(location.search);
     const q = qs.get("trova");
@@ -1568,6 +1585,7 @@
   checkImport();
   trackLast();
   quizTarget();
+  quizChapter();
   registerSW();
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal.hidden ? openSearch() : closeSearch(); return; }
