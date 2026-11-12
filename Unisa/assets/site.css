@@ -139,6 +139,11 @@ a.ua-ni:hover{background:var(--ua-soft)}
   .ua-ni{padding:12px 10px}
 }
 @keyframes ua-sheet{from{transform:translateY(100%)}to{transform:none}}
+/* pannello aperto su telefono: il sito dietro resta fermo, anche se il pannello è breve o si tocca lo sfondo */
+@media (max-width:640px){
+  html.ua-sheet-open,html.ua-sheet-open body{overflow:hidden;overscroll-behavior:none}
+  .ua-ap .ua-np-veil{touch-action:none}
+}
 @media (prefers-reduced-motion:reduce){.ua-np-box,.ua-switch,.ua-switch i{animation:none;transition:none}}
 
 /* ---------- copyright in fondo alla pagina ---------- */

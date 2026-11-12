@@ -938,12 +938,14 @@
     if (pal && !pal.hidden) closeSearch();
     apTrigger = trigger || document.querySelector(".ua-open-sync");
     renderAccount(); ap.hidden = false; placeBox(ap.querySelector(".ua-np-box"), apTrigger);
+    document.documentElement.classList.add("ua-sheet-open"); // telefono: la pagina dietro il pannello non scorre (vedi site.css)
     document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "true"));
     ap.querySelector(".ua-np-box").focus({ preventScroll: true });
   }
   function closeAccount(noFocus) {
     if (!ap || ap.hidden) return;
     ap.hidden = true;
+    document.documentElement.classList.remove("ua-sheet-open");
     document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "false"));
     if (!noFocus && apTrigger && document.contains(apTrigger)) apTrigger.focus({ preventScroll: true });
   }
@@ -1234,33 +1236,38 @@
   const emptyNews = `<div class="ua-ni-empty">${ICON.bell}<p><b>Qui arriveranno le notizie.</b> Nuovi appunti, quiz, cambi di programma e avvisi sui corsi.</p></div>`;
 
   /* tendine (Profilo) */
-  // su telefono: trascina in giù la maniglia (o l'intestazione) per chiudere. Pointer events + touch-action:none (vedi site.css),
-  // se no il browser prende il gesto per scorrere il contenuto e il trascinamento non parte.
+  // su telefono: il pannello si chiude trascinandolo in giù da maniglia/intestazione, o da qualsiasi punto quando il contenuto è in cima
+  // (se è scorso più in basso, il dito scorre il contenuto). touchmove non passivo: serve preventDefault, se no il browser prende il gesto.
   function sheetSwipe(box, close) {
-    let y0 = null, id = null, t0 = 0, dy = 0;
+    let y0 = null, t0 = 0, dy = 0, drag = false, top = false;
     const reset = () => { box.style.transition = ""; box.style.transform = ""; };
-    box.addEventListener("pointerdown", e => {
-      if (!phone() || e.button > 0 || !e.target.closest(".ua-np-grip,.ua-np-head") || e.target.closest(".ua-np-close")) return;
-      y0 = e.clientY; id = e.pointerId; t0 = Date.now(); dy = 0;
-      try { box.setPointerCapture(id); } catch (err) {}
-      box.style.transition = "none";
-    });
-    box.addEventListener("pointermove", e => {
-      if (y0 === null || e.pointerId !== id) return;
-      dy = Math.max(0, e.clientY - y0);
-      box.style.transform = `translateY(${dy}px)`;
-    });
+    box.addEventListener("touchstart", e => {
+      if (!phone() || e.touches.length !== 1 || e.target.closest(".ua-np-close")) { y0 = null; return; }
+      y0 = e.touches[0].clientY; t0 = Date.now(); dy = 0; drag = false;
+      top = !!e.target.closest(".ua-np-grip,.ua-np-head") || box.scrollTop <= 0; // da qui si può trascinare il pannello
+    }, { passive: true });
+    box.addEventListener("touchmove", e => {
+      if (y0 === null) return;
+      dy = e.touches[0].clientY - y0;
+      if (!drag) {
+        if (!(top && dy > 6 && box.scrollTop <= 0)) return; // verso l'alto o contenuto scorso: scorre il contenuto
+        drag = true; box.style.transition = "none";
+      }
+      if (e.cancelable) e.preventDefault();
+      box.style.transform = `translateY(${Math.max(0, dy)}px)`;
+    }, { passive: false });
     const end = e => {
-      if (y0 === null || e.pointerId !== id) return;
-      const fast = dy / Math.max(1, Date.now() - t0) > 0.6; // trascinata veloce: chiude anche se breve
-      y0 = null;
-      if (e.type === "pointerup" && (dy > 90 || (fast && dy > 30))) {
+      if (y0 === null) return;
+      const was = drag, d = Math.max(0, dy), fast = d / Math.max(1, Date.now() - t0) > 0.6; // trascinata veloce: chiude anche se breve
+      y0 = null; drag = false;
+      if (!was) return;
+      if (e.type === "touchend" && (d > 90 || (fast && d > 30))) {
         box.style.transition = "transform .18s ease-out"; box.style.transform = "translateY(100%)";
         setTimeout(() => { close(); reset(); }, 170);
       } else reset();
     };
-    box.addEventListener("pointerup", end);
-    box.addEventListener("pointercancel", end);
+    box.addEventListener("touchend", end);
+    box.addEventListener("touchcancel", end);
   }
   // su PC: la tendina si apre sotto (o sopra) il pulsante che l'ha aperta
   function placeBox(box, trigger) {
