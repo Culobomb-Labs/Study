@@ -23,7 +23,6 @@
   const ROOT = (me && me.dataset.root) || "./";
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
-  const IS_REPORTS = PAGE === "segnalazioni.html";
   const CORSI = window.CORSI || [];
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat([{ code: "AL", name: "Accompagnamento al lavoro", color: "al", docs: [] }].filter(x => !CORSI.some(c => c.code === x.code)));
@@ -142,7 +141,8 @@
 
   /* ---------------- barra in basso (schede, stile iOS) ----------------
      In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Indice (telefono, nei quaderni),
-     Cerca, News (la pagina delle notizie) e Segnala, con la scheda della pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
+     Cerca, News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto l'accesso), con la scheda della
+     pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
      a parte, sopra la barra, che compare dopo un po' di scorrimento. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
@@ -155,7 +155,7 @@
       ${idx ? tab("button", "ua-dock-idx", 'type="button"', ICON.book, "Indice") : ""}
       ${tab("button", "ua-open-search", 'type="button"', ICON.search, "Cerca")}
       ${tab("a", "ua-dock-news" + (IS_NEWS_PAGE ? " is-on" : ""), `href="${ROOT}news.html"` + (IS_NEWS_PAGE ? ` ${on}` : ""), ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
-      ${tab("a", "ua-dock-report" + (IS_REPORTS ? " is-on" : ""), `href="${ROOT}segnalazioni.html"` + (IS_REPORTS ? ` ${on}` : ""), ICON.bug, "Segnala")}
+      ${tab("button", "ua-open-sync", 'type="button" aria-haspopup="dialog"', ICON.user, "Profilo")}
     </div>
     <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
@@ -270,10 +270,11 @@
     };
     bar.addEventListener("pointerup", e => end(e, false));
     bar.addEventListener("pointercancel", e => end(e, true));
-    // il clic "vero" del dito arriva subito dopo il rilascio: lo fermiamo, la scheda si apre a fine animazione.
-    // Solo per un attimo dopo il gesto: Invio e spazio da tastiera restano normali.
-    bar.addEventListener("click", e => {
-      if (e.isTrusted && Date.now() < swallowUntil) { e.preventDefault(); e.stopImmediatePropagation(); }
+    // il clic "vero" del dito arriva subito dopo il rilascio: lo fermiamo, la scheda l'abbiamo già aperta noi.
+    // Lo cerchiamo su tutta la pagina: se la scheda apre una tendina, il clic finirebbe sul velo e la richiuderebbe.
+    // Solo il primo e solo per un attimo dopo il gesto: Invio e spazio da tastiera restano normali.
+    window.addEventListener("click", e => {
+      if (e.isTrusted && Date.now() < swallowUntil) { swallowUntil = 0; e.preventDefault(); e.stopImmediatePropagation(); }
     }, true);
     new ResizeObserver(rest).observe(bar);
     rest();
@@ -863,12 +864,13 @@
     document.querySelectorAll(".ua-open-sync").forEach(b => {
       if (cloudUser) {
         const who = cloudUser.displayName || cloudUser.email || "account Google";
-        b.innerHTML = avatarOf(cloudUser, true);
-        installAvatarFallbacks(b);
+        const ic = b.querySelector(".ua-tab-ic") || b; // nella barra in basso la foto prende il posto dell'icona, la scritta resta
+        ic.innerHTML = avatarOf(cloudUser, true);
+        installAvatarFallbacks(ic);
         b.setAttribute("aria-label", `I tuoi progressi: accesso fatto come ${who}, spunte sincronizzate`);
         b.title = `Accesso fatto come ${who}`;
       } else {
-        b.innerHTML = ICON.user;
+        (b.querySelector(".ua-tab-ic") || b).innerHTML = ICON.user;
         b.setAttribute("aria-label", "Accedi: salva i tuoi progressi su tutti i dispositivi");
         b.title = "Accedi per salvare i progressi";
       }
