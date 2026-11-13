@@ -29,25 +29,78 @@ EXT = {"png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "webp": "webp", 
 THEME_BOOT = '<script>try{var d=document.documentElement,t=localStorage.getItem("ua-theme"),g=localStorage.getItem("ua-glass");if(t&&t!="auto")d.setAttribute("data-theme",t);if(g)d.setAttribute("data-glass",g)}catch(e){}</script>'
 
 
+# ---------------------------------------------------------------------------
+# Versione del sito: Semantic Versioning 2.0.0 (MAJOR.MINOR.PATCH, senza pre-release
+# e build metadata). Ogni commit di main (le pull request contano come uno) vale:
+#   major -> X+1.0.0   minor -> X.Y+1.0   patch -> X.Y.Z+1   nessuna -> invariata
+# Il tipo dei commit passati è scritto in .github/versioni.txt; per i nuovi si usa
+# l'etichetta nel messaggio ([major], [minor], [patch], [no version]).
+# ---------------------------------------------------------------------------
+VERSION_HISTORY = ".github/versioni.txt"
+VERSION_TAG = re.compile(r"\[(major|minor|patch|no version)\]", re.I)
+VERSION_RANK = {"no version": 0, "patch": 1, "minor": 2, "major": 3}
+NEWS_FILES = re.compile(r"^Unisa/news(?:\.json$|/)")
+
+
+def git(*args):
+    return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
+
+
+def version_history():
+    """Legge lo storico: {commit: "major" | "minor" | "patch" | None}."""
+    history = {}
+    if not os.path.exists(VERSION_HISTORY):
+        return history
+    with open(VERSION_HISTORY, encoding="utf-8") as f:
+        for line in f:
+            fields = line.split("#", 1)[0].split()
+            if len(fields) >= 2:
+                history[fields[0]] = None if fields[1] == "-" else fields[1].lower()
+    return history
+
+
+def commit_kind(sha, parents, message, files):
+    """Tipo di un commit non presente nello storico."""
+    if message.startswith("News automatica: "):
+        return None  # la news automatica non è una modifica del sito
+    messages = message
+    if len(parents) > 1:  # pull request: contano anche i messaggi dei suoi commit
+        messages += git("log", "--format=%B", f"{parents[0]}..{parents[1]}")
+    tags = {tag.lower() for tag in VERSION_TAG.findall(messages)}
+    if tags:
+        best = max(tags, key=VERSION_RANK.get)
+        return None if best == "no version" else best
+    site_files = [name for name in files if name.startswith(SRC + "/")]
+    if not site_files or all(NEWS_FILES.match(name) for name in site_files):
+        return None  # solo news o file fuori dal sito
+    return "patch"
+
+
 def site_version():
-    """Calcola una versione stabile a partire dal commit che introduce il marcatore."""
-    marker = ".github/site-version-start"
-    output = subprocess.run(
-        ["git", "log", "--first-parent", "--diff-merges=first-parent",
-         "--diff-filter=A", "--no-patch", "--format=%H", "--", marker],
-        capture_output=True, text=True, check=True,
-    ).stdout.splitlines()
-    # Accetta solo identificativi di commit, anche con configurazioni Git personalizzate.
-    origin = [line for line in output if re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", line)]
-    if not origin:
-        raise RuntimeError("Impossibile trovare il commit iniziale del versionamento: serve la cronologia Git completa.")
-    commits = subprocess.run(
-        ["git", "log", "--first-parent", "--format=%s", origin[-1] + "..HEAD"],
-        capture_output=True, text=True, check=True,
-    ).stdout.splitlines()
-    # La news automatica non rappresenta una modifica indipendente del sito.
-    count = sum(1 for message in commits if not message.startswith("News automatica: "))
-    return f"1.{count // 10}.{count % 10}"
+    """Calcola la versione SemVer percorrendo tutta la cronologia di main."""
+    if git("rev-parse", "--is-shallow-repository").strip() == "true":
+        raise RuntimeError("Per calcolare la versione serve la cronologia Git completa (fetch-depth: 0).")
+    history = version_history()
+    log = git("log", "--first-parent", "--reverse", "--diff-merges=first-parent",
+              "--name-only", "--format=%x1e%H%x1f%P%x1f%B%x1f")
+    version = None
+    for record in log.split("\x1e")[1:]:
+        sha, parents, message, files = record.split("\x1f")
+        if sha in history:
+            kind = history[sha]
+        else:
+            kind = commit_kind(sha, parents.split(), message.strip(), [f for f in files.split("\n") if f])
+        if kind is None:
+            continue
+        if version is None:
+            version = [0, 1, 0]  # primo commit: inizio dello sviluppo (SemVer consiglia 0.1.0)
+        elif kind == "major":
+            version = [version[0] + 1, 0, 0]
+        elif kind == "minor":
+            version = [version[0], version[1] + 1, 0]
+        else:
+            version[2] += 1
+    return ".".join(map(str, version or [0, 1, 0]))
 
 
 def last_commit_date(path):

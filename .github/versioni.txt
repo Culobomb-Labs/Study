@@ -1,0 +1,217 @@
+# Storico delle versioni del sito (Semantic Versioning 2.0.0, senza pre-release e build metadata).
+#
+# Una riga per ogni commit di main (prima linea: le pull request contano come un solo commit).
+# Formato: <commit> <tipo>   # <versione risultante> · <messaggio>
+#   major  modifica incompatibile o sito rifatto       -> X+1.0.0
+#   minor  nuova funzione, nuovo corso, quaderno o quiz -> X.Y+1.0
+#   patch  correzione, ritocco grafico o di contenuto   -> X.Y.Z+1
+#   -      non cambia il sito (README, news, file di servizio): nessuna versione
+# Le news automatiche ("News automatica: ...") sono escluse e non compaiono qui.
+# I commit successivi a questo elenco si classificano con [major], [minor], [patch] o [no version]
+# nel messaggio; senza etichetta valgono patch (oppure nessuna versione se toccano solo le news
+# o file fuori da Unisa/). La versione tra i commenti è indicativa: quella vera la calcola build_site.py.
+
+0a2d1ca4255ee52c52b2b4274b0750ec77e45c42 minor  # 0.1.0 · Initial commit
+c8659966c17bea416fcda36413a780409b33391a -      # — · Add main directory description for university projects
+4ee02140b0700211744f934f0a7b9fb83c1b87bd -      # — · Add README file with university materials description
+4b91fc0a4d395cbd99aee0081cb71a0879ab7ace -      # — · Update project description in README.md
+eb7b7e8cb47177ada18e1151fbd916959ac72b6d -      # — · Fix typo in README description
+8a3f20a9e17b09f13f7a12ba2865c78b69f27405 -      # — · Add README.md for Programmazione Distribuita course
+d87646e71b5373e927a77cd02824f2fb6fab32b8 -      # — · Add README.md for Software Engineering notes
+b68c2752e112494c281c4df16bfbd5a1229188c8 minor  # 0.2.0 · Add files via upload
+bc5fe5fd29be4801c3a6b7c37efbb78f650fe481 minor  # 0.3.0 · Add files via upload
+19781a72b7424543607cbb140206c00fe932ca37 -      # — · Add README.md with study material notes
+77d1025c744a9870ba8f55d1bf26cb55f967c008 minor  # 0.4.0 · Add files via upload
+8ef99bedd4e999a93314c273b30da2cfa229eee8 minor  # 0.5.0 · Add course notes for Mobile Programming 2026/27
+3869c05e88c356c773a7dacac0263b2c9aead42a patch  # 0.5.1 · Add files via upload
+69ee5ee82ba31a4d99fb87f79aaee54b382f32a3 minor  # 0.6.0 · Add files via upload
+e7dc51b5ae8e517a2a44206fb1af2022f86dcd15 major  # 1.0.0 · Merge pull request #1 from Culobomb-Labs/sito-unisa
+1d447086cf101c4f8725840df19aaf29b9a1b3f6 minor  # 1.1.0 · Merge pull request #2 from Culobomb-Labs/home-nuova
+2e15a4d0a9ab55990389ba4cbef0ce548409831d minor  # 1.2.0 · Merge pull request #3 from Culobomb-Labs/js-sito
+a57b16e975648ec6ec80aa947af48db251c6ad42 patch  # 1.2.1 · Merge pull request #4 from Culobomb-Labs/fix-android-mobile
+9d10cf5d85926754128e19cae223c431c244b8f3 minor  # 1.3.0 · Merge pull request #5 from Culobomb-Labs/stato-corsi
+83c33797d2182dc19c3b40a18444cab33baef57e patch  # 1.3.1 · Merge pull request #6 from Culobomb-Labs/home-senza-ricerca
+226e9df613334249febc3aa2c4593c8e6be24af1 minor  # 1.4.0 · Merge pull request #7 from Culobomb-Labs/migliorie
+a138f71dc17e5fe0a500813971356dfcad609cd6 patch  # 1.4.1 · Ricerca: tolto il bordo di focus attorno al campo, l'icona si accende al posto suo
+9cd8b92698fef99a4b3534b27ac7ab83bcfb1f36 minor  # 1.5.0 · Quiz IS: 328 domande (almeno 32 per capitolo), 10 a giro pescate in modo dinamico
+cdd66ec328aa1f1eb4d27fd1fb6a00c30c490789 patch  # 1.5.1 · Copyright in fondo a tutte le pagine
+d5ff0cf8f8cf20c6a6487f4632434338d3f30d3f patch  # 1.5.2 · Ingegneria del Software e Programmazione Distribuita: indicato il canale Resto 1
+e8a0cbc5b328ed0228e1a6e955f2b1d60922a3a7 minor  # 1.6.0 · Sezione News in home, campanello nella barra e notifiche
+f5449d1483387c0f366210dbf4071e1eba138565 patch  # 1.6.1 · Anteprima dei link generica, senza l'elenco dei corsi
+8da263300a4c70c6ee0d64d71f53dcfd46e56ec4 patch  # 1.6.2 · Anteprima dei link: simbolo del sito e frase generica
+55fc71ddee7d6aab035a63bbdb8676cdfd0fd491 minor  # 1.7.0 · News in una tendina dal campanello, con pagina news.html per tutte le notizie
+36dd1e7a7466394995b0433418f9ae4ecc3c1393 patch  # 1.7.1 · Nuova icona del sito: quadrato chiaro con tre righe, senza i colori dei corsi
+8e2ec56d034a1b390cb258d48f7368ad6b8c5234 minor  # 1.8.0 · Firebase: accesso con Google, spunte sincronizzate e notifiche istantanee delle news
+25e63c1e1e20acff0f5c89d593c5841acd9c9f29 patch  # 1.8.1 · Barra: pulsante dei progressi in fondo a destra, dopo il tema
+645e84dd66f772677761d62cbafdda11b1513bae minor  # 1.9.0 · News automatica quando si carica o si aggiorna un documento dei corsi
+d07b813a6528a4c4be4ed4880c7ff089278b255d minor  # 1.10.0 · Merge pull request #8 from Culobomb-Labs/corso-so
+8172ee3549fd2f81e96f8e7ba3f52cd03ef8ac8b -      # — · Add README.md with operating systems notes
+c34a4aca2dceef382e01e39258a0ab1393049be7 minor  # 1.11.0 · Add files via upload
+b56e3f6c4808ce884f882521b00401be5b97db7e patch  # 1.11.1 · Update course status and add documentation
+bf75564867ddbcb4575ad998d5d3f24621e343bf patch  # 1.11.2 · Update resource references in HTML document
+b185a51fc2ea01d1b3e8a9e0d70aa3c8e2817011 minor  # 1.12.0 · Add files via upload
+abfa942acf2a54861cfe14f8a3530e8c81b22650 patch  # 1.12.1 · Add quiz document to corsi.js
+913d138933c29c7bbd6cdea99c5f386eb8015141 -      # — · Update description of university study material
+16411b4c2016aed9017ae7bffd97e8d34a150bd8 patch  # 1.12.2 · Update corsi.js
+dc3f19122b4803e09299c19d1452097e4c836399 patch  # 1.12.3 · Fix typo in comment about color usage
+35731b1f829fb7911a5d06c7016760390b5dbca6 patch  # 1.12.4 · Fix syntax error in corsi.js
+b5a52b1c5ee7c02568782066a7d4b35ebc090ad9 patch  # 1.12.5 · Update Quaderno di Ingegneria del Software.html
+366f345097991e125c94fef987f15a8465273a06 patch  # 1.12.6 · Update HTML structure and styles for the document
+c0f6805191e47e6d6fc967baa26a45e7bd5498b8 patch  # 1.12.7 · Fix comment formatting in Quiz SO.html
+28e2cd60f236805490de96e787179d46cf50532d minor  # 1.13.0 · Add avatar handling and fallback installation
+ac3f1749776ad5346f35afbd04557e1eb0b05df6 patch  # 1.13.1 · Refactor .ua-avatar styles for better layout
+9eb311c13f956882c5b7bb2f382e55dc33d28868 patch  # 1.13.2 · Refactor photo retrieval logic in site.js
+741f9c2531944bfb70f94155deb8f29702e2c08a patch  # 1.13.3 · Fix CSS media query syntax for ua-toast
+7654080227b7447dc4db5ff4489f4601bb2c4665 patch  # 1.13.4 · Fix CSS media query syntax for ua-toast
+beb1617d67338e82e3b42914ac71836a94e73f9b minor  # 1.14.0 · Merge pull request #9 from Denis7Kom/main
+b66ee1a488f52c37edec1d8a3a37a776b53cd459 patch  # 1.14.1 · Merge pull request #10 from Denis7Kom/main
+415804364a451f1c79dd440360398fdd38e9e2ae patch  # 1.14.2 · Merge pull request #11 from Denis7Kom/main
+4b95202fc1243a3bc1024c530cfa87c25bc329d3 patch  # 1.14.3 · Merge pull request #12 from Denis7Kom/main
+224dea26e80fe8f4da44ed722dd61374e8987023 minor  # 1.15.0 · Merge pull request #13 from Denis7Kom/main
+973e520d6beff0e6833618b24b8ce2efde8a86a9 patch  # 1.15.1 · Merge pull request #14 from Denis7Kom/main
+b2a9ab765adad9af9c91749db99e1bdf51d8ec30 patch  # 1.15.2 · Merge pull request #15 from Denis7Kom/main
+4dd034d7eca4122c2e03032824f4ace6e0a322ce patch  # 1.15.3 · Merge pull request #16 from Denis7Kom/main
+2baec372d1b75f315ce5e8237eee543bb84bfe04 patch  # 1.15.4 · Merge pull request #17 from Denis7Kom/main
+44f5cef0cee6182a6ccbf3cb7c654d3a52892fd5 patch  # 1.15.5 · Enhance requirements elicitation and analysis content
+38c661a150ce924e1ae96a468eb7c975ea3d4c16 patch  # 1.15.6 · Update course status from 'in-aggiornamento' to 'aggiornato'
+c366435dfb3b24ab071237753b9d94c68f73d07c patch  # 1.15.7 · Merge pull request #18 from Denis7Kom/main
+2cab3a1393430dcf84a89cb45f0fb90e8842a058 patch  # 1.15.8 · Enhance emergency report use case documentation
+83eaf73827a4ed9d3e1ace3f33784707ca3cc143 patch  # 1.15.9 · Add section on responsibilities and contracts
+173b8755b54c8f74677fd6f0e03608c0b14f2d02 minor  # 1.16.0 · Merge pull request #19 from Denis7Kom/main
+040ab5c776c17a0b5fc4dd7157737c35badd8876 patch  # 1.16.1 · Merge pull request #20 from Denis7Kom/main
+d72217f79d97eded0e08418a069318543310bcf8 patch  # 1.16.2 · Add files via upload
+8ed3744f1ab6c86566943954b92302c033d68544 minor  # 1.17.0 · Enhance index.html with CDI and messaging content
+5de936c288159b3e8f81105586ec1cd7cfbe1767 patch  # 1.17.1 · Update course status from 'in-aggiornamento' to 'aggiornato'
+8bf4ab674c6f47fc6cd980006b43a6cf810a1594 minor  # 1.18.0 · Merge pull request #21 from Denis7Kom/main
+f0f9b9ab56aa23723f3f07f35d934b771f192054 patch  # 1.18.1 · Merge pull request #22 from Denis7Kom/main
+f72b868a43367b0a9957c722c283de6f6425b2b5 patch  # 1.18.2 · Remove document entry from corsi.js
+4a15b96531467af7f32bae118c1400ebd51bf17c minor  # 1.19.0 · Quaderno IS: aggiunta lezione Class e sequence diagram
+1dfa1134c94d66451ccaeb04f549ed7a798f5083 minor  # 1.20.0 · Quiz IS su tutti i capitoli (00–17) con la numerazione del quaderno
+025141f09009297661f91ef08a5d78150bf3009c minor  # 1.21.0 · IS: pagina Prova intercorso con piano personalizzato; quiz senza cap. 00 e con simulazione intercorso
+ba96986039dca73008d96931f156ba98ac49828f patch  # 1.21.1 · Quiz IS e SO: torna all'elenco dei quiz senza passare dalla home; Prova intercorso: schede di navigazione
+a2df3ff74e6e47f5c87c81f93fc9710dcd3a16c1 patch  # 1.21.2 · Prova intercorso: messaggio sul tempo più chiaro (ore totali e giorno di ripasso)
+6c167e89ec9002127e176d7a2e4a3cfd0c71d4e0 patch  # 1.21.3 · Segnalazioni: nuovo pulsante con icona, pagina ridisegnata, descrizione max 550 caratteri
+e40b4bed8fe45fc1e74234cc1d9a89c2a69a726a -      # — · firestore.rules: allineate alle regole pubblicate su Firebase, con descrizione max 550
+6027ea4515d8c3783d73e082e8be31a24c9a0d01 minor  # 1.22.0 · Segnalazioni: contatto per la risposta con canale preferito e secondo canale facoltativo
+e263db75b7b5e241edad399b7d9ca519f9f40f69 minor  # 1.23.0 · Segnalazioni: barra delle segnalazioni di oggi e conto alla rovescia al posto della nota
+27e89b2c9df27c8f6e58814e16b746b8b80c4178 patch  # 1.23.1 · Segnalazioni: conferma di invio verde con spunta
+aa6e1435734074cd7427831906ebcc0291f42796 patch  # 1.23.2 · Segnalazioni: colore rosso al posto dell'arancio-rosso (pagina e pulsante)
+88393fbde62084269a9c65a4fc288e727de006b9 patch  # 1.23.3 · Segnalazioni: rosso più scuro nel tema scuro, testo leggibile
+dbbf2b2bcc6618c11bac88b7f9db367efa777a46 patch  # 1.23.4 · Segnalazioni: stato con pulsanti colorati (vista amministratore), conferma senza punto
+59998bf5ebb8f5a46cd448d76bd910dba3850a59 patch  # 1.23.5 · Segnalazioni: "Email Google" usa l'email dell'account con cui si è fatto l'accesso
+d5d11da7206b218084272e46f15664a60302502d patch  # 1.23.6 · Segnalazioni: limite di 5 con attesa di 24 ore dall'ultima invece che a mezzanotte
+cbc4f2edb5c3c70952ac800dc34ff09821210c43 patch  # 1.23.7 · Segnalazioni: orario di reset accanto al conto alla rovescia
+23cd1dac06dfbb3229780e82113c93a47140b399 minor  # 1.24.0 · IS: la pagina diventa "Piano di studio" con scelta della prova (prima, seconda, completa)
+e5deff693a22551a0d1a93d30b737bf0e708eaca minor  # 1.25.0 · Piano di studio anche per Mobile Programming, Programmazione Distribuita e Sistemi Operativi (esame completo)
+d0f1df520eef060c2c1ec4832c9a18547ac77259 patch  # 1.25.1 · Quiz SO: tolti i capitoli 01 e 02 introduttivi, numerazione del quaderno (03–15)
+b827c53fcb424274796bc8c712d137a4ed8cc902 minor  # 1.26.0 · Quiz MP: 352 domande sui capitoli 01–21 del quaderno di Android, collegato in home e nel piano di studio
+4c44112cd1c08f9c7abc0cdc7f305a2f596b92d3 minor  # 1.27.0 · Quiz SO: da 45 a 226 domande (soprattutto aperte, con esercizi; alcune a risposta multipla), 10 a giro
+026391787d55fe321962655662db40afbcc6f546 patch  # 1.27.1 · Scheda "I tuoi progressi" come tendina, uguale a quella delle News [no news]
+b655605f7ad7c02ad3ae71f72ea6570b6d20c3a0 patch  # 1.27.2 · Sposta le spunte: scheda espandibile nella tendina e QR funzionante [no news]
+5260bf4c5bee79e24224530a23387c196ef316ca minor  # 1.28.0 · Home: aggiunto il link "3° anno Drive Coscienze" sotto UNI Files e nuovo design delle cartelle Drive
+58fb02972214f6e6384f7ba36f8c9d8b21f04501 patch  # 1.28.1 · Home: sottotitoli più chiari per le cartelle Drive [no news]
+ef7932a4baafcb7c9e8be098863f6a0e5874bd7e patch  # 1.28.2 · Home: sottotitolo più corto per Drive Coscienze [no news]
+f0e4e8c45bd5540070dc8dca5c255d3cd5d19c4a patch  # 1.28.3 · Home: sottotitoli delle cartelle Drive riscritti [no news]
+37f7002bc54bb42028dcc11878bd5be528946029 patch  # 1.28.4 · Home: nuovo design del titolo e dei contatori [no news]
+27ae122bc8f888a2cab39aebf157d488cd518208 patch  # 1.28.5 · Home: più spazio tra le righe del titolo [no news]
+fd840b921bd1aea64a6021c49a564ab8b1053dbb patch  # 1.28.6 · Home: sigillo con gli archi dei corsi sopra i contatori, tolta la barretta sotto il titolo [no news]
+f2560ff6d59322b459ab14667bef25d66b58a411 patch  # 1.28.7 · Barra in alto: nuovo logo a forma di quaderno in tutte le pagine [no news]
+6139771e86c44c50a8bdbd979a76410babe6a0c7 patch  # 1.28.8 · Nuove icone del sito e della web app con il quaderno [no news]
+89f2c15806a593c6cd34a309727cd02eae217e9f patch  # 1.28.9 · Icone della web app uguali al logo del sito [no news]
+07ac865b28b52fa6087870a114f380e04fc10239 patch  # 1.28.10 · Icone: solo il quaderno, senza sfondo [no news]
+25a89bce5eb31bdc3df03149aaff4427de936828 patch  # 1.28.11 · Icone adatte a tema chiaro e scuro [no news]
+eaf71feb9446cd1ac6ed58e0a0cc9349e0824a6e patch  # 1.28.12 · Icona del sito in tutte le pagine (anche per Safari) [no news]
+8d904ceec26d50cd3462e3ee84e03e4fcfbbd6b7 patch  # 1.28.13 · Icone: una sola serie in tutte le pagine, favicon.ico per Safari, icona del Dock a tutto quadrato [no news]
+f1dcc0c76cad208b3468dce663e871bc31c7aa83 minor  # 1.29.0 · Quiz: il link porta al punto preciso del quaderno e non fa perdere i risultati
+a2bfc279e36d8c39d5f1c617737bd9e6a44b9524 minor  # 1.30.0 · Quiz: il quaderno si apre in un pannello sopra il quiz (anche nella web app)
+934004e0c2fd5f666792c6169593a79e7ab5025d patch  # 1.30.1 · Quiz MP e SO: pannello del quaderno sistemato [no news]
+c1113f64460ead3d82dcf52f3839aaa3a9a9b438 minor  # 1.31.0 · Segnalazioni: notifiche push all'amministratore e a chi segnala
+7778fe0e460e3ed8b609815ade8be741b494ded3 minor  # 1.32.0 · Account: "Accedi con un altro account" [no news]
+df1859442d91da1fe7e6540c7ee08ce45449f6dc patch  # 1.32.1 · Segnalazioni: limite di attesa da 24 a 12 ore [no news]
+90163f95b2789f8505465e80373647fe50ef40e6 -      # — · Regole di Firestore: pubblicazione con firebase-admin [no news]
+3adc9673301642997fe4c44badbd2d7072d7f075 minor  # 1.33.0 · Segnalazioni: conversazione tra amministratore e chi segnala [no news]
+f9738ad65b91bd69a6aa7123f4c84ff9c73be1cc patch  # 1.33.1 · Home: data e versione allineate a destra anche su telefono [no news]
+8bc2fde4fe9cd1db50dcd745c69cc70e4bd3992d minor  # 1.34.0 · Segnalazioni: rifiutate eliminate dopo 7 giorni, pulsante Elimina per l'admin [no news]
+7a926527ec4176a912bb1eff6539a86c19446a5c patch  # 1.34.1 · Home: "Unisa" con contorno sfumato [no news]
+80bff96a095c761edf39803af378caf966d61f8b patch  # 1.34.2 · Ricerca: su PC/Mac si apre dal pulsante Cerca della barra [no news]
+ec0cd86323321349fafc0c5e746380a12856028b patch  # 1.34.3 · Home: "Unisa" più leggibile nel tema chiaro [no news]
+fd373f49efd142028539fc47501162945ec352d7 patch  # 1.34.4 · Riprendi da dove eri: torna al paragrafo preciso; "Unisa" più scura nel tema chiaro [no news]
+846a77015d53b12dde1646cf29ea857f65383024 patch  # 1.34.5 · Quiz: il link torna ad aprire il quaderno nella pagina, con "Torna al quiz" [no news]
+fa9cf459c3abc75689e7cd39f72ea34a6eb318f7 patch  # 1.34.6 · Home: contorno di "Unisa" più scuro nel tema chiaro [no news]
+e4c408ab840a1b2daa86135f9f460367e50ef454 patch  # 1.34.7 · IS: quaderno, quiz e simulazione aggiornati con gli appunti completi della prova intercorso
+261c0ceb6524039ed524f40134adfa7ce7196630 minor  # 1.35.0 · IS: domande del deposito nei quiz e nelle simulazioni, capitolo 19 System design
+3b631f5901bbae0671006024aa94dcc9079a2805 patch  # 1.35.1 · Segnalazioni: ping al Worker per avviare subito le notifiche (disattivato finché PING_URL è vuoto) [no news]
+bddf074a117691aff8df808a2c8231c9f04df470 patch  # 1.35.2 · Segnalazioni: attiva il ping al Worker unisa-ping [no news]
+caf0f31a61fad767e3840a1f1dc0a7f6b1771ea3 patch  # 1.35.3 · Merge pull request #23 from Culobomb-Labs/quiz-sim-15
+a54d298bb49928a8cce69805eccee2af661eba79 minor  # 1.36.0 · Merge pull request #24 from Culobomb-Labs/quiz-prova-5nov
+0288ec83821b10517cc8d7223186ba7a44b6e588 patch  # 1.36.1 · Merge pull request #25 from Culobomb-Labs/quiz-testo-sim
+ef40b6b14561db47aa5e99150ebd2d34a13a38fc patch  # 1.36.2 · Merge pull request #26 from Culobomb-Labs/quiz-no-dep
+7b8e7c3a667326e889f337e4e02709486a5b3f66 patch  # 1.36.3 · Merge pull request #27 from Culobomb-Labs/quiz-seconda-prova
+f51f4bed5fadcc58945f391ff592eac7abac5d2a patch  # 1.36.4 · Merge pull request #28 from Culobomb-Labs/quiz-nomi-prove
+e5a9f83cba0ca68442f5e584a89c0a22d82bc223 minor  # 1.37.0 · Merge pull request #29 from Culobomb-Labs/quiz-timer
+969c85123dd5e2f56ec91ada7c0408dead354a08 patch  # 1.37.1 · Merge pull request #30 from Culobomb-Labs/quiz-punteggio-completa
+2e85fd814ba135b86ef0c4a704ee478e6e462cac patch  # 1.37.2 · Merge pull request #31 from Culobomb-Labs/quiz-testo-chiaro
+0c71ffbde6c0db8579f5847198ecf3fa9b7e7c4a minor  # 1.38.0 · Merge pull request #32 from Culobomb-Labs/quiz-navigazione
+d16367a88258788ef70b7724918bf27d95a164d3 patch  # 1.38.1 · Segnalazioni: la conversazione sul sito c'è solo se la risposta si vuole sul sito [no news]
+b6a2cd500bd833e0de1e0594a9f01e006ef76b83 major  # 2.0.0 · Icona del sito: cappello da laureato con il gradiente della scritta Unisa [no news]
+5d0a8a83a883eb35c7946a111f214f88bdc0aaf9 patch  # 2.0.1 · Home: il cappello al centro del sigillo usa il gradiente della scritta Unisa [no news]
+0b7459fa9ed6f58fc54e1e8c7b77b74b4c1bd82d patch  # 2.0.2 · Ripristinata l'icona del quaderno (favicon e app) [no news]
+1ff7cf5eff3a2771d609278a6a9910ba3eca03c7 patch  # 2.0.3 · Sigillo: gradiente del cappello su tutta la larghezza, più colore nel tema scuro [no news]
+dd50199eb36d48fe2e6e057008a0dd9d5789a248 patch  # 2.0.4 · Sigillo: anello sottile col gradiente Unisa al posto degli archi colorati [no news]
+b99c843db386c56b1d11b27d76c042f139ac5a64 patch  # 2.0.5 · Sigillo: cerchio sempre scuro per far risaltare il gradiente del cappello [no news]
+f703fe4e2ba93f5f7c185c08c0d3ed3ad02d2111 patch  # 2.0.6 · Barra in alto: la parola Unisa col gradiente dei corsi [no news]
+ba372a7ebdb41f4b269c4b927d82c6f97b13c1ad patch  # 2.0.7 · Mobile Programming: nomi dei capitoli come nelle slide, cap. 12 completato [no news]
+159076af9fa32df66c191973ad71a288ece35698 patch  # 2.0.8 · Barra in alto: bordo con il gradiente dei corsi al passaggio del mouse e al focus [no news]
+00c4dcb4e5b663b00efd30bac3b4359e686d4c1b patch  # 2.0.9 · Barra in alto: icone col gradiente dei corsi, tolto il bordo sfumato [no news]
+5938698b86f4bf08addc524fa9c73d4571c0b118 patch  # 2.0.10 · Barra in alto: Cerca col gradiente dei corsi (lente e bordo), campanello ambra-arancio, tema con sole/luna/auto ciascuno col suo gradiente [no news]
+41836098f64ddb0a5e6256e3d1be547e556e177e patch  # 2.0.11 · Barra in alto: icona del profilo per chi non ha fatto l'accesso [no news]
+fc6849b2ca4bed5ee3cc3b26e5bcc325d320ca3e patch  # 2.0.12 · Riga Notifiche: campanello col gradiente ambra-arancio [no news]
+d4eeb38e6bc84f0eda45ab00f7aa0ce982d8af6e patch  # 2.0.13 · Finestra di ricerca: lente col gradiente dei corsi [no news]
+8a30ffd16eb5e27b03dab8ca11f43dd13fdddd03 patch  # 2.0.14 · Home: numeri col gradiente caldo, etichette in corsivo calligrafico con alone verde acqua [no news]
+461205116268e237a97a1dfa305b050005ae8272 patch  # 2.0.15 · Appunti Unisa in corsivo calligrafico: titolo della home e barra in alto [no news]
+d9678832868c5bde149c18cd23463437608c9000 patch  # 2.0.16 · Tema chiaro più scuro: sfondo avorio, schede e barra non più bianco puro [no news]
+3da359df8a4a076c5e445b5f545b6005d74a2c86 patch  # 2.0.17 · Home: corsi come schede in griglia, con il colore del corso e icone per tipo di documento [no news]
+f09d36a002b5c564f58fc4a6b5dd3908a967b98b patch  # 2.0.18 · Home: nuovo piè di pagina (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive), con layout dedicato al telefono [no news]
+ad4fe1612071c5c51f14b7664e79976f6ca72958 patch  # 2.0.19 · News col colore del campanello (titolo della tendina e pulsante in fondo), Segnalazioni in rosso come nel pannello del profilo [no news]
+7c01853ca20d69b5da34e98d147dfb47c355c6d4 patch  # 2.0.20 · Pagina News: titolo col gradiente caldo giallo-arancio-rosa [no news]
+359b4766293c05f5d910af96019aa844ce899468 minor  # 2.1.0 · News e avvisi scritti dal sito (solo amministratore): riquadro nella pagina News, regole Firestore newsBozze, azione News dal sito; etichetta Avviso in lista e notifica [no news]
+5ed1fd9e6646b0770b3590f7514789ba39fce5ed patch  # 2.1.1 · Segnalazioni: nuovo stile dell'elenco (filtri a chip con conteggi, ricerca con icona, schede con colore dello stato, conversazione a fumetti, zona Gestisci) [no news]
+97dbea6d8affd0c6897441965ce845cc5999ceac patch  # 2.1.2 · News: corso Accompagnamento al lavoro (AL) nel modulo e nelle etichette, non in home [no news]
+09891f09340735651d7cf354d1e4ccaf93fc2454 patch  # 2.1.3 · Quaderni: nuovo stile comune (assets/quaderno.css) per IS, Android, PD e SO: sfondo del sito con luce del colore del corso, capitoli in schede, indice in scheda, ricerca e blocchi arrotondati [no news]
+1c64fb8a83e2d98984296ec02c355e494f43956f minor  # 2.2.0 · Basi di Dati: quaderno (lezioni 02–10) e piano di studio; nuovi colori BD blu e PD ocra
+17faf3a932a7a03211ccdf5128791a1504b5b262 patch  # 2.2.1 · Home: il sigillo dice "2° & 3° anno" [no news]
+d1dbb5801a3ba645d9d4d07dc4b0a268568314c3 patch  # 2.2.2 · Ricerca: tendina sotto la barra come News e Progressi, sigle dei corsi al posto dei pallini [no news]
+4bf3b55872f4da627782bd3b21b60f6b5480adf3 patch  # 2.2.3 · Ripristinati gli stili del riquadro Scrivi una notizia e degli avvisi, persi in un commit precedente [no news]
+d2274fba276be2da57e27ba66a81da7b273a5179 -      # — · Immagine per la news del seminario Regione Campania [no news]
+8a36df48d863e15f07378793f037982d7b3f4408 -      # — · News: Oggi seminario Regione Campania (matricole dispari): lavorare nel digitale pubblico
+521d4d0faaec87ab77c9b588517e0e0963a95005 minor  # 2.3.0 · Nuovo corso Accompagnamento al lavoro: quaderno con regole, calendario dei seminari e gli errori del CV
+50e4591c11247828cf8f8961924648e70055ebf4 patch  # 2.3.1 · Home: sigle delle schede senza sovrapposizioni; piè di pagina in corsivo, senza nota né logo [no news]
+e7213d1cb96dc4b81b03e246b7d511ad7518042c patch  # 2.3.2 · Home: tolto il riquadro "In arrivo" generico [no news]
+c46e79d667664f7fa3223532a41125cd3efa7672 patch  # 2.3.3 · Icona del sito: il tocco del sigillo al posto del quaderno (app, favicon, barra in alto) [no news]
+5e1ea98831c303ac629b00bde04be3686cea44e5 patch  # 2.3.4 · Anteprima dei link: nuovo og.png con il sigillo e il tocco [no news]
+94270c9621c7ab99105fae4b8ef9ad421668a179 -      # — · News: Sito rinnovato: nuova icona e ricerca più comoda
+d9ba4b4ecf543e231791ac1c29a8666e3c8fa762 minor  # 2.4.0 · Barra in basso: stile liquid glass, Indice su telefono, campanello solo con news da leggere [no news]
+1a8b27a60f09bfd74bae860c39d29860503dc6fd patch  # 2.4.1 · Barra in basso a schede stile iOS in tutte le pagine (Home, Indice, Cerca, News) e Torna su separato [no news]
+78a944e2169ad4f220302ed46fe2957722d7d056 patch  # 2.4.2 · Segnalazioni: nascosta la tendina doppia sotto i filtri di stato [no news]
+70b4ef1b526a05d4838eecf64bdaa64b35cfd59e patch  # 2.4.3 · Barra in basso: vetro più trasparente e meno sfocato, come in iOS [no news]
+a7e139005233641b6205c03b57a304d1316f6c34 patch  # 2.4.4 · Barra in basso: lente di vetro che segue il dito tra le schede, come in iOS [no news]
+3154646f58ba3b6a7c476ec81e931f0317ff8038 patch  # 2.4.5 · Barra in basso: lente più affidabile su iPhone (link, gesto annullato, ombra dopo il tocco) [no news]
+a09f664276838389bbee02e834fa4983e77b8a0f patch  # 2.4.6 · Barra in basso: lente a goccia con molla e allungamento, niente bordo doppio col dito [no news]
+aa0111eaaefb6c83bfdc79fec59e830fdc0b7314 patch  # 2.4.7 · Barra in basso: News apre la pagina delle notizie, nuova scheda Segnala [no news]
+25241fb50abe151356b59fec5287b033dcee8142 patch  # 2.4.8 · Barra in basso: le schede si aprono subito al tocco, la lente si posa intanto [no news]
+cc63443858aacef56c40f66c87755cb1b74aa51d minor  # 2.5.0 · Pagine più reattive: caricamento al tocco, copia salvata se la rete è lenta, passaggio morbido tra le pagine [no news]
+13fa18009ed5cdd06c5f88c41c06c11a7fb48b12 minor  # 2.6.0 · Barra in basso: cinque livelli di trasparenza scelti in "I tuoi progressi"; sfocatura non più spenta dal passaggio tra pagine [no news]
+c07bbbd3073d735da81064e193eb438b696ceba5 patch  # 2.6.1 · Barra in basso: quattro livelli di trasparenza (tolto Denso, chi l'aveva passa a Vetro) [no news]
+f7c6b7f0f20211945003b3ca4cbd37cbde97e0a6 minor  # 2.7.0 · Trasparenza della barra salvata anche sull'account Google, insieme alle spunte [no news]
+c0e949f49e6440a588a51c72eae5acb33247b174 minor  # 2.8.0 · Barra in basso: scheda Profilo (con la foto Google se hai fatto l'accesso) al posto di Segnala [no news]
+dc844bfa2f4cba233db986ee4a9d56934de933df minor  # 2.9.0 · Barra in alto: solo marchio, percorso e "Cerca nel sito" su PC; tema nella tendina Profilo e sincronizzato; ricerca anche nelle News [no news]
+f37a1c8191050889a3e9c81caad9d198de665459 minor  # 2.10.0 · Ricerca anche nelle domande dei quiz (mai le risposte), con il capitolo evidenziato nella pagina del quiz [no news]
+f11fb69eb94c6afab972794a897994424adbc845 -      # — · Tolto un file temporaneo di Python finito per sbaglio nel repo [no news]
+6ffdeb6a62122bed283a342709ec3219cb7b2f69 patch  # 2.10.1 · Home: card 'Riprendi da dove eri' con lo stesso stile delle schede dei corsi
+ebe9c036e8496bed13c39d6d4305357cf6a0d803 patch  # 2.10.2 · Pannello Profilo: si chiude trascinando la maniglia col dito
+89615b6989326b648d0fba19052d4b1ebae53e32 patch  # 2.10.3 · Pannello Profilo: pagina dietro ferma e chiusura trascinando da tutta la parte alta
+e68d7e7f2976c3357d8b39383c80570afca70da2 minor  # 2.11.0 · News: filtro per corso; home: sigla del corso leggibile su telefono
+7161b09ea3b7700c672a5c4ff3ab63389b309341 minor  # 2.12.0 · Aggiunto il corso Programmazione Orientata agli Oggetti: quaderno e piano di studio
+6b5915ea257fe1f06bd950b39587e8f71ab1986a patch  # 2.12.1 · IS: System design aggiornato con la dispensa L15 e spostato al cap. 09
+8262bce56f8ef4c4862775ab59ccd2dcfbdb7d9e patch  # 2.12.2 · PO: sigla e nome del corso diventano PO · Programmazione ad Oggetti
+2eed01f424038cc6fbcdbb08807c45cbed000204 patch  # 2.12.3 · PO: colore del corso rosso, come i titoli delle slide

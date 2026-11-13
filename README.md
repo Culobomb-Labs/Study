@@ -39,7 +39,16 @@ La pubblicazione è gestita dal workflow GitHub Actions: una modifica a `main` a
 
 In fondo alla pagina principale sono mostrati il momento della build in ora di Roma e la versione del sito. La data dei singoli documenti corrisponde all'ultimo commit che ha modificato il relativo file.
 
-Il versionamento parte da `1.0.0` con il commit che introduce `.github/site-version-start`. Per ogni commit successivo sulla storia principale, esclusi quelli automatici con messaggio che inizia per `News automatica: `, l'ultima cifra aumenta da 0 a 9 e poi si incrementa la cifra centrale: `1.0.9`, `1.1.0`, `1.1.1`. Una nuova build dello stesso commit mantiene la stessa versione. Il numero identifica lo stato della storia Git, non il numero di deploy riusciti; più commit possono essere pubblicati insieme. Non eliminare o rinominare il marcatore e conservare la cronologia completa durante la build.
+La versione segue [Semantic Versioning 2.0.0](https://semver.org/) nella forma `MAJOR.MINOR.PATCH`, senza pre-release né build metadata. Viene calcolata durante la build percorrendo tutti i commit di `main` (una pull request conta come un solo commit):
+
+| Tipo | Quando | Effetto |
+|---|---|---|
+| `major` | modifica incompatibile o sito rifatto | `1.4.2` → `2.0.0` |
+| `minor` | nuova funzione, nuovo corso, quaderno, quiz o capitolo | `1.4.2` → `1.5.0` |
+| `patch` | correzione, ritocco grafico o aggiornamento di contenuti esistenti | `1.4.2` → `1.4.3` |
+| nessuno | news, README e file che non fanno parte del sito | invariata |
+
+Il tipo dei commit già fatti è scritto in `.github/versioni.txt`. Per i nuovi commit si aggiunge l'etichetta nel messaggio: `[major]`, `[minor]`, `[patch]` oppure `[no version]`. Senza etichetta il commit vale `patch`, ma non cambia la versione se tocca solo `Unisa/news.json`, le immagini delle news o file fuori da `Unisa/`; le news automatiche (`News automatica: ...`) sono sempre escluse. In una pull request vale l'etichetta più alta tra quelle dei suoi commit. Una nuova build dello stesso commit mantiene la stessa versione; per il calcolo serve la cronologia Git completa.
 
 ## Account, progressi e segnalazioni
 
