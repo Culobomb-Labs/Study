@@ -105,19 +105,46 @@ class VersionTests(unittest.TestCase):
         self.write_commit("Unisa/index.html", quiz(2, 19), "Nuovo capitolo del quiz")
         self.assertEqual(build_site.site_version(), "0.3.0")
 
+    @staticmethod
+    def courses(*codes, docs=1, key="k"):
+        data = [{"code": c, "docs": [{"path": f"{c}/{d}.html", "progressKey": f"{key}-{c}-{d}"}
+                                     for d in range(docs)]} for c in codes]
+        return "const C = /* CORSI-INIZIO */" + json.dumps(data) + "/* CORSI-FINE */;\n"
+
     def test_courses_file(self):
-        def courses(*codes, docs=1):
-            data = [{"code": c, "docs": [{"path": f"{c}/{d}.html"} for d in range(docs)]} for c in codes]
-            return "const C = /* CORSI-INIZIO */" + json.dumps(data) + "/* CORSI-FINE */;\n"
-        self.write_commit("Unisa/assets/corsi.js", courses("IS"), "Catalogo [patch]")
-        self.write_commit("Unisa/assets/corsi.js", courses("PO"), "Sigla rinominata")
-        self.assertEqual(build_site.site_version(), "0.1.2")
-        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD"), "Nuovo corso")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS"), "Catalogo [patch]")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "BD"), "Nuovo corso")
         self.assertEqual(build_site.site_version(), "0.2.0")
-        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD", docs=2), "Nuovo documento")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "BD", docs=2), "Nuovo documento")
         self.assertEqual(build_site.site_version(), "0.3.0")
-        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD", "SO", docs=2), "Corso in prova [patch]")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "BD", "SO", docs=2), "Corso in prova [patch]")
         self.assertEqual(build_site.site_version(), "0.3.1")
+
+    def test_incompatible_changes_are_major(self):
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "PO", docs=2), "Catalogo [patch]")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "PO", docs=2, key="v2"), "Spunte rinominate")
+        self.assertEqual(build_site.site_version(), "1.0.0")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "POO", docs=2, key="v2"), "Sigla rinominata")
+        self.assertEqual(build_site.site_version(), "2.0.0")
+        self.write_commit("Unisa/assets/corsi.js", self.courses("IS", "POO", key="v2"), "Documento tolto")
+        self.assertEqual(build_site.site_version(), "3.0.0")
+        self.write_commit("Unisa/Vecchia.html", "<p>x</p>\n", "Pagina [patch]")
+        self.git("mv", "Unisa/Vecchia.html", "Unisa/Nuova.html")
+        self.git("commit", "-m", "Pagina spostata")
+        self.assertEqual(build_site.site_version(), "4.0.0")
+        self.git("rm", "-q", "Unisa/Nuova.html")
+        self.git("commit", "-m", "Pagina tolta")
+        self.assertEqual(build_site.site_version(), "5.0.0")
+        self.write_commit("Unisa/news.json", "[]\n", "News")
+        self.git("rm", "-q", "Unisa/news.json")
+        self.git("commit", "-m", "Le news non contano")
+        self.assertEqual(build_site.site_version(), "5.0.0")
+
+    def test_major_button_makes_an_empty_major_commit(self):
+        self.git("commit", "--allow-empty", "-m", "Nuova versione major: Nuovo design [major] [no news]")
+        self.assertEqual(build_site.site_version(), "1.0.0")
+        self.git("commit", "--allow-empty", "-m", "Commit vuoto")
+        self.assertEqual(build_site.site_version(), "1.0.0")
 
     def test_history_file_overrides_tags(self):
         self.write_commit("Unisa/a.html", "1\n", "Ritocco [major]")

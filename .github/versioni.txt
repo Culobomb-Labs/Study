@@ -8,8 +8,9 @@
 #   -      non cambia il sito (README, news, file di servizio): nessuna versione
 # Le news automatiche ("News automatica: ...") sono escluse e non compaiono qui.
 # I commit successivi a questo elenco si classificano da soli (vedi README, "Data e versione"):
-# etichetta [major], [minor], [patch] o [no version] nel titolo; altrimenti minor se aggiungono
-# pagine, corsi, documenti, capitoli o almeno 10 domande; patch per il resto del sito.
+# etichetta [major], [minor], [patch] o [no version] nel titolo (o il pulsante "Nuova versione major");
+# altrimenti major se tolgono o spostano pagine, corsi, documenti o chiavi delle spunte; minor se
+# aggiungono pagine, corsi, documenti, capitoli o almeno 10 domande; patch per il resto del sito.
 # La versione tra i commenti è indicativa: quella vera la calcola build_site.py.
 
 0a2d1ca4255ee52c52b2b4274b0750ec77e45c42 minor  # 0.1.0 · Initial commit

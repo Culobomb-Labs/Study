@@ -35,10 +35,13 @@ THEME_BOOT = '<script>try{var d=document.documentElement,t=localStorage.getItem(
 #   major -> X+1.0.0   minor -> X.Y+1.0   patch -> X.Y.Z+1   nessuna -> invariata
 # Il tipo dei commit passati è scritto in .github/versioni.txt. Per i nuovi:
 #   1. etichetta nel titolo del commit: [major], [minor], [patch] o [no version]
-#   2. altrimenti minor se il commit aggiunge una pagina, un corso, un documento
+#      (il pulsante Actions -> "Nuova versione major" crea un commit con [major])
+#   2. altrimenti major se il commit non è compatibile: pagina tolta o spostata, corso,
+#      documento o chiave delle spunte tolti da corsi.js
+#   3. altrimenti minor se il commit aggiunge una pagina, un corso, un documento
 #      in corsi.js, un capitolo (quaderno o quiz) o almeno 10 domande a un quiz
-#   3. altrimenti nessuna versione se tocca solo le news o file fuori da Unisa/
-#   4. altrimenti patch
+#   4. altrimenti nessuna versione se tocca solo le news o file fuori da Unisa/
+#   5. altrimenti patch
 # ---------------------------------------------------------------------------
 VERSION_HISTORY = ".github/versioni.txt"
 VERSION_TAG = re.compile(r"\[(major|minor|patch|no version)\]", re.I)
@@ -76,8 +79,8 @@ def version_history():
     return history
 
 
-def course_counts(js):
-    """(numero di corsi, numero di documenti) in corsi.js; None se il file non si legge."""
+def course_catalog(js):
+    """Corsi, documenti e chiavi delle spunte in corsi.js; None se il file non si legge."""
     m = re.search(r"/\* CORSI-INIZIO \*/(.*?)/\* CORSI-FINE \*/", js, re.S)
     try:
         courses = json.loads(m.group(1)) if m else None
@@ -85,7 +88,12 @@ def course_counts(js):
         return None
     if courses is None:
         return None
-    return len(courses), sum(len(course.get("docs", [])) for course in courses)
+    docs = [doc for course in courses for doc in course.get("docs", [])]
+    return {
+        "corsi": {course.get("code", "") for course in courses},
+        "documenti": {doc.get("path", "") for doc in docs},
+        "spunte": {doc["progressKey"] for doc in docs if doc.get("progressKey")},
+    }
 
 
 def chapter_count(page):
@@ -98,6 +106,25 @@ def chapter_count(page):
     return count
 
 
+def breaks_compat(sha, parent, changes):
+    """Motivi per cui il commit non è compatibile con il sito di prima (lista vuota se lo è):
+    pagine tolte o spostate (i link salvati non funzionano più), corsi o documenti tolti
+    da corsi.js, chiavi delle spunte cambiate (chi aveva spuntato perde i progressi)."""
+    reasons = []
+    for status, path in changes:
+        if not path.startswith(SRC + "/") or NEWS_FILES.match(path):
+            continue
+        if path.endswith(".html") and status in ("D", "R"):
+            reasons.append(("pagina tolta: " if status == "D" else "pagina spostata: ") + path)
+        if path == COURSES_FILE and status == "M":
+            before, after = course_catalog(git_file(parent, path)), course_catalog(git_file(sha, path))
+            if before and after:
+                labels = {"corsi": "corso tolto", "documenti": "documento tolto", "spunte": "chiave delle spunte tolta"}
+                for key, label in labels.items():
+                    reasons.extend(f"{label}: {item}" for item in sorted(before[key] - after[key]))
+    return reasons
+
+
 def adds_content(sha, parent, changes):
     """True se il commit aggiunge una pagina, un corso, un documento, un capitolo
     o almeno NEW_QUESTIONS domande a un quiz (rinomine e correzioni non contano)."""
@@ -105,8 +132,9 @@ def adds_content(sha, parent, changes):
         if not path.startswith(SRC + "/") or NEWS_FILES.match(path):
             continue
         if path == COURSES_FILE:
-            before, after = course_counts(git_file(parent, path)), course_counts(git_file(sha, path))
-            if before and after and (after[0] > before[0] or after[1] > before[1]):
+            before, after = course_catalog(git_file(parent, path)), course_catalog(git_file(sha, path))
+            if before and after and (len(after["corsi"]) > len(before["corsi"])
+                                     or len(after["documenti"]) > len(before["documenti"])):
                 return True
         elif path.endswith(".html"):
             if status == "A":
@@ -132,7 +160,12 @@ def commit_kind(sha, parents, message, changes):
     if tags:
         best = max(tags, key=VERSION_RANK.get)
         return None if best == "no version" else best
-    if adds_content(sha, parents[0] if parents else None, changes):
+    parent = parents[0] if parents else None
+    reasons = breaks_compat(sha, parent, changes)
+    if reasons:
+        print(f"versione: major per il commit {sha[:7]} ({'; '.join(reasons)})")
+        return "major"
+    if adds_content(sha, parent, changes):
         return "minor"
     site_files = [path for _, path in changes if path.startswith(SRC + "/")]
     if not site_files or all(NEWS_FILES.match(path) for path in site_files):
@@ -141,11 +174,14 @@ def commit_kind(sha, parents, message, changes):
 
 
 def parse_changes(text):
-    """Righe di --name-status -> [(stato, percorso)]; per rinomine e copie conta il nuovo percorso."""
+    """Righe di --name-status -> [(stato, percorso)]; una rinomina diventa ("R", vecchio) e ("A", nuovo)."""
     changes = []
     for line in text.split("\n"):
         fields = line.split("\t")
-        if len(fields) >= 2:
+        if len(fields) == 3 and fields[0][:1] == "R":  # rinomina: il vecchio percorso sparisce
+            changes.append(("R", fields[1]))
+            changes.append(("A", fields[2]))
+        elif len(fields) >= 2:
             changes.append((fields[0][:1], fields[-1]))
     return changes
 

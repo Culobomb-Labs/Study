@@ -51,11 +51,12 @@ La versione segue [Semantic Versioning 2.0.0](https://semver.org/) nella forma `
 Il tipo dei commit già fatti è scritto in `.github/versioni.txt`. Per i nuovi commit il tipo si decide così, nell'ordine:
 
 1. se il titolo del commit (la prima riga) contiene `[major]`, `[minor]`, `[patch]` o `[no version]`, vale quell'etichetta;
-2. altrimenti è `minor` se aggiunge una pagina HTML in `Unisa/`, un corso o un documento in `Unisa/assets/corsi.js`, un capitolo (una `<section class="ch">` di un quaderno o una voce di `CHAPTERS` in un quiz) oppure almeno 10 domande a un quiz;
-3. altrimenti non cambia la versione se tocca solo `Unisa/news.json`, le immagini delle news o file fuori da `Unisa/`;
-4. altrimenti è `patch`.
+2. altrimenti è `major` se non è compatibile con il sito di prima: una pagina HTML in `Unisa/` tolta o spostata (i link salvati non funzionano più), oppure un corso, un documento o una chiave delle spunte (`progressKey`) tolti da `Unisa/assets/corsi.js` (chi aveva spuntato perde i progressi). Il motivo viene scritto nel log del deploy;
+3. altrimenti è `minor` se aggiunge una pagina HTML in `Unisa/`, un corso o un documento in `Unisa/assets/corsi.js`, un capitolo (una `<section class="ch">` di un quaderno o una voce di `CHAPTERS` in un quiz) oppure almeno 10 domande a un quiz;
+4. altrimenti non cambia la versione se tocca solo `Unisa/news.json`, le immagini delle news o file fuori da `Unisa/`;
+5. altrimenti è `patch`.
 
-Le news automatiche (`News automatica: ...`) sono sempre escluse. In una pull request vale l'etichetta più alta tra i titoli dei suoi commit. Le funzioni nuove del sito (per esempio un nuovo pulsante o una nuova pagina di servizio che modifica file esistenti) non si riconoscono da sole: per quelle serve `[minor]`. Una nuova build dello stesso commit mantiene la stessa versione; per il calcolo serve la cronologia Git completa.
+Le news automatiche (`News automatica: ...`) sono sempre escluse. In una pull request vale l'etichetta più alta tra i titoli dei suoi commit. Le funzioni nuove del sito (per esempio un nuovo pulsante o un nuovo filtro in file già esistenti) non si riconoscono da sole: per quelle serve `[minor]`. Per una major senza scrivere niente, per esempio quando il sito viene rifatto, c'è il pulsante **Actions → "Nuova versione major" → Run workflow**: crea un commit vuoto con `[major]` e ripubblica il sito. Una nuova build dello stesso commit mantiene la stessa versione; per il calcolo serve la cronologia Git completa.
 
 ## Account, progressi e segnalazioni
 

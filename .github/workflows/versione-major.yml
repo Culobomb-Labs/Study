@@ -1,0 +1,38 @@
+# Fa salire la versione del sito alla major successiva (es. 2.12.3 -> 3.0.0), senza scrivere niente.
+# Serve quando rifai il sito (nuovo design, nuova struttura): il resto lo riconosce da solo build_site.py.
+# Actions -> "Nuova versione major" -> Run workflow -> (facoltativo) motivo -> Run workflow.
+name: Nuova versione major
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: "Motivo (facoltativo), es. Nuovo design del sito"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: versione-major
+  cancel-in-progress: false
+
+jobs:
+  major:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crea il commit con [major]
+        env:
+          MOTIVO: ${{ inputs.motivo }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "Nuova versione major${MOTIVO:+: $MOTIVO} [major] [no news]"
+          git push
+      - name: Pubblica il sito con la nuova versione
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref "${{ github.ref_name }}"
