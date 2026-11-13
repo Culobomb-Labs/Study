@@ -33,17 +33,34 @@ THEME_BOOT = '<script>try{var d=document.documentElement,t=localStorage.getItem(
 # Versione del sito: Semantic Versioning 2.0.0 (MAJOR.MINOR.PATCH, senza pre-release
 # e build metadata). Ogni commit di main (le pull request contano come uno) vale:
 #   major -> X+1.0.0   minor -> X.Y+1.0   patch -> X.Y.Z+1   nessuna -> invariata
-# Il tipo dei commit passati è scritto in .github/versioni.txt; per i nuovi si usa
-# l'etichetta nel messaggio ([major], [minor], [patch], [no version]).
+# Il tipo dei commit passati è scritto in .github/versioni.txt. Per i nuovi:
+#   1. etichetta nel titolo del commit: [major], [minor], [patch] o [no version]
+#   2. altrimenti minor se il commit aggiunge una pagina, un corso, un documento
+#      in corsi.js, un capitolo (quaderno o quiz) o almeno 10 domande a un quiz
+#   3. altrimenti nessuna versione se tocca solo le news o file fuori da Unisa/
+#   4. altrimenti patch
 # ---------------------------------------------------------------------------
 VERSION_HISTORY = ".github/versioni.txt"
 VERSION_TAG = re.compile(r"\[(major|minor|patch|no version)\]", re.I)
 VERSION_RANK = {"no version": 0, "patch": 1, "minor": 2, "major": 3}
 NEWS_FILES = re.compile(r"^Unisa/news(?:\.json$|/)")
+COURSES_FILE = SRC + "/assets/corsi.js"
+CHAPTER_SECTION = re.compile(r'<section\b[^>]*\bclass="ch"')
+NEW_QUESTIONS = 10  # domande nuove in un quiz che valgono un minor
+QUIZ_QUESTION = re.compile(r'[{,]\s*"?q"?\s*:\s*"')  # chiave q di ogni domanda, in qualunque ordine
 
 
 def git(*args):
-    return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
+    return subprocess.run(["git", "-c", "core.quotepath=false", *args],
+                          capture_output=True, text=True, check=True).stdout
+
+
+def git_file(rev, path):
+    """Contenuto di un file a un certo commit ("" se non esiste)."""
+    if not rev:
+        return ""
+    result = subprocess.run(["git", "show", f"{rev}:{path}"], capture_output=True, text=True)
+    return result.stdout if result.returncode == 0 else ""
 
 
 def version_history():
@@ -59,37 +76,94 @@ def version_history():
     return history
 
 
-def commit_kind(sha, parents, message, files):
-    """Tipo di un commit non presente nello storico."""
+def course_counts(js):
+    """(numero di corsi, numero di documenti) in corsi.js; None se il file non si legge."""
+    m = re.search(r"/\* CORSI-INIZIO \*/(.*?)/\* CORSI-FINE \*/", js, re.S)
+    try:
+        courses = json.loads(m.group(1)) if m else None
+    except ValueError:
+        return None
+    if courses is None:
+        return None
+    return len(courses), sum(len(course.get("docs", [])) for course in courses)
+
+
+def chapter_count(page):
+    """Capitoli di una pagina: sezioni dei quaderni più capitoli della lista CHAPTERS dei quiz."""
+    count = len(CHAPTER_SECTION.findall(page))
+    start = page.find("const CHAPTERS")
+    if start >= 0:
+        end = page.find("];", start)
+        count += len(QUIZ_CH.findall(page[start:end]))
+    return count
+
+
+def adds_content(sha, parent, changes):
+    """True se il commit aggiunge una pagina, un corso, un documento, un capitolo
+    o almeno NEW_QUESTIONS domande a un quiz (rinomine e correzioni non contano)."""
+    for status, path in changes:
+        if not path.startswith(SRC + "/") or NEWS_FILES.match(path):
+            continue
+        if path == COURSES_FILE:
+            before, after = course_counts(git_file(parent, path)), course_counts(git_file(sha, path))
+            if before and after and (after[0] > before[0] or after[1] > before[1]):
+                return True
+        elif path.endswith(".html"):
+            if status == "A":
+                return True
+            if status == "M":
+                before, after = git_file(parent, path), git_file(sha, path)
+                if chapter_count(after) > chapter_count(before):
+                    return True
+                if len(QUIZ_QUESTION.findall(after)) - len(QUIZ_QUESTION.findall(before)) >= NEW_QUESTIONS:
+                    return True
+    return False
+
+
+def commit_kind(sha, parents, message, changes):
+    """Tipo di un commit non presente nello storico. changes: [(stato, percorso), ...]"""
     if message.startswith("News automatica: "):
         return None  # la news automatica non è una modifica del sito
-    messages = message
-    if len(parents) > 1:  # pull request: contano anche i messaggi dei suoi commit
-        messages += git("log", "--format=%B", f"{parents[0]}..{parents[1]}")
+    # le etichette valgono solo nel titolo del commit (la prima riga), non nella descrizione
+    messages = message.split("\n", 1)[0]
+    if len(parents) > 1:  # pull request: contano anche i titoli dei suoi commit
+        messages += "\n" + git("log", "--format=%s", f"{parents[0]}..{parents[1]}")
     tags = {tag.lower() for tag in VERSION_TAG.findall(messages)}
     if tags:
         best = max(tags, key=VERSION_RANK.get)
         return None if best == "no version" else best
-    site_files = [name for name in files if name.startswith(SRC + "/")]
-    if not site_files or all(NEWS_FILES.match(name) for name in site_files):
+    if adds_content(sha, parents[0] if parents else None, changes):
+        return "minor"
+    site_files = [path for _, path in changes if path.startswith(SRC + "/")]
+    if not site_files or all(NEWS_FILES.match(path) for path in site_files):
         return None  # solo news o file fuori dal sito
     return "patch"
 
 
-def site_version():
+def parse_changes(text):
+    """Righe di --name-status -> [(stato, percorso)]; per rinomine e copie conta il nuovo percorso."""
+    changes = []
+    for line in text.split("\n"):
+        fields = line.split("\t")
+        if len(fields) >= 2:
+            changes.append((fields[0][:1], fields[-1]))
+    return changes
+
+
+def site_version(use_history=True):
     """Calcola la versione SemVer percorrendo tutta la cronologia di main."""
     if git("rev-parse", "--is-shallow-repository").strip() == "true":
         raise RuntimeError("Per calcolare la versione serve la cronologia Git completa (fetch-depth: 0).")
-    history = version_history()
+    history = version_history() if use_history else {}
     log = git("log", "--first-parent", "--reverse", "--diff-merges=first-parent",
-              "--name-only", "--format=%x1e%H%x1f%P%x1f%B%x1f")
+              "--name-status", "--format=%x1e%H%x1f%P%x1f%B%x1f")
     version = None
     for record in log.split("\x1e")[1:]:
-        sha, parents, message, files = record.split("\x1f")
+        sha, parents, message, changes = record.split("\x1f")
         if sha in history:
             kind = history[sha]
         else:
-            kind = commit_kind(sha, parents.split(), message.strip(), [f for f in files.split("\n") if f])
+            kind = commit_kind(sha, parents.split(), message.strip(), parse_changes(changes))
         if kind is None:
             continue
         if version is None:

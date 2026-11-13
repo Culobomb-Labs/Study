@@ -1,5 +1,6 @@
 """Test della versione del sito (Semantic Versioning 2.0.0) e delle cronologie con merge."""
 import importlib.util
+import json
 import os
 import subprocess
 import tempfile
@@ -74,6 +75,49 @@ class VersionTests(unittest.TestCase):
         self.git("checkout", "main")
         self.git("merge", "--no-ff", "-m", "Merge pull request #1", "feature")
         self.assertEqual(build_site.site_version(), "0.2.0")
+
+    def test_tags_only_count_in_the_title(self):
+        self.write_commit("Unisa/index.html", "2\n", "Ritocco\n\nEtichette possibili: [major], [minor]")
+        self.assertEqual(build_site.site_version(), "0.1.1")
+
+    def test_new_page_is_minor(self):
+        self.write_commit("Unisa/Corso/Quiz.html", "<p>quiz</p>\n", "Quiz del corso")
+        self.assertEqual(build_site.site_version(), "0.2.0")
+        self.write_commit("Unisa/Corso/Quiz.html", "<p>quiz corretto</p>\n", "Correzione")
+        self.assertEqual(build_site.site_version(), "0.2.1")
+
+    def test_new_chapter_is_minor(self):
+        page = '<section class="ch" id="c1"></section>\n'
+        self.write_commit("Unisa/index.html", page, "Primo capitolo [patch]")
+        self.write_commit("Unisa/index.html", page + '<section class="ch" id="c2"></section>\n', "Secondo capitolo")
+        self.assertEqual(build_site.site_version(), "0.2.0")
+
+    def test_quiz_questions_and_chapters(self):
+        def quiz(chapters, questions):
+            ch = ",".join(f'{{id:"c{i}",n:"{i:02}",t:"Capitolo {i}"}}' for i in range(chapters))
+            qs = ",\n".join(f'{{x:1,c:"c0",q:"Domanda {i}",o:["a"]}}' for i in range(questions))
+            return f"<script>const CHAPTERS = [{ch}];\nconst Q = [\n{qs}\n];</script>\n"
+        self.write_commit("Unisa/index.html", quiz(1, 5), "Quiz [patch]")
+        self.write_commit("Unisa/index.html", quiz(1, 9), "Quattro domande")
+        self.assertEqual(build_site.site_version(), "0.1.2")
+        self.write_commit("Unisa/index.html", quiz(1, 19), "Dieci domande")
+        self.assertEqual(build_site.site_version(), "0.2.0")
+        self.write_commit("Unisa/index.html", quiz(2, 19), "Nuovo capitolo del quiz")
+        self.assertEqual(build_site.site_version(), "0.3.0")
+
+    def test_courses_file(self):
+        def courses(*codes, docs=1):
+            data = [{"code": c, "docs": [{"path": f"{c}/{d}.html"} for d in range(docs)]} for c in codes]
+            return "const C = /* CORSI-INIZIO */" + json.dumps(data) + "/* CORSI-FINE */;\n"
+        self.write_commit("Unisa/assets/corsi.js", courses("IS"), "Catalogo [patch]")
+        self.write_commit("Unisa/assets/corsi.js", courses("PO"), "Sigla rinominata")
+        self.assertEqual(build_site.site_version(), "0.1.2")
+        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD"), "Nuovo corso")
+        self.assertEqual(build_site.site_version(), "0.2.0")
+        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD", docs=2), "Nuovo documento")
+        self.assertEqual(build_site.site_version(), "0.3.0")
+        self.write_commit("Unisa/assets/corsi.js", courses("PO", "BD", "SO", docs=2), "Corso in prova [patch]")
+        self.assertEqual(build_site.site_version(), "0.3.1")
 
     def test_history_file_overrides_tags(self):
         self.write_commit("Unisa/a.html", "1\n", "Ritocco [major]")
