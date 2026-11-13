@@ -199,15 +199,15 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <p>Dal caso d'uso al modello di analisi: oggetti entity, boundary e control, modello dinamico, responsabilità e contratti, RAD.</p>
       <ul>
         <li><span class="n">02</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#req">Requisiti ed elicitation</a><span class="s">Dall'elicitation all'analisi, Gestire e rivedere il modello di analisi, Il documento finale: RAD</span></div></li>
-        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Dal caso d'uso agli oggetti di analisi (entity, boundary, control, ReportEmergency), Dettagliare associazioni, attributi e gerarchie</span></div></li>
+        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Class diagram · come si costruisce in analisi (Abbott, entity, boundary, control, ReportEmergency, dettagliare associazioni, attributi e gerarchie)</span></div></li>
         <li><span class="n">08</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#dyn">Modello dinamico e sequence</a><span class="s">Gli elementi, i frame, Dai casi d'uso ai sequence diagram, Responsabilità e controllo dello scenario (contratti), Fork o stair, Collaboration diagram</span></div></li>
       </ul>
     </section>
     <section class="pkg">
       <div class="hd"><span class="k">4</span><h3>Class e sequence diagram</h3><span class="who">lezione del prof. Palomba</span></div>
-      <p>Il class diagram nel dettaglio, il sequence con BCE in pratica e la modellazione nell'era GenAI.</p>
+      <p>Il class diagram (come si legge e come si costruisce), il sequence con BCE in pratica e la modellazione nell'era GenAI.</p>
       <ul>
-        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Che cos'è un modello (Stachowiak, storia UML, 14 diagrammi, analisi e progettazione), Class diagram nel dettaglio (visibilità, sei relazioni, molteplicità, classe associativa, composizione, interfacce, OCL, Abbott, biblioteca)</span></div></li>
+        <li><span class="n">06</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#uml">UML: use case e classi</a><span class="s">Che cos'è un modello (Stachowiak, storia UML, 14 diagrammi, analisi e progettazione), Class diagram · come si legge (visibilità, sei relazioni, molteplicità, classe associativa, composizione, interfacce, OCL) e come si costruisce (Abbott, biblioteca)</span></div></li>
         <li><span class="n">08</span><div><a href="Quaderno%20di%20Ingegneria%20del%20Software.html#dyn">Modello dinamico e sequence</a><span class="s">Perché serve, come si scrive un messaggio, BCE in pratica (Accedi, Richiedi prestito, Paga ordine, package), Class e sequence insieme, Modellare nell'era GenAI</span></div></li>
       </ul>
     </section>
@@ -322,7 +322,7 @@ const TOPICS = [
     draw: "Use case diagram di una biblioteca con almeno un include e un extend",
     open: "Include ed extend: differenza e verso della freccia" },
   { id: "class", ch: "06", cid: "uml", pkg: "Intro UML · Class e sequence", t: "Class diagram (base e nel dettaglio)", min: 130, pri: 5,
-    read: "Cap. 06: class diagram, Class diagram nel dettaglio (visibilità, sei relazioni, molteplicità, navigabilità, classe associativa, composizione, interfacce, dipendenza, OCL, Abbott)",
+    read: "Cap. 06: Class diagram · come si legge (visibilità, sei relazioni, molteplicità, navigabilità, classe associativa, composizione, interfacce, dipendenza, OCL) e come si costruisce in analisi (Abbott)",
     draw: "Dal testo del requisito della biblioteca disegna il class diagram con molteplicità; poi fai il \"Prova tu · che relazione è?\"",
     open: "Aggregazione e composizione: differenza, tre test, esempio" },
   { id: "state", ch: "07", cid: "state", pkg: "Intro UML", t: "Statechart, activity e package", min: 70, pri: 3,
@@ -330,7 +330,7 @@ const TOPICS = [
     draw: "Statechart di un ordine online e activity diagram di un prestito con una swimlane per attore",
     open: "Fork e branch nell'activity diagram: differenza" },
   { id: "analisi", ch: "02 · 06", cid: "uml", pkg: "Analisi dei requisiti", t: "Analisi: oggetti entity, boundary, control e RAD", min: 80, pri: 4,
-    read: "Cap. 02: Dall'elicitation all'analisi, Gestire e rivedere il modello, RAD · Cap. 06: Dal caso d'uso agli oggetti di analisi, Dettagliare associazioni e attributi",
+    read: "Cap. 02: Dall'elicitation all'analisi, Gestire e rivedere il modello, RAD · Cap. 06: Class diagram · come si costruisce in analisi (oggetti entity, boundary, control; dettagliare associazioni e attributi)",
     draw: "Dal caso d'uso ReportEmergency (o \"Prenota esame\") elenca entity, boundary e control",
     open: "Perché si separano boundary, control ed entity?" },
   { id: "seq", ch: "08", cid: "dyn", pkg: "Analisi dei requisiti · Class e sequence", t: "Sequence diagram e modello dinamico", min: 100, pri: 5,
