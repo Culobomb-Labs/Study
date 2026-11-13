@@ -220,8 +220,8 @@ output{font-family:var(--f-mono);color:var(--ink)}
     </section>
   </div>
 
-  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07, 08 e 19</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prima prova" pesca solo da questi capitoli.</div>
-  <p class="muted" style="font-size:14px;margin:0">Non entrano: 00 Java minimo, 01 Riunioni e minuta, 05 Ciclo di vita, 09 System design, 10–17 object design e testing, 18 Scrum. La corrispondenza tra slide e capitoli è ricostruita dagli argomenti dei pacchetti: se in un pacchetto c'è qualcosa che qui manca, segnalalo.</p>
+  <div class="note">In sintesi entrano i capitoli <b>02, 03, 04, 06, 07, 08 e 20</b>. Per esercitarti usa il <a href="Quiz%20IS.html">Quiz di Ingegneria del Software</a>: la "Simulazione prima prova" pesca solo da questi capitoli.</div>
+  <p class="muted" style="font-size:14px;margin:0">Non entrano: 00 Java minimo, 01 Riunioni e minuta, 05 Ciclo di vita, 09 System design, 10 Agenti e modelli, 11–18 object design e testing, 19 Scrum. La corrispondenza tra slide e capitoli è ricostruita dagli argomenti dei pacchetti: se in un pacchetto c'è qualcosa che qui manca, segnalalo.</p>
 
   <div class="tbl" id="mappa"><table>
     <tr><th>Capitolo</th><th>Requirements Elicitation</th><th>Intro UML</th><th>Analisi dei requisiti</th><th>Class e sequence</th></tr>
@@ -240,9 +240,9 @@ output{font-family:var(--f-mono);color:var(--ink)}
     <fieldset>
       <legend>Per quale prova</legend>
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
-        <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 19</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 20</small></span></label>
         <label class="scope off" title="Gli argomenti non sono ancora stati comunicati"><input type="radio" name="scope" value="seconda" disabled><span><b>Seconda prova</b><small>argomenti non ancora disponibili</small></span></label>
-        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–19</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–20</small></span></label>
       </div>
     </fieldset>
     <fieldset>
@@ -345,48 +345,52 @@ const TOPICS = [
     read: "Cap. 08: Modellare nell'era GenAI (diagramma come specifica e come verifica, LLM dietro un'interfaccia, RAG, agenti)",
     draw: "Fai l'esercizio per casa \"promemoria scritti da un LLM\": class diagram e sequence BCE",
     open: "Dove sta l'LLM in un modello BCE e perché" },
-  { id: "review", ch: "19", cid: "review", pkg: "Pull-based e code review", t: "Pull-based development e code review", min: 50, pri: 4,
-    read: "Cap. 19: Onion Model, contributor e integrator, pull request e criteri di accettazione, 4 ruoli e 6 fasi di Fagan, modern code review",
+  { id: "review", ch: "20", cid: "review", pkg: "Pull-based e code review", t: "Pull-based development e code review", min: 50, pri: 4,
+    read: "Cap. 20: Onion Model, contributor e integrator, pull request e criteri di accettazione, 4 ruoli e 6 fasi di Fagan, modern code review",
     draw: "Schema delle 6 fasi di Fagan con chi lavora in ogni fase, e tabella code inspection vs modern code review",
     open: "Differenze tra code inspection e modern code review" },
-  { id: "sd", full: true, ch: "09", cid: "sd", pkg: "System design", t: "System design", min: 90, pri: 4,
-    read: "Cap. 09: le 8 attività, dall'analisi al design, design goal e trade-off, sottosistemi e servizi, coesione e accoppiamento, layer e macchine virtuali, stili architetturali, scelta dei sottosistemi, deployment diagram, flusso di controllo",
+  { id: "sd", full: true, ch: "09", cid: "sd", pkg: "System design", t: "System design", min: 150, pri: 4,
+    read: "Cap. 09: le 8 attività, dall'analisi al design, design goal e trade-off, sottosistemi e servizi, coesione e accoppiamento, layer e macchine virtuali, stili architetturali, scelta dei sottosistemi; poi le cinque scelte, component e deployment diagram, dati persistenti, matrice di accesso, flusso di controllo e concorrenza, condizioni limite ed eccezioni, revisione e ruoli",
     draw: "Deployment diagram di un sistema client/server a tre livelli, e uno schema MVC con l'Observer tra Model e View",
     open: "Decomposizione in sottosistemi con coesione e accoppiamento (domanda aperta del deposito)" },
-  { id: "riuso", full: true, ch: "10", cid: "riuso", pkg: "Object design", t: "Riuso: ereditarietà e delega", min: 45, pri: 3,
-    read: "Cap. 10: ereditarietà di specifica e di implementazione, principio di Liskov, delega (Stack e List)",
+  { id: "agenti", full: true, ch: "10", cid: "agenti", pkg: "Agenti e modelli", t: "Agenti e modelli", min: 70, pri: 3,
+    read: "Cap. 10: agenti e workflow, i cinque schemi, i modelli come specifica, l'esperimento su PrenotaAula, quali task e quali modelli, ordine di generazione, agent file, task per l'agente, pipeline su GitHub, Definition of Done",
+    draw: "Scrivi il task per l'agente (specifica, ambito, verifica, procedura) e le regole Sempre / Chiedi prima / Mai per un caso d'uso del vostro progetto",
+    open: "Cosa ricava un agente da ciascun modello, e cosa sbaglia quando manca?" },
+  { id: "riuso", full: true, ch: "11", cid: "riuso", pkg: "Object design", t: "Riuso: ereditarietà e delega", min: 45, pri: 3,
+    read: "Cap. 11: ereditarietà di specifica e di implementazione, principio di Liskov, delega (Stack e List)",
     draw: "Riscrivi Stack con la delega e disegna i due class diagram (ereditarietà e delega)",
     open: "Ereditarietà o delega: quando usare l'una o l'altra" },
-  { id: "dp", full: true, ch: "11", cid: "dp", pkg: "Object design", t: "Design pattern", min: 90, pri: 4,
-    read: "Cap. 11: Composite, Facade, Adapter, Bridge, Proxy, Observer, Abstract Factory, MVC, indizi nel testo",
+  { id: "dp", full: true, ch: "12", cid: "dp", pkg: "Object design", t: "Design pattern", min: 90, pri: 4,
+    read: "Cap. 12: Composite, Facade, Adapter, Bridge, Proxy, Observer, Abstract Factory, MVC, indizi nel testo",
     draw: "Disegna a memoria il class diagram di Adapter, Observer e Composite",
     open: "Adapter e Bridge: differenza, con un esempio" },
-  { id: "map", full: true, ch: "12", cid: "map", pkg: "Object design", t: "Mapping models to code", min: 90, pri: 4,
-    read: "Cap. 12: le 4 trasformazioni, refactoring, mappare le associazioni, contratti ed eccezioni, persistenza, ereditarietà nel database",
+  { id: "map", full: true, ch: "13", cid: "map", pkg: "Object design", t: "Mapping models to code", min: 90, pri: 4,
+    read: "Cap. 13: le 4 trasformazioni, refactoring, mappare le associazioni, contratti ed eccezioni, persistenza, ereditarietà nel database",
     draw: "Mappa in Java e in tabelle un'associazione uno-a-molti e una molti-a-molti",
     open: "Mapping verticale e orizzontale dell'ereditarietà: pro e contro" },
-  { id: "test", full: true, ch: "13", cid: "test", pkg: "Testing", t: "Testing: i concetti", min: 60, pri: 4,
-    read: "Cap. 13: failure, fault, stato di errore, review e inspection di Fagan, livelli di test, oracolo, stub e driver",
+  { id: "test", full: true, ch: "14", cid: "test", pkg: "Testing", t: "Testing: i concetti", min: 60, pri: 4,
+    read: "Cap. 14: failure, fault, stato di errore, review e inspection di Fagan, livelli di test, oracolo, stub e driver",
     draw: "Per una funzione a scelta scrivi un test case completo (input, oracolo) e indica dove servono stub e driver",
     open: "Differenza tra fault, failure e stato di errore" },
-  { id: "bb", full: true, ch: "14", cid: "bb", pkg: "Testing", t: "Black-box testing", min: 60, pri: 5,
-    read: "Cap. 14: classi di equivalenza, WECT e SECT, boundary value analysis, robustness, worst case",
+  { id: "bb", full: true, ch: "15", cid: "bb", pkg: "Testing", t: "Black-box testing", min: 60, pri: 5,
+    read: "Cap. 15: classi di equivalenza, WECT e SECT, boundary value analysis, robustness, worst case",
     draw: "Con 2–3 variabili calcola a mano i test di BVA, robustness, WECT e SECT",
     open: "Cos'è l'ipotesi di single fault e quali tecniche la usano" },
-  { id: "cp", full: true, ch: "15", cid: "cp", pkg: "Testing", t: "Category-partition", min: 50, pri: 4,
-    read: "Cap. 15: i passi del metodo, categorie, scelte, vincoli [property] [if] [error] [single], test frame",
+  { id: "cp", full: true, ch: "16", cid: "cp", pkg: "Testing", t: "Category-partition", min: 50, pri: 4,
+    read: "Cap. 16: i passi del metodo, categorie, scelte, vincoli [property] [if] [error] [single], test frame",
     draw: "Applica il category-partition a una funzione con 2 parametri e conta i frame",
     open: "Categoria, scelta e test frame: definizioni con un esempio" },
-  { id: "wb", full: true, ch: "16", cid: "wb", pkg: "Testing", t: "White-box testing", min: 50, pri: 4,
-    read: "Cap. 16: statement, branch, loop e path coverage, computeFine, FindMean, complessità ciclomatica",
+  { id: "wb", full: true, ch: "17", cid: "wb", pkg: "Testing", t: "White-box testing", min: 50, pri: 4,
+    read: "Cap. 17: statement, branch, loop e path coverage, computeFine, FindMean, complessità ciclomatica",
     draw: "Disegna il grafo di flusso di un metodo con 2 if e un ciclo e calcola V(G)",
     open: "White-box e black-box: cosa trova l'uno e cosa l'altro" },
-  { id: "its", full: true, ch: "17", cid: "its", pkg: "Testing", t: "Integrazione e sistema", min: 60, pri: 3,
-    read: "Cap. 17: big bang, bottom-up, top-down, sandwich, system testing, documenti IEEE 829",
+  { id: "its", full: true, ch: "18", cid: "its", pkg: "Testing", t: "Integrazione e sistema", min: 60, pri: 3,
+    read: "Cap. 18: big bang, bottom-up, top-down, sandwich, system testing, documenti IEEE 829",
     draw: "Per un sistema a 3 livelli scegli una strategia di integrazione e indica dove servono stub e driver",
     open: "Bottom-up e top-down: pro, contro, stub o driver" },
-  { id: "scrum", full: true, ch: "18", cid: "scrum", pkg: "Sviluppo agile", t: "Scrum", min: 70, pri: 4,
-    read: "Cap. 18: Manifesto Agile, i tre ruoli, cerimonie, artefatti, capacità e focus factor, burndown",
+  { id: "scrum", full: true, ch: "19", cid: "scrum", pkg: "Sviluppo agile", t: "Scrum", min: 70, pri: 4,
+    read: "Cap. 19: Manifesto Agile, i tre ruoli, cerimonie, artefatti, capacità e focus factor, burndown",
     draw: "Calcola la capacità di un team con il focus factor e leggi un burndown chart",
     open: "Ruoli e cerimonie di Scrum" }
 ];
