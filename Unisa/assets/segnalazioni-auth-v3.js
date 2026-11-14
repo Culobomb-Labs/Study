@@ -1,6 +1,5 @@
 /* Pagina Segnalazioni · accesso con Google, invio delle segnalazioni e conversazioni (Firebase).
-   È la versione in uso: la carica segnalazioni.html. Le versioni precedenti (segnalazioni-auth.js e
-   segnalazioni-auth-v2.js) non sono più usate dal sito. */
+   Lo carica segnalazioni.html. */
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import {
   getAuth,
