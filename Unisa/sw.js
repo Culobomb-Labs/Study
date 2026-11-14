@@ -8,7 +8,8 @@ const FONTS = "appunti-font";
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE)
+    caches
+      .open(CACHE)
       .then(c => Promise.all(PRECACHE.map(u => c.add(new Request(u, { cache: "reload" })).catch(() => {}))))
       .then(() => self.skipWaiting())
   );
@@ -16,8 +17,13 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k.startsWith("appunti-") && k !== CACHE && k !== FONTS).map(k => caches.delete(k))))
+    caches
+      .keys()
+      .then(keys =>
+        Promise.all(
+          keys.filter(k => k.startsWith("appunti-") && k !== CACHE && k !== FONTS).map(k => caches.delete(k))
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
@@ -29,19 +35,42 @@ self.addEventListener("fetch", event => {
 
   // caratteri di Google Fonts: dalla cache, aggiornati quando possibile
   if (url.host === "fonts.googleapis.com" || url.host === "fonts.gstatic.com") {
-    event.respondWith(caches.open(FONTS).then(async c => {
-      const hit = await c.match(req);
-      const net = fetch(req).then(r => { if (r.ok || r.type === "opaque") c.put(req, r.clone()); return r; }).catch(() => hit);
-      return hit || net;
-    }));
+    event.respondWith(
+      caches.open(FONTS).then(async c => {
+        const hit = await c.match(req);
+        const net = fetch(req)
+          .then(r => {
+            if (r.ok || r.type === "opaque") c.put(req, r.clone());
+            return r;
+          })
+          .catch(() => hit);
+        return hit || net;
+      })
+    );
     return;
   }
   if (url.origin !== location.origin) return;
 
   // pagine e dati: prima la rete (così vedi sempre la versione nuova), senza rete la copia salvata
-  const fresh = req.mode === "navigate" || url.pathname.endsWith(".html") || url.pathname.endsWith(".json") || url.pathname.endsWith("/");
+  const fresh =
+    req.mode === "navigate" ||
+    url.pathname.endsWith(".html") ||
+    url.pathname.endsWith(".json") ||
+    url.pathname.endsWith("/");
   if (fresh) {
-    const net = fetch(req).then(r => { if (r.ok) { const copy = r.clone(); return caches.open(CACHE).then(c => c.put(req, copy)).then(() => r, () => r); } return r; });
+    const net = fetch(req).then(r => {
+      if (r.ok) {
+        const copy = r.clone();
+        return caches
+          .open(CACHE)
+          .then(c => c.put(req, copy))
+          .then(
+            () => r,
+            () => r
+          );
+      }
+      return r;
+    });
     event.waitUntil(net.catch(() => {})); // la copia nuova si salva anche se intanto è stata mostrata quella vecchia
     const saved = () => caches.match(req, { ignoreSearch: true });
     if (req.mode === "navigate") {
@@ -60,11 +89,18 @@ self.addEventListener("fetch", event => {
   }
 
   // stile, script, immagini: subito dalla cache, aggiornati in sottofondo
-  event.respondWith(caches.open(CACHE).then(async c => {
-    const hit = await c.match(req);
-    const net = fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }).catch(async () => hit || await c.match(req, { ignoreSearch: true }));
-    return hit || net;
-  }));
+  event.respondWith(
+    caches.open(CACHE).then(async c => {
+      const hit = await c.match(req);
+      const net = fetch(req)
+        .then(r => {
+          if (r.ok) c.put(req, r.clone());
+          return r;
+        })
+        .catch(async () => hit || (await c.match(req, { ignoreSearch: true })));
+      return hit || net;
+    })
+  );
 });
 
 /* ---------------- news: notifiche ----------------
@@ -80,16 +116,30 @@ async function checkNews() {
   if (!hit) return; // notifiche mai attivate da questo dispositivo
   const done = await hit.json();
   let news = [];
-  try { const r = await fetch(new URL("news.json", self.registration.scope).href, { cache: "no-cache" }); news = (await r.json()).news || []; } catch (e) { return; }
+  try {
+    const r = await fetch(new URL("news.json", self.registration.scope).href, { cache: "no-cache" });
+    news = (await r.json()).news || [];
+  } catch (e) {
+    return;
+  }
   const fresh = news.filter(n => n && n.id && n.titolo && !done.includes(n.id));
   if (!fresh.length) return;
-  await c.put(stateUrl(), new Response(JSON.stringify(done.concat(fresh.map(n => n.id))), { headers: { "Content-Type": "application/json" } }));
+  await c.put(
+    stateUrl(),
+    new Response(JSON.stringify(done.concat(fresh.map(n => n.id))), {
+      headers: { "Content-Type": "application/json" }
+    })
+  );
   for (const n of fresh.slice(0, 3)) {
     await self.registration.showNotification(n.titolo, {
-      body: n.testo || "", tag: "news-" + n.id,
+      body: n.testo || "",
+      tag: "news-" + n.id,
       icon: new URL("icon-192.png", self.registration.scope).href,
       badge: new URL("favicon-32.png", self.registration.scope).href,
-      data: { url: new URL("news.html" + (n && n.id ? "#" + encodeURIComponent(n.id) : ""), self.registration.scope).href }
+      data: {
+        url: new URL("news.html" + (n && n.id ? "#" + encodeURIComponent(n.id) : ""), self.registration.scope)
+          .href
+      }
     });
   }
 }
@@ -106,7 +156,10 @@ async function markNotified(id) {
     const hit = await c.match(stateUrl());
     const done = hit ? await hit.json() : [];
     if (!done.includes(id)) done.push(id);
-    await c.put(stateUrl(), new Response(JSON.stringify(done), { headers: { "Content-Type": "application/json" } }));
+    await c.put(
+      stateUrl(),
+      new Response(JSON.stringify(done), { headers: { "Content-Type": "application/json" } })
+    );
   } catch (e) {}
 }
 async function showPush(d) {
@@ -116,7 +169,10 @@ async function showPush(d) {
   const id = p.id || "";
   if (id) await markNotified(id); // così la pagina non la mostra una seconda volta
   const scope = self.registration.scope;
-  const url = p.url && String(p.url).startsWith(scope) ? p.url : new URL("news.html" + (id ? "#" + encodeURIComponent(id) : ""), scope).href;
+  const url =
+    p.url && String(p.url).startsWith(scope)
+      ? p.url
+      : new URL("news.html" + (id ? "#" + encodeURIComponent(id) : ""), scope).href;
   return self.registration.showNotification(titolo, {
     body: p.testo || (d.notification && d.notification.body) || "",
     tag: "news-" + (id || Date.now()),
@@ -127,15 +183,25 @@ async function showPush(d) {
 }
 self.addEventListener("push", event => {
   let d = {};
-  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { titolo: event.data && event.data.text() }; }
+  try {
+    d = event.data ? event.data.json() : {};
+  } catch (e) {
+    d = { titolo: event.data && event.data.text() };
+  }
   event.waitUntil(showPush(d || {}));
 });
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   const target = (event.notification.data && event.notification.data.url) || self.registration.scope;
-  event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
-    for (const w of list) if (w.url.startsWith(self.registration.scope) && "focus" in w) { w.navigate(target).catch(() => {}); return w.focus(); }
-    return self.clients.openWindow(target);
-  }));
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+      for (const w of list)
+        if (w.url.startsWith(self.registration.scope) && "focus" in w) {
+          w.navigate(target).catch(() => {});
+          return w.focus();
+        }
+      return self.clients.openWindow(target);
+    })
+  );
 });

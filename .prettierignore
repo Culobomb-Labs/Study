@@ -1,0 +1,15 @@
+# Formattazione automatica (Prettier) solo per il codice comune del sito.
+# Gli appunti (quaderni, piani di studio, quiz) restano come sono: sono file enormi
+# e un riordino automatico rischierebbe di cambiarne l'aspetto.
+*
+!Unisa/
+!Unisa/assets/
+!Unisa/assets/*.css
+!Unisa/assets/*.js
+!Unisa/index.html
+!Unisa/news.html
+!Unisa/segnalazioni.html
+!Unisa/sw.js
+Unisa/assets/*.min.js
+# corsi.js è già ordinato (un documento per riga) e tra le righe CORSI deve restare JSON valido
+Unisa/assets/corsi.js

@@ -1,120 +1,320 @@
 <!doctype html>
 <html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111418">
-<title>Segnalazioni · Appunti Unisa</title>
-<script>try{var t=localStorage.getItem('ua-theme');if(t&&t!='auto')document.documentElement.dataset.theme=t}catch(e){}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/segnalazioni.css?v=17">
-</head>
-<body>
-<main class="reports-page">
-  <header class="reports-hero">
-    <div class="hero-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg></div>
-    <p class="eyebrow">Appunti Unisa <span aria-hidden="true">/</span> Assistenza</p>
-    <h1>Segnala un problema<span class="hero-dot" aria-hidden="true">.</span></h1>
-    <p class="intro">Un errore negli appunti, una pagina che non si apre, un quiz con la risposta sbagliata? Raccontalo qui e segui lo stato della tua segnalazione.</p>
-    <ol class="steps" aria-label="Come funziona">
-      <li><b>1</b><span>Descrivi il problema</span></li>
-      <li><b>2</b><span>Invia la segnalazione</span></li>
-      <li><b>3</b><span>Segui lo stato e la risposta</span></li>
-    </ol>
-    <div class="account">
-      <span class="account-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
-      <div class="account-copy"><span class="account-label">Il tuo account</span><span id="identity"></span><p id="auth-message" role="status" aria-live="polite">Verifica dell’account…</p></div>
-      <button id="login" type="button" hidden disabled>Accedi con Google</button>
-      <button id="switch-account" class="switch-account" type="button" hidden>Cambia account</button>
-    </div>
-  </header>
-  <div id="report-notices" class="report-notices" aria-live="polite"></div>
-  <section class="report-push" aria-label="Notifiche delle segnalazioni">
-    <p><b>Avvisi sulle segnalazioni.</b> Con l’accesso fatto e le notifiche attive su questo dispositivo, ti arriva una notifica quando la tua segnalazione cambia stato o riceve una risposta (di solito entro qualche minuto), anche a sito chiuso.</p>
-    <div class="ua-np-nt ua-np-nt-card" data-ua-nt></div>
-  </section>
-  <div class="grid">
-    <section class="report-panel form-panel" aria-labelledby="form-title">
-      <div class="panel-heading"><span class="panel-number">01</span><div><h2 id="form-title">Nuova segnalazione</h2><p>Bastano poche righe: dove, cosa ti aspettavi, cosa è successo.</p></div></div>
-      <form id="form">
-        <label for="report-title">Titolo</label>
-        <input id="report-title" name="title" minlength="3" maxlength="120" required placeholder="Es. Quiz IS, domanda sulla composizione sbagliata" autocomplete="off">
-        <div class="label-row"><label for="report-text">Descrizione</label><small id="counter" aria-live="polite">0 / 550</small></div>
-        <textarea id="report-text" name="text" minlength="10" maxlength="550" required placeholder="In quale pagina o capitolo? Cosa ti aspettavi e cosa è successo invece? Se puoi, come riprodurlo." aria-describedby="counter text-hint"></textarea>
-        <div class="meter" aria-hidden="true"><i id="counter-bar"></i></div>
-        <p class="hint" id="text-hint">Massimo 550 caratteri.</p>
-        <fieldset class="contact">
-          <legend>Dove vuoi la risposta</legend>
-          <div class="ch-chips" role="radiogroup" aria-label="Canale per la risposta">
-            <label class="ch"><input type="radio" name="ch1" value="site" checked><span>Qui sul sito</span></label>
-            <label class="ch"><input type="radio" name="ch1" value="telegram"><span>Telegram</span></label>
-            <label class="ch"><input type="radio" name="ch1" value="instagram"><span>Instagram</span></label>
-            <label class="ch"><input type="radio" name="ch1" value="discord"><span>Discord</span></label>
-            <label class="ch"><input type="radio" name="ch1" value="google"><span>Email Google</span></label>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#111418" />
+    <title>Segnalazioni · Appunti Unisa</title>
+    <script>
+      try {
+        var t = localStorage.getItem("ua-theme");
+        if (t && t != "auto") document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/segnalazioni.css?v=17" />
+  </head>
+  <body>
+    <main class="reports-page">
+      <header class="reports-hero">
+        <div class="hero-badge" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 2l1.9 1.9M16 2l-1.9 1.9" />
+            <path d="M9 7.1V6a3 3 0 0 1 6 0v1.1" />
+            <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z" />
+            <path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5" />
+          </svg>
+        </div>
+        <p class="eyebrow">Appunti Unisa <span aria-hidden="true">/</span> Assistenza</p>
+        <h1>Segnala un problema<span class="hero-dot" aria-hidden="true">.</span></h1>
+        <p class="intro">
+          Un errore negli appunti, una pagina che non si apre, un quiz con la risposta sbagliata? Raccontalo
+          qui e segui lo stato della tua segnalazione.
+        </p>
+        <ol class="steps" aria-label="Come funziona">
+          <li><b>1</b><span>Descrivi il problema</span></li>
+          <li><b>2</b><span>Invia la segnalazione</span></li>
+          <li><b>3</b><span>Segui lo stato e la risposta</span></li>
+        </ol>
+        <div class="account">
+          <span class="account-icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M5 20a7 7 0 0 1 14 0" /></svg
+          ></span>
+          <div class="account-copy">
+            <span class="account-label">Il tuo account</span><span id="identity"></span>
+            <p id="auth-message" role="status" aria-live="polite">Verifica dell’account…</p>
           </div>
-          <p class="hint" id="site-hint">La risposta comparirà sotto la tua segnalazione, in “Le tue segnalazioni”. Se preferisci essere avvisato altrove, scegli un canale.</p>
-          <div id="contact1" class="contact-row" hidden>
-            <label for="report-c1" class="sr-only">Recapito <span id="c1-label"></span></label>
-            <input id="report-c1" name="c1" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c1-hint">
-            <p class="hint" id="c1-hint"></p>
-          </div>
-          <p class="google-note" id="google1" hidden></p>
-          <button type="button" class="add-contact" id="add-contact2" hidden>+ Aggiungi un secondo contatto <span class="optional">facoltativo</span></button>
-          <div id="contact2" class="contact-row contact-row-2" hidden>
-            <div class="c2-line">
-              <label for="report-ch2" class="sr-only">Tipo del secondo contatto</label>
-              <select id="report-ch2" name="ch2"><option value="telegram">Telegram</option><option value="instagram">Instagram</option><option value="discord">Discord</option><option value="google">Email Google</option></select>
-              <label for="report-c2" class="sr-only">Secondo recapito</label>
-              <input id="report-c2" name="c2" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="c2-hint">
-              <button type="button" class="rm-contact" id="rm-contact2" aria-label="Togli il secondo contatto">×</button>
+          <button id="login" type="button" hidden disabled>Accedi con Google</button>
+          <button id="switch-account" class="switch-account" type="button" hidden>Cambia account</button>
+        </div>
+      </header>
+      <div id="report-notices" class="report-notices" aria-live="polite"></div>
+      <section class="report-push" aria-label="Notifiche delle segnalazioni">
+        <p>
+          <b>Avvisi sulle segnalazioni.</b> Con l’accesso fatto e le notifiche attive su questo dispositivo,
+          ti arriva una notifica quando la tua segnalazione cambia stato o riceve una risposta (di solito
+          entro qualche minuto), anche a sito chiuso.
+        </p>
+        <div class="ua-np-nt ua-np-nt-card" data-ua-nt></div>
+      </section>
+      <div class="grid">
+        <section class="report-panel form-panel" aria-labelledby="form-title">
+          <div class="panel-heading">
+            <span class="panel-number">01</span>
+            <div>
+              <h2 id="form-title">Nuova segnalazione</h2>
+              <p>Bastano poche righe: dove, cosa ti aspettavi, cosa è successo.</p>
             </div>
-            <p class="hint" id="c2-hint"></p>
-            <p class="google-note" id="google2" hidden></p>
           </div>
-          <input type="hidden" name="contact" value="">
-        </fieldset>
-        <button id="send" type="submit" disabled><span>Invia segnalazione</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-        <p id="message" role="status" aria-live="polite"></p>
-        <div class="quota" id="quota" hidden>
-          <div class="quota-top"><span class="quota-lbl">Segnalazioni usate</span><span class="quota-num" id="quota-num"></span></div>
-          <div class="quota-bar" id="quota-bar" role="img" aria-label=""><i></i><i></i><i></i><i></i><i></i></div>
-          <p class="quota-msg" id="quota-msg" aria-live="polite"></p>
-        </div>
-      </form>
-    </section>
-    <section class="report-panel list-panel" aria-labelledby="list-title">
-      <div class="panel-heading"><span class="panel-number">02</span><div><h2 id="list-title">Le tue segnalazioni</h2><p>Qui trovi lo stato di ogni richiesta e le risposte.</p></div></div>
-      <div id="admin-tools" class="admin-tools" hidden>
-        <div class="tools-row">
-          <label class="search-field" for="report-search"><span class="sr-only">Cerca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="report-search" type="search" placeholder="Cerca titolo, testo, email…" autocomplete="off"></label>
-          <label class="sort-field" for="report-sort"><span class="sr-only">Ordina</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5"/></svg><select id="report-sort"><option value="newest">Recenti</option><option value="oldest">Meno recenti</option><option value="status">Per stato</option></select></label>
-        </div>
-        <div class="filter-chips" id="filter-chips" role="radiogroup" aria-label="Filtra per stato">
-          <button type="button" role="radio" class="fchip all" data-v="all">Tutte <b data-count="all">0</b></button>
-          <button type="button" role="radio" class="fchip new" data-v="new">Nuove <b data-count="new">0</b></button>
-          <button type="button" role="radio" class="fchip in_progress" data-v="in_progress">In elaborazione <b data-count="in_progress">0</b></button>
-          <button type="button" role="radio" class="fchip resolved" data-v="resolved">Risolte <b data-count="resolved">0</b></button>
-          <button type="button" role="radio" class="fchip rejected" data-v="rejected">Rifiutate <b data-count="rejected">0</b></button>
-        </div>
-        <select id="report-filter" hidden aria-hidden="true" tabindex="-1"><option value="all">Tutti gli stati</option><option value="new">Nuova</option><option value="in_progress">In elaborazione</option><option value="resolved">Risolta</option><option value="rejected">Rifiutata</option></select>
-        <p class="tools-count" id="report-count" aria-live="polite"></p>
+          <form id="form">
+            <label for="report-title">Titolo</label>
+            <input
+              id="report-title"
+              name="title"
+              minlength="3"
+              maxlength="120"
+              required
+              placeholder="Es. Quiz IS, domanda sulla composizione sbagliata"
+              autocomplete="off"
+            />
+            <div class="label-row">
+              <label for="report-text">Descrizione</label
+              ><small id="counter" aria-live="polite">0 / 550</small>
+            </div>
+            <textarea
+              id="report-text"
+              name="text"
+              minlength="10"
+              maxlength="550"
+              required
+              placeholder="In quale pagina o capitolo? Cosa ti aspettavi e cosa è successo invece? Se puoi, come riprodurlo."
+              aria-describedby="counter text-hint"
+            ></textarea>
+            <div class="meter" aria-hidden="true"><i id="counter-bar"></i></div>
+            <p class="hint" id="text-hint">Massimo 550 caratteri.</p>
+            <fieldset class="contact">
+              <legend>Dove vuoi la risposta</legend>
+              <div class="ch-chips" role="radiogroup" aria-label="Canale per la risposta">
+                <label class="ch"
+                  ><input type="radio" name="ch1" value="site" checked /><span>Qui sul sito</span></label
+                >
+                <label class="ch"
+                  ><input type="radio" name="ch1" value="telegram" /><span>Telegram</span></label
+                >
+                <label class="ch"
+                  ><input type="radio" name="ch1" value="instagram" /><span>Instagram</span></label
+                >
+                <label class="ch"
+                  ><input type="radio" name="ch1" value="discord" /><span>Discord</span></label
+                >
+                <label class="ch"
+                  ><input type="radio" name="ch1" value="google" /><span>Email Google</span></label
+                >
+              </div>
+              <p class="hint" id="site-hint">
+                La risposta comparirà sotto la tua segnalazione, in “Le tue segnalazioni”. Se preferisci
+                essere avvisato altrove, scegli un canale.
+              </p>
+              <div id="contact1" class="contact-row" hidden>
+                <label for="report-c1" class="sr-only">Recapito <span id="c1-label"></span></label>
+                <input
+                  id="report-c1"
+                  name="c1"
+                  maxlength="120"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  aria-describedby="c1-hint"
+                />
+                <p class="hint" id="c1-hint"></p>
+              </div>
+              <p class="google-note" id="google1" hidden></p>
+              <button type="button" class="add-contact" id="add-contact2" hidden>
+                + Aggiungi un secondo contatto <span class="optional">facoltativo</span>
+              </button>
+              <div id="contact2" class="contact-row contact-row-2" hidden>
+                <div class="c2-line">
+                  <label for="report-ch2" class="sr-only">Tipo del secondo contatto</label>
+                  <select id="report-ch2" name="ch2">
+                    <option value="telegram">Telegram</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="discord">Discord</option>
+                    <option value="google">Email Google</option>
+                  </select>
+                  <label for="report-c2" class="sr-only">Secondo recapito</label>
+                  <input
+                    id="report-c2"
+                    name="c2"
+                    maxlength="120"
+                    autocomplete="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    aria-describedby="c2-hint"
+                  />
+                  <button
+                    type="button"
+                    class="rm-contact"
+                    id="rm-contact2"
+                    aria-label="Togli il secondo contatto"
+                  >
+                    ×
+                  </button>
+                </div>
+                <p class="hint" id="c2-hint"></p>
+                <p class="google-note" id="google2" hidden></p>
+              </div>
+              <input type="hidden" name="contact" value="" />
+            </fieldset>
+            <button id="send" type="submit" disabled>
+              <span>Invia segnalazione</span
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </button>
+            <p id="message" role="status" aria-live="polite"></p>
+            <div class="quota" id="quota" hidden>
+              <div class="quota-top">
+                <span class="quota-lbl">Segnalazioni usate</span
+                ><span class="quota-num" id="quota-num"></span>
+              </div>
+              <div class="quota-bar" id="quota-bar" role="img" aria-label="">
+                <i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <p class="quota-msg" id="quota-msg" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+        <section class="report-panel list-panel" aria-labelledby="list-title">
+          <div class="panel-heading">
+            <span class="panel-number">02</span>
+            <div>
+              <h2 id="list-title">Le tue segnalazioni</h2>
+              <p>Qui trovi lo stato di ogni richiesta e le risposte.</p>
+            </div>
+          </div>
+          <div id="admin-tools" class="admin-tools" hidden>
+            <div class="tools-row">
+              <label class="search-field" for="report-search"
+                ><span class="sr-only">Cerca</span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="M20 20l-4.2-4.2" /></svg
+                ><input
+                  id="report-search"
+                  type="search"
+                  placeholder="Cerca titolo, testo, email…"
+                  autocomplete="off"
+              /></label>
+              <label class="sort-field" for="report-sort"
+                ><span class="sr-only">Ordina</span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5" /></svg
+                ><select id="report-sort">
+                  <option value="newest">Recenti</option>
+                  <option value="oldest">Meno recenti</option>
+                  <option value="status">Per stato</option>
+                </select></label
+              >
+            </div>
+            <div class="filter-chips" id="filter-chips" role="radiogroup" aria-label="Filtra per stato">
+              <button type="button" role="radio" class="fchip all" data-v="all">
+                Tutte <b data-count="all">0</b>
+              </button>
+              <button type="button" role="radio" class="fchip new" data-v="new">
+                Nuove <b data-count="new">0</b>
+              </button>
+              <button type="button" role="radio" class="fchip in_progress" data-v="in_progress">
+                In elaborazione <b data-count="in_progress">0</b>
+              </button>
+              <button type="button" role="radio" class="fchip resolved" data-v="resolved">
+                Risolte <b data-count="resolved">0</b>
+              </button>
+              <button type="button" role="radio" class="fchip rejected" data-v="rejected">
+                Rifiutate <b data-count="rejected">0</b>
+              </button>
+            </div>
+            <select id="report-filter" hidden aria-hidden="true" tabindex="-1">
+              <option value="all">Tutti gli stati</option>
+              <option value="new">Nuova</option>
+              <option value="in_progress">In elaborazione</option>
+              <option value="resolved">Risolta</option>
+              <option value="rejected">Rifiutata</option>
+            </select>
+            <p class="tools-count" id="report-count" aria-live="polite"></p>
+          </div>
+          <p id="list-message" role="status" aria-live="polite">Accedi per vedere le segnalazioni.</p>
+          <div id="list"></div>
+        </section>
       </div>
-      <p id="list-message" role="status" aria-live="polite">Accedi per vedere le segnalazioni.</p>
-      <div id="list"></div>
-    </section>
-  </div>
-  <p class="account-note">Per inviare e consultare le segnalazioni serve l’accesso con Google. Per uscire o per entrare con un altro account usa anche il menu del tuo account nella barra in alto.</p>
-</main>
-<script>
-/* contatore della descrizione: funziona subito, anche prima che si carichi il servizio di accesso */
-(function(){var t=document.getElementById('report-text'),c=document.getElementById('counter'),bar=document.getElementById('counter-bar'),max=550;
-function paint(){var n=t.value.length,st=n>=max?'full':n>=max*0.9?'near':'';c.textContent=n+' / '+max;c.dataset.state=st;bar.style.width=Math.min(100,100*n/max)+'%';bar.dataset.state=st;}
-t.addEventListener('input',paint);paint();})();
-</script>
-<script src="assets/segnalazioni-contatto.js?v=2"></script>
-<script type="module">import("./assets/segnalazioni-auth-v3.js?v=19").catch((error) => { console.error("Failed to load reports:", error); document.querySelector("#auth-message").textContent = "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina."; });</script>
-</body>
+      <p class="account-note">
+        Per inviare e consultare le segnalazioni serve l’accesso con Google. Per uscire o per entrare con un
+        altro account usa anche il menu del tuo account nella barra in alto.
+      </p>
+    </main>
+    <script>
+      /* contatore della descrizione: funziona subito, anche prima che si carichi il servizio di accesso */
+      (function () {
+        var t = document.getElementById("report-text"),
+          c = document.getElementById("counter"),
+          bar = document.getElementById("counter-bar"),
+          max = 550;
+        function paint() {
+          var n = t.value.length,
+            st = n >= max ? "full" : n >= max * 0.9 ? "near" : "";
+          c.textContent = n + " / " + max;
+          c.dataset.state = st;
+          bar.style.width = Math.min(100, (100 * n) / max) + "%";
+          bar.dataset.state = st;
+        }
+        t.addEventListener("input", paint);
+        paint();
+      })();
+    </script>
+    <script src="assets/segnalazioni-contatto.js?v=2"></script>
+    <script type="module">
+      import("./assets/segnalazioni-auth-v3.js?v=19").catch(error => {
+        console.error("Failed to load reports:", error);
+        document.querySelector("#auth-message").textContent =
+          "Impossibile caricare il servizio di accesso. Controlla la connessione e aggiorna la pagina.";
+      });
+    </script>
+  </body>
 </html>

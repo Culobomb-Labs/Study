@@ -1,473 +1,1594 @@
 <!doctype html>
 <html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Appunti Unisa</title>
-<link rel="icon" href="icon.svg?v=10" type="image/svg+xml">
-<link rel="icon" href="favicon.ico?v=10" sizes="16x16 32x32 48x48">
-<link rel="icon" href="favicon-32.png?v=10" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=10">
-<meta name="description" content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque.">
-<meta name="theme-color" content="#111418">
-<link rel="manifest" href="manifest.webmanifest">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Appunti Unisa">
-<meta property="og:title" content="Appunti Unisa">
-<meta property="og:description" content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque.">
-<meta property="og:url" content="https://culobomb-labs.github.io/Study/">
-<meta property="og:image" content="https://culobomb-labs.github.io/Study/og.png?v=4">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="it_IT">
-<meta name="twitter:card" content="summary_large_image">
-<script>try{var d=document.documentElement,t=localStorage.getItem("ua-theme"),g=localStorage.getItem("ua-glass");if(t&&t!="auto")d.setAttribute("data-theme",t);if(g)d.setAttribute("data-glass",g)}catch(e){}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600;700&display=swap">
-<link rel="stylesheet" href="assets/site.css">
-<style>
-/* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
-:root{
-  --bg:#ebeae6; --surface:#f4f3f0; --ink:#111418; --muted:#5d636b; --line:#d2d1cb; --hover:#e2e1dc; --glow:rgba(17,20,24,.05); --ok:#2b7a4b; --ok-bg:#e4f2e9; --wip:#9a5b0c; --wip-bg:#fbefdc;
-  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
-  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); --ok:#6fd398; --ok-bg:#16291f; --wip:#f0b45e; --wip-bg:#2e2313; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e1012; --surface:#15181b; --ink:#eceef0; --muted:#9aa1a9; --line:#272b30; --hover:#1c2024; --glow:rgba(255,255,255,.045); --ok:#6fd398; --ok-bg:#16291f; --wip:#f0b45e; --wip-bg:#2e2313; color-scheme:dark}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;transition:background-color .25s,color .25s}
-a{color:inherit}
-.wrap{max-width:980px;margin:0 auto;
-  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Appunti Unisa</title>
+    <link rel="icon" href="icon.svg?v=10" type="image/svg+xml" />
+    <link rel="icon" href="favicon.ico?v=10" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="favicon-32.png?v=10" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=10" />
+    <meta
+      name="description"
+      content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque."
+    />
+    <meta name="theme-color" content="#111418" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Appunti Unisa" />
+    <meta property="og:title" content="Appunti Unisa" />
+    <meta
+      property="og:description"
+      content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque."
+    />
+    <meta property="og:url" content="https://culobomb-labs.github.io/Study/" />
+    <meta property="og:image" content="https://culobomb-labs.github.io/Study/og.png?v=4" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="it_IT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      try {
+        var d = document.documentElement,
+          t = localStorage.getItem("ua-theme"),
+          g = localStorage.getItem("ua-glass");
+        if (t && t != "auto") d.setAttribute("data-theme", t);
+        if (g) d.setAttribute("data-glass", g);
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600;700&display=swap"
+    />
+    <link rel="stylesheet" href="assets/site.css" />
+    <style>
+      /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
+      :root {
+        --bg: #ebeae6;
+        --surface: #f4f3f0;
+        --ink: #111418;
+        --muted: #5d636b;
+        --line: #d2d1cb;
+        --hover: #e2e1dc;
+        --glow: rgba(17, 20, 24, 0.05);
+        --ok: #2b7a4b;
+        --ok-bg: #e4f2e9;
+        --wip: #9a5b0c;
+        --wip-bg: #fbefdc;
+        --f-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+        --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+        --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0e1012;
+          --surface: #15181b;
+          --ink: #eceef0;
+          --muted: #9aa1a9;
+          --line: #272b30;
+          --hover: #1c2024;
+          --glow: rgba(255, 255, 255, 0.045);
+          --ok: #6fd398;
+          --ok-bg: #16291f;
+          --wip: #f0b45e;
+          --wip-bg: #2e2313;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0e1012;
+        --surface: #15181b;
+        --ink: #eceef0;
+        --muted: #9aa1a9;
+        --line: #272b30;
+        --hover: #1c2024;
+        --glow: rgba(255, 255, 255, 0.045);
+        --ok: #6fd398;
+        --ok-bg: #16291f;
+        --wip: #f0b45e;
+        --wip-bg: #2e2313;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--f-body);
+        font-size: 16px;
+        line-height: 1.55;
+        transition:
+          background-color 0.25s,
+          color 0.25s;
+      }
+      a {
+        color: inherit;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding-left: max(20px, env(safe-area-inset-left, 0px));
+        padding-right: max(20px, env(safe-area-inset-right, 0px));
+      }
 
-/* testata */
-.hero .wrap{padding-block:56px 36px;display:grid;grid-template-columns:1fr auto;gap:20px 40px;align-items:end}
-.eyebrow{grid-column:1 / -1;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em}
-h1{font-family:var(--f-display);font-weight:800;font-size:clamp(52px,10vw,96px);line-height:1.1;letter-spacing:-.04em;margin:0}
-h1 .h1-l{display:block}
-h1 .h1-l + .h1-l{color:var(--muted)}
-/* "Unisa": solo il contorno delle lettere, sfumato dal viola all'azzurro con i colori dei corsi; il punto resta pieno */
-@supports ((-webkit-background-clip:text) or (background-clip:text)) and (-webkit-text-stroke:1px black){
-  h1 .h1-l + .h1-l{background:linear-gradient(90deg,var(--u-c1),var(--u-c2) 55%,var(--u-c3));-webkit-background-clip:text;background-clip:text;
-    -webkit-text-stroke:var(--u-stroke) transparent;-webkit-text-fill-color:var(--u-fill);color:var(--u-fill);
-    letter-spacing:var(--u-ls)} /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
-  /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
-  :root{--u-stroke:clamp(3px,.05em,5px);--u-fill:color-mix(in srgb,var(--ua-c-is) 20%,var(--bg));--u-ls:.045em;
-    --u-c1:color-mix(in srgb,var(--ua-c-is) 55%,#000);--u-c2:color-mix(in srgb,var(--ua-c-bd) 55%,#000);--u-c3:color-mix(in srgb,var(--ua-c-mp) 55%,#000)}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-bd);--u-c3:var(--ua-c-mp)}}
-  :root[data-theme="dark"]{--u-stroke:clamp(2px,.035em,3.5px);--u-fill:var(--bg);--u-ls:.02em;--u-c1:var(--ua-c-is);--u-c2:var(--ua-c-bd);--u-c3:var(--ua-c-mp)}
-  h1 .h1-dot{-webkit-text-stroke:0;-webkit-text-fill-color:var(--ink)}
-}
-h1 .h1-dot{color:var(--ink)}
-/* titolo in corsivo calligrafico, come le etichette delle statistiche; "Unisa" pieno col gradiente (il solo contorno con un corsivo legato si accavalla) */
-h1{font-family:"Dancing Script","Segoe Script","Brush Script MT",cursive;font-weight:700;letter-spacing:0;line-height:1.05}
-h1 .h1-l + .h1-l{-webkit-text-stroke:0 !important;-webkit-text-fill-color:transparent !important;letter-spacing:0 !important;padding-right:.08em}
-h1 .h1-dot{-webkit-text-fill-color:var(--ink) !important}
+      /* testata */
+      .hero .wrap {
+        padding-block: 56px 36px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px 40px;
+        align-items: end;
+      }
+      .eyebrow {
+        grid-column: 1 / -1;
+        font-family: var(--f-mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+      h1 {
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: clamp(52px, 10vw, 96px);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+      h1 .h1-l {
+        display: block;
+      }
+      h1 .h1-l + .h1-l {
+        color: var(--muted);
+      }
+      /* "Unisa": solo il contorno delle lettere, sfumato dal viola all'azzurro con i colori dei corsi; il punto resta pieno */
+      @supports ((-webkit-background-clip: text) or (background-clip: text)) and
+        (-webkit-text-stroke: 1px black) {
+        h1 .h1-l + .h1-l {
+          background: linear-gradient(90deg, var(--u-c1), var(--u-c2) 55%, var(--u-c3));
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-stroke: var(--u-stroke) transparent;
+          -webkit-text-fill-color: var(--u-fill);
+          color: var(--u-fill);
+          letter-spacing: var(--u-ls);
+        } /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
+        /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
+        :root {
+          --u-stroke: clamp(3px, 0.05em, 5px);
+          --u-fill: color-mix(in srgb, var(--ua-c-is) 20%, var(--bg));
+          --u-ls: 0.045em;
+          --u-c1: color-mix(in srgb, var(--ua-c-is) 55%, #000);
+          --u-c2: color-mix(in srgb, var(--ua-c-bd) 55%, #000);
+          --u-c3: color-mix(in srgb, var(--ua-c-mp) 55%, #000);
+        }
+        @media (prefers-color-scheme: dark) {
+          :root:not([data-theme="light"]) {
+            --u-stroke: clamp(2px, 0.035em, 3.5px);
+            --u-fill: var(--bg);
+            --u-ls: 0.02em;
+            --u-c1: var(--ua-c-is);
+            --u-c2: var(--ua-c-bd);
+            --u-c3: var(--ua-c-mp);
+          }
+        }
+        :root[data-theme="dark"] {
+          --u-stroke: clamp(2px, 0.035em, 3.5px);
+          --u-fill: var(--bg);
+          --u-ls: 0.02em;
+          --u-c1: var(--ua-c-is);
+          --u-c2: var(--ua-c-bd);
+          --u-c3: var(--ua-c-mp);
+        }
+        h1 .h1-dot {
+          -webkit-text-stroke: 0;
+          -webkit-text-fill-color: var(--ink);
+        }
+      }
+      h1 .h1-dot {
+        color: var(--ink);
+      }
+      /* titolo in corsivo calligrafico, come le etichette delle statistiche; "Unisa" pieno col gradiente (il solo contorno con un corsivo legato si accavalla) */
+      h1 {
+        font-family: "Dancing Script", "Segoe Script", "Brush Script MT", cursive;
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.05;
+      }
+      h1 .h1-l + .h1-l {
+        -webkit-text-stroke: 0 !important;
+        -webkit-text-fill-color: transparent !important;
+        letter-spacing: 0 !important;
+        padding-right: 0.08em;
+      }
+      h1 .h1-dot {
+        -webkit-text-fill-color: var(--ink) !important;
+      }
 
-.lede{grid-column:1;margin:0;max-width:52ch;color:var(--muted);font-size:17px}
-.stats{grid-column:2;grid-row:2 / span 2;display:grid;grid-template-columns:repeat(2,minmax(124px,1fr));gap:10px}
-.stat{min-width:112px;padding:14px 16px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 1px 0 var(--glow)}
-.stat b{display:block;font-family:var(--f-display);font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;font-variant-numeric:lining-nums proportional-nums}
-.stat span{display:flex;align-items:center;gap:6px;margin-top:8px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
-.stat span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted)}
-/* numeri delle statistiche: gradiente caldo ambra → arancio → rosa su tutti e due, per staccarli dal resto */
-:root{--st-c1:#d97706;--st-c2:#ea580c;--st-c3:#db2777}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--st-c1:#fbbf24;--st-c2:#fb923c;--st-c3:#f472b6}}
-:root[data-theme="dark"]{--st-c1:#fbbf24;--st-c2:#fb923c;--st-c3:#f472b6}
-.stat b{width:fit-content;background-image:linear-gradient(90deg,var(--st-c1),var(--st-c2) 50%,var(--st-c3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-/* alone verde acqua → azzurro che segue le lettere, complementare al gradiente caldo dei numeri; etichetta in corsivo calligrafico, grigia */
-:root{--st-dot:#0d9488;--st-dot2:#0284c7}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--st-dot:#2dd4bf;--st-dot2:#38bdf8}}
-:root[data-theme="dark"]{--st-dot:#2dd4bf;--st-dot2:#38bdf8}
-.stat span::before,.stat:first-child span::before,.stat:last-child span::before{content:none}
-.stat span>i{font-style:normal;color:color-mix(in srgb,var(--st-dot) 35%,var(--ink));text-shadow:0 0 3px color-mix(in srgb,var(--st-dot) 70%,transparent),0 0 9px color-mix(in srgb,var(--st-dot) 60%,transparent),0 0 18px color-mix(in srgb,var(--st-dot2) 50%,transparent)}
-.stat{overflow:hidden}
-.stat span{gap:8px;margin-top:6px;font-family:"Dancing Script","Segoe Script","Brush Script MT",cursive;font-weight:600;font-style:normal;font-size:21px;letter-spacing:0;text-transform:none;color:var(--muted)}
+      .lede {
+        grid-column: 1;
+        margin: 0;
+        max-width: 52ch;
+        color: var(--muted);
+        font-size: 17px;
+      }
+      .stats {
+        grid-column: 2;
+        grid-row: 2 / span 2;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(124px, 1fr));
+        gap: 10px;
+      }
+      .stat {
+        min-width: 112px;
+        padding: 14px 16px 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: 0 1px 0 var(--glow);
+      }
+      .stat b {
+        display: block;
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        font-variant-numeric: lining-nums proportional-nums;
+      }
+      .stat span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .stat span::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--muted);
+      }
+      /* numeri delle statistiche: gradiente caldo ambra → arancio → rosa su tutti e due, per staccarli dal resto */
+      :root {
+        --st-c1: #d97706;
+        --st-c2: #ea580c;
+        --st-c3: #db2777;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --st-c1: #fbbf24;
+          --st-c2: #fb923c;
+          --st-c3: #f472b6;
+        }
+      }
+      :root[data-theme="dark"] {
+        --st-c1: #fbbf24;
+        --st-c2: #fb923c;
+        --st-c3: #f472b6;
+      }
+      .stat b {
+        width: fit-content;
+        background-image: linear-gradient(90deg, var(--st-c1), var(--st-c2) 50%, var(--st-c3));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      /* alone verde acqua → azzurro che segue le lettere, complementare al gradiente caldo dei numeri; etichetta in corsivo calligrafico, grigia */
+      :root {
+        --st-dot: #0d9488;
+        --st-dot2: #0284c7;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --st-dot: #2dd4bf;
+          --st-dot2: #38bdf8;
+        }
+      }
+      :root[data-theme="dark"] {
+        --st-dot: #2dd4bf;
+        --st-dot2: #38bdf8;
+      }
+      .stat span::before,
+      .stat:first-child span::before,
+      .stat:last-child span::before {
+        content: none;
+      }
+      .stat span > i {
+        font-style: normal;
+        color: color-mix(in srgb, var(--st-dot) 35%, var(--ink));
+        text-shadow:
+          0 0 3px color-mix(in srgb, var(--st-dot) 70%, transparent),
+          0 0 9px color-mix(in srgb, var(--st-dot) 60%, transparent),
+          0 0 18px color-mix(in srgb, var(--st-dot2) 50%, transparent);
+      }
+      .stat {
+        overflow: hidden;
+      }
+      .stat span {
+        gap: 8px;
+        margin-top: 6px;
+        font-family: "Dancing Script", "Segoe Script", "Brush Script MT", cursive;
+        font-weight: 600;
+        font-style: normal;
+        font-size: 21px;
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--muted);
+      }
 
+      /* registro corsi */
+      .list {
+        border-top: 2px solid var(--ink);
+        margin-bottom: 56px;
+      }
+      .course {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.35fr);
+        gap: 20px 28px;
+        padding: 26px 0;
+        border-bottom: 1px solid var(--line);
+        scroll-margin-top: 16px;
+      }
+      .course:target h2 {
+        text-decoration: underline;
+        text-decoration-color: var(--c);
+        text-decoration-thickness: 3px;
+        text-underline-offset: 6px;
+      }
+      .code {
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: 22px;
+        color: var(--c);
+        letter-spacing: 0.02em;
+        padding-top: 2px;
+      }
+      .code::before {
+        content: "";
+        display: block;
+        width: 28px;
+        height: 4px;
+        background: var(--c);
+        margin-bottom: 10px;
+        border-radius: 2px;
+        transition: width 0.35s var(--ua-ease);
+      }
+      .course:hover .code::before {
+        width: 44px;
+      }
+      .course h2 {
+        font-family: var(--f-display);
+        font-weight: 700;
+        font-size: 26px;
+        line-height: 1.15;
+        margin: 0 0 6px;
+        text-wrap: balance;
+        letter-spacing: -0.01em;
+      }
+      .meta {
+        font-family: var(--f-mono);
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .docs {
+        position: relative;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        overflow: hidden;
+      }
+      .docs::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s;
+        background: radial-gradient(
+          260px circle at var(--mx, 50%) var(--my, 50%),
+          var(--glow),
+          transparent 70%
+        );
+      }
+      .docs:hover::before {
+        opacity: 1;
+      }
+      .docs li {
+        position: relative;
+      }
+      .docs li + li {
+        border-top: 1px solid var(--line);
+      }
+      .docs a {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 2px 14px;
+        align-items: center;
+        padding: 13px 16px;
+        text-decoration: none;
+      }
+      .docs a:focus-visible {
+        outline: none;
+        box-shadow: inset 3px 0 0 var(--c);
+        background: var(--hover);
+      }
+      .dname {
+        font-weight: 600;
+        min-width: 0;
+      }
+      .dinfo {
+        grid-column: 1;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .arrow {
+        grid-row: 1 / span 2;
+        grid-column: 2;
+        color: var(--muted);
+        transition:
+          transform 0.2s var(--ua-ease),
+          color 0.2s;
+      }
+      .docs a:hover .arrow {
+        transform: translateX(4px);
+        color: var(--c);
+      }
 
-/* registro corsi */
-.list{border-top:2px solid var(--ink);margin-bottom:56px}
-.course{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,1.35fr);gap:20px 28px;padding:26px 0;border-bottom:1px solid var(--line);scroll-margin-top:16px}
-.course:target h2{text-decoration:underline;text-decoration-color:var(--c);text-decoration-thickness:3px;text-underline-offset:6px}
-.code{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--c);letter-spacing:.02em;padding-top:2px}
-.code::before{content:"";display:block;width:28px;height:4px;background:var(--c);margin-bottom:10px;border-radius:2px;transition:width .35s var(--ua-ease)}
-.course:hover .code::before{width:44px}
-.course h2{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.15;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
-.meta{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
-.docs{position:relative;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
-.docs::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;
-  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),var(--glow),transparent 70%)}
-.docs:hover::before{opacity:1}
-.docs li{position:relative}
-.docs li+li{border-top:1px solid var(--line)}
-.docs a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:13px 16px;text-decoration:none}
-.docs a:focus-visible{outline:none;box-shadow:inset 3px 0 0 var(--c);background:var(--hover)}
-.dname{font-weight:600;min-width:0}
-.dinfo{grid-column:1;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
-.arrow{grid-row:1 / span 2;grid-column:2;color:var(--muted);transition:transform .2s var(--ua-ease),color .2s}
-.docs a:hover .arrow{transform:translateX(4px);color:var(--c)}
-
-/* stato degli appunti */
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.resto{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);
-  font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--ink)}
-.state{display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:999px;
-  font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--s);background:var(--s-bg)}
-.state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.state.ok{--s:var(--ok);--s-bg:var(--ok-bg)}
-.state.wip{--s:var(--wip);--s-bg:var(--wip-bg)}
-.state.wip::before{animation:pulse 2.2s ease-in-out infinite}
-.state.soon{--s:var(--muted);--s-bg:var(--hover)}
-.docs-empty{border:1px dashed var(--line);border-radius:8px;padding:16px 18px;color:var(--muted);font-size:15px;line-height:1.5}
-.docs-empty b{color:var(--ink);font-weight:600}
-@keyframes pulse{50%{opacity:.35}}
-/* corsi come schede: griglia a due colonne, ogni scheda con il colore del suo corso */
-.list{border-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.course{position:relative;isolation:isolate;display:flex;flex-direction:column;gap:16px;padding:22px 22px 18px;border:1px solid var(--line);border-radius:18px;
-  background:radial-gradient(420px 180px at 0 0,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--surface);overflow:hidden;
-  transition:transform .25s var(--ua-ease),border-color .25s,box-shadow .25s}
-.course:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));box-shadow:0 14px 34px -18px color-mix(in srgb,var(--c) 60%,transparent)}
-.course::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
-/* sigla grande contornata: prima il contorno, poi il riempimento col colore della scheda (paint-order).
+      /* stato degli appunti */
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .resto {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        font-family: var(--f-mono);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 10px 4px 8px;
+        border-radius: 999px;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--s);
+        background: var(--s-bg);
+      }
+      .state::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .state.ok {
+        --s: var(--ok);
+        --s-bg: var(--ok-bg);
+      }
+      .state.wip {
+        --s: var(--wip);
+        --s-bg: var(--wip-bg);
+      }
+      .state.wip::before {
+        animation: pulse 2.2s ease-in-out infinite;
+      }
+      .state.soon {
+        --s: var(--muted);
+        --s-bg: var(--hover);
+      }
+      .docs-empty {
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        padding: 16px 18px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .docs-empty b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      /* corsi come schede: griglia a due colonne, ogni scheda con il colore del suo corso */
+      .list {
+        border-top: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .course {
+        position: relative;
+        isolation: isolate;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 22px 22px 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background:
+          radial-gradient(420px 180px at 0 0, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%),
+          var(--surface);
+        overflow: hidden;
+        transition:
+          transform 0.25s var(--ua-ease),
+          border-color 0.25s,
+          box-shadow 0.25s;
+      }
+      .course:hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+        box-shadow: 0 14px 34px -18px color-mix(in srgb, var(--c) 60%, transparent);
+      }
+      .course::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--c), transparent 85%);
+      }
+      /* sigla grande contornata: prima il contorno, poi il riempimento col colore della scheda (paint-order).
    Così non si vedono le parti interne delle lettere (la barra della A, l'incrocio della M) né i punti dove due lettere si toccano.
    Il contorno è doppio perché metà resta sotto il riempimento; in em, così resta proporzionato anche su telefono. */
-.code{position:absolute;right:16px;top:6px;z-index:-1;font-size:76px;line-height:1;letter-spacing:-.04em;padding:0;
-  color:var(--surface);-webkit-text-stroke:.04em color-mix(in srgb,var(--c) 40%,transparent);paint-order:stroke fill;opacity:.9}
-.code::before{content:none}
-.course h2{font-size:24px;padding-right:118px}
-.docs{border:0;border-radius:12px;background:transparent;gap:6px;overflow:visible}
-.docs::before{content:none}
-.docs li+li{border-top:0}
-.docs a{grid-template-columns:34px minmax(0,1fr) auto;gap:1px 12px;padding:10px 12px;border-radius:12px;background:var(--hover);
-  border:1px solid transparent;transition:border-color .2s,background .2s}
-.docs a:hover{border-color:color-mix(in srgb,var(--c) 50%,transparent);background:color-mix(in srgb,var(--c) 8%,var(--hover))}
-.docs a::before{content:"Q";grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
-  font:700 14px/1 var(--f-display);color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
-.docs a[data-kind="Piano di studio"]::before{content:"P"}
-.docs a[data-kind="Quiz"]::before{content:"?"}
-.dname{grid-column:2}.dinfo{grid-column:2}
-.arrow{grid-column:3}
-.docs .prog{grid-column:2 / span 2}
-@media (max-width:760px){.list{grid-template-columns:1fr}}
+      .code {
+        position: absolute;
+        right: 16px;
+        top: 6px;
+        z-index: -1;
+        font-size: 76px;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        padding: 0;
+        color: var(--surface);
+        -webkit-text-stroke: 0.04em color-mix(in srgb, var(--c) 40%, transparent);
+        paint-order: stroke fill;
+        opacity: 0.9;
+      }
+      .code::before {
+        content: none;
+      }
+      .course h2 {
+        font-size: 24px;
+        padding-right: 118px;
+      }
+      .docs {
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        gap: 6px;
+        overflow: visible;
+      }
+      .docs::before {
+        content: none;
+      }
+      .docs li + li {
+        border-top: 0;
+      }
+      .docs a {
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        gap: 1px 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--hover);
+        border: 1px solid transparent;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .docs a:hover {
+        border-color: color-mix(in srgb, var(--c) 50%, transparent);
+        background: color-mix(in srgb, var(--c) 8%, var(--hover));
+      }
+      .docs a::before {
+        content: "Q";
+        grid-row: 1 / span 2;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font: 700 14px/1 var(--f-display);
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 16%, transparent);
+      }
+      .docs a[data-kind="Piano di studio"]::before {
+        content: "P";
+      }
+      .docs a[data-kind="Quiz"]::before {
+        content: "?";
+      }
+      .dname {
+        grid-column: 2;
+      }
+      .dinfo {
+        grid-column: 2;
+      }
+      .arrow {
+        grid-column: 3;
+      }
+      .docs .prog {
+        grid-column: 2 / span 2;
+      }
+      @media (max-width: 760px) {
+        .list {
+          grid-template-columns: 1fr;
+        }
+      }
 
+      /* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
+      .resume-wrap {
+        padding-block: 0 18px;
+      }
+      .resume {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        gap: 2px 14px;
+        align-items: center;
+        padding: 16px 22px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        text-decoration: none;
+        background:
+          radial-gradient(420px 180px at 0 0, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%),
+          var(--surface);
+        transition:
+          transform 0.25s var(--ua-ease),
+          border-color 0.25s,
+          box-shadow 0.25s;
+      }
+      .resume::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--c), transparent 85%);
+      }
+      .resume:hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+        box-shadow: 0 14px 34px -18px color-mix(in srgb, var(--c) 60%, transparent);
+      }
+      .resume:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
+      }
+      /* tessera con la lettera del tipo di documento, come quella dei documenti dei corsi (Q quaderno, P piano di studio, ? quiz) */
+      .resume-dot {
+        grid-row: 1 / span 2;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font: 700 14px/1 var(--f-display);
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 16%, transparent);
+      }
+      .resume-dot::before {
+        content: "Q";
+      }
+      .resume-dot[data-kind="Piano di studio"]::before {
+        content: "P";
+      }
+      .resume-dot[data-kind="Quiz"]::before {
+        content: "?";
+      }
+      .resume-k,
+      .resume-t {
+        grid-column: 2;
+      }
+      .resume-k {
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+      }
+      .resume-t {
+        font-family: var(--f-display);
+        font-weight: 700;
+        font-size: 19px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .resume-t small {
+        font-family: var(--f-body);
+        font-weight: 400;
+        font-size: 14px;
+        letter-spacing: 0;
+        color: var(--muted);
+        margin-left: 8px;
+      }
+      .resume .arrow {
+        grid-row: 1 / span 2;
+        grid-column: 3;
+      }
+      .resume:hover .arrow {
+        transform: translateX(4px);
+        color: var(--c);
+      }
+      @media (max-width: 520px) {
+        .resume {
+          grid-template-columns: 30px minmax(0, 1fr) auto;
+          gap: 2px 12px;
+          padding: 14px 16px;
+        }
+        .resume-dot {
+          width: 30px;
+          height: 30px;
+          border-radius: 9px;
+        }
+        .resume-k {
+          font-size: 10.5px;
+          letter-spacing: 0.04em;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .resume-t {
+          font-size: 17px;
+        }
+      }
 
+      /* avanzamento */
+      .prog {
+        grid-column: 1;
+        display: block;
+        height: 3px;
+        margin-top: 8px;
+        border-radius: 2px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .prog i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--c);
+        border-radius: 2px;
+        transition: width 0.6s var(--ua-ease);
+      }
 
-/* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
-.resume-wrap{padding-block:0 18px}
-.resume{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:2px 14px;align-items:center;padding:16px 22px;
-  border:1px solid var(--line);border-radius:18px;text-decoration:none;
-  background:radial-gradient(420px 180px at 0 0,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),var(--surface);
-  transition:transform .25s var(--ua-ease),border-color .25s,box-shadow .25s}
-.resume::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
-.resume:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 45%,var(--line));box-shadow:0 14px 34px -18px color-mix(in srgb,var(--c) 60%,transparent)}
-.resume:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-/* tessera con la lettera del tipo di documento, come quella dei documenti dei corsi (Q quaderno, P piano di studio, ? quiz) */
-.resume-dot{grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
-  font:700 14px/1 var(--f-display);color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
-.resume-dot::before{content:"Q"}
-.resume-dot[data-kind="Piano di studio"]::before{content:"P"}
-.resume-dot[data-kind="Quiz"]::before{content:"?"}
-.resume-k,.resume-t{grid-column:2}
-.resume-k{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.resume-t{font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.25;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.resume-t small{font-family:var(--f-body);font-weight:400;font-size:14px;letter-spacing:0;color:var(--muted);margin-left:8px}
-.resume .arrow{grid-row:1 / span 2;grid-column:3}
-.resume:hover .arrow{transform:translateX(4px);color:var(--c)}
-@media (max-width:520px){
-  .resume{grid-template-columns:30px minmax(0,1fr) auto;gap:2px 12px;padding:14px 16px}
-  .resume-dot{width:30px;height:30px;border-radius:9px}
-  .resume-k{font-size:10.5px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .resume-t{font-size:17px}
-}
+      footer {
+        border-top: 1px solid var(--line);
+      }
+      footer .wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px 24px;
+        flex-wrap: wrap;
+        padding-block: 22px 40px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      footer a {
+        text-underline-offset: 3px;
+      }
 
-/* avanzamento */
-.prog{grid-column:1;display:block;height:3px;margin-top:8px;border-radius:2px;background:var(--line);overflow:hidden}
-.prog i{display:block;height:100%;width:0;background:var(--c);border-radius:2px;transition:width .6s var(--ua-ease)}
+      /* cartelle Drive nel piè di pagina */
+      .drives {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: min(380px, 100%);
+      }
+      .drives-k {
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+      .drive {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 1px 12px;
+        align-items: center;
+        padding: 11px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--ink);
+        text-decoration: none;
+        transition:
+          border-color 0.2s,
+          background-color 0.2s,
+          transform 0.2s var(--ua-ease);
+      }
+      .drive:hover {
+        border-color: var(--muted);
+        background: var(--hover);
+      }
+      .drive:active {
+        transform: scale(0.99);
+      }
+      .drive:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
+      }
+      .drive-ic {
+        grid-row: 1 / span 2;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--hover);
+        color: var(--ink);
+      }
+      .drive:hover .drive-ic {
+        background: var(--surface);
+      }
+      .drive-t {
+        grid-column: 2;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 1.3;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .drive-s {
+        grid-column: 2;
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+      .drive-go {
+        grid-row: 1 / span 2;
+        grid-column: 3;
+        color: var(--muted);
+        font-size: 16px;
+        transition:
+          transform 0.2s var(--ua-ease),
+          color 0.2s;
+      }
+      .drive:hover .drive-go {
+        transform: translate(2px, -2px);
+        color: var(--ink);
+      }
+      /* data e versione: sempre a destra, allineate a destra (su telefono vanno sotto le cartelle, ma restano a destra come su PC) */
+      .build-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+        margin-left: auto;
+        text-align: right;
+      }
 
-footer{border-top:1px solid var(--line)}
-footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:22px 40px;font-size:14px;color:var(--muted)}
-footer a{text-underline-offset:3px}
+      @media (max-width: 720px) {
+        .hero .wrap {
+          grid-template-columns: 1fr;
+          padding-block: 36px 26px;
+        }
+        .stats {
+          grid-column: 1;
+          grid-row: auto;
+          max-width: 360px;
+        }
+        .course {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        /* la sigla resta il grande watermark in alto a destra (non una sigla piccola): un po' più piccola che su PC, ma ben leggibile */
+        .code {
+          font-size: clamp(56px, 16vw, 76px);
+          right: 14px;
+        }
+        .course h2 {
+          padding-right: 100px;
+        }
+      }
 
-/* cartelle Drive nel piè di pagina */
-.drives{display:flex;flex-direction:column;gap:8px;width:min(380px,100%)}
-.drives-k{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:2px}
-.drive{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1px 12px;align-items:center;padding:11px 14px;border:1px solid var(--line);
-  border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .2s,background-color .2s,transform .2s var(--ua-ease)}
-.drive:hover{border-color:var(--muted);background:var(--hover)}
-.drive:active{transform:scale(.99)}
-.drive:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.drive-ic{grid-row:1 / span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--hover);color:var(--ink)}
-.drive:hover .drive-ic{background:var(--surface)}
-.drive-t{grid-column:2;font-weight:600;font-size:15px;line-height:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.drive-s{grid-column:2;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);line-height:1.3}
-.drive-go{grid-row:1 / span 2;grid-column:3;color:var(--muted);font-size:16px;transition:transform .2s var(--ua-ease),color .2s}
-.drive:hover .drive-go{transform:translate(2px,-2px);color:var(--ink)}
-/* data e versione: sempre a destra, allineate a destra (su telefono vanno sotto le cartelle, ma restano a destra come su PC) */
-.build-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:auto;text-align:right}
+      /* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive) */
+      .site-foot {
+        position: relative;
+        margin-top: 24px;
+        border-top: 0;
+        background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 70%, transparent));
+      }
+      .site-foot::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--ua-c-is),
+          var(--ua-c-bd),
+          var(--ua-c-mp),
+          transparent
+        );
+        opacity: 1;
+        height: 2px;
+      }
+      .site-foot .wrap {
+        display: block;
+        padding-block: 44px 34px;
+        color: var(--muted);
+      }
+      .f-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.7fr 1.1fr;
+        gap: 32px 48px;
+        align-items: start;
+      }
+      .f-k {
+        display: block;
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      .f-logo {
+        display: inline-block;
+        font-family: "Dancing Script", "Segoe Script", cursive;
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 1;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .f-logo span {
+        background: linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-right: 0.08em;
+      }
+      .f-brand p {
+        margin: 0 0 14px;
+        font-size: 14px;
+        line-height: 1.55;
+        max-width: 34ch;
+      }
+      .f-brand .build-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-left: 0;
+        text-align: left;
+      }
+      .f-brand #built {
+        font-family: var(--f-display);
+        font-weight: 700;
+        font-size: 22px;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+      }
+      .f-brand #version:not(:empty) {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--surface), var(--surface)) padding-box,
+          linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+        border: 1px solid transparent;
+      }
+      .f-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .f-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14.5px;
+        white-space: nowrap;
+        color: var(--ink);
+        text-decoration: none;
+        transition:
+          color 0.2s,
+          transform 0.2s var(--ua-ease);
+      }
+      .f-links a:hover {
+        color: var(--c, var(--ink));
+        transform: translateX(3px);
+      }
+      .f-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--c, var(--muted));
+        flex: none;
+      }
+      .f-links b {
+        font-family: var(--f-mono);
+        font-weight: 500;
+        font-size: 12px;
+        color: var(--c, var(--muted));
+        min-width: 22px;
+      }
+      .site-foot .drives {
+        width: auto;
+        gap: 8px;
+      }
+      .site-foot .drive {
+        background: var(--surface);
+      }
+      .site-foot .drive-t {
+        white-space: normal;
+      }
+      .site-foot .drive:hover {
+        border-color: transparent;
+        background:
+          linear-gradient(var(--surface), var(--surface)) padding-box,
+          linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+      }
+      .site-foot .drive-ic {
+        background: color-mix(in srgb, var(--ua-c-bd) 16%, transparent);
+        color: var(--ua-c-bd);
+      }
+      body:has(.site-foot) .ua-copy {
+        margin-top: 0;
+        border-top-color: color-mix(in srgb, var(--line) 70%, transparent);
+      }
+      @media (max-width: 760px) {
+        /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due pulsanti affiancati, poi le cartelle */
+        .site-foot .wrap {
+          padding-block: 30px 26px;
+        }
+        .f-grid {
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+        .f-brand {
+          display: flex;
+          flex-direction: column;
+          padding: 14px 16px;
+          border: 1px solid var(--line);
+          border-radius: 14px;
+          background: var(--surface);
+        }
+        .f-brand .f-k {
+          margin-bottom: 6px;
+        }
+        .f-brand .build-meta {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .f-brand #built {
+          font-size: 18px;
+        }
+        .f-col .f-k {
+          display: none;
+        }
+        .f-links {
+          flex-direction: row;
+          gap: 10px;
+        }
+        .f-links li {
+          flex: 1;
+        }
+        .f-links a {
+          width: 100%;
+          justify-content: center;
+          box-sizing: border-box;
+          padding: 12px;
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          background: var(--surface);
+          font-weight: 600;
+        }
+        .f-links a:hover {
+          transform: none;
+        }
+        .f-links .f-dot {
+          display: none;
+        }
+        /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
+        .f-links a[href="news.html"] {
+          color: var(--ua-g-bell2);
+          background: color-mix(in srgb, var(--ua-g-bell1) 12%, var(--surface));
+          border-color: color-mix(in srgb, var(--ua-g-bell1) 40%, var(--line));
+        }
+        .f-links a[href="segnalazioni.html"] {
+          color: var(--ua-warn);
+          background: var(--ua-warn-soft);
+          border-color: var(--ua-warn-line);
+        }
+      }
+      .f-links a[href="news.html"] .f-dot {
+        background: linear-gradient(135deg, var(--ua-g-bell1), var(--ua-g-bell2));
+      }
+      .f-links a[href="segnalazioni.html"] .f-dot {
+        background: var(--ua-warn);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        body,
+        .drive,
+        .drive-go,
+        .arrow,
+        .code::before,
+        .docs::before,
+        .resume {
+          transition: none;
+        }
+        .state.wip::before {
+          animation: none;
+        }
+      }
+      .hero .wrap {
+        position: relative;
+      }
+      .stats {
+        grid-row: 3 !important;
+        align-self: start;
+      }
+      .lede {
+        align-self: start;
+      }
+      .seal {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: center;
+        align-self: center;
+        width: 168px;
+        height: 168px;
+        color: var(--ink);
+      }
+      .seal svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .seal .ring {
+        transform-origin: 80px 80px;
+        animation: sealSpin 48s linear infinite;
+      }
+      .seal text {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        fill: var(--muted);
+        text-transform: uppercase;
+      }
+      /* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio è sempre scuro, così i colori risaltano in entrambi i temi */
+      :root {
+        --s-c1: #a58bf0;
+        --s-c2: #7ea6ff;
+        --s-c3: #5fc48c;
+      }
+      @keyframes sealSpin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (max-width: 720px) {
+        .seal {
+          grid-column: auto;
+          grid-row: auto;
+          position: absolute;
+          right: max(14px, env(safe-area-inset-right, 0px));
+          top: 92px;
+          width: 100px;
+          height: 100px;
+        }
+        .stats {
+          grid-row: auto !important;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .seal .ring {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ua-bar" class="ua-bar"></div>
 
-@media (max-width:720px){
-  .hero .wrap{grid-template-columns:1fr;padding-block:36px 26px}
-  .stats{grid-column:1;grid-row:auto;max-width:360px}
-  .course{grid-template-columns:1fr;gap:12px}
-  /* la sigla resta il grande watermark in alto a destra (non una sigla piccola): un po' più piccola che su PC, ma ben leggibile */
-  .code{font-size:clamp(56px,16vw,76px);right:14px}
-  .course h2{padding-right:100px}
-}
-
-/* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, cartelle Drive) */
-.site-foot{position:relative;margin-top:24px;border-top:0;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--surface) 70%,transparent))}
-.site-foot::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--ua-c-is),var(--ua-c-bd),var(--ua-c-mp),transparent);opacity:1;height:2px}
-.site-foot .wrap{display:block;padding-block:44px 34px;color:var(--muted)}
-.f-grid{display:grid;grid-template-columns:1.2fr .7fr 1.1fr;gap:32px 48px;align-items:start}
-.f-k{display:block;font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
-.f-logo{display:inline-block;font-family:"Dancing Script","Segoe Script",cursive;font-weight:700;font-size:34px;line-height:1;color:var(--ink);text-decoration:none}
-.f-logo span{background:linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-right:.08em}
-.f-brand p{margin:0 0 14px;font-size:14px;line-height:1.55;max-width:34ch}
-.f-brand .build-meta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-left:0;text-align:left}
-.f-brand #built{font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--ink);letter-spacing:-.01em}
-.f-brand #version:not(:empty){font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;color:var(--ink);
-  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box;border:1px solid transparent}
-.f-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
-.f-links a{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;white-space:nowrap;color:var(--ink);text-decoration:none;transition:color .2s,transform .2s var(--ua-ease)}
-.f-links a:hover{color:var(--c,var(--ink));transform:translateX(3px)}
-.f-dot{width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted));flex:none}
-.f-links b{font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--c,var(--muted));min-width:22px}
-.site-foot .drives{width:auto;gap:8px}
-.site-foot .drive{background:var(--surface)}
-.site-foot .drive-t{white-space:normal}
-.site-foot .drive:hover{border-color:transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,var(--ua-c-is),var(--ua-c-bd) 55%,var(--ua-c-mp)) border-box}
-.site-foot .drive-ic{background:color-mix(in srgb,var(--ua-c-bd) 16%,transparent);color:var(--ua-c-bd)}
-body:has(.site-foot) .ua-copy{margin-top:0;border-top-color:color-mix(in srgb,var(--line) 70%,transparent)}
-@media (max-width:760px){
-  /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due pulsanti affiancati, poi le cartelle */
-  .site-foot .wrap{padding-block:30px 26px}
-  .f-grid{grid-template-columns:1fr;gap:22px}
-  .f-brand{display:flex;flex-direction:column;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-  .f-brand .f-k{margin-bottom:6px}
-  .f-brand .build-meta{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
-  .f-brand #built{font-size:18px}
-  .f-col .f-k{display:none}
-  .f-links{flex-direction:row;gap:10px}
-  .f-links li{flex:1}
-  .f-links a{width:100%;justify-content:center;box-sizing:border-box;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-weight:600}
-  .f-links a:hover{transform:none}
-  .f-links .f-dot{display:none}
-  /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
-  .f-links a[href="news.html"]{color:var(--ua-g-bell2);background:color-mix(in srgb,var(--ua-g-bell1) 12%,var(--surface));border-color:color-mix(in srgb,var(--ua-g-bell1) 40%,var(--line))}
-  .f-links a[href="segnalazioni.html"]{color:var(--ua-warn);background:var(--ua-warn-soft);border-color:var(--ua-warn-line)}
-}
-.f-links a[href="news.html"] .f-dot{background:linear-gradient(135deg,var(--ua-g-bell1),var(--ua-g-bell2))}
-.f-links a[href="segnalazioni.html"] .f-dot{background:var(--ua-warn)}
-@media (prefers-reduced-motion:reduce){body,.drive,.drive-go,.arrow,.code::before,.docs::before,.resume{transition:none}.state.wip::before{animation:none}}
-.hero .wrap{position:relative}
-.stats{grid-row:3 !important;align-self:start}
-.lede{align-self:start}
-.seal{grid-column:2;grid-row:2;justify-self:center;align-self:center;width:168px;height:168px;color:var(--ink)}
-.seal svg{width:100%;height:100%;overflow:visible}
-.seal .ring{transform-origin:80px 80px;animation:sealSpin 48s linear infinite}
-.seal text{font-family:var(--f-mono);font-size:10px;fill:var(--muted);text-transform:uppercase}
-/* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio è sempre scuro, così i colori risaltano in entrambi i temi */
-:root{--s-c1:#a58bf0;--s-c2:#7ea6ff;--s-c3:#5fc48c}
-@keyframes sealSpin{to{transform:rotate(360deg)}}
-@media (max-width:720px){.seal{grid-column:auto;grid-row:auto;position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:92px;width:100px;height:100px}.stats{grid-row:auto !important}}
-@media (prefers-reduced-motion:reduce){.seal .ring{animation:none}}
-</style>
-</head>
-<body>
-  <div id="ua-bar" class="ua-bar"></div>
-
-  <header class="hero"><div class="wrap">
-    <div class="eyebrow" data-ua-rise>Università degli Studi di Salerno · Informatica</div>
-    <h1 data-ua-rise><span class="h1-l">Appunti</span><span class="h1-l">Unisa<span class="h1-dot">.</span></span></h1>
-    <p class="lede" data-ua-rise>Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si legge dal browser, anche da telefono.</p>
-    <div class="seal" aria-hidden="true"><svg viewBox="0 0 160 160">
-<defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0"/></defs>
-<linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0"><stop offset="0" style="stop-color:var(--s-c1)"/><stop offset=".55" style="stop-color:var(--s-c2)"/><stop offset="1" style="stop-color:var(--s-c3)"/></linearGradient>
-<linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0"><stop offset="0" style="stop-color:var(--u-c1,#5b3fa3)"/><stop offset=".55" style="stop-color:var(--u-c2,#2350c8)"/><stop offset="1" style="stop-color:var(--u-c3,#2f7d52)"/></linearGradient>
-<circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5"/>
-<g class="ring"><text textLength="322.7" lengthAdjust="spacing"><textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">Appunti · Unisa · Informatica · 2° &amp; 3° anno ·</textPath></text></g>
-<circle cx="80" cy="80" r="35" fill="#111418" stroke="var(--line,#2a2e33)" stroke-width="1"/>
-<g transform="translate(62 62) scale(.9)" fill="none" stroke="url(#sealGrad)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M4 15 20 8l16 7-16 7z"/><path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7"/><path d="M36 15v9"/></g>
-</svg></div>
-    <div class="stats" aria-label="Riepilogo" data-ua-rise>
-      <div class="stat"><b id="n-courses">0</b><span><i>Corsi</i></span></div>
-      <div class="stat"><b id="n-docs">0</b><span><i>Documenti</i></span></div>
-    </div>
-  </div></header>
-
-
-  <div class="wrap resume-wrap" id="resume-wrap" hidden>
-    <a class="resume" id="resume" href="#">
-      <span class="resume-dot" aria-hidden="true"></span>
-      <span class="resume-k">Riprendi da dove eri</span>
-      <span class="resume-t" id="resume-t"></span>
-      <span class="arrow" aria-hidden="true">→</span>
-    </a>
-  </div>
-
-  <main class="wrap">
-    <div class="list" id="list"></div>
-  </main>
-
-  <footer class="site-foot"><div class="wrap">
-    <div class="f-grid">
-      <div class="f-brand">
-        <span class="f-k">Ultimo aggiornamento</span>
-        <div class="build-meta"><span id="built">—</span><span id="version"></span></div>
+    <header class="hero">
+      <div class="wrap">
+        <div class="eyebrow" data-ua-rise>Università degli Studi di Salerno · Informatica</div>
+        <h1 data-ua-rise>
+          <span class="h1-l">Appunti</span><span class="h1-l">Unisa<span class="h1-dot">.</span></span>
+        </h1>
+        <p class="lede" data-ua-rise>
+          Quaderni di studio e piani per la preparazione degli esami. Scegli il corso e apri il materiale: si
+          legge dal browser, anche da telefono.
+        </p>
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 160 160">
+            <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0" /></defs>
+            <linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0">
+              <stop offset="0" style="stop-color: var(--s-c1)" />
+              <stop offset=".55" style="stop-color: var(--s-c2)" />
+              <stop offset="1" style="stop-color: var(--s-c3)" />
+            </linearGradient>
+            <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0">
+              <stop offset="0" style="stop-color: var(--u-c1, #5b3fa3)" />
+              <stop offset=".55" style="stop-color: var(--u-c2, #2350c8)" />
+              <stop offset="1" style="stop-color: var(--u-c3, #2f7d52)" />
+            </linearGradient>
+            <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" />
+            <g class="ring">
+              <text textLength="322.7" lengthAdjust="spacing">
+                <textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">
+                  Appunti · Unisa · Informatica · 2° &amp; 3° anno ·
+                </textPath>
+              </text>
+            </g>
+            <circle cx="80" cy="80" r="35" fill="#111418" stroke="var(--line,#2a2e33)" stroke-width="1" />
+            <g
+              transform="translate(62 62) scale(.9)"
+              fill="none"
+              stroke="url(#sealGrad)"
+              stroke-width="2.4"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+            >
+              <path d="M4 15 20 8l16 7-16 7z" />
+              <path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7" />
+              <path d="M36 15v9" />
+            </g>
+          </svg>
+        </div>
+        <div class="stats" aria-label="Riepilogo" data-ua-rise>
+          <div class="stat">
+            <b id="n-courses">0</b><span><i>Corsi</i></span>
+          </div>
+          <div class="stat">
+            <b id="n-docs">0</b><span><i>Documenti</i></span>
+          </div>
+        </div>
       </div>
-      <nav class="f-col" aria-label="Sito">
-        <span class="f-k">Sito</span>
-        <ul class="f-links">
-          <li><a href="news.html"><i class="f-dot"></i>News</a></li>
-          <li><a href="segnalazioni.html"><i class="f-dot"></i>Segnalazioni</a></li>
-        </ul>
-      </nav>
-      <nav class="drives" aria-label="Cartelle Google Drive">
-      <span class="f-k">Cartelle Google Drive</span>
-      <a class="drive" href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x" target="_blank" rel="noopener">
-        <span class="drive-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></span>
-        <span class="drive-t">UNI Files</span>
-        <span class="drive-s">Raccolta personale · file dei corsi</span>
-        <span class="drive-go" aria-hidden="true">↗</span>
+    </header>
+
+    <div class="wrap resume-wrap" id="resume-wrap" hidden>
+      <a class="resume" id="resume" href="#">
+        <span class="resume-dot" aria-hidden="true"></span>
+        <span class="resume-k">Riprendi da dove eri</span>
+        <span class="resume-t" id="resume-t"></span>
+        <span class="arrow" aria-hidden="true">→</span>
       </a>
-      <a class="drive" href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3" target="_blank" rel="noopener">
-        <span class="drive-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg></span>
-        <span class="drive-t">3° anno Drive Coscienze</span>
-        <span class="drive-s">Raccolta comune · file del 3° anno</span>
-        <span class="drive-go" aria-hidden="true">↗</span>
-      </a>
-    </nav>
     </div>
-  </div></footer>
 
-<script src="assets/corsi.js"></script>
-<script>
-const COURSES = window.CORSI || [];
-const fmt = iso => new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(new Date(iso));
-const list = document.getElementById("list");
-let updates = {};
+    <main class="wrap">
+      <div class="list" id="list"></div>
+    </main>
 
-function render() {
-  list.textContent = "";
-  for (const c of COURSES) {
-    const row = document.createElement("section");
-    row.className = "course"; row.id = c.code.toLowerCase();
-    row.style.setProperty("--c", `var(--ua-c-${c.color}, var(--ua-muted))`);
-    row.setAttribute("data-ua-rise", "");
-    const code = document.createElement("div"); code.className = "code"; code.textContent = c.code;
-    const info = document.createElement("div");
-    const h2 = document.createElement("h2"); h2.textContent = c.name;
-    const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = c.docs.length ? `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}` : `${c.meta} · appunti in arrivo`;
-    info.append(h2, meta);
-    const tags = document.createElement("div"); tags.className = "tags";
-    if (c.resto) {
-      const r = document.createElement("div"); r.className = "resto";
-      r.textContent = `Resto ${c.resto}`;
-      r.title = `Appunti del canale Resto ${c.resto}: per l'altro canale programma e docente possono essere diversi`;
-      tags.append(r);
-    }
-    if (c.stato) {
-      const st = document.createElement("div");
-      const ok = c.stato === "aggiornato", soon = c.stato === "in-arrivo";
-      st.className = "state " + (ok ? "ok" : soon ? "soon" : "wip");
-      st.textContent = ok ? "Appunti aggiornati" : soon ? "In arrivo" : "In aggiornamento";
-      st.title = ok ? "Gli appunti coprono tutte le lezioni fatte finora" : soon ? "Il corso è nel sito, gli appunti arrivano a breve" : "Gli appunti vengono completati man mano che il corso va avanti";
-      tags.append(st);
-    }
-    if (tags.children.length) info.append(tags);
-    const ul = document.createElement("ul"); ul.className = "docs";
-    for (const d of c.docs) {
-      const li = document.createElement("li"); const a = document.createElement("a");
-      a.href = d.path.split("/").map(encodeURIComponent).join("/"); a.dataset.kind = d.kind;
-      const n = document.createElement("span"); n.className = "dname"; n.textContent = d.name;
-      const i = document.createElement("span"); i.className = "dinfo"; i.dataset.path = d.path; i.dataset.kind = d.kind;
-      if (d.progressKey) i.dataset.key = d.progressKey;
-      const ar = document.createElement("span"); ar.className = "arrow"; ar.setAttribute("aria-hidden", "true"); ar.textContent = "→";
-      a.append(n, i, ar);
-      if (d.progressKey) { const pr = document.createElement("span"); pr.className = "prog"; pr.setAttribute("aria-hidden", "true"); pr.append(document.createElement("i")); a.append(pr); }
-      li.append(a); ul.append(li);
-    }
-    if (!c.docs.length) {
-      const empty = document.createElement("div"); empty.className = "docs-empty";
-      empty.innerHTML = `<b>Appunti in arrivo.</b> I quaderni di ${c.name.replace(/[<&>]/g, "")} verranno caricati a breve.`;
-      row.append(code, info, empty); list.append(row); continue;
-    }
-    row.append(code, info, ul); list.append(row);
-  }
-}
-render();
-const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
-document.getElementById("n-courses").textContent = COURSES.length;
-document.getElementById("n-docs").textContent = nDocs;
-document.getElementById("n-courses").dataset.uaCount = COURSES.length;
-document.getElementById("n-docs").dataset.uaCount = nDocs;
-/* Avanzamento: legge le spunte salvate nel browser dalle pagine (capitoli fatti, attività del piano) */
-function progressOf(key, meta) {
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem(key)) || {}; } catch (e) {}
-  if (meta && meta.ids) return { done: meta.ids.filter(id => saved[id] === true).length, total: meta.ids.length, what: "capitoli fatti" };
-  if (meta && meta.total) return { done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length), total: meta.total, what: "attività fatte" };
-  return null;
-}
-function paintInfo(data) {
-  const files = (data && data.files) || {}, prog = (data && data.progress) || {};
-  document.querySelectorAll(".dinfo").forEach(i => {
-    const parts = [i.dataset.kind];
-    const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
-    if (p) parts.push(`${p.done}/${p.total} ${p.what}`);
-    if (files[i.dataset.path]) parts.push("aggiornato il " + fmt(files[i.dataset.path]));
-    i.textContent = parts.join(" · ");
-    const bar = i.parentElement.querySelector(".prog i");
-    if (bar) bar.style.width = p && p.total ? (100 * p.done / p.total) + "%" : "0%";
-  });
-}
-paintInfo(null);
+    <footer class="site-foot">
+      <div class="wrap">
+        <div class="f-grid">
+          <div class="f-brand">
+            <span class="f-k">Ultimo aggiornamento</span>
+            <div class="build-meta"><span id="built">—</span><span id="version"></span></div>
+          </div>
+          <nav class="f-col" aria-label="Sito">
+            <span class="f-k">Sito</span>
+            <ul class="f-links">
+              <li>
+                <a href="news.html"><i class="f-dot"></i>News</a>
+              </li>
+              <li>
+                <a href="segnalazioni.html"><i class="f-dot"></i>Segnalazioni</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="drives" aria-label="Cartelle Google Drive">
+            <span class="f-k">Cartelle Google Drive</span>
+            <a
+              class="drive"
+              href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="drive-ic"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                  /></svg
+              ></span>
+              <span class="drive-t">UNI Files</span>
+              <span class="drive-s">Raccolta personale · file dei corsi</span>
+              <span class="drive-go" aria-hidden="true">↗</span>
+            </a>
+            <a
+              class="drive"
+              href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="drive-ic"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                  /></svg
+              ></span>
+              <span class="drive-t">3° anno Drive Coscienze</span>
+              <span class="drive-s">Raccolta comune · file del 3° anno</span>
+              <span class="drive-go" aria-hidden="true">↗</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </footer>
 
-/* updates.json viene generato dal deploy: date di aggiornamento e capitoli di ogni quaderno */
-fetch("updates.json").then(r => r.ok ? r.json() : null).then(data => {
-  if (!data) return;
-  paintInfo(data);
-  if (data.built) {
-    const built = new Date(data.built);
-    const time = new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome" }).format(built);
-    const date = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome" }).format(built);
-    document.getElementById("built").textContent = `${date}, ${time}`;
-  }
-  if (data.version) document.getElementById("version").textContent = "ver. " + data.version;
-}).catch(() => {});
+    <script src="assets/corsi.js"></script>
+    <script>
+      const COURSES = window.CORSI || [];
+      const fmt = iso =>
+        new Intl.DateTimeFormat("it-IT", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/Rome"
+        }).format(new Date(iso));
+      const list = document.getElementById("list");
+      let updates = {};
 
-/* Riprendi da dove eri */
-(function () {
-  let last = null;
-  try { last = JSON.parse(localStorage.getItem("ua-last")); } catch (e) {}
-  if (!last || !last.p) return;
-  let found = null;
-  for (const c of COURSES) for (const d of c.docs) if (d.path === last.p) found = { c, d };
-  if (!found) return;
-  const box = document.getElementById("resume");
-  // ?riprendi=1: la pagina torna al paragrafo dove eri rimasto (vedi trackLast in assets/site.js)
-  box.href = last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "?riprendi=1#" + last.i : "");
-  box.style.setProperty("--c", `var(--ua-c-${found.c.color})`);
-  box.querySelector(".resume-dot").dataset.kind = found.d.kind || "";
-  const t = document.getElementById("resume-t");
-  t.textContent = found.d.name;
-  if (last.t) { const s = document.createElement("small"); s.textContent = (last.n ? last.n + " · " : "") + last.t; t.append(s); }
-  const mins = Math.round((Date.now() - (last.at || Date.now())) / 60000);
-  const rtf = new Intl.RelativeTimeFormat("it", { numeric: "auto" });
-  const when = mins < 60 ? rtf.format(-mins, "minute") : mins < 1440 ? rtf.format(-Math.round(mins / 60), "hour") : rtf.format(-Math.round(mins / 1440), "day");
-  box.querySelector(".resume-k").textContent = "Riprendi da dove eri · " + when;
-  document.getElementById("resume-wrap").hidden = false;
-})();
-window.addEventListener("pageshow", e => { if (e.persisted) location.reload(); });
+      function render() {
+        list.textContent = "";
+        for (const c of COURSES) {
+          const row = document.createElement("section");
+          row.className = "course";
+          row.id = c.code.toLowerCase();
+          row.style.setProperty("--c", `var(--ua-c-${c.color}, var(--ua-muted))`);
+          row.setAttribute("data-ua-rise", "");
+          const code = document.createElement("div");
+          code.className = "code";
+          code.textContent = c.code;
+          const info = document.createElement("div");
+          const h2 = document.createElement("h2");
+          h2.textContent = c.name;
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          meta.textContent = c.docs.length
+            ? `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`
+            : `${c.meta} · appunti in arrivo`;
+          info.append(h2, meta);
+          const tags = document.createElement("div");
+          tags.className = "tags";
+          if (c.resto) {
+            const r = document.createElement("div");
+            r.className = "resto";
+            r.textContent = `Resto ${c.resto}`;
+            r.title = `Appunti del canale Resto ${c.resto}: per l'altro canale programma e docente possono essere diversi`;
+            tags.append(r);
+          }
+          if (c.stato) {
+            const st = document.createElement("div");
+            const ok = c.stato === "aggiornato",
+              soon = c.stato === "in-arrivo";
+            st.className = "state " + (ok ? "ok" : soon ? "soon" : "wip");
+            st.textContent = ok ? "Appunti aggiornati" : soon ? "In arrivo" : "In aggiornamento";
+            st.title = ok
+              ? "Gli appunti coprono tutte le lezioni fatte finora"
+              : soon
+                ? "Il corso è nel sito, gli appunti arrivano a breve"
+                : "Gli appunti vengono completati man mano che il corso va avanti";
+            tags.append(st);
+          }
+          if (tags.children.length) info.append(tags);
+          const ul = document.createElement("ul");
+          ul.className = "docs";
+          for (const d of c.docs) {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = d.path.split("/").map(encodeURIComponent).join("/");
+            a.dataset.kind = d.kind;
+            const n = document.createElement("span");
+            n.className = "dname";
+            n.textContent = d.name;
+            const i = document.createElement("span");
+            i.className = "dinfo";
+            i.dataset.path = d.path;
+            i.dataset.kind = d.kind;
+            if (d.progressKey) i.dataset.key = d.progressKey;
+            const ar = document.createElement("span");
+            ar.className = "arrow";
+            ar.setAttribute("aria-hidden", "true");
+            ar.textContent = "→";
+            a.append(n, i, ar);
+            if (d.progressKey) {
+              const pr = document.createElement("span");
+              pr.className = "prog";
+              pr.setAttribute("aria-hidden", "true");
+              pr.append(document.createElement("i"));
+              a.append(pr);
+            }
+            li.append(a);
+            ul.append(li);
+          }
+          if (!c.docs.length) {
+            const empty = document.createElement("div");
+            empty.className = "docs-empty";
+            empty.innerHTML = `<b>Appunti in arrivo.</b> I quaderni di ${c.name.replace(/[<&>]/g, "")} verranno caricati a breve.`;
+            row.append(code, info, empty);
+            list.append(row);
+            continue;
+          }
+          row.append(code, info, ul);
+          list.append(row);
+        }
+      }
+      render();
+      const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
+      document.getElementById("n-courses").textContent = COURSES.length;
+      document.getElementById("n-docs").textContent = nDocs;
+      document.getElementById("n-courses").dataset.uaCount = COURSES.length;
+      document.getElementById("n-docs").dataset.uaCount = nDocs;
+      /* Avanzamento: legge le spunte salvate nel browser dalle pagine (capitoli fatti, attività del piano) */
+      function progressOf(key, meta) {
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(key)) || {};
+        } catch (e) {}
+        if (meta && meta.ids)
+          return {
+            done: meta.ids.filter(id => saved[id] === true).length,
+            total: meta.ids.length,
+            what: "capitoli fatti"
+          };
+        if (meta && meta.total)
+          return {
+            done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length),
+            total: meta.total,
+            what: "attività fatte"
+          };
+        return null;
+      }
+      function paintInfo(data) {
+        const files = (data && data.files) || {},
+          prog = (data && data.progress) || {};
+        document.querySelectorAll(".dinfo").forEach(i => {
+          const parts = [i.dataset.kind];
+          const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
+          if (p) parts.push(`${p.done}/${p.total} ${p.what}`);
+          if (files[i.dataset.path]) parts.push("aggiornato il " + fmt(files[i.dataset.path]));
+          i.textContent = parts.join(" · ");
+          const bar = i.parentElement.querySelector(".prog i");
+          if (bar) bar.style.width = p && p.total ? (100 * p.done) / p.total + "%" : "0%";
+        });
+      }
+      paintInfo(null);
 
-</script>
-<script src="assets/site.js" data-root="./" data-page="index.html"></script>
-</body>
+      /* updates.json viene generato dal deploy: date di aggiornamento e capitoli di ogni quaderno */
+      fetch("updates.json")
+        .then(r => (r.ok ? r.json() : null))
+        .then(data => {
+          if (!data) return;
+          paintInfo(data);
+          if (data.built) {
+            const built = new Date(data.built);
+            const time = new Intl.DateTimeFormat("it-IT", {
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "Europe/Rome"
+            }).format(built);
+            const date = new Intl.DateTimeFormat("it-IT", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              timeZone: "Europe/Rome"
+            }).format(built);
+            document.getElementById("built").textContent = `${date}, ${time}`;
+          }
+          if (data.version) document.getElementById("version").textContent = "ver. " + data.version;
+        })
+        .catch(() => {});
+
+      /* Riprendi da dove eri */
+      (function () {
+        let last = null;
+        try {
+          last = JSON.parse(localStorage.getItem("ua-last"));
+        } catch (e) {}
+        if (!last || !last.p) return;
+        let found = null;
+        for (const c of COURSES) for (const d of c.docs) if (d.path === last.p) found = { c, d };
+        if (!found) return;
+        const box = document.getElementById("resume");
+        // ?riprendi=1: la pagina torna al paragrafo dove eri rimasto (vedi trackLast in assets/site.js)
+        box.href =
+          last.p.split("/").map(encodeURIComponent).join("/") + (last.i ? "?riprendi=1#" + last.i : "");
+        box.style.setProperty("--c", `var(--ua-c-${found.c.color})`);
+        box.querySelector(".resume-dot").dataset.kind = found.d.kind || "";
+        const t = document.getElementById("resume-t");
+        t.textContent = found.d.name;
+        if (last.t) {
+          const s = document.createElement("small");
+          s.textContent = (last.n ? last.n + " · " : "") + last.t;
+          t.append(s);
+        }
+        const mins = Math.round((Date.now() - (last.at || Date.now())) / 60000);
+        const rtf = new Intl.RelativeTimeFormat("it", { numeric: "auto" });
+        const when =
+          mins < 60
+            ? rtf.format(-mins, "minute")
+            : mins < 1440
+              ? rtf.format(-Math.round(mins / 60), "hour")
+              : rtf.format(-Math.round(mins / 1440), "day");
+        box.querySelector(".resume-k").textContent = "Riprendi da dove eri · " + when;
+        document.getElementById("resume-wrap").hidden = false;
+      })();
+      window.addEventListener("pageshow", e => {
+        if (e.persisted) location.reload();
+      });
+    </script>
+    <script src="assets/site.js" data-root="./" data-page="index.html"></script>
+  </body>
 </html>
