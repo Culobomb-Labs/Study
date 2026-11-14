@@ -192,6 +192,9 @@ a.ua-ni:hover{background:var(--ua-soft)}
    pillola più scura. Icone e scritte monocromatiche. I colori del vetro sono le variabili --ua-glass… del tema. */
 .ua-dock{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));
   font:500 11.5px/1 var(--ua-font);color:var(--ua-ink);-webkit-font-smoothing:antialiased}
+/* misure uguali in tutte le pagine (alcune non mettono box-sizing:border-box): altrimenti la barra cambia larghezza
+   da una pagina all'altra e, nel passaggio tra le pagine, Chrome ed Edge mostrano le due barre sovrapposte */
+.ua-dock,.ua-dock *,.ua-dock *::before,.ua-dock *::after{box-sizing:border-box}
 .ua-tabs,.ua-dock .ua-up{position:relative;isolation:isolate;background:var(--ua-glass);
   -webkit-backdrop-filter:var(--ua-glass-fx);backdrop-filter:var(--ua-glass-fx);box-shadow:var(--ua-glass-shadow)}
 .ua-tabs::before,.ua-dock .ua-up::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;
@@ -204,6 +207,7 @@ a.ua-ni:hover{background:var(--ua-soft)}
   transform:translateX(var(--lx,0)) scale(var(--ls,1),var(--lsy,1));
   background:var(--ua-glass-on);opacity:0;pointer-events:none;will-change:transform;
   transition:top .25s var(--ua-ease),bottom .25s var(--ua-ease),background .25s,box-shadow .25s,opacity .2s}
+.ua-tabs:not(.ua-ready) .ua-lens{transition:none} /* all'apertura della pagina la pillola c'è già, senza dissolvenza */
 .ua-tabs.has-on .ua-lens,.ua-tabs.is-pressing .ua-lens{opacity:1}
 .ua-tabs.is-pressing .ua-lens{top:-7px;bottom:-7px;background:rgba(255,255,255,.06);
   box-shadow:inset 0 1px 8px rgba(255,255,255,.28),inset 0 -2px 8px rgba(255,255,255,.12),0 8px 22px -6px rgba(0,0,0,.45)}

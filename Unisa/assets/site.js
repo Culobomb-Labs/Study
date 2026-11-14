@@ -274,6 +274,7 @@
     }, true);
     new ResizeObserver(rest).observe(bar);
     rest();
+    requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("ua-ready"))); // da qui in poi la lente si anima
   }
 
   /* ---------------- ricerca ---------------- */
