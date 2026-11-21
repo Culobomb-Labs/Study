@@ -224,8 +224,8 @@ const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ot
 /* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
    pri = priorità quando il tempo non basta (più alto = più importante). */
 const TOPICS = [
-  {"id": "corso", "ch": "00", "cid": "corso", "pkg": "Introduzione", "t": "Il corso in breve", "min": 15, "pri": 1, "read": "Cap. 00: com'è fatto il corso e cosa serve per l'esame", "draw": "Fai una lista dei capitoli e segna quelli che ti sembrano più difficili", "open": "Cosa si fa nel corso e com'è fatto l'esame"},
-  {"id": "piattaforma", "ch": "01", "cid": "piattaforma", "pkg": "Piattaforma", "t": "La piattaforma Android", "min": 45, "pri": 4, "read": "Cap. 01: l'architettura a strati, dal codice all'app (file .dex e ART)", "draw": "Disegna a memoria gli strati dell'architettura Android, dal kernel alle app", "open": "Cosa sono ART e i file .dex, e perché servono"},
+  {"id": "corso", "intro": true, "ch": "00", "cid": "corso", "pkg": "Introduzione", "t": "Il corso in breve", "min": 15, "pri": 1, "read": "Cap. 00: com'è fatto il corso e cosa serve per l'esame", "draw": "Fai una lista dei capitoli e segna quelli che ti sembrano più difficili", "open": "Cosa si fa nel corso e com'è fatto l'esame"},
+  {"id": "piattaforma", "intro": true, "ch": "01", "cid": "piattaforma", "pkg": "Piattaforma", "t": "La piattaforma Android", "min": 45, "pri": 4, "read": "Cap. 01: l'architettura a strati, dal codice all'app (file .dex e ART)", "draw": "Disegna a memoria gli strati dell'architettura Android, dal kernel alle app", "open": "Cosa sono ART e i file .dex, e perché servono"},
   {"id": "versioni", "ch": "02", "cid": "versioni", "pkg": "Piattaforma", "t": "Versioni", "min": 20, "pri": 2, "read": "Cap. 02: versioni di Android, livelli API, minSdk e targetSdk", "draw": "Per un'app di esempio scegli minSdk e targetSdk e spiega perché", "open": "Differenza tra minSdkVersion, targetSdkVersion e compileSdk"},
   {"id": "strumenti", "ch": "03", "cid": "strumenti", "pkg": "Strumenti", "t": "Android Developer Tools", "min": 50, "pri": 3, "read": "Cap. 03: com'è fatto un progetto, Activity o AppCompatActivity, edge-to-edge e insets, emulatore, adb, debug", "draw": "Crea un progetto vuoto, avvialo sull'emulatore e prova un comando adb", "open": "A cosa servono il manifest, la cartella res e Gradle"},
   {"id": "layout", "ch": "04", "cid": "layout", "pkg": "Interfaccia", "t": "Layouts", "min": 60, "pri": 5, "read": "Cap. 04: regole dell'XML, px, dp e sp, i contenitori (ViewGroup)", "draw": "Scrivi a mano l'XML di una schermata di login con LinearLayout o ConstraintLayout", "open": "Differenza tra px, dp e sp, con un esempio"},
@@ -247,8 +247,10 @@ const TOPICS = [
   {"id": "provider", "ch": "20", "cid": "provider", "pkg": "Componenti", "t": "Content Providers", "min": 50, "pri": 4, "read": "Cap. 20: a cosa serve, URI, come crearne uno", "draw": "Leggi i contatti con un ContentResolver", "open": "Che cos'è un Content Provider e quando serve"},
   {"id": "service", "ch": "21", "cid": "service", "pkg": "Componenti", "t": "Services", "min": 50, "pri": 5, "read": "Cap. 21: tipi di service, ciclo di vita, foreground", "draw": "Scrivi un service che parte con un Intent e si ferma da solo alla fine", "open": "Differenza tra started service e bound service"}
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: {"t": "Simulazione d'esame", "s": "Nel quiz: simulazione della prova. Poi rivedi gli errori."},
     focus: "ciclo di vita, intent, layout, salvataggio dei dati e service",
     recap: "Callback del ciclo di vita, parti di un Intent, px/dp/sp, i 4 passi dell'Adapter, permessi a runtime, dove salvare i dati, tipi di service" }
@@ -262,6 +264,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

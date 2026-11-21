@@ -233,8 +233,10 @@ const TOPICS = [
   {"id": "jdbc", "ch": "09", "cid": "jdbc", "pkg": "Linguaggi", "t": "SQL nei linguaggi di programmazione e JDBC", "min": 45, "pri": 3, "read": "Cap. 09: conflitto di impedenza, SQL immerso e cursori, SQL dinamico, CLI, JDBC con Statement, ResultSet, PreparedStatement e transazioni", "draw": "Scrivi a mano un programma JDBC che apre la connessione, esegue una PreparedStatement e scorre il ResultSet", "open": "Cos'è il conflitto di impedenza e come lo risolve il cursore"},
   {"id": "fisica", "ch": "10", "cid": "fisica", "pkg": "Livello fisico", "t": "Progettazione fisica", "min": 80, "pri": 4, "read": "Cap. 10: memoria secondaria, file heap, ordinati e hash, indici primari e secondari, densi e sparsi, multilivello, B-tree e B+-tree", "draw": "Calcola l'ordine di B-tree e B+-tree con i dati delle slide e inserisci 8, 5, 1, 7, 3, 12 in un B+-tree (p = 3, Pleaf = 2)", "open": "Indice primario e secondario, denso e sparso: regole"}
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: {"t": "Simulazione d'esame su carta", "s": "A tempo: uno schema ER da una traccia, la sua traduzione in relazioni e tre query in algebra e SQL. Poi correggi con il quaderno."},
     focus: "modello ER, progettazione logica, mapping, algebra relazionale e SQL",
     recap: "Costrutti e cardinalità dell'ER, analisi delle ridondanze, eliminazione delle gerarchie, regole del mapping, chiavi e integrità referenziale, operatori dell'algebra e cardinalità del join, GROUP BY e HAVING, NOT EXISTS, indici e B+-tree" }
@@ -248,6 +250,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

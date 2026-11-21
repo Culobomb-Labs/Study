@@ -253,8 +253,10 @@ const TOPICS = [
   {"id": "eccezioni", "ch": "30", "cid": "eccezioni", "pkg": "Eccezioni", "t": "Gestione delle eccezioni", "min": 55, "pri": 5, "read": "Cap. 30: checked e unchecked, gerarchia, try, catch, finally, throw e throws, eccezioni personalizzate, printStackTrace", "draw": "Scrivi un'eccezione personalizzata, un metodo con throws e il main con try-catch-finally", "open": "Eccezioni checked e unchecked: differenze ed esempi"},
   {"id": "object", "ch": "Obj", "cid": "object", "pkg": "Approfondimento", "t": "La classe Object", "min": 35, "pri": 4, "read": "Dispensa sulla classe Object: toString, equals e le sue proprietà, hashCode, getClass, instanceof, clone e Cloneable", "draw": "Scrivi equals e hashCode coerenti per BankAccount", "open": "Quali regole deve rispettare equals e come si lega a hashCode?"}
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: {"t": "Simulazione d'esame su carta", "s": "A tempo: prevedi l'output di due programmi, scrivi una piccola gerarchia con classe astratta e interfaccia, una pipeline di stream e la gestione di un'eccezione. Poi correggi con il quaderno."},
     focus: "ereditarietà, polimorfismo, interfacce, collezioni, generics, lambda, stream ed eccezioni",
     recap: "static, overloading e overriding, ordine di costruzione, upcasting e downcasting, early e late binding, classi astratte e interfacce, final, copia superficiale e profonda, List Set e Map, generics, lambda e interfacce funzionali, operazioni sugli stream, checked e unchecked" }
@@ -268,6 +270,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

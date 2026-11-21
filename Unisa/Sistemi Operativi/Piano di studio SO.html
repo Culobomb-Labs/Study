@@ -238,8 +238,10 @@ const TOPICS = [
   {"id": "implementazione", "ch": "14", "cid": "implementazione", "pkg": "File e directory", "t": "Realizzazione del file system", "min": 60, "pri": 5, "read": "Cap. 14: strutture su disco, directory, allocazione contigua, concatenata e indicizzata, spazio libero, coerenza e recovery", "draw": "Per lo stesso file confronta su carta allocazione contigua, concatenata e indicizzata", "open": "Pro e contro dei tre metodi di allocazione"},
   {"id": "dettagli", "ch": "15", "cid": "dettagli", "pkg": "File e directory", "t": "Dettagli interni del file system", "min": 40, "pri": 3, "read": "Cap. 15: partizioni e mount, VFS, condivisione, file system remoti e NFS", "draw": "Disegna come il VFS collega più file system diversi", "open": "A cosa serve il Virtual File System"}
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: {"t": "Simulazione d'esame", "s": "Nel quiz: simulazione della prova. Poi rivedi gli errori."},
     focus: "scheduling, sincronizzazione, stallo e memoria virtuale",
     recap: "Stati di un processo, algoritmi di scheduling, requisiti della sezione critica, condizioni dello stallo, paginazione e TLB, algoritmi di sostituzione, scheduling del disco, metodi di allocazione" }
@@ -253,6 +255,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

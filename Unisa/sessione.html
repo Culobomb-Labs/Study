@@ -334,6 +334,22 @@
         background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--ua-bg));
         border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, var(--ua-line));
       }
+      /* consiglio: i capitoli introduttivi, facoltativi (non entrano nel piano) */
+      .ss-tip {
+        margin: 0 0 10px;
+        padding: 12px 14px;
+        border: 1px dashed var(--ua-line);
+        border-radius: 12px;
+        font-size: 14.5px;
+        color: var(--ua-muted);
+      }
+      .ss-tip b {
+        color: var(--ua-ink);
+      }
+      .ss-tip a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
 
       /* progetto nel modulo: casella, poi ore e consegna */
       .ss-prj {
@@ -1158,6 +1174,19 @@
               ""
             )}</div>${sm ? `<p class="ss-note" style="margin-top:10px">Avanzamento della sessione: <b>${sm.pct}%</b></p>` : ""}`;
         }
+        // consiglio in cima: i capitoli introduttivi dei corsi della sessione, con il link al quaderno
+        function introTip(st) {
+          const list = Object.entries(st.plan.intro || {}).flatMap(([code, tips]) =>
+            tips.map(x =>
+              x.href
+                ? `<a href="${esc(x.href)}">${esc(code)} ${esc(x.ch)} ${esc(x.t)}</a>`
+                : `${esc(code)} ${esc(x.ch)} ${esc(x.t)}`
+            )
+          );
+          return list.length
+            ? `<p class="ss-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${list.join(" · ")}</p>`
+            : "";
+        }
         function plan(st) {
           const t = S.today();
           const days = st.plan.days;
@@ -1175,6 +1204,7 @@
               <button type="button" class="ss-btn" id="ss-print" aria-label="Stampa il piano">Stampa</button>
               <button type="button" class="ss-btn danger" id="ss-del" aria-label="Elimina la sessione">Elimina</button>
             </div>
+            ${introTip(st)}
             ${notice}${(st.plan.warnings || []).map(w => `<p class="ss-warn">${esc(w)}</p>`).join("")}${(st.plan.notes || []).map(w => `<p class="ss-info">${esc(w)}</p>`).join("")}
             ${examCards(st)}
             <h2>Oggi</h2>
@@ -1221,6 +1251,16 @@
         function render() {
           const st = S.load();
           if (!st || !st.plan || editing) return form(st);
+          // sessioni salvate prima della regola dei capitoli introduttivi (senza plan.intro): il piano si rifà da solo,
+          // tenendo le spunte, così i capitoli introduttivi escono dal piano e diventano un consiglio
+          if (!st.plan.intro) {
+            app.innerHTML = `<p class="ss-wait">Aggiorno il piano…</p>`;
+            S.build(st, ROOT)
+              .then(() => S.save(st))
+              .catch(() => (st.plan.intro = {})) // senza rete: riprova la prossima volta
+              .then(() => plan(st));
+            return;
+          }
           // attività rimaste indietro: si spostano da sole da oggi in poi
           if (S.replanOffline(st)) S.save(st);
           plan(st);

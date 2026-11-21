@@ -223,8 +223,8 @@ const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ot
 /* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
    pri = priorità quando il tempo non basta (più alto = più importante). */
 const TOPICS = [
-  {"id": "java", "ch": "00", "cid": "java", "pkg": "Prima di iniziare", "t": "Il Java minimo", "min": 30, "pri": 2, "read": "Cap. 00: il Java che serve, la classe anonima", "draw": "Riscrivi una classe anonima come classe normale e come lambda", "open": "Cos'è una classe anonima e quando si usa"},
-  {"id": "sd", "ch": "01", "cid": "sd", "pkg": "Sistemi distribuiti", "t": "Cos'è un sistema distribuito", "min": 45, "pri": 4, "read": "Cap. 01: perché distribuire, le 8 parole chiave, il modello RM-ODP", "draw": "Scrivi a memoria le 8 parole chiave con un esempio ciascuna", "open": "Definizione di sistema distribuito e perché si distribuisce"},
+  {"id": "java", "intro": true, "ch": "00", "cid": "java", "pkg": "Prima di iniziare", "t": "Il Java minimo", "min": 30, "pri": 2, "read": "Cap. 00: il Java che serve, la classe anonima", "draw": "Riscrivi una classe anonima come classe normale e come lambda", "open": "Cos'è una classe anonima e quando si usa"},
+  {"id": "sd", "intro": true, "ch": "01", "cid": "sd", "pkg": "Sistemi distribuiti", "t": "Cos'è un sistema distribuito", "min": 45, "pri": 4, "read": "Cap. 01: perché distribuire, le 8 parole chiave, il modello RM-ODP", "draw": "Scrivi a memoria le 8 parole chiave con un esempio ciascuna", "open": "Definizione di sistema distribuito e perché si distribuisce"},
   {"id": "requisiti", "ch": "02", "cid": "requisiti", "pkg": "Sistemi distribuiti", "t": "Requisiti non funzionali", "min": 30, "pri": 3, "read": "Cap. 02: i requisiti non funzionali di un sistema distribuito", "draw": "Per un servizio che usi ogni giorno elenca i requisiti non funzionali più importanti", "open": "Quali sono i requisiti non funzionali tipici di un sistema distribuito"},
   {"id": "trasparenza", "ch": "03", "cid": "trasparenza", "pkg": "Sistemi distribuiti", "t": "La trasparenza", "min": 30, "pri": 4, "read": "Cap. 03: i tipi di trasparenza", "draw": "Per ogni tipo di trasparenza trova un esempio reale", "open": "Cosa significa trasparenza in un sistema distribuito"},
   {"id": "middleware", "ch": "04", "cid": "middleware", "pkg": "Sistemi distribuiti", "t": "Middleware a oggetti", "min": 50, "pri": 4, "read": "Cap. 04: tre tipi di middleware, RPC, oggetti distribuiti, esempi, middleware esplicito o implicito", "draw": "Disegna il percorso di una chiamata RPC dal client al server e ritorno", "open": "Da RPC agli oggetti distribuiti: cosa cambia"},
@@ -248,8 +248,10 @@ const TOPICS = [
   {"id": "messaging", "ch": "22", "cid": "messaging", "pkg": "JMS", "t": "Messaging: concetti", "min": 40, "pri": 4, "read": "Cap. 22: point-to-point e publish/subscribe, administered objects, MDB", "draw": "Disegna i due modelli di messaggistica con produttori e consumatori", "open": "Differenza tra point-to-point e publish/subscribe"},
   {"id": "jms-api", "ch": "23", "cid": "jms-api", "pkg": "JMS", "t": "JMS: producer e consumer", "min": 45, "pri": 4, "read": "Cap. 23: i pezzi dell'API, tre modi di fare un producer, consumer sincrono e asincrono", "draw": "Scrivi un producer con CDI e un consumer asincrono", "open": "Consumer sincrono e asincrono: differenza"}
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: {"t": "Simulazione d'esame", "s": "Prendi 3 capitoli a caso e rispondi a voce, a tempo, alle loro domande lampo. Poi rileggi dove hai esitato."},
     focus: "thread e sincronizzazione, socket, Java EE e CDI",
     recap: "Le 8 parole chiave, tipi di trasparenza, Thread e Runnable, synchronized, deadlock/livelock/starvation, Amdahl, Socket e ServerSocket, i 4 container, scope CDI, modelli JMS" }
@@ -263,6 +265,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

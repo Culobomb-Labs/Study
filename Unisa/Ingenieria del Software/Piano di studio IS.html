@@ -242,7 +242,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
         <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 20</small></span></label>
         <label class="scope off" title="Gli argomenti non sono ancora stati comunicati"><input type="radio" name="scope" value="seconda" disabled><span><b>Seconda prova</b><small>argomenti non ancora disponibili</small></span></label>
-        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 01–20</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 02–20</small></span></label>
       </div>
     </fieldset>
     <fieldset>
@@ -297,7 +297,9 @@ const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ot
 /* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
    pri = priorità quando il tempo non basta (più alto = più importante). */
 const TOPICS = [
-  { id: "minuta", full: true, ch: "01", cid: "minuta", pkg: "Riunioni", t: "Riunioni e minuta", min: 30, pri: 1,
+  { id: "java", intro: true, ch: "00", cid: "java", pkg: "Prima di iniziare", t: "Il Java minimo", min: 30, pri: 1,
+    read: "Cap. 00: il Java che serve per gli esempi del corso" },
+  { id: "minuta", intro: true, full: true, ch: "01", cid: "minuta", pkg: "Riunioni", t: "Riunioni e minuta", min: 30, pri: 1,
     read: "Cap. 01: intestazione, sezioni della minuta, notazione I[n], P[n.m], AI[n], ruoli",
     draw: "Scrivi la minuta di una riunione del tuo progetto con almeno 2 issue e 2 action item",
     open: "A cosa serve la minuta e quali ruoli ci sono in una riunione" },
@@ -394,13 +396,15 @@ const TOPICS = [
     draw: "Calcola la capacità di un team con il focus factor e leggi un burndown chart",
     open: "Ruoli e cerimonie di Scrum" }
 ];
+/* Capitoli introduttivi (intro: true): non entrano nel piano (in nessuna prova), sono solo un consiglio sopra il modulo. */
+const STUDY = TOPICS.filter(t => !t.intro);
 /* Per quale prova: quali argomenti, che data proporre, che simulazione fare nel quiz */
 const SCOPES = {
-  prima: { topics: () => TOPICS.filter(t => !t.full), exam: "2026-11-06", examLbl: "La prova è il",
+  prima: { topics: () => STUDY.filter(t => !t.full), exam: "2026-11-06", examLbl: "La prova è il",
     sim: { t: "Simulazione prima prova", s: "Nel quiz: \"Prima prova\" (15 domande, 30 minuti, punteggio d'esame). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
-  completa: { topics: () => TOPICS, exam: "", examLbl: "L'esame è il",
+  completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: { t: "Simulazione prova completa", s: "Nel quiz: \"Prova completa\" (25 domande). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso, sequence e black-box testing",
     recap: "Relazioni del class diagram, include/extend, frame del sequence, regole BCE, modelli di ciclo di vita, pattern e indizi, formule BVA/WECT/SECT, V(G), ruoli e cerimonie Scrum" }
@@ -414,6 +418,11 @@ const LEVELS = [
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* Consiglio: i capitoli introduttivi, con il link al quaderno, sopra il modulo del piano */
+(function () {
+  const intro = TOPICS.filter(t => t.intro);
+  if (intro.length) $("#cfg").insertAdjacentHTML("beforebegin", `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>`);
+})();
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };

@@ -16,7 +16,8 @@
      cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date } }],
              start, hours, days, ded, notify, ore: [ore dei promemoria] },
      plan: { built, start, recap, items: { iid: { c, k, t, top, s, m, href, quiz } },
-             days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned },
+             days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned,
+             intro: { sigla: [{ ch, t, href }] } (capitoli introduttivi: solo consiglio) },
      done: { idPezzo: true } } */
 (function () {
   const KEY = "ua-sessione";
@@ -181,13 +182,15 @@
     const add = (id, o) =>
       items.push(Object.assign({ iid: `${exam.code}.${id}`, c: exam.code, k: "top" }, o));
     if (data) {
-      // IS: prima prova = argomenti senza "full"; seconda prova = solo quelli "full" (non c'erano nella prima)
+      /* I capitoli introduttivi ("intro" nel piano di studio) non entrano mai: sono solo un consiglio (plan.intro).
+         IS: prima prova = argomenti senza "full"; seconda prova = quelli "full" (non c'erano nella prima) */
+      const study = data.topics.filter(t => !t.intro);
       const topics =
         exam.scope === "prima"
-          ? data.topics.filter(t => !t.full)
+          ? study.filter(t => !t.full)
           : exam.scope === "seconda"
-            ? data.topics.filter(t => t.full)
-            : data.topics;
+            ? study.filter(t => t.full)
+            : study;
       const verb = lv === 2 ? "Ripassa" : lv === 1 ? "Rileggi" : "Studia";
       topics.forEach(t => {
         const parts = { read: Math.max(15, r5(t.min * f)) };
@@ -599,7 +602,8 @@
     const from = cfg.start && cfg.start > today() ? cfg.start : today();
     const doneMin = doneMinutes(st);
     const fresh = {},
-      recap = {};
+      recap = {},
+      intro = {};
     for (const e of cfg.exams) {
       const course = courseOf(e.code);
       if (!course) continue;
@@ -609,6 +613,14 @@
         throw new Error("Non riesco a leggere il piano di studio di " + course.name + ".");
       // ripasso a memoria dell'ultimo giorno: quello della prova scelta, se il piano di studio lo ha
       if (data) recap[e.code] = data.recap[e.scope || "completa"] || "";
+      // consiglio: i capitoli introduttivi del corso, con il link al quaderno (non contano nel piano)
+      const tips = data ? data.topics.filter(t => t.intro) : [];
+      if (tips.length)
+        intro[e.code] = tips.map(t => ({
+          ch: t.ch,
+          t: t.t,
+          href: course.quaderno ? href(root, course.quaderno, t.cid) : ""
+        }));
       buildItems(e, course, data, root)
         .concat(projectItems(e))
         .forEach(i => (fresh[i.iid] = i));
@@ -620,6 +632,7 @@
       built: Date.now(),
       start: from,
       recap,
+      intro,
       items: Object.assign({}, old, fresh, g.items),
       days,
       warnings: g.warnings,
