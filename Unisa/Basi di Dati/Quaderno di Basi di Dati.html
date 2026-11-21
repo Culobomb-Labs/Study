@@ -39,6 +39,44 @@ pre u{text-decoration-thickness:1.5px}
 <div class="tbl"><table><tr><th></th><th>Pro</th><th>Contro</th></tr>
 <tr><td><b>DBMS</b></td><td>Gestione centralizzata, standardizzazione ed “economia di scala”; servizi integrati; meno ridondanze e inconsistenze; <b>minor accoppiamento programma/dati</b> (sviluppo e manutenzione più semplici).</td><td>Costo del DBMS; overhead computazionale (meno efficienza).</td></tr>
 <tr><td><b>File processing</b></td><td>Niente acquisto del DBMS (difficile da ammortizzare per piccole applicazioni); programmi molto efficienti.</td><td>Ridondanza e alto rischio di inconsistenze; <b>forte accoppiamento programma/dati</b> (sviluppo e manutenzione più difficili).</td></tr></table></div>
+<figure class="diagram"><svg viewBox="0 0 640 190" role="img" aria-label="A sinistra ogni programma, Gestione Esami e Gestione Iscrizioni, ha il suo file. A destra entrambi passano dal DBMS, che gestisce un&#x27;unica base di dati con il catalogo">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<defs><marker id="bd-m-fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="150" y="18" text-anchor="middle" font-size="12" fill="var(--soft)">Approccio file processing</text>
+<text x="490" y="18" text-anchor="middle" font-size="12" fill="var(--soft)">Approccio DBMS</text>
+<rect x="10" y="40" width="120" height="44" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="70" y="59" text-anchor="middle" font-size="12">Gestione</text>
+<text x="70" y="74" text-anchor="middle" font-size="12">Esami</text>
+<rect x="10" y="120" width="120" height="44" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="70" y="139" text-anchor="middle" font-size="12">Gestione</text>
+<text x="70" y="154" text-anchor="middle" font-size="12">Iscrizioni</text>
+<path d="M180 46 V80 A62 8 0 0 0 304 80 V46" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<ellipse cx="242" cy="46" rx="62" ry="8" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="242" y="71" text-anchor="middle" font-size="12">File “Esame”</text>
+<path d="M180 126 V160 A62 8 0 0 0 304 160 V126" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<ellipse cx="242" cy="126" rx="62" ry="8" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="242" y="151" text-anchor="middle" font-size="12">File “Studente”</text>
+<line x1="132" y1="62" x2="178" y2="62" stroke="currentColor" marker-start="url(#bd-m-fp)" marker-end="url(#bd-m-fp)"/>
+<line x1="132" y1="142" x2="178" y2="142" stroke="currentColor" marker-start="url(#bd-m-fp)" marker-end="url(#bd-m-fp)"/>
+<line x1="320" y1="30" x2="320" y2="180" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4 4"/>
+<rect x="345" y="40" width="110" height="44" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="400" y="59" text-anchor="middle" font-size="12">Gestione</text>
+<text x="400" y="74" text-anchor="middle" font-size="12">Esami</text>
+<rect x="345" y="120" width="110" height="44" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="400" y="139" text-anchor="middle" font-size="12">Gestione</text>
+<text x="400" y="154" text-anchor="middle" font-size="12">Iscrizioni</text>
+<rect x="478" y="58" width="30" height="88" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="493" y="102" text-anchor="middle" font-size="12" fill="var(--acc)" transform="rotate(-90 493 102)" dominant-baseline="middle">DBMS</text>
+<path d="M523 38 V162 A55 8 0 0 0 633 162 V38" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<ellipse cx="578" cy="38" rx="55" ry="8" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="578" y="92" text-anchor="middle" font-size="12" fill="var(--acc)">Base di dati</text>
+<text x="578" y="108" text-anchor="middle" font-size="12" fill="var(--acc)">+</text>
+<text x="578" y="124" text-anchor="middle" font-size="12" fill="var(--acc)">catalogo</text>
+<line x1="457" y1="66" x2="476" y2="82" stroke="currentColor" marker-start="url(#bd-m-fp)" marker-end="url(#bd-m-fp)"/>
+<line x1="457" y1="138" x2="476" y2="122" stroke="currentColor" marker-start="url(#bd-m-fp)" marker-end="url(#bd-m-fp)"/>
+<line x1="510" y1="102" x2="521" y2="102" stroke="currentColor" marker-start="url(#bd-m-fp)" marker-end="url(#bd-m-fp)"/>
+</g></svg>
+<figcaption>Senza DBMS ogni programma ha i suoi file; con il DBMS tutti usano un’unica base di dati.</figcaption></figure>
 <h3>Modelli dei dati</h3>
 <p>Ogni DBMS supporta un <b>modello dei dati</b>: un insieme di costrutti per descrivere i dati, nascondendo i dettagli di memorizzazione (come una mappa rappresenta un territorio con dei simboli, mostrando alcune caratteristiche e nascondendone altre). Nel modello relazionale il costrutto è la <b>relazione</b> (tabella), che definisce insiemi di record omogenei. Il database vero e proprio è solo quello sui file: il DBMS si occupa di memorizzarvi i dati espressi secondo il modello.</p>
 <div class="vs"><div><h4>Modelli concettuali</h4><p>Rappresentano i dati in modo <b>indipendente da ogni sistema</b>, descrivono concetti del mondo reale, si usano nelle fasi preliminari di progettazione. Il più noto: <b>Entity-Relationship (ER)</b>.</p></div><div><h4>Modelli logici</h4><p>Adottati dai DBMS per organizzare i dati e usati dai programmi, <b>indipendenti dalle strutture fisiche</b>. Esempi: relazionale, reticolare, gerarchico, a oggetti.</p></div></div>
@@ -116,12 +154,99 @@ pre u{text-decoration-thickness:1.5px}
 <p>Nomi: ogni entità e associazione ha un nome <b>univoco</b> nello schema, espressivo, al <b>singolare</b>; per le associazioni meglio <b>sostantivi</b> che verbi.</p>
 <div class="vs"><div><h4>Entità</h4><p>La classe (es. Studente). Nello schema si rappresentano le entità, non le singole istanze (astrazione).</p></div><div><h4>Occorrenza (istanza)</h4><p>Un elemento della classe: l’oggetto, la persona… non i dati che la descrivono.</p></div></div>
 <p>Un’<b>occorrenza di un’associazione binaria</b> è una coppia di occorrenze di entità, una per ciascuna entità coinvolta; di un’associazione <b>n-aria</b> è una n-upla. In un’associazione <b>non ci possono essere occorrenze ripetute</b>.</p>
+<figure class="diagram"><svg viewBox="0 0 640 240" role="img" aria-label="Occorrenze: gli insiemi Studente, Esame e Corso; ogni occorrenza di Esame collega uno studente e un corso">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<ellipse cx="170" cy="115" rx="55" ry="90" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<text x="170" y="228" text-anchor="middle" font-weight="700">Studente</text>
+<ellipse cx="320" cy="115" rx="55" ry="90" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<text x="320" y="228" text-anchor="middle" font-weight="700">Esame</text>
+<ellipse cx="470" cy="115" rx="55" ry="90" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<text x="470" y="228" text-anchor="middle" font-weight="700">Corso</text>
+<path d="M150 60 Q235 31 320 45 Q391 35 462 68" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+<path d="M165 102 Q235 74 305 88 Q396 78 488 112" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+<path d="M165 102 Q247 88 330 125 Q396 115 462 156" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+<path d="M140 142 Q227 128 315 172 Q388 146 462 156" fill="none" stroke="var(--acc)" stroke-width="1.6"/>
+<circle cx="150" cy="60" r="3.5" fill="currentColor"/>
+<text x="140" y="64" text-anchor="end" font-size="12">S1</text>
+<circle cx="165" cy="102" r="3.5" fill="currentColor"/>
+<text x="155" y="106" text-anchor="end" font-size="12">S2</text>
+<circle cx="140" cy="142" r="3.5" fill="currentColor"/>
+<text x="130" y="146" text-anchor="end" font-size="12">S3</text>
+<circle cx="168" cy="178" r="3.5" fill="currentColor"/>
+<text x="158" y="182" text-anchor="end" font-size="12">S4</text>
+<circle cx="320" cy="45" r="3.5" fill="currentColor"/>
+<text x="320" y="37" text-anchor="middle" font-size="12">E1</text>
+<circle cx="305" cy="88" r="3.5" fill="currentColor"/>
+<text x="305" y="80" text-anchor="middle" font-size="12">E2</text>
+<circle cx="330" cy="125" r="3.5" fill="currentColor"/>
+<text x="330" y="117" text-anchor="middle" font-size="12">E3</text>
+<circle cx="315" cy="172" r="3.5" fill="currentColor"/>
+<text x="315" y="164" text-anchor="middle" font-size="12">E4</text>
+<circle cx="462" cy="68" r="3.5" fill="currentColor"/>
+<text x="472" y="72" font-size="12">C1</text>
+<circle cx="488" cy="112" r="3.5" fill="currentColor"/>
+<text x="498" y="116" font-size="12">C2</text>
+<circle cx="462" cy="156" r="3.5" fill="currentColor"/>
+<text x="472" y="160" font-size="12">C3</text>
+</g></svg>
+<figcaption>Ogni occorrenza di Esame collega uno studente a un corso.</figcaption></figure>
 <div class="exam"><b class="lbl">Trabocchetto: “associazioni corrette?”</b>Esame tra Studente e Corso, o Visita tra Paziente e Medico: se lo stesso studente può sostenere lo stesso esame più volte (o lo stesso paziente fare più visite con lo stesso medico), la coppia si ripeterebbe, e non è ammesso. In quel caso Esame (o Visita) va modellato come <b>entità</b>.</div>
 <h3>Tipi particolari di associazione</h3>
 <ul><li><b>Più associazioni sulle stesse entità:</b> Residenza e Sede di lavoro tra Impiegato e Città.</li>
 <li><b>N-aria:</b> Fornitura tra Fornitore, Prodotto e Dipartimento.</li>
 <li><b>Ricorsiva:</b> coinvolge due volte la stessa entità, es. Conoscenza su Persona. Se non è simmetrica servono i <b>ruoli</b>: Successione su Sovrano con ruoli Successore e Predecessore.</li>
 <li><b>Ternaria ricorsiva:</b> Confronto tra Tennista (ruoli Migliore e Peggiore) e Superficie.</li></ul>
+<figure class="diagram"><svg viewBox="0 0 640 350" role="img" aria-label="Quattro schemi: Residenza e Sede di lavoro tra Impiegato e Città; Fornitura tra Fornitore, Prodotto e Dipartimento; Successione su Sovrano con ruoli Successore e Predecessore; Confronto tra Tennista, con ruoli Migliore e Peggiore, e Superficie">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="10" y="95" width="90" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="55" y="117.5" text-anchor="middle">Impiegato</text>
+<rect x="210" y="95" width="90" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="255" y="117.5" text-anchor="middle">Città</text>
+<path d="M55 95 V40 H85" fill="none" stroke="currentColor"/>
+<path d="M225 40 H255 V95" fill="none" stroke="currentColor"/>
+<line x1="100" y1="113" x2="110" y2="113" stroke="currentColor"/>
+<line x1="200" y1="113" x2="210" y2="113" stroke="currentColor"/>
+<path d="M85 40 L155 20 L225 40 L155 60 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="155" y="44.5" text-anchor="middle" font-size="12" fill="var(--acc)">Sede di lavoro</text>
+<path d="M110 113 L155 93 L200 113 L155 133 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="155" y="117.5" text-anchor="middle" font-size="12" fill="var(--acc)">Residenza</text>
+<text x="155" y="160" text-anchor="middle" font-size="11" fill="var(--soft)">Due associazioni sulle stesse entità</text>
+<rect x="330" y="60" width="90" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="375" y="82.5" text-anchor="middle">Fornitore</text>
+<rect x="550" y="60" width="85" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="592.5" y="82.5" text-anchor="middle">Prodotto</text>
+<rect x="430" y="118" width="110" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="138.5" text-anchor="middle">Dipartimento</text>
+<line x1="420" y1="78" x2="435" y2="78" stroke="currentColor"/>
+<line x1="535" y1="78" x2="550" y2="78" stroke="currentColor"/>
+<line x1="485" y1="100" x2="485" y2="118" stroke="currentColor"/>
+<path d="M435 78 L485 56 L535 78 L485 100 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="485" y="82.5" text-anchor="middle" font-size="12" fill="var(--acc)">Fornitura</text>
+<text x="485" y="170" text-anchor="middle" font-size="11" fill="var(--soft)">Associazione n-aria</text>
+<line x1="0" y1="185" x2="640" y2="185" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<path d="M95 215 H40 V282 H95" fill="none" stroke="currentColor"/>
+<path d="M215 215 H270 V282 H215" fill="none" stroke="currentColor"/>
+<path d="M95 215 L155 195 L215 215 L155 235 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="155" y="219.5" text-anchor="middle" font-size="12" fill="var(--acc)">Successione</text>
+<rect x="95" y="265" width="120" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="155" y="286.5" text-anchor="middle">Sovrano</text>
+<text x="88" y="312" text-anchor="end" font-size="11" fill="var(--acc)">Successore</text>
+<text x="222" y="312" font-size="11" fill="var(--acc)">Predecessore</text>
+<text x="155" y="340" text-anchor="middle" font-size="11" fill="var(--soft)">Associazione ricorsiva con ruoli</text>
+<rect x="435" y="192" width="100" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="211.5" text-anchor="middle">Superficie</text>
+<rect x="430" y="282" width="110" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="301.5" text-anchor="middle">Tennista</text>
+<line x1="485" y1="222" x2="485" y2="230" stroke="currentColor"/>
+<path d="M430 250 H390 V297 H430" fill="none" stroke="currentColor"/>
+<path d="M540 250 H580 V297 H540" fill="none" stroke="currentColor"/>
+<path d="M430 250 L485 230 L540 250 L485 270 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="485" y="254.5" text-anchor="middle" font-size="12" fill="var(--acc)">Confronto</text>
+<text x="386" y="242" text-anchor="end" font-size="11" fill="var(--acc)">Migliore</text>
+<text x="584" y="242" font-size="11" fill="var(--acc)">Peggiore</text>
+<text x="485" y="340" text-anchor="middle" font-size="11" fill="var(--soft)">Associazione ternaria ricorsiva</text>
+</g></svg>
+<figcaption>Quattro tipi di associazione; nelle ricorsive i ruoli dicono chi è chi.</figcaption></figure>
 <h3>Attributi composti</h3>
 <p>Raggruppano attributi della stessa entità o associazione affini per significato o uso. Es. Via, Numero civico e CAP formano <b>Indirizzo</b>.</p>
 <h3>Cardinalità delle associazioni</h3>
@@ -147,9 +272,108 @@ pre u{text-decoration-thickness:1.5px}
 <p>Anche gli attributi possono avere una cardinalità, per indicare:</p>
 <ul><li><b>attributi opzionali</b> (informazione incompleta): Numero patente <b>(0,1)</b>;</li><li><b>attributi multivalore</b>: Telefono <b>(0,N)</b>.</li></ul>
 <p>Se manca, la cardinalità di un attributo è (1,1).</p>
+<figure class="diagram"><svg viewBox="0 0 640 200" role="img" aria-label="A sinistra Impiegato con Cognome, Età e l&#x27;attributo composto Indirizzo formato da Via, Numero e CAP. A destra Impiegato con Telefono (0,N), Nome e Numero patente (0,1)">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="20" y="80" width="100" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="70" y="102.5" text-anchor="middle">Impiegato</text>
+<line x1="120" y1="84" x2="150" y2="52" stroke="currentColor"/>
+<circle cx="150" cy="52" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="160" y="50">Cognome</text>
+<line x1="120" y1="98" x2="160" y2="98" stroke="currentColor"/>
+<circle cx="160" cy="98" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="170" y="103">Età</text>
+<line x1="120" y1="112" x2="152" y2="137" stroke="currentColor"/>
+<ellipse cx="190" cy="148" rx="44" ry="15" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="190" y="152" text-anchor="middle" font-size="12">Indirizzo</text>
+<line x1="226" y1="140" x2="258" y2="116" stroke="currentColor"/>
+<circle cx="258" cy="116" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="268" y="120">Via</text>
+<line x1="234" y1="148" x2="266" y2="148" stroke="currentColor"/>
+<circle cx="266" cy="148" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="276" y="152">Numero</text>
+<line x1="226" y1="156" x2="258" y2="182" stroke="currentColor"/>
+<circle cx="258" cy="182" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="268" y="186">CAP</text>
+<line x1="320" y1="20" x2="320" y2="200" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<rect x="360" y="80" width="100" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="410" y="102.5" text-anchor="middle">Impiegato</text>
+<line x1="460" y1="84" x2="500" y2="50" stroke="currentColor"/>
+<circle cx="500" cy="50" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="510" y="54">Telefono</text>
+<text x="478" y="52" text-anchor="end" font-size="12" fill="var(--acc)">(0,N)</text>
+<line x1="460" y1="98" x2="500" y2="98" stroke="currentColor"/>
+<circle cx="500" cy="98" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="510" y="103">Nome</text>
+<line x1="460" y1="112" x2="500" y2="146" stroke="currentColor"/>
+<circle cx="500" cy="146" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="510" y="150">Numero patente</text>
+<text x="478" y="152" text-anchor="end" font-size="12" fill="var(--acc)">(0,1)</text>
+</g></svg>
+<figcaption>Indirizzo è un attributo composto; (0,N) e (0,1) rendono un attributo multivalore o opzionale.</figcaption></figure>
 <h3>Identificatori</h3>
 <div class="vs"><div><h4>Interno</h4><p>Fatto solo di attributi dell’entità. Es. Targa per Automobile; Cognome + Nome + Data di nascita per Persona.</p></div><div><h4>Esterno</h4><p>Fatto di (attributi +) entità esterne raggiunte tramite associazioni. Es. Studente identificato da Matricola <b>+ Università</b> attraverso Iscrizione.</p></div></div>
 <ul><li>Ogni entità deve avere <b>almeno un</b> identificatore, ma può averne più di uno.</li><li>Un’identificazione esterna è possibile solo attraverso un’associazione a cui l’entità da identificare partecipa con cardinalità <b>(1,1)</b>.</li><li>Le associazioni non hanno identificatori: le loro occorrenze sono già identificate dalle occorrenze delle entità che collegano.</li></ul>
+<figure class="diagram"><svg viewBox="0 0 640 262" role="img" aria-label="Identificatori. Automobile identificata da Targa; Persona identificata da Cognome, Nome e Data nascita insieme. Studente identificato da Matricola più Università, tramite Iscrizione con cardinalità (1,1)">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="15" y="40" width="110" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="70" y="62.5" text-anchor="middle">Automobile</text>
+<line x1="125" y1="44" x2="160" y2="18" stroke="currentColor"/>
+<circle cx="160" cy="18" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="170" y="23">Targa</text>
+<line x1="125" y1="58" x2="165" y2="58" stroke="currentColor"/>
+<circle cx="165" cy="58" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="175" y="63">Cilindrata</text>
+<line x1="125" y1="72" x2="160" y2="98" stroke="currentColor"/>
+<circle cx="160" cy="98" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="170" y="103">Modello</text>
+<rect x="15" y="150" width="100" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="65" y="172.5" text-anchor="middle">Persona</text>
+<line x1="115" y1="155" x2="160" y2="132" stroke="currentColor"/>
+<circle cx="160" cy="132" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="170" y="136">Data nascita</text>
+<line x1="115" y1="168" x2="165" y2="168" stroke="currentColor"/>
+<circle cx="165" cy="168" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="175" y="173">Cognome</text>
+<line x1="115" y1="181" x2="160" y2="204" stroke="currentColor"/>
+<circle cx="160" cy="204" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="170" y="209">Nome</text>
+<line x1="140" y1="214" x2="140" y2="122" stroke="currentColor"/>
+<circle cx="140" cy="118" r="4.5" fill="currentColor" stroke="currentColor"/>
+<line x1="55" y1="186" x2="55" y2="210" stroke="currentColor"/>
+<circle cx="55" cy="210" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="55" y="228" text-anchor="middle">Indirizzo</text>
+<line x1="320" y1="15" x2="320" y2="230" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<line x1="430" y1="118" x2="444" y2="118" stroke="currentColor"/>
+<line x1="540" y1="118" x2="548" y2="118" stroke="currentColor"/>
+<rect x="340" y="100" width="90" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="385" y="122.5" text-anchor="middle">Studente</text>
+<rect x="548" y="100" width="88" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="592" y="122.5" text-anchor="middle">Università</text>
+<path d="M444 118 L492 98 L540 118 L492 138 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="492" y="122.5" text-anchor="middle" font-size="12" fill="var(--acc)">Iscrizione</text>
+<text x="452" y="92" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="546" y="92" text-anchor="end" font-size="12" fill="var(--acc)">(0,N)</text>
+<line x1="350" y1="100" x2="350" y2="66" stroke="currentColor"/>
+<circle cx="350" cy="66" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="344" y="54" text-anchor="middle">Cognome</text>
+<line x1="410" y1="100" x2="410" y2="66" stroke="currentColor"/>
+<circle cx="410" cy="66" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="424" y="54" text-anchor="middle">Matricola</text>
+<line x1="385" y1="136" x2="385" y2="160" stroke="currentColor"/>
+<circle cx="385" cy="160" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="385" y="178" text-anchor="middle">Anno di corso</text>
+<line x1="592" y1="100" x2="592" y2="66" stroke="currentColor"/>
+<circle cx="592" cy="66" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="592" y="54" text-anchor="middle">Nome</text>
+<line x1="592" y1="136" x2="592" y2="160" stroke="currentColor"/>
+<circle cx="592" cy="160" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="592" y="178" text-anchor="middle">Indirizzo</text>
+<path d="M398 82 H438 V128" fill="none" stroke="var(--acc)" stroke-width="1.4"/>
+<circle cx="438" cy="132" r="4.5" fill="var(--acc)" stroke="var(--acc)"/>
+<text x="160" y="252" text-anchor="middle" font-size="11" fill="var(--soft)">Identificatore interno</text>
+<text x="480" y="252" text-anchor="middle" font-size="11" fill="var(--soft)">Identificatore esterno</text>
+</g></svg>
+<figcaption>Pallino pieno = identificatore; lo studente si riconosce da Matricola + Università.</figcaption></figure>
 <h3>Generalizzazioni</h3>
 <p>Mettono in relazione entità E1…En con un’entità E che le comprende come casi particolari: E è <b>generalizzazione</b> (genitore), E1…En sono <b>specializzazioni</b> o sottotipi (figlie). Es. Dipendente → Impiegato, Funzionario, Dirigente.</p>
 <ul><li>Ogni proprietà di E è significativa per le figlie.</li><li>Ogni occorrenza di una figlia è anche occorrenza di E.</li><li><b>Ereditarietà:</b> attributi, associazioni e altre generalizzazioni del genitore sono ereditati dalle figlie e <b>non si ridisegnano</b>.</li></ul>
@@ -157,6 +381,55 @@ pre u{text-decoration-thickness:1.5px}
 <tr><td><b>Totale (t)</b><br><small>ogni occorrenza del genitore è in almeno una figlia</small></td><td><b>(t,e)</b> Studente → In corso, Fuori corso · Persona → Uomo, Donna</td><td><b>(t,o)</b> Dipendente → Impiegato, Funzionario, Dirigente</td></tr>
 <tr><td><b>Parziale (p)</b><br><small>alcune occorrenze del genitore non sono in nessuna figlia</small></td><td><b>(p,e)</b> Persona → Disoccupato, Lavoratore</td><td><b>(p,o)</b> Persona → Lavoratore, Studente, se una persona può essere entrambi o nessuno dei due</td></tr></table></div>
 <p><b>Esclusiva</b>: ogni occorrenza del genitore è in <b>al più una</b> figlia. Considerando (senza perdita di generalità) generalizzazioni esclusive, totale e parziale si distinguono dal riempimento della freccia (piena = totale). Possono esistere gerarchie a più livelli, più generalizzazioni allo stesso livello, entità genitore e figlia in gerarchie diverse. Se c’è <b>una sola figlia</b> si parla di <b>sottoinsieme</b>.</p>
+<figure class="diagram"><svg viewBox="0 0 640 215" role="img" aria-label="Generalizzazioni. A sinistra Dipendente con figlie Impiegato, Funzionario e Dirigente. A destra Persona, con Codice fiscale, Nome, Età e l&#x27;associazione Nascita con Città, e figlie Lavoratore, con Stipendio, e Studente">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="95" y="20" width="120" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="155" y="41.5" text-anchor="middle">Dipendente</text>
+<path d="M55 88 H255" fill="none" stroke="currentColor"/>
+<path d="M55 88 V120" fill="none" stroke="currentColor"/>
+<path d="M155 88 V120" fill="none" stroke="currentColor"/>
+<path d="M255 88 V120" fill="none" stroke="currentColor"/>
+<path d="M155 54 L166 68 L160 68 L160 88 L150 88 L150 68 L144 68 Z" fill="var(--acc)" stroke="var(--acc)" stroke-width="1.4"/>
+<rect x="7" y="120" width="96" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="55" y="141.5" text-anchor="middle">Impiegato</text>
+<rect x="107" y="120" width="96" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="155" y="141.5" text-anchor="middle" font-size="12">Funzionario</text>
+<rect x="207" y="120" width="96" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="255" y="141.5" text-anchor="middle">Dirigente</text>
+<line x1="320" y1="10" x2="320" y2="210" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<line x1="485" y1="24" x2="485" y2="42" stroke="currentColor"/>
+<line x1="485" y1="70" x2="485" y2="90" stroke="currentColor"/>
+<rect x="440" y="0" width="90" height="24" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="16.5" text-anchor="middle">Città</text>
+<path d="M440 56 L485 42 L530 56 L485 70 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="485" y="60.5" text-anchor="middle" font-size="12" fill="var(--acc)">Nascita</text>
+<rect x="430" y="90" width="110" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="110.5" text-anchor="middle">Persona</text>
+<text x="478" y="40" text-anchor="end" font-size="12" fill="var(--acc)">(0,N)</text>
+<text x="478" y="85" text-anchor="end" font-size="12" fill="var(--acc)">(1,1)</text>
+<line x1="540" y1="95" x2="570" y2="80" stroke="currentColor"/>
+<circle cx="570" cy="80" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="580" y="76">Codice</text>
+<text x="580" y="91">fiscale</text>
+<line x1="540" y1="106" x2="575" y2="106" stroke="currentColor"/>
+<circle cx="575" cy="106" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="585" y="111">Nome</text>
+<line x1="540" y1="117" x2="570" y2="132" stroke="currentColor"/>
+<circle cx="570" cy="132" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="580" y="137">Età</text>
+<path d="M435 150 H555" fill="none" stroke="currentColor"/>
+<path d="M435 150 V175" fill="none" stroke="currentColor"/>
+<path d="M555 150 V175" fill="none" stroke="currentColor"/>
+<path d="M485 122 L496 136 L490 136 L490 150 L480 150 L480 136 L474 136 Z" fill="var(--acc)" stroke="var(--acc)" stroke-width="1.4"/>
+<rect x="380" y="175" width="110" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="435" y="195.5" text-anchor="middle">Lavoratore</text>
+<rect x="500" y="175" width="110" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="555" y="195.5" text-anchor="middle">Studente</text>
+<line x1="380" y1="184" x2="354" y2="170" stroke="currentColor"/>
+<circle cx="354" cy="170" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="358" y="158" text-anchor="middle">Stipendio</text>
+</g></svg>
+<figcaption>Le figlie ereditano attributi e associazioni del genitore, verso cui punta la freccia.</figcaption></figure>
 <div class="exam"><b class="lbl">Esercizio delle slide</b>Persone con CF, cognome, età; gli uomini anche la posizione militare; impiegati con stipendio che possono essere segretari, direttori o progettisti (un progettista può essere anche responsabile); studenti (non impiegati) con matricola; persone che non sono né impiegati né studenti. Soluzione: Persona (CF, Cognome, Età) → Uomo (PosizioneMilitare), Donna: totale ed esclusiva. Persona → Impiegato (Stipendio), Studente (Matricola): <b>parziale ed esclusiva</b>. Impiegato → Segretario, Direttore, Progettista; Progettista → Responsabile come <b>sottoinsieme</b>.</div>
 <h3>Esempio completo: l’azienda di sviluppo software</h3>
 <p>Dipartimenti (nome, telefoni) a cui afferiscono al più una volta gli impiegati (codice, cognome), eventualmente con data di afferenza; impiegati che partecipano eventualmente a progetti (nome, budget) con uno o più dipendenti; ogni dipartimento diretto da un unico dipendente e composto da un’unica sede (città, indirizzo con via e CAP).</p>
@@ -166,6 +439,79 @@ pre u{text-decoration-thickness:1.5px}
 <tr><td>Partecipazione</td><td>Impiegato (0,N)</td><td>Progetto (1,N)</td></tr>
 <tr><td>Composizione</td><td>Dipartimento (1,1)</td><td>Sede (1,N)</td></tr></table></div>
 <p>Identificatori: Impiegato → Codice; Progetto → Nome; Sede → Città; Dipartimento → Nome + Sede (esterno, tramite Composizione). Telefono di Dipartimento è multivalore (1,N).</p>
+<figure class="diagram"><svg viewBox="0 0 640 338" role="img" aria-label="Schema ER dell&#x27;azienda: Impiegato, Dipartimento, Progetto e Sede con le associazioni Direzione, Afferenza, Partecipazione e Composizione, cardinalità e attributi">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<path d="M180 75 V35 H255" fill="none" stroke="currentColor"/>
+<path d="M375 35 H520 V75" fill="none" stroke="currentColor"/>
+<line x1="200" y1="93" x2="255" y2="93" stroke="currentColor"/>
+<line x1="375" y1="93" x2="420" y2="93" stroke="currentColor"/>
+<line x1="145" y1="111" x2="145" y2="168" stroke="currentColor"/>
+<line x1="145" y1="212" x2="145" y2="250" stroke="currentColor"/>
+<line x1="485" y1="111" x2="485" y2="168" stroke="currentColor"/>
+<line x1="485" y1="212" x2="485" y2="250" stroke="currentColor"/>
+<rect x="90" y="75" width="110" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="145" y="97.5" text-anchor="middle">Impiegato</text>
+<rect x="420" y="75" width="130" height="36" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="97.5" text-anchor="middle">Dipartimento</text>
+<rect x="90" y="250" width="110" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="145" y="271.5" text-anchor="middle">Progetto</text>
+<rect x="430" y="250" width="110" height="34" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="485" y="271.5" text-anchor="middle">Sede</text>
+<path d="M255 35 L315 17 L375 35 L315 53 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="315" y="39.5" text-anchor="middle" font-size="12" fill="var(--acc)">Direzione</text>
+<path d="M255 93 L315 73 L375 93 L315 113 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="315" y="97.5" text-anchor="middle" font-size="12" fill="var(--acc)">Afferenza</text>
+<path d="M70 190 L145 168 L220 190 L145 212 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="145" y="194.5" text-anchor="middle" font-size="12" fill="var(--acc)">Partecipazione</text>
+<path d="M410 190 L485 168 L560 190 L485 212 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="485" y="194.5" text-anchor="middle" font-size="12" fill="var(--acc)">Composizione</text>
+<text x="228" y="28" text-anchor="middle" font-size="12" fill="var(--acc)">(0,1)</text>
+<text x="402" y="28" text-anchor="middle" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="228" y="86" text-anchor="middle" font-size="12" fill="var(--acc)">(0,1)</text>
+<text x="398" y="86" text-anchor="middle" font-size="12" fill="var(--acc)">(1,N)</text>
+<text x="155" y="142" font-size="12" fill="var(--acc)">(0,N)</text>
+<text x="155" y="238" font-size="12" fill="var(--acc)">(1,N)</text>
+<text x="495" y="142" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="495" y="238" font-size="12" fill="var(--acc)">(1,N)</text>
+<line x1="315" y1="113" x2="315" y2="133" stroke="currentColor"/>
+<circle cx="315" cy="133" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="315" y="153" text-anchor="middle">Data</text>
+<text x="325" y="133" font-size="11" fill="var(--acc)">(0,1)</text>
+<line x1="110" y1="75" x2="110" y2="50" stroke="currentColor"/>
+<circle cx="110" cy="50" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="110" y="40" text-anchor="middle">Cognome</text>
+<line x1="110" y1="111" x2="100" y2="135" stroke="currentColor"/>
+<circle cx="100" cy="135" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="90" y="140" text-anchor="end">Codice</text>
+<line x1="545" y1="79" x2="575" y2="58" stroke="currentColor"/>
+<circle cx="575" cy="58" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="575" y="44" text-anchor="middle">Telefono</text>
+<text x="588" y="64" font-size="11" fill="var(--acc)">(1,N)</text>
+<line x1="550" y1="100" x2="585" y2="100" stroke="currentColor"/>
+<circle cx="585" cy="100" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="597" y="105">Nome</text>
+<path d="M568 100 V125 H473" fill="none" stroke="var(--acc)" stroke-width="1.4"/>
+<circle cx="469" cy="125" r="4.5" fill="var(--acc)" stroke="var(--acc)"/>
+<line x1="115" y1="284" x2="115" y2="302" stroke="currentColor"/>
+<circle cx="115" cy="302" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="115" y="320" text-anchor="middle">Budget</text>
+<line x1="175" y1="284" x2="175" y2="302" stroke="currentColor"/>
+<circle cx="175" cy="302" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="175" y="320" text-anchor="middle">Nome</text>
+<line x1="520" y1="284" x2="532" y2="302" stroke="currentColor"/>
+<circle cx="532" cy="302" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="544" y="307">Città</text>
+<line x1="462" y1="284" x2="450" y2="292" stroke="currentColor"/>
+<ellipse cx="440" cy="305" rx="42" ry="14" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="440" y="309" text-anchor="middle" font-size="12">Indirizzo</text>
+<line x1="400" y1="300" x2="378" y2="290" stroke="currentColor"/>
+<circle cx="378" cy="290" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="368" y="294" text-anchor="end">Via</text>
+<line x1="402" y1="312" x2="380" y2="324" stroke="currentColor"/>
+<circle cx="380" cy="324" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="370" y="328" text-anchor="end">CAP</text>
+</g></svg>
+<figcaption>Lo schema ER completo dell’azienda usato negli esempi.</figcaption></figure>
 <h3>Documentazione degli schemi</h3>
 <p>Uno schema ER si accompagna con il <b>dizionario dei dati</b> e con i <b>vincoli non esprimibili</b>.</p>
 <div class="vs"><div><h4>Dizionario delle entità</h4><p>Entità, descrizione, attributi, identificatore. Es. Impiegato · Dipendente dell’azienda · Codice, Cognome, Stipendio · Codice.</p></div><div><h4>Dizionario delle associazioni</h4><p>Associazione, descrizione, entità componenti, attributi. Es. Afferenza · Afferenza a un dipartimento · Impiegato, Dipartimento · Data.</p></div></div>
@@ -203,6 +549,23 @@ pre u{text-decoration-thickness:1.5px}
 <p><b>Forme di ridondanza:</b> attributi derivabili da altri attributi della stessa entità (Importo lordo = Importo netto + IVA in Fattura) o di altre entità (Importo totale di Acquisto da Prezzo dei Prodotti tramite Composizione, o da un conteggio); associazioni derivabili dalla composizione di altre in presenza di <b>cicli</b> (Frequenza tra Studente e Corso, deducibile se un corso ha un solo professore: Studente–Corso–Docenza–Professore).</p>
 <h4>Esempio svolto: Numero abitanti di Città</h4>
 <p>Persona (1,1) Residenza (1,N) Città; Città ha l’attributo ridondante <b>Numero abitanti</b>. Volumi: Città 200, Persona 1.000.000, Residenza 1.000.000. Op. 1 (I, 500/giorno): memorizza una nuova persona con la città. Op. 2 (I, 2/giorno): stampa i dati di una città con il numero di abitanti.</p>
+<figure class="diagram"><svg viewBox="0 0 640 115" role="img" aria-label="Persona (1,1) Residenza (1,N) Città; Città ha l&#x27;attributo ridondante Numero abitanti">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<line x1="180" y1="80" x2="255" y2="80" stroke="currentColor"/>
+<line x1="385" y1="80" x2="460" y2="80" stroke="currentColor"/>
+<rect x="60" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="120" y="84.5" text-anchor="middle">Persona</text>
+<rect x="460" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="520" y="84.5" text-anchor="middle">Città</text>
+<path d="M255 80 L320 57 L385 80 L320 103 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="320" y="84.5" text-anchor="middle" fill="var(--acc)">Residenza</text>
+<text x="215" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="425" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(1,N)</text>
+<line x1="520" y1="60" x2="520" y2="34" stroke="currentColor"/>
+<circle cx="520" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor" stroke-dasharray="2 2"/>
+<text x="520" y="20" text-anchor="middle">Numero abitanti</text>
+</g></svg>
+<figcaption>Numero abitanti è ridondante: si ricava contando i residenti.</figcaption></figure>
 <div class="vs"><div><h4>Con la ridondanza</h4><p>Op. 1: Persona 1 S, Residenza 1 S, Città 1 L, Città 1 S → 3 S + 1 L.<br>Op. 2: Città 1 L.<br><b>Totale:</b> 500 × (3×2 + 1) + 2 = <b>3502 accessi/giorno</b> + 4 byte × 200 città = 800 byte.</p></div><div><h4>Senza la ridondanza</h4><p>Op. 1: Persona 1 S, Residenza 1 S → 2 S.<br>Op. 2: Città 1 L + Residenza 5000 L (1.000.000/200).<br><b>Totale:</b> 500 × 2×2 + 2 × 5001 = <b>12002 accessi/giorno</b>.</p></div></div>
 <div class="exam"><b class="lbl">Regola del conto</b>Gli accessi in <b>scrittura contano doppio</b>. Qui conviene <b>mantenere</b> la ridondanza: 3502 contro 12002, al prezzo di soli 800 byte.</div>
 <p>Esercizio delle slide (stesso schema, con Persona → Lavoratore 80% / Studente 20%, 10 città, 500.000 persone): op. 1 365 volte/anno, op. 2 (report di tutte le città) 1 volta/anno. Con ridondanza: (4 S + 1 L) = 9 accessi × 365 = 3285, più 10 L → <b>3295 accessi/anno</b> e 4 × 10 = 40 byte. Senza: 3 S = 6 × 365 = 2190, più 10 + 500.000 L → <b>502.200 accessi/anno</b>. Conviene mantenere la ridondanza.</p>
@@ -212,6 +575,168 @@ pre u{text-decoration-thickness:1.5px}
 <tr><td><b>1. Figlie nel genitore</b></td><td>Resta solo E0 con A01, A02 e gli attributi delle figlie A11, A21 <b>opzionali (0,1)</b>, più un attributo <b>TIPO</b> che dice a quale figlia appartiene l’occorrenza. R2 diventa opzionale lato E0.</td><td>Gli accessi a padre e figlie sono <b>contestuali</b>.</td></tr>
 <tr><td><b>2. Genitore nelle figlie</b></td><td>Spariscono E0: E1 ed E2 ereditano A01, A02; R1 si sdoppia in R11 (E1–E3) e R12 (E2–E3). Possibile solo se la generalizzazione è <b>totale</b>.</td><td>Gli accessi alle figlie sono <b>distinti</b>.</td></tr>
 <tr><td><b>3. Sostituzione con associazioni</b></td><td>Restano tutte le entità, legate da RG1 (E0–E1) e RG2 (E0–E2) con cardinalità <b>(0,1) lato genitore</b> e <b>(1,1) lato figlia</b>; le figlie sono identificate esternamente dal genitore.</td><td>Gli accessi alle figlie sono <b>separati</b> da quelli al padre.</td></tr></table></div>
+<figure class="diagram"><svg viewBox="0 0 640 490" role="img" aria-label="Eliminazione della generalizzazione di E0 con figlie E1 ed E2: schema di partenza e le tre possibilità, cioè figlie accorpate nel genitore con l&#x27;attributo TIPO, genitore accorpato nelle figlie, sostituzione con le associazioni RG1 e RG2">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<line x1="130" y1="60" x2="160" y2="60" stroke="currentColor"/>
+<line x1="220" y1="60" x2="238" y2="60" stroke="currentColor"/>
+<rect x="60" y="45" width="70" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="95" y="64.5" text-anchor="middle" font-size="12">E0</text>
+<line x1="80" y1="45" x2="80" y2="25" stroke="currentColor"/>
+<circle cx="80" cy="25" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="80" y="15" text-anchor="middle" font-size="11">A01</text>
+<line x1="110" y1="45" x2="110" y2="25" stroke="currentColor"/>
+<circle cx="110" cy="25" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="110" y="15" text-anchor="middle" font-size="11">A02</text>
+<path d="M160 60 L190 45 L220 60 L190 75 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="190" y="64.5" text-anchor="middle" font-size="11" fill="var(--acc)">R1</text>
+<rect x="238" y="45" width="52" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="264" y="64.5" text-anchor="middle" font-size="12">E3</text>
+<path d="M60 105 H145" fill="none" stroke="currentColor"/>
+<path d="M60 105 V130" fill="none" stroke="currentColor"/>
+<path d="M145 105 V130" fill="none" stroke="currentColor"/>
+<path d="M95 75 L106 89 L100 89 L100 105 L90 105 L90 89 L84 89 Z" fill="var(--acc)" stroke="var(--acc)" stroke-width="1.4"/>
+<line x1="175" y1="145" x2="195" y2="145" stroke="currentColor"/>
+<line x1="225" y1="160" x2="225" y2="185" stroke="currentColor"/>
+<rect x="30" y="130" width="60" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="60" y="149.5" text-anchor="middle" font-size="12">E1</text>
+<rect x="115" y="130" width="60" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="145" y="149.5" text-anchor="middle" font-size="12">E2</text>
+<line x1="60" y1="160" x2="60" y2="178" stroke="currentColor"/>
+<circle cx="60" cy="178" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="60" y="196" text-anchor="middle" font-size="11">A11</text>
+<line x1="145" y1="160" x2="145" y2="178" stroke="currentColor"/>
+<circle cx="145" cy="178" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="145" y="196" text-anchor="middle" font-size="11">A21</text>
+<path d="M195 145 L225 130 L255 145 L225 160 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="225" y="149.5" text-anchor="middle" font-size="11" fill="var(--acc)">R2</text>
+<rect x="199" y="185" width="52" height="28" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="225" y="203.5" text-anchor="middle" font-size="12">E4</text>
+<text x="155" y="232" text-anchor="middle" font-size="12" font-weight="700">Schema di partenza</text>
+<rect x="338" y="30" width="172" height="130" rx="14" fill="none" stroke="var(--red)" stroke-dasharray="6 4"/>
+<line x1="460" y1="90" x2="490" y2="90" stroke="currentColor"/>
+<line x1="550" y1="90" x2="568" y2="90" stroke="currentColor"/>
+<rect x="390" y="75" width="70" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="425" y="94.5" text-anchor="middle" font-size="12">E0</text>
+<line x1="410" y1="75" x2="410" y2="55" stroke="currentColor"/>
+<circle cx="410" cy="55" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="410" y="45" text-anchor="middle" font-size="11">A01</text>
+<line x1="440" y1="75" x2="440" y2="55" stroke="currentColor"/>
+<circle cx="440" cy="55" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="440" y="45" text-anchor="middle" font-size="11">A02</text>
+<path d="M490 90 L520 75 L550 90 L520 105 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="520" y="94.5" text-anchor="middle" font-size="11" fill="var(--acc)">R1</text>
+<rect x="568" y="75" width="52" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="594" y="94.5" text-anchor="middle" font-size="12">E3</text>
+<line x1="390" y1="82" x2="368" y2="82" stroke="currentColor"/>
+<circle cx="368" cy="82" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="360" y="86" text-anchor="end" font-size="11">A11</text>
+<text x="376" y="72" text-anchor="middle" font-size="10" fill="var(--acc)">(0,1)</text>
+<line x1="390" y1="98" x2="368" y2="98" stroke="currentColor"/>
+<circle cx="368" cy="98" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="360" y="102" text-anchor="end" font-size="11">A21</text>
+<text x="376" y="116" text-anchor="middle" font-size="10" fill="var(--acc)">(0,1)</text>
+<line x1="425" y1="105" x2="425" y2="124" stroke="currentColor"/>
+<circle cx="425" cy="124" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="425" y="142" text-anchor="middle" font-size="11">TIPO</text>
+<path d="M450 105 V160 H525" fill="none" stroke="currentColor"/>
+<line x1="555" y1="175" x2="555" y2="188" stroke="currentColor"/>
+<text x="455" y="128" font-size="10" fill="var(--acc)">(0,…)</text>
+<path d="M525 160 L555 145 L585 160 L555 175 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="555" y="164.5" text-anchor="middle" font-size="11" fill="var(--acc)">R2</text>
+<rect x="529" y="188" width="52" height="26" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="555" y="205.5" text-anchor="middle" font-size="12">E4</text>
+<text x="485" y="232" text-anchor="middle" font-size="12" font-weight="700">Accorpamento delle figlie nel genitore</text>
+<line x1="0" y1="245" x2="640" y2="245" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<rect x="12" y="288" width="210" height="168" rx="14" fill="none" stroke="var(--red)" stroke-dasharray="6 4"/>
+<path d="M65 370 V320" fill="none" stroke="currentColor"/>
+<path d="M95 305 H265 V325" fill="none" stroke="currentColor"/>
+<line x1="170" y1="370" x2="170" y2="359" stroke="currentColor"/>
+<line x1="200" y1="345" x2="235" y2="345" stroke="currentColor"/>
+<line x1="210" y1="385" x2="234" y2="385" stroke="currentColor"/>
+<line x1="262" y1="399" x2="262" y2="435" stroke="currentColor"/>
+<path d="M35 305 L65 290 L95 305 L65 320 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="65" y="309.5" text-anchor="middle" font-size="11" fill="var(--acc)">R11</text>
+<path d="M140 345 L170 331 L200 345 L170 359 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="170" y="349.5" text-anchor="middle" font-size="11" fill="var(--acc)">R12</text>
+<rect x="235" y="325" width="60" height="28" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="265" y="343.5" text-anchor="middle" font-size="12">E3</text>
+<rect x="25" y="370" width="80" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="65" y="389.5" text-anchor="middle" font-size="12">E1</text>
+<rect x="130" y="370" width="80" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="170" y="389.5" text-anchor="middle" font-size="12">E2</text>
+<line x1="40" y1="400" x2="40" y2="418" stroke="currentColor"/>
+<circle cx="40" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="40" y="436" text-anchor="middle" font-size="10">A01</text>
+<line x1="65" y1="400" x2="65" y2="418" stroke="currentColor"/>
+<circle cx="65" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="65" y="436" text-anchor="middle" font-size="10">A11</text>
+<line x1="90" y1="400" x2="90" y2="418" stroke="currentColor"/>
+<circle cx="90" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="90" y="436" text-anchor="middle" font-size="10">A02</text>
+<line x1="145" y1="400" x2="145" y2="418" stroke="currentColor"/>
+<circle cx="145" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="145" y="436" text-anchor="middle" font-size="10">A01</text>
+<line x1="170" y1="400" x2="170" y2="418" stroke="currentColor"/>
+<circle cx="170" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="170" y="436" text-anchor="middle" font-size="10">A21</text>
+<line x1="195" y1="400" x2="195" y2="418" stroke="currentColor"/>
+<circle cx="195" cy="418" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="195" y="436" text-anchor="middle" font-size="10">A02</text>
+<path d="M234 385 L262 371 L290 385 L262 399 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="262" y="389.5" text-anchor="middle" font-size="11" fill="var(--acc)">R2</text>
+<rect x="237" y="435" width="52" height="26" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="263" y="452.5" text-anchor="middle" font-size="12">E4</text>
+<text x="155" y="482" text-anchor="middle" font-size="12" font-weight="700">Accorpamento del genitore nelle figlie</text>
+<rect x="358" y="282" width="168" height="180" rx="14" fill="none" stroke="var(--red)" stroke-dasharray="6 4"/>
+<line x1="490" y1="305" x2="500" y2="305" stroke="currentColor"/>
+<line x1="560" y1="305" x2="578" y2="305" stroke="currentColor"/>
+<rect x="420" y="290" width="70" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="455" y="309.5" text-anchor="middle" font-size="12">E0</text>
+<line x1="440" y1="290" x2="440" y2="270" stroke="currentColor"/>
+<circle cx="440" cy="270" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="440" y="260" text-anchor="middle" font-size="11">A01</text>
+<line x1="470" y1="290" x2="470" y2="270" stroke="currentColor"/>
+<circle cx="470" cy="270" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="470" y="260" text-anchor="middle" font-size="11">A02</text>
+<path d="M500 305 L530 290 L560 305 L530 320 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="530" y="309.5" text-anchor="middle" font-size="11" fill="var(--acc)">R1</text>
+<rect x="578" y="290" width="52" height="30" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="604" y="309.5" text-anchor="middle" font-size="12">E3</text>
+<path d="M420 305 H405 V341" fill="none" stroke="currentColor"/>
+<path d="M480 320 V341" fill="none" stroke="currentColor"/>
+<line x1="405" y1="369" x2="405" y2="395" stroke="currentColor"/>
+<line x1="480" y1="369" x2="480" y2="395" stroke="currentColor"/>
+<line x1="510" y1="409" x2="552" y2="409" stroke="currentColor"/>
+<line x1="580" y1="423" x2="580" y2="445" stroke="currentColor"/>
+<path d="M375 355 L405 341 L435 355 L405 369 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="405" y="359.5" text-anchor="middle" font-size="11" fill="var(--acc)">RG1</text>
+<path d="M450 355 L480 341 L510 355 L480 369 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="480" y="359.5" text-anchor="middle" font-size="11" fill="var(--acc)">RG2</text>
+<rect x="375" y="395" width="60" height="28" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="405" y="413.5" text-anchor="middle" font-size="12">E1</text>
+<rect x="450" y="395" width="60" height="28" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="480" y="413.5" text-anchor="middle" font-size="12">E2</text>
+<text x="413" y="336" font-size="10" fill="var(--acc)">(0,1)</text>
+<text x="413" y="388" font-size="10" fill="var(--acc)">(1,1)</text>
+<line x1="405" y1="382" x2="389" y2="382" stroke="currentColor"/>
+<circle cx="385" cy="382" r="4" fill="currentColor" stroke="currentColor"/>
+<text x="488" y="336" font-size="10" fill="var(--acc)">(0,1)</text>
+<text x="488" y="388" font-size="10" fill="var(--acc)">(1,1)</text>
+<line x1="480" y1="382" x2="464" y2="382" stroke="currentColor"/>
+<circle cx="460" cy="382" r="4" fill="currentColor" stroke="currentColor"/>
+<line x1="405" y1="423" x2="405" y2="440" stroke="currentColor"/>
+<circle cx="405" cy="440" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="405" y="457" text-anchor="middle" font-size="11">A11</text>
+<line x1="480" y1="423" x2="480" y2="440" stroke="currentColor"/>
+<circle cx="480" cy="440" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="480" y="457" text-anchor="middle" font-size="11">A21</text>
+<path d="M552 409 L580 395 L608 409 L580 423 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="580" y="413.5" text-anchor="middle" font-size="11" fill="var(--acc)">R2</text>
+<rect x="555" y="445" width="50" height="26" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="580" y="462.5" text-anchor="middle" font-size="12">E4</text>
+<text x="485" y="482" text-anchor="middle" font-size="12" font-weight="700">Sostituzione con associazioni</text>
+</g></svg>
+<figcaption>Tre modi per eliminare una generalizzazione; il riquadro rosso è la parte che cambia.</figcaption></figure>
 <p>Sono possibili soluzioni <b>ibride</b>, soprattutto in gerarchie a più livelli (es. E1 accorpata in E0 con TIPO, E2 legata con RG2). La scelta si fa come per le ridondanze, ma non solo contando gli accessi.</p>
 <h3>3 · Partizionamento e accorpamento</h3>
 <div class="def"><b class="lbl">Principio</b>Gli accessi si riducono <b>separando</b> attributi di un concetto che vengono acceduti separatamente e <b>raggruppando</b> attributi di concetti diversi acceduti insieme.</div>
@@ -220,6 +745,70 @@ pre u{text-decoration-thickness:1.5px}
 <tr><td><b>Eliminazione di attributi multivalore</b></td><td>Agenzia con Telefono (1,N) → nuova entità <b>Telefono</b> (Numero) legata da <b>Utenza</b>: Agenzia (1,N) – Telefono (1,1).</td></tr>
 <tr><td><b>Accorpamento</b> di entità/associazioni</td><td>Persona (1,1) Residenza (1,1) Appartamento → un’unica entità Persona con Indirizzo e Interno. Tipico delle associazioni <b>uno a uno</b>.</td></tr>
 <tr><td><b>Partizionamento orizzontale</b> di associazioni</td><td>Composizione tra Giocatore e Squadra (Data acquisto, Data cessione (0,1)) → <b>Composizione attuale</b> (Data acquisto; Giocatore (1,1)) e <b>Composizione passata</b> (Data acquisto, Data cessione).</td></tr></table></div>
+<figure class="diagram"><svg viewBox="0 0 640 324" role="img" aria-label="Partizionamento verticale: Impiegato diventa Dati anagrafici e Dati lavorativi, legati da un&#x27;associazione uno a uno">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="270" y="60" width="100" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="320" y="84.5" text-anchor="middle">Impiegato</text>
+<line x1="320" y1="60" x2="320" y2="34" stroke="currentColor"/>
+<circle cx="320" cy="34" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="320" y="22" text-anchor="middle">Codice</text>
+<line x1="270" y1="66" x2="236" y2="45" stroke="currentColor"/>
+<circle cx="236" cy="45" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="226" y="49" text-anchor="end">Cognome</text>
+<line x1="270" y1="80" x2="226" y2="80" stroke="currentColor"/>
+<circle cx="226" cy="80" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="216" y="85" text-anchor="end">Indirizzo</text>
+<line x1="270" y1="94" x2="236" y2="115" stroke="currentColor"/>
+<circle cx="236" cy="115" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="226" y="120" text-anchor="end">Data nascita</text>
+<line x1="370" y1="66" x2="404" y2="45" stroke="currentColor"/>
+<circle cx="404" cy="45" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="414" y="49">Livello</text>
+<line x1="370" y1="80" x2="414" y2="80" stroke="currentColor"/>
+<circle cx="414" cy="80" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="424" y="85">Stipendio</text>
+<line x1="370" y1="94" x2="404" y2="115" stroke="currentColor"/>
+<circle cx="404" cy="115" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="414" y="120">Ritenute</text>
+<defs><marker id="bd-m-part" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<line x1="320" y1="138" x2="320" y2="166" stroke="currentColor" marker-end="url(#bd-m-part)" stroke-width="1.4"/>
+<line x1="240" y1="250" x2="285" y2="250" stroke="currentColor"/>
+<line x1="355" y1="250" x2="400" y2="250" stroke="currentColor"/>
+<rect x="120" y="230" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="180" y="247" text-anchor="middle" font-size="12">Dati</text>
+<text x="180" y="262" text-anchor="middle" font-size="12">anagrafici</text>
+<rect x="400" y="230" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="460" y="247" text-anchor="middle" font-size="12">Dati</text>
+<text x="460" y="262" text-anchor="middle" font-size="12">lavorativi</text>
+<path d="M285 250 L320 232 L355 250 L320 268 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="320" y="254.5" text-anchor="middle" font-size="12" fill="var(--acc)">R</text>
+<text x="262" y="240" text-anchor="middle" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="378" y="240" text-anchor="middle" font-size="12" fill="var(--acc)">(1,1)</text>
+<line x1="145" y1="230" x2="145" y2="202" stroke="currentColor"/>
+<circle cx="145" cy="202" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="145" y="190" text-anchor="middle">Cognome</text>
+<line x1="215" y1="230" x2="215" y2="202" stroke="currentColor"/>
+<circle cx="215" cy="202" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="215" y="190" text-anchor="middle">Codice</text>
+<line x1="135" y1="270" x2="135" y2="296" stroke="currentColor"/>
+<circle cx="135" cy="296" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="135" y="314" text-anchor="middle">Indirizzo</text>
+<line x1="225" y1="270" x2="225" y2="296" stroke="currentColor"/>
+<circle cx="225" cy="296" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="232" y="314" text-anchor="middle">Data nascita</text>
+<line x1="425" y1="230" x2="425" y2="202" stroke="currentColor"/>
+<circle cx="425" cy="202" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="425" y="190" text-anchor="middle">Stipendio</text>
+<line x1="505" y1="230" x2="505" y2="202" stroke="currentColor"/>
+<circle cx="505" cy="202" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="505" y="190" text-anchor="middle">Livello</text>
+<line x1="460" y1="270" x2="460" y2="296" stroke="currentColor"/>
+<circle cx="460" cy="296" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="460" y="314" text-anchor="middle">Ritenute</text>
+<line x1="388" y1="240" x2="388" y2="262" stroke="var(--acc)" stroke-width="1.4"/>
+<circle cx="388" cy="266" r="4.5" fill="var(--acc)" stroke="var(--acc)"/>
+</g></svg>
+<figcaption>Impiegato diviso in due entità, perché i due gruppi di dati si usano separatamente.</figcaption></figure>
 <h3>4 · Scelta degli identificatori principali</h3>
 <p>Operazione <b>indispensabile</b> per la traduzione nel relazionale (diventerà la chiave primaria). Criteri:</p>
 <ul><li><b>assenza di opzionalità</b> (niente attributi che possono essere nulli);</li><li><b>semplicità</b> (pochi attributi);</li><li><b>utilizzo nelle operazioni più frequenti o importanti</b>.</li></ul>
@@ -241,6 +830,90 @@ pre u{text-decoration-thickness:1.5px}
 <h3>Basato su valori</h3>
 <p>Studenti, Esami e Corsi sono collegati dai valori: in Esami la colonna Studente contiene la Matricola, la colonna Corso contiene il Codice del corso. Vantaggi della struttura basata su valori:</p>
 <ul><li>indipendenza dalle strutture fisiche, che possono cambiare dinamicamente;</li><li>si rappresenta solo ciò che è rilevante per l’applicazione;</li><li>l’utente finale vede gli stessi dati dei programmatori;</li><li>i dati sono più facilmente portabili da un sistema a un altro;</li><li>i puntatori sono <b>direzionali</b>, i valori no.</li></ul>
+<figure class="diagram"><svg viewBox="0 0 640 250" role="img" aria-label="Tabelle Studenti, Esami e Corsi: i valori di Studente e Corso in Esami rimandano alle righe di Studenti e Corsi con la stessa Matricola e lo stesso Codice">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<text x="102" y="34" text-anchor="end" font-size="12" font-weight="700">Studenti</text>
+<rect x="110" y="20" width="330" height="100" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="110" y1="40" x2="440" y2="40" stroke="currentColor" stroke-width="1.2"/>
+<line x1="110" y1="60" x2="440" y2="60" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="110" y1="80" x2="440" y2="80" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="110" y1="100" x2="440" y2="100" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="180" y1="20" x2="180" y2="120" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="260" y1="20" x2="260" y2="120" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="330" y1="20" x2="330" y2="120" stroke="currentColor" stroke-opacity=".45"/>
+<text x="145" y="34" text-anchor="middle" font-size="11" font-weight="700">Matricola</text>
+<text x="220" y="34" text-anchor="middle" font-size="11" font-weight="700">Cognome</text>
+<text x="295" y="34" text-anchor="middle" font-size="11" font-weight="700">Nome</text>
+<text x="385" y="34" text-anchor="middle" font-size="11" font-weight="700">Data di nascita</text>
+<text x="145" y="54" text-anchor="middle" font-size="11">6554</text>
+<text x="220" y="54" text-anchor="middle" font-size="11">Rossi</text>
+<text x="295" y="54" text-anchor="middle" font-size="11">Mario</text>
+<text x="385" y="54" text-anchor="middle" font-size="11">05/12/1978</text>
+<text x="145" y="74" text-anchor="middle" font-size="11">8765</text>
+<text x="220" y="74" text-anchor="middle" font-size="11">Neri</text>
+<text x="295" y="74" text-anchor="middle" font-size="11">Paolo</text>
+<text x="385" y="74" text-anchor="middle" font-size="11">03/11/1976</text>
+<text x="145" y="94" text-anchor="middle" font-size="11">9283</text>
+<text x="220" y="94" text-anchor="middle" font-size="11">Verdi</text>
+<text x="295" y="94" text-anchor="middle" font-size="11">Luisa</text>
+<text x="385" y="94" text-anchor="middle" font-size="11">12/11/1979</text>
+<text x="145" y="114" text-anchor="middle" font-size="11">3456</text>
+<text x="220" y="114" text-anchor="middle" font-size="11">Rossi</text>
+<text x="295" y="114" text-anchor="middle" font-size="11">Maria</text>
+<text x="385" y="114" text-anchor="middle" font-size="11">01/02/1978</text>
+<text x="192" y="154" text-anchor="end" font-size="12" font-weight="700">Esami</text>
+<rect x="200" y="140" width="180" height="100" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="200" y1="160" x2="380" y2="160" stroke="currentColor" stroke-width="1.2"/>
+<line x1="200" y1="180" x2="380" y2="180" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="200" y1="200" x2="380" y2="200" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="200" y1="220" x2="380" y2="220" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="270" y1="140" x2="270" y2="240" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="320" y1="140" x2="320" y2="240" stroke="currentColor" stroke-opacity=".45"/>
+<text x="235" y="154" text-anchor="middle" font-size="11" font-weight="700">Studente</text>
+<text x="295" y="154" text-anchor="middle" font-size="11" font-weight="700">Voto</text>
+<text x="350" y="154" text-anchor="middle" font-size="11" font-weight="700">Corso</text>
+<text x="235" y="174" text-anchor="middle" font-size="11">3456</text>
+<text x="295" y="174" text-anchor="middle" font-size="11">30</text>
+<text x="350" y="174" text-anchor="middle" font-size="11">04</text>
+<text x="235" y="194" text-anchor="middle" font-size="11">3456</text>
+<text x="295" y="194" text-anchor="middle" font-size="11">24</text>
+<text x="350" y="194" text-anchor="middle" font-size="11">02</text>
+<text x="235" y="214" text-anchor="middle" font-size="11">9283</text>
+<text x="295" y="214" text-anchor="middle" font-size="11">28</text>
+<text x="350" y="214" text-anchor="middle" font-size="11">01</text>
+<text x="235" y="234" text-anchor="middle" font-size="11">6554</text>
+<text x="295" y="234" text-anchor="middle" font-size="11">26</text>
+<text x="350" y="234" text-anchor="middle" font-size="11">01</text>
+<text x="440" y="133" font-size="12" font-weight="700">Corsi</text>
+<rect x="440" y="140" width="195" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="440" y1="160" x2="635" y2="160" stroke="currentColor" stroke-width="1.2"/>
+<line x1="440" y1="180" x2="635" y2="180" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="440" y1="200" x2="635" y2="200" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="495" y1="140" x2="495" y2="220" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="570" y1="140" x2="570" y2="220" stroke="currentColor" stroke-opacity=".45"/>
+<text x="467.5" y="154" text-anchor="middle" font-size="11" font-weight="700">Codice</text>
+<text x="532.5" y="154" text-anchor="middle" font-size="11" font-weight="700">Titolo</text>
+<text x="602.5" y="154" text-anchor="middle" font-size="11" font-weight="700">Docente</text>
+<text x="467.5" y="174" text-anchor="middle" font-size="11">01</text>
+<text x="532.5" y="174" text-anchor="middle" font-size="11">Analisi</text>
+<text x="602.5" y="174" text-anchor="middle" font-size="11">Mario</text>
+<text x="467.5" y="194" text-anchor="middle" font-size="11">02</text>
+<text x="532.5" y="194" text-anchor="middle" font-size="11">Chimica</text>
+<text x="602.5" y="194" text-anchor="middle" font-size="11">Bruni</text>
+<text x="467.5" y="214" text-anchor="middle" font-size="11">04</text>
+<text x="532.5" y="214" text-anchor="middle" font-size="11">Chimica</text>
+<text x="602.5" y="214" text-anchor="middle" font-size="11">Verdi</text>
+<defs><marker id="bd-m-ref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="var(--acc)"/></marker></defs>
+<path d="M200 170 H40 V110 H108" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M380 170 H396 V206 H438" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M200 190 H52 V110 H108" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M380 190 H406 V188 H438" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M200 210 H64 V90 H108" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M380 210 H416 V170 H438" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M200 230 H76 V50 H108" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+<path d="M380 230 H426 V172 H438" fill="none" stroke="var(--acc)" stroke-opacity=".75" marker-end="url(#bd-m-ref)"/>
+</g></svg>
+<figcaption>Esami rimanda a Studenti e Corsi attraverso i valori, non con puntatori.</figcaption></figure>
 <h3>Schemi, ennuple, istanze</h3>
 <div class="tbl"><table><tr><th>Concetto</th><th>Definizione</th></tr>
 <tr><td><b>Schema di relazione</b></td><td>Un nome R con un insieme di attributi: R(A1, …, An).</td></tr>
@@ -282,6 +955,41 @@ pre u{text-decoration-thickness:1.5px}
 <p>Notazione: la chiave primaria è <u>sottolineata</u>; un asterisco (*) indica un attributo che ammette valori nulli.</p>
 <h3>Associazioni molti a molti</h3>
 <p>Impiegato (0,N) Partecipazione (1,N) Progetto, con Data inizio su Partecipazione:</p>
+<figure class="diagram"><svg viewBox="0 0 640 154" role="img" aria-label="Impiegato (0,N) Partecipazione (1,N) Progetto; Partecipazione ha l&#x27;attributo Data inizio">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<line x1="150" y1="80" x2="240" y2="80" stroke="currentColor"/>
+<line x1="400" y1="80" x2="490" y2="80" stroke="currentColor"/>
+<rect x="30" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="90" y="84.5" text-anchor="middle">Impiegato</text>
+<rect x="490" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="550" y="84.5" text-anchor="middle">Progetto</text>
+<path d="M240 80 L320 57 L400 80 L320 103 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="320" y="84.5" text-anchor="middle" fill="var(--acc)">Partecipazione</text>
+<text x="195" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(0,N)</text>
+<text x="445" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(1,N)</text>
+<line x1="50" y1="60" x2="50" y2="34" stroke="currentColor"/>
+<circle cx="50" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="46" y="22" text-anchor="middle">Cognome</text>
+<line x1="120" y1="60" x2="120" y2="34" stroke="currentColor"/>
+<circle cx="120" cy="34" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="130" y="22" text-anchor="middle">Matricola</text>
+<line x1="90" y1="100" x2="90" y2="126" stroke="currentColor"/>
+<circle cx="90" cy="126" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="90" y="144" text-anchor="middle">Stipendio</text>
+<line x1="320" y1="57" x2="320" y2="34" stroke="currentColor"/>
+<circle cx="320" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="320" y="22" text-anchor="middle">Data inizio</text>
+<line x1="520" y1="60" x2="520" y2="34" stroke="currentColor"/>
+<circle cx="520" cy="34" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="520" y="22" text-anchor="middle">Codice</text>
+<line x1="585" y1="60" x2="585" y2="34" stroke="currentColor"/>
+<circle cx="585" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="585" y="22" text-anchor="middle">Nome</text>
+<line x1="550" y1="100" x2="550" y2="126" stroke="currentColor"/>
+<circle cx="550" cy="126" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="550" y="144" text-anchor="middle">Budget</text>
+</g></svg>
+<figcaption>Molti a molti: Partecipazione diventa una tabella con chiave Matricola + Codice.</figcaption></figure>
 <pre>Impiegato(<u>Matricola</u>, Cognome, Stipendio)
 Progetto(<u>Codice</u>, Nome, Budget)
 Partecipazione(<u>Matricola</u>, <u>Codice</u>, DataInizio)</pre>
@@ -297,6 +1005,43 @@ Dipartimento(<u>Nome</u>, Telefono)
 Fornitura(<u>Fornitore</u>, <u>Prodotto</u>, <u>Dipartimento</u>, Quantità)</pre>
 <h3>Associazioni uno a molti</h3>
 <p>Giocatore (1,1) Contratto (0,N) Squadra, con Ingaggio. La traduzione “di base” crea tre relazioni, ma la chiave di Contratto coincide con quella di Giocatore, quindi c’è una <b>soluzione più compatta</b>: si porta l’associazione dentro l’entità con cardinalità (1,1).</p>
+<figure class="diagram"><svg viewBox="0 0 640 154" role="img" aria-label="Giocatore (1,1) Contratto (0,N) Squadra; Giocatore identificato da Cognome e Data nascita">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<line x1="150" y1="80" x2="255" y2="80" stroke="currentColor"/>
+<line x1="385" y1="80" x2="490" y2="80" stroke="currentColor"/>
+<rect x="30" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="90" y="84.5" text-anchor="middle">Giocatore</text>
+<rect x="490" y="60" width="120" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="550" y="84.5" text-anchor="middle">Squadra</text>
+<path d="M255 80 L320 57 L385 80 L320 103 Z" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="320" y="84.5" text-anchor="middle" fill="var(--acc)">Contratto</text>
+<text x="190" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(1,1)</text>
+<text x="450" y="70" text-anchor="middle" font-size="12" fill="var(--acc)">(0,N)</text>
+<line x1="42" y1="60" x2="42" y2="30" stroke="currentColor"/>
+<circle cx="42" cy="30" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="40" y="18" text-anchor="middle">Cognome</text>
+<line x1="130" y1="60" x2="130" y2="30" stroke="currentColor"/>
+<circle cx="130" cy="30" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="138" y="18" text-anchor="middle">Data nascita</text>
+<line x1="32" y1="45" x2="148" y2="45" stroke="currentColor"/>
+<circle cx="152" cy="45" r="4.5" fill="currentColor" stroke="currentColor"/>
+<line x1="90" y1="100" x2="90" y2="126" stroke="currentColor"/>
+<circle cx="90" cy="126" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="90" y="144" text-anchor="middle">Ruolo</text>
+<line x1="320" y1="57" x2="320" y2="34" stroke="currentColor"/>
+<circle cx="320" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="320" y="22" text-anchor="middle">Ingaggio</text>
+<line x1="520" y1="60" x2="520" y2="34" stroke="currentColor"/>
+<circle cx="520" cy="34" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="520" y="22" text-anchor="middle">Città</text>
+<line x1="585" y1="60" x2="585" y2="34" stroke="currentColor"/>
+<circle cx="585" cy="34" r="4.5" fill="currentColor" stroke="currentColor"/>
+<text x="585" y="22" text-anchor="middle">Nome</text>
+<line x1="550" y1="100" x2="550" y2="126" stroke="currentColor"/>
+<circle cx="550" cy="126" r="4.5" fill="var(--surface)" stroke="currentColor"/>
+<text x="550" y="144" text-anchor="middle">Colori sociali</text>
+</g></svg>
+<figcaption>Uno a molti: Contratto si può portare dentro Giocatore.</figcaption></figure>
 <div class="vs"><div><h4>Di base</h4><p><code>Giocatore(<u>Cognome</u>, <u>DataNascita</u>, Ruolo)</code><br><code>Contratto(<u>CognGiocatore</u>, <u>DataNascG</u>, Squadra, Ingaggio)</code><br><code>Squadra(<u>Nome</u>, Città, ColoriSociali)</code></p></div><div><h4>Compatta</h4><p><code>Giocatore(<u>Cognome</u>, <u>DataNasc</u>, Ruolo, Squadra, Ingaggio)</code><br><code>Squadra(<u>Nome</u>, Città, ColoriSociali)</code><br>Vincolo referenziale fra Squadra in Giocatore e la chiave di Squadra.</p></div></div>
 <div class="exam"><b class="lbl">Attenzione</b>Se la cardinalità minima del lato “uno” fosse <b>0</b> (giocatore senza squadra), allora Squadra in Giocatore deve <b>ammettere valori nulli</b>.</div>
 <h3>Entità con identificazione esterna</h3>
@@ -357,6 +1102,78 @@ Partecipazione(<u>Impiegato</u>, <u>Progetto</u>)</pre>
 <p>Operatore <b>monadico</b>: il risultato ha <b>parte degli attributi</b> dell’operando e contiene ennuple a cui contribuiscono tutte le ennuple dell’operando, ristrette agli attributi della lista. Eventuali <b>duplicati</b> creati dall’eliminazione degli attributi vengono eliminati. Sintassi: <code>PROJ ListaAttributi (Operando)</code> oppure <code>π</code>.</p>
 <div class="def"><b class="lbl">Cardinalità della proiezione</b>Una proiezione contiene <b>al più</b> tante ennuple quante l’operando, anche meno se ci sono duplicati. Se la lista X è una <b>superchiave</b> di R, π<sub>X</sub>(R) contiene <b>esattamente</b> tante ennuple quante R.</div>
 <p>Selezione e proiezione sono <b>ortogonali</b>: la selezione è una decomposizione <b>orizzontale</b> (righe), la proiezione è una decomposizione <b>verticale</b> (colonne). Insieme: <code>π Matricola, Cognome (σ Stipendio &gt; 50 (Impiegati))</code>. Ma non permettono di correlare dati in relazioni <b>diverse</b>: serve il join.</p>
+<figure class="diagram"><svg viewBox="0 0 640 240" role="img" aria-label="Una tabella con ATTR1, ATTR2 e ATTR3: la selezione dà una tabella con le stesse colonne e meno righe, la proiezione una tabella con tutte le righe e solo ATTR1 e ATTR3">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<rect x="20" y="50" width="180" height="132" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="20" y1="72" x2="200" y2="72" stroke="currentColor" stroke-width="1.2"/>
+<line x1="20" y1="94" x2="200" y2="94" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="20" y1="116" x2="200" y2="116" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="20" y1="138" x2="200" y2="138" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="20" y1="160" x2="200" y2="160" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="80" y1="50" x2="80" y2="182" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="140" y1="50" x2="140" y2="182" stroke="currentColor" stroke-opacity=".45"/>
+<text x="50" y="66" text-anchor="middle" font-size="12" font-weight="700">ATTR1</text>
+<text x="110" y="66" text-anchor="middle" font-size="12" font-weight="700">ATTR2</text>
+<text x="170" y="66" text-anchor="middle" font-size="12" font-weight="700">ATTR3</text>
+<text x="50" y="88" text-anchor="middle" font-size="12">…</text>
+<text x="110" y="88" text-anchor="middle" font-size="12">…</text>
+<text x="170" y="88" text-anchor="middle" font-size="12">…</text>
+<text x="50" y="110" text-anchor="middle" font-size="12">…</text>
+<text x="110" y="110" text-anchor="middle" font-size="12">…</text>
+<text x="170" y="110" text-anchor="middle" font-size="12">…</text>
+<text x="50" y="132" text-anchor="middle" font-size="12">…</text>
+<text x="110" y="132" text-anchor="middle" font-size="12">…</text>
+<text x="170" y="132" text-anchor="middle" font-size="12">…</text>
+<text x="50" y="154" text-anchor="middle" font-size="12">…</text>
+<text x="110" y="154" text-anchor="middle" font-size="12">…</text>
+<text x="170" y="154" text-anchor="middle" font-size="12">…</text>
+<text x="50" y="176" text-anchor="middle" font-size="12">…</text>
+<text x="110" y="176" text-anchor="middle" font-size="12">…</text>
+<text x="170" y="176" text-anchor="middle" font-size="12">…</text>
+<rect x="400" y="10" width="180" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="30" x2="580" y2="30" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="50" x2="580" y2="50" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="400" y1="70" x2="580" y2="70" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="460" y1="10" x2="460" y2="90" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="520" y1="10" x2="520" y2="90" stroke="currentColor" stroke-opacity=".45"/>
+<text x="430" y="24" text-anchor="middle" font-size="12" font-weight="700">ATTR1</text>
+<text x="490" y="24" text-anchor="middle" font-size="12" font-weight="700">ATTR2</text>
+<text x="550" y="24" text-anchor="middle" font-size="12" font-weight="700">ATTR3</text>
+<text x="430" y="44" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="44" text-anchor="middle" font-size="12">…</text>
+<text x="550" y="44" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="64" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="64" text-anchor="middle" font-size="12">…</text>
+<text x="550" y="64" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="84" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="84" text-anchor="middle" font-size="12">…</text>
+<text x="550" y="84" text-anchor="middle" font-size="12">…</text>
+<rect x="400" y="112" width="120" height="120" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="132" x2="520" y2="132" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="152" x2="520" y2="152" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="400" y1="172" x2="520" y2="172" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="400" y1="192" x2="520" y2="192" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="400" y1="212" x2="520" y2="212" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="460" y1="112" x2="460" y2="232" stroke="currentColor" stroke-opacity=".45"/>
+<text x="430" y="126" text-anchor="middle" font-size="12" font-weight="700">ATTR1</text>
+<text x="490" y="126" text-anchor="middle" font-size="12" font-weight="700">ATTR3</text>
+<text x="430" y="146" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="146" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="166" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="166" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="186" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="186" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="206" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="206" text-anchor="middle" font-size="12">…</text>
+<text x="430" y="226" text-anchor="middle" font-size="12">…</text>
+<text x="490" y="226" text-anchor="middle" font-size="12">…</text>
+<defs><marker id="bd-m-sel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="var(--acc)"/></marker></defs>
+<line x1="240" y1="80" x2="380" y2="50" stroke="var(--acc)" stroke-width="2" marker-end="url(#bd-m-sel)"/>
+<line x1="240" y1="150" x2="380" y2="170" stroke="var(--acc)" stroke-width="2" marker-end="url(#bd-m-sel)"/>
+<text x="305" y="52" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">Selezione</text>
+<text x="305" y="185" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">Proiezione</text>
+</g></svg>
+<figcaption>La selezione sceglie le righe, la proiezione sceglie le colonne.</figcaption></figure>
 <h3>Join naturale (⋈)</h3>
 <div class="def"><b class="lbl">Join naturale</b>Operatore binario (generalizzabile) su R1(X1), R2(X2): il risultato è una relazione su <b>X1 ∪ X2</b> con le ennuple ottenute combinando ennuple degli operandi che hanno <b>valori uguali sugli attributi comuni</b>.<br>R1 ⋈ R2 = { t su X1X2 | esistono t1 ∈ R1 e t2 ∈ R2 con t[X1] = t1 e t[X2] = t2 }</div>
 <p>Esempio del concorso: Risultati(Numero, Voto) ⋈ Concorrenti(Numero, Candidato) dà Numero, Candidato, Voto.</p>
@@ -372,6 +1189,149 @@ Partecipazione(<u>Impiegato</u>, <u>Progetto</u>)</pre>
 <tr><td><b>Sinistro</b> (JOIN left)</td><td>tutte le ennuple del primo operando</td><td>Neri B Mori, Bianchi B Mori, <b>Rossi A null</b></td></tr>
 <tr><td><b>Destro</b> (JOIN right)</td><td>tutte quelle del secondo</td><td>Neri B Mori, Bianchi B Mori, <b>null C Bruni</b></td></tr>
 <tr><td><b>Completo</b> (JOIN full)</td><td>quelle di entrambi</td><td>le due precedenti + Rossi A null + null C Bruni</td></tr></table></div>
+<figure class="diagram"><svg viewBox="0 0 640 416" role="img" aria-label="Join esterno sinistro, destro e completo tra Impiegati e Reparti: Rossi del reparto A e il reparto C, che non hanno corrispondenza, compaiono nel risultato con valori null">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<text x="10" y="16" font-size="12" font-weight="700">Join esterno sinistro</text>
+<rect x="10" y="48" width="145" height="20" fill="var(--tint)"/>
+<rect x="10" y="28" width="145" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="48" x2="155" y2="48" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="68" x2="155" y2="68" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="10" y1="88" x2="155" y2="88" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="90" y1="28" x2="90" y2="108" stroke="currentColor" stroke-opacity=".45"/>
+<text x="50" y="42" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="122.5" y="42" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="50" y="62" text-anchor="middle" font-size="11">Rossi</text>
+<text x="122.5" y="62" text-anchor="middle" font-size="11">A</text>
+<text x="50" y="82" text-anchor="middle" font-size="11">Neri</text>
+<text x="122.5" y="82" text-anchor="middle" font-size="11">B</text>
+<text x="50" y="102" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="122.5" y="102" text-anchor="middle" font-size="11">B</text>
+<rect x="170" y="28" width="135" height="60" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="48" x2="305" y2="48" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="68" x2="305" y2="68" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="235" y1="28" x2="235" y2="88" stroke="currentColor" stroke-opacity=".45"/>
+<text x="202.5" y="42" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="270" y="42" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="202.5" y="62" text-anchor="middle" font-size="11">B</text>
+<text x="270" y="62" text-anchor="middle" font-size="11">Mori</text>
+<text x="202.5" y="82" text-anchor="middle" font-size="11" fill="var(--red)">C</text>
+<text x="270" y="82" text-anchor="middle" font-size="11" fill="var(--red)">Bruni</text>
+<text x="380" y="16" font-size="12"><tspan>Impiegati </tspan><tspan fill="var(--acc)">JOIN left</tspan><tspan> Reparti</tspan></text>
+<rect x="380" y="28" width="220" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="48" x2="600" y2="48" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="68" x2="600" y2="68" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="380" y1="88" x2="600" y2="88" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="465" y1="28" x2="465" y2="108" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="530" y1="28" x2="530" y2="108" stroke="currentColor" stroke-opacity=".45"/>
+<text x="422.5" y="42" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="497.5" y="42" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="565" y="42" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="422.5" y="62" text-anchor="middle" font-size="11">Neri</text>
+<text x="497.5" y="62" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="62" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="82" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="497.5" y="82" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="82" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="102" text-anchor="middle" font-size="11">Rossi</text>
+<text x="497.5" y="102" text-anchor="middle" font-size="11">A</text>
+<text x="565" y="102" text-anchor="middle" font-size="11" fill="var(--acc)">null</text>
+<line x1="0" y1="130" x2="640" y2="130" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<text x="10" y="156" font-size="12" font-weight="700">Join esterno destro</text>
+<rect x="10" y="168" width="145" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="188" x2="155" y2="188" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="208" x2="155" y2="208" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="10" y1="228" x2="155" y2="228" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="90" y1="168" x2="90" y2="248" stroke="currentColor" stroke-opacity=".45"/>
+<text x="50" y="182" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="122.5" y="182" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="50" y="202" text-anchor="middle" font-size="11" fill="var(--red)">Rossi</text>
+<text x="122.5" y="202" text-anchor="middle" font-size="11" fill="var(--red)">A</text>
+<text x="50" y="222" text-anchor="middle" font-size="11">Neri</text>
+<text x="122.5" y="222" text-anchor="middle" font-size="11">B</text>
+<text x="50" y="242" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="122.5" y="242" text-anchor="middle" font-size="11">B</text>
+<rect x="170" y="208" width="135" height="20" fill="var(--tint)"/>
+<rect x="170" y="168" width="135" height="60" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="188" x2="305" y2="188" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="208" x2="305" y2="208" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="235" y1="168" x2="235" y2="228" stroke="currentColor" stroke-opacity=".45"/>
+<text x="202.5" y="182" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="270" y="182" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="202.5" y="202" text-anchor="middle" font-size="11">B</text>
+<text x="270" y="202" text-anchor="middle" font-size="11">Mori</text>
+<text x="202.5" y="222" text-anchor="middle" font-size="11">C</text>
+<text x="270" y="222" text-anchor="middle" font-size="11">Bruni</text>
+<text x="380" y="156" font-size="12"><tspan>Impiegati </tspan><tspan fill="var(--acc)">JOIN right</tspan><tspan> Reparti</tspan></text>
+<rect x="380" y="168" width="220" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="188" x2="600" y2="188" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="208" x2="600" y2="208" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="380" y1="228" x2="600" y2="228" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="465" y1="168" x2="465" y2="248" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="530" y1="168" x2="530" y2="248" stroke="currentColor" stroke-opacity=".45"/>
+<text x="422.5" y="182" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="497.5" y="182" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="565" y="182" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="422.5" y="202" text-anchor="middle" font-size="11">Neri</text>
+<text x="497.5" y="202" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="202" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="222" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="497.5" y="222" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="222" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="242" text-anchor="middle" font-size="11" fill="var(--acc)">null</text>
+<text x="497.5" y="242" text-anchor="middle" font-size="11">C</text>
+<text x="565" y="242" text-anchor="middle" font-size="11">Bruni</text>
+<line x1="0" y1="270" x2="640" y2="270" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="4 4"/>
+<text x="10" y="296" font-size="12" font-weight="700">Join esterno completo</text>
+<rect x="10" y="328" width="145" height="20" fill="var(--tint)"/>
+<rect x="10" y="308" width="145" height="80" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="328" x2="155" y2="328" stroke="currentColor" stroke-width="1.2"/>
+<line x1="10" y1="348" x2="155" y2="348" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="10" y1="368" x2="155" y2="368" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="90" y1="308" x2="90" y2="388" stroke="currentColor" stroke-opacity=".45"/>
+<text x="50" y="322" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="122.5" y="322" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="50" y="342" text-anchor="middle" font-size="11">Rossi</text>
+<text x="122.5" y="342" text-anchor="middle" font-size="11">A</text>
+<text x="50" y="362" text-anchor="middle" font-size="11">Neri</text>
+<text x="122.5" y="362" text-anchor="middle" font-size="11">B</text>
+<text x="50" y="382" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="122.5" y="382" text-anchor="middle" font-size="11">B</text>
+<rect x="170" y="348" width="135" height="20" fill="var(--tint)"/>
+<rect x="170" y="308" width="135" height="60" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="328" x2="305" y2="328" stroke="currentColor" stroke-width="1.2"/>
+<line x1="170" y1="348" x2="305" y2="348" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="235" y1="308" x2="235" y2="368" stroke="currentColor" stroke-opacity=".45"/>
+<text x="202.5" y="322" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="270" y="322" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="202.5" y="342" text-anchor="middle" font-size="11">B</text>
+<text x="270" y="342" text-anchor="middle" font-size="11">Mori</text>
+<text x="202.5" y="362" text-anchor="middle" font-size="11">C</text>
+<text x="270" y="362" text-anchor="middle" font-size="11">Bruni</text>
+<text x="380" y="296" font-size="12"><tspan>Impiegati </tspan><tspan fill="var(--acc)">JOIN full</tspan><tspan> Reparti</tspan></text>
+<rect x="380" y="308" width="220" height="100" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="328" x2="600" y2="328" stroke="currentColor" stroke-width="1.2"/>
+<line x1="380" y1="348" x2="600" y2="348" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="380" y1="368" x2="600" y2="368" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="380" y1="388" x2="600" y2="388" stroke="currentColor" stroke-opacity=".3"/>
+<line x1="465" y1="308" x2="465" y2="408" stroke="currentColor" stroke-opacity=".45"/>
+<line x1="530" y1="308" x2="530" y2="408" stroke="currentColor" stroke-opacity=".45"/>
+<text x="422.5" y="322" text-anchor="middle" font-size="11" font-weight="700">Impiegato</text>
+<text x="497.5" y="322" text-anchor="middle" font-size="11" font-weight="700">Reparto</text>
+<text x="565" y="322" text-anchor="middle" font-size="11" font-weight="700">Capo</text>
+<text x="422.5" y="342" text-anchor="middle" font-size="11">Neri</text>
+<text x="497.5" y="342" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="342" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="362" text-anchor="middle" font-size="11">Bianchi</text>
+<text x="497.5" y="362" text-anchor="middle" font-size="11">B</text>
+<text x="565" y="362" text-anchor="middle" font-size="11">Mori</text>
+<text x="422.5" y="382" text-anchor="middle" font-size="11">Rossi</text>
+<text x="497.5" y="382" text-anchor="middle" font-size="11">A</text>
+<text x="565" y="382" text-anchor="middle" font-size="11" fill="var(--acc)">null</text>
+<text x="422.5" y="402" text-anchor="middle" font-size="11" fill="var(--acc)">null</text>
+<text x="497.5" y="402" text-anchor="middle" font-size="11">C</text>
+<text x="565" y="402" text-anchor="middle" font-size="11">Bruni</text>
+</g></svg>
+<figcaption>Il join esterno conserva anche le righe senza corrispondenza (evidenziate) e le completa con null.</figcaption></figure>
 <h3>Join e proiezioni</h3>
 <p>Con R1(X1), R2(X2): <b>π<sub>X1</sub>(R1 ⋈ R2) ⊆ R1</b> (le ennuple tagliate fuori non tornano). Con R(X), X = X1 ∪ X2: <b>π<sub>X1</sub>(R) ⋈ π<sub>X2</sub>(R) ⊇ R</b>: proiettando e poi ricomponendo possono comparire ennuple <b>in più</b> (es. Neri con capo Mori e anche Bruni, quando il reparto B ha due capi).</p>
 <h3>Prodotto cartesiano e theta-join</h3>
@@ -674,6 +1634,34 @@ COMMIT WORK;      -- oppure ROLLBACK WORK per rinunciare</pre>
 <p>Il precompilatore è specifico della combinazione <b>linguaggio – DBMS – sistema operativo</b>.</p>
 <h3>Cursori</h3>
 <p>Una SELECT restituisce zero o più ennuple: con zero o una si usa un record, ma con più ennuple il risultato (una lista) non è gestibile facilmente in molti linguaggi. Il <b>cursore</b> trasmette al programma <b>un’ennupla alla volta</b>: accede a tutte le ennuple in modo globale (tutte insieme o a blocchi, sceglie il DBMS) e le passa al buffer del programma una per volta.</p>
+<figure class="diagram"><svg viewBox="0 0 640 215" role="img" aria-label="Il programma manda la select al DBMS; il risultato va nel buffer del programma, da cui il cursore lo legge una riga alla volta">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<defs><marker id="bd-m-cur" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<rect x="30" y="30" width="150" height="110" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="105" y="52" text-anchor="middle" font-weight="700">Programma</text>
+<rect x="55" y="84" width="100" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="450" y="30" width="160" height="140" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="530" y="52" text-anchor="middle" font-weight="700">DBMS</text>
+<rect x="475" y="66" width="110" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="475" y="85" width="110" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="475" y="104" width="110" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="475" y="123" width="110" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="475" y="142" width="110" height="12" fill="currentColor" fill-opacity=".14"/>
+<rect x="240" y="95" width="150" height="110" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="315" y="113" text-anchor="middle" font-size="12" font-weight="700">Buffer del</text>
+<text x="315" y="128" text-anchor="middle" font-size="12" font-weight="700">programma</text>
+<rect x="262" y="138" width="106" height="10" fill="currentColor" fill-opacity=".14"/>
+<rect x="262" y="154" width="106" height="10" fill="currentColor" fill-opacity=".14"/>
+<rect x="262" y="170" width="106" height="10" fill="currentColor" fill-opacity=".14"/>
+<rect x="262" y="186" width="106" height="10" fill="currentColor" fill-opacity=".14"/>
+<line x1="408" y1="159" x2="372" y2="159" stroke="var(--acc)" stroke-width="1.4" marker-end="url(#bd-m-cur)"/>
+<line x1="408" y1="159" x2="408" y2="200" stroke="var(--acc)" stroke-width="1.4" marker-end="url(#bd-m-cur)"/>
+<line x1="180" y1="45" x2="448" y2="45" stroke="currentColor" marker-end="url(#bd-m-cur)"/>
+<text x="314" y="38" text-anchor="middle" font-size="13" fill="var(--acc)" font-weight="700">select …</text>
+<line x1="450" y1="130" x2="392" y2="140" stroke="currentColor" marker-end="url(#bd-m-cur)"/>
+<line x1="240" y1="125" x2="182" y2="110" stroke="currentColor" marker-end="url(#bd-m-cur)"/>
+</g></svg>
+<figcaption>Il cursore passa al programma il risultato della SELECT un’ennupla alla volta.</figcaption></figure>
 <div class="tbl"><table><tr><th>Operazione</th><th>Sintassi</th></tr>
 <tr><td>Definizione</td><td><code>DECLARE NomeCursore [SCROLL] CURSOR FOR SELECT …</code></td></tr>
 <tr><td>Esecuzione dell’interrogazione</td><td><code>OPEN NomeCursore</code></td></tr>
@@ -772,6 +1760,107 @@ con.rollback();</pre>
 <p>Obiettivo: accesso diretto ai record in base al valore di una chiave. Se i valori possibili sono pochi (1000 studenti con matricole da 1 a 1000) basta un array; se sono molti di più di quelli usati (40 studenti con matricole di 6 cifre) l’array sprecherebbe spazio. La <b>funzione hash</b> associa a ogni chiave un indirizzo in uno spazio poco più grande del necessario. Lo spazio delle chiavi è più grande di quello degli indirizzi, quindi la funzione non è iniettiva e ci sono <b>collisioni</b>; le buone funzioni distribuiscono in modo casuale e uniforme.</p>
 <p>Collisioni: posizioni successive libere, tabella di overflow collegata, funzioni hash alternative. Ci sono quasi sempre, ma le collisioni multiple diventano sempre meno probabili e la molteplicità media è bassa.</p>
 <div class="exam"><b class="lbl">L’esempio delle slide</b>40 record, tabella con 50 posizioni (M mod 50): 1 collisione a 4, 2 a 3, 5 a 2, 12 record in overflow. Accessi medi = (28×1 + 8×2 + 3×3 + 1×4) / 40 = <b>1,425</b>. Con un <b>file hash</b> a <b>fattore di blocco 10</b> e 5 blocchi (M mod 5) restano solo 2 record in overflow: accessi medi 42/40 = <b>1,05</b>. Più record per blocco = meno overflow.</div>
+<figure class="diagram"><svg viewBox="0 0 640 226" role="img" aria-label="File hash con 5 blocchi da 10 record, numerati da 0 a 4; i blocchi 0 e 2 sono pieni e hanno un record in overflow ciascuno">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<text x="80" y="20" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">0</text>
+<rect x="40" y="30" width="80" height="160" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="40" y1="46" x2="120" y2="46" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="62" x2="120" y2="62" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="78" x2="120" y2="78" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="94" x2="120" y2="94" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="110" x2="120" y2="110" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="126" x2="120" y2="126" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="142" x2="120" y2="142" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="158" x2="120" y2="158" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="40" y1="174" x2="120" y2="174" stroke="currentColor" stroke-opacity=".25"/>
+<text x="80" y="42" text-anchor="middle" font-size="11">60600</text>
+<text x="80" y="58" text-anchor="middle" font-size="11">66005</text>
+<text x="80" y="74" text-anchor="middle" font-size="11">116455</text>
+<text x="80" y="90" text-anchor="middle" font-size="11">200205</text>
+<text x="80" y="106" text-anchor="middle" font-size="11">205610</text>
+<text x="80" y="122" text-anchor="middle" font-size="11">201260</text>
+<text x="80" y="138" text-anchor="middle" font-size="11">102360</text>
+<text x="80" y="154" text-anchor="middle" font-size="11">205460</text>
+<text x="80" y="170" text-anchor="middle" font-size="11">200430</text>
+<text x="80" y="186" text-anchor="middle" font-size="11">102690</text>
+<rect x="40" y="200" width="80" height="16" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<text x="80" y="212" text-anchor="middle" font-size="11">205845</text>
+<text x="200" y="20" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">1</text>
+<rect x="160" y="30" width="80" height="160" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="160" y1="46" x2="240" y2="46" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="62" x2="240" y2="62" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="78" x2="240" y2="78" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="94" x2="240" y2="94" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="110" x2="240" y2="110" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="126" x2="240" y2="126" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="142" x2="240" y2="142" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="158" x2="240" y2="158" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="160" y1="174" x2="240" y2="174" stroke="currentColor" stroke-opacity=".25"/>
+<text x="200" y="42" text-anchor="middle" font-size="11">66301</text>
+<text x="200" y="58" text-anchor="middle" font-size="11">205751</text>
+<text x="200" y="74" text-anchor="middle" font-size="11">115541</text>
+<text x="200" y="90" text-anchor="middle" font-size="11">200296</text>
+<text x="200" y="106" text-anchor="middle" font-size="11">205796</text>
+<text x="320" y="20" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">2</text>
+<rect x="280" y="30" width="80" height="160" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="280" y1="46" x2="360" y2="46" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="62" x2="360" y2="62" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="78" x2="360" y2="78" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="94" x2="360" y2="94" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="110" x2="360" y2="110" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="126" x2="360" y2="126" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="142" x2="360" y2="142" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="158" x2="360" y2="158" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="280" y1="174" x2="360" y2="174" stroke="currentColor" stroke-opacity=".25"/>
+<text x="320" y="42" text-anchor="middle" font-size="11">205802</text>
+<text x="320" y="58" text-anchor="middle" font-size="11">200902</text>
+<text x="320" y="74" text-anchor="middle" font-size="11">116202</text>
+<text x="320" y="90" text-anchor="middle" font-size="11">205912</text>
+<text x="320" y="106" text-anchor="middle" font-size="11">205762</text>
+<text x="320" y="122" text-anchor="middle" font-size="11">205617</text>
+<text x="320" y="138" text-anchor="middle" font-size="11">205667</text>
+<text x="320" y="154" text-anchor="middle" font-size="11">210522</text>
+<text x="320" y="170" text-anchor="middle" font-size="11">205977</text>
+<text x="320" y="186" text-anchor="middle" font-size="11">205887</text>
+<rect x="280" y="200" width="80" height="16" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<text x="320" y="212" text-anchor="middle" font-size="11">206092</text>
+<text x="440" y="20" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">3</text>
+<rect x="400" y="30" width="80" height="160" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="46" x2="480" y2="46" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="62" x2="480" y2="62" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="78" x2="480" y2="78" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="94" x2="480" y2="94" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="110" x2="480" y2="110" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="126" x2="480" y2="126" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="142" x2="480" y2="142" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="158" x2="480" y2="158" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="400" y1="174" x2="480" y2="174" stroke="currentColor" stroke-opacity=".25"/>
+<text x="440" y="42" text-anchor="middle" font-size="11">200268</text>
+<text x="440" y="58" text-anchor="middle" font-size="11">205478</text>
+<text x="440" y="74" text-anchor="middle" font-size="11">210533</text>
+<text x="440" y="90" text-anchor="middle" font-size="11">200138</text>
+<text x="440" y="106" text-anchor="middle" font-size="11">102338</text>
+<text x="440" y="122" text-anchor="middle" font-size="11">205693</text>
+<text x="440" y="138" text-anchor="middle" font-size="11">200498</text>
+<text x="560" y="20" text-anchor="middle" font-size="12" fill="var(--acc)" font-weight="700">4</text>
+<rect x="520" y="30" width="80" height="160" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="520" y1="46" x2="600" y2="46" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="62" x2="600" y2="62" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="78" x2="600" y2="78" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="94" x2="600" y2="94" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="110" x2="600" y2="110" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="126" x2="600" y2="126" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="142" x2="600" y2="142" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="158" x2="600" y2="158" stroke="currentColor" stroke-opacity=".25"/>
+<line x1="520" y1="174" x2="600" y2="174" stroke="currentColor" stroke-opacity=".25"/>
+<text x="560" y="42" text-anchor="middle" font-size="11">200604</text>
+<text x="560" y="58" text-anchor="middle" font-size="11">201159</text>
+<text x="560" y="74" text-anchor="middle" font-size="11">200464</text>
+<text x="560" y="90" text-anchor="middle" font-size="11">205619</text>
+<text x="560" y="106" text-anchor="middle" font-size="11">205724</text>
+<text x="560" y="122" text-anchor="middle" font-size="11">206049</text>
+</g></svg>
+<figcaption>Il blocco è dato dalla matricola mod 5; i record che non ci stanno vanno in overflow.</figcaption></figure>
 <p>La lunghezza media delle catene di overflow dipende dal <b>coefficiente di riempimento T/(F×B)</b> (T record, B blocchi, F fattore di blocco): cresce con il riempimento e cala con F. Es. a riempimento 0,8 vale 2,0 con F = 1 e 0,110 con F = 10; a 0,5 vale 0,5 con F = 1 e 0,005 con F = 10.</p>
 <div class="vs"><div><h4>Hash: pro</h4><p>L’organizzazione <b>più efficiente</b> per l’accesso diretto con condizioni di <b>uguaglianza</b> (puntuale): costo medio di poco superiore a 1.</p></div><div><h4>Hash: contro</h4><p><b>Inefficiente per intervalli</b> e per ricerche su altri attributi. “Degenera” se si riduce lo spazio sovrabbondante: va bene solo per file di dimensione abbastanza stabile.</p></div></div>
 <h3>Indici</h3>
@@ -779,6 +1868,78 @@ con.rollback();</pre>
 <div class="vs"><div><h4>Indice primario (di cluster)</h4><p>Sul campo su cui è basato l’<b>ordinamento fisico</b> del file. (A volte “primario” è quello su chiave identificante e “di cluster” quello su pseudochiave.) Come l’indice generale di un libro.</p></div><div><h4>Indice secondario</h4><p>Su un campo con ordinamento <b>diverso</b> da quello di memorizzazione. Come l’indice analitico. I suoi benefici sono molto più sensibili.</p></div></div>
 <ul><li>Ogni file ha <b>al più un indice primario</b> e quanti indici secondari si vuole (una guida con indice dei luoghi e degli artisti).</li><li>Un <b>file hash non può avere un indice primario</b>.</li></ul>
 <div class="vs"><div><h4>Denso</h4><p>Contiene <b>tutti</b> i valori della chiave (su campo identificante, un riferimento per record).</p></div><div><h4>Sparso</h4><p>Contiene <b>solo alcuni</b> valori (es. uno per blocco): meno riferimenti dei record.</p></div></div>
+<figure class="diagram"><svg viewBox="0 0 640 350" role="img" aria-label="Indice primario sparso sul cognome: le voci Aceto, Aldo, Asola e Baco puntano ai blocchi del file ordinato che finiscono con quei cognomi">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<defs><marker id="bd-m-idx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="var(--acc)"/></marker></defs>
+<rect x="340" y="10" width="150" height="64" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="10" x2="400" y2="74" stroke="currentColor" stroke-opacity=".35"/>
+<text x="370" y="22" text-anchor="middle" font-size="11">10021</text>
+<text x="406" y="22" font-size="11">Abate</text>
+<line x1="340" y1="26" x2="490" y2="26" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="38" text-anchor="middle" font-size="11">14322</text>
+<text x="406" y="38" font-size="11">Abete</text>
+<line x1="340" y1="42" x2="490" y2="42" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="54" text-anchor="middle" font-size="11">00002</text>
+<text x="406" y="54" font-size="11">Acaro</text>
+<line x1="340" y1="58" x2="490" y2="58" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="70" text-anchor="middle" font-size="11">03421</text>
+<text x="406" y="70" font-size="11">Aceto</text>
+<rect x="340" y="88" width="150" height="64" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="88" x2="400" y2="152" stroke="currentColor" stroke-opacity=".35"/>
+<text x="370" y="100" text-anchor="middle" font-size="11">00003</text>
+<text x="406" y="100" font-size="11">Adone</text>
+<line x1="340" y1="104" x2="490" y2="104" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="116" text-anchor="middle" font-size="11">20000</text>
+<text x="406" y="116" font-size="11">Africa</text>
+<line x1="340" y1="120" x2="490" y2="120" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="132" text-anchor="middle" font-size="11">65001</text>
+<text x="406" y="132" font-size="11">Ago</text>
+<line x1="340" y1="136" x2="490" y2="136" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="148" text-anchor="middle" font-size="11">76199</text>
+<text x="406" y="148" font-size="11">Aldo</text>
+<rect x="340" y="166" width="150" height="64" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="166" x2="400" y2="230" stroke="currentColor" stroke-opacity=".35"/>
+<text x="370" y="178" text-anchor="middle" font-size="11">00001</text>
+<text x="406" y="178" font-size="11">Amari</text>
+<line x1="340" y1="182" x2="490" y2="182" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="194" text-anchor="middle" font-size="11">40000</text>
+<text x="406" y="194" font-size="11">Amato</text>
+<line x1="340" y1="198" x2="490" y2="198" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="210" text-anchor="middle" font-size="11">54002</text>
+<text x="406" y="210" font-size="11">Ando</text>
+<line x1="340" y1="214" x2="490" y2="214" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="226" text-anchor="middle" font-size="11">00004</text>
+<text x="406" y="226" font-size="11">Asola</text>
+<rect x="340" y="262" width="150" height="64" fill="var(--surface)" stroke="currentColor" stroke-width="1.2"/>
+<line x1="400" y1="262" x2="400" y2="326" stroke="currentColor" stroke-opacity=".35"/>
+<text x="370" y="274" text-anchor="middle" font-size="11">34001</text>
+<text x="406" y="274" font-size="11">Baba</text>
+<line x1="340" y1="278" x2="490" y2="278" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="290" text-anchor="middle" font-size="11">54200</text>
+<text x="406" y="290" font-size="11">Bacardi</text>
+<line x1="340" y1="294" x2="490" y2="294" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="306" text-anchor="middle" font-size="11">65401</text>
+<text x="406" y="306" font-size="11">Bacci</text>
+<line x1="340" y1="310" x2="490" y2="310" stroke="currentColor" stroke-opacity=".2"/>
+<text x="370" y="322" text-anchor="middle" font-size="11">54320</text>
+<text x="406" y="322" font-size="11">Baco</text>
+<text x="415" y="250" text-anchor="middle" fill="var(--soft)">…</text>
+<text x="415" y="342" text-anchor="middle" fill="var(--soft)">…</text>
+<rect x="150" y="100" width="80" height="72" fill="var(--surface)" stroke="var(--acc)" stroke-width="1.4"/>
+<text x="190" y="113" text-anchor="middle" font-size="11" fill="var(--acc)">Aceto</text>
+<line x1="230" y1="109" x2="337" y2="42" stroke="var(--acc)" stroke-opacity=".8" marker-end="url(#bd-m-idx)"/>
+<line x1="150" y1="118" x2="230" y2="118" stroke="var(--acc)" stroke-opacity=".4"/>
+<text x="190" y="131" text-anchor="middle" font-size="11" fill="var(--acc)">Aldo</text>
+<line x1="230" y1="127" x2="337" y2="120" stroke="var(--acc)" stroke-opacity=".8" marker-end="url(#bd-m-idx)"/>
+<line x1="150" y1="136" x2="230" y2="136" stroke="var(--acc)" stroke-opacity=".4"/>
+<text x="190" y="149" text-anchor="middle" font-size="11" fill="var(--acc)">Asola</text>
+<line x1="230" y1="145" x2="337" y2="198" stroke="var(--acc)" stroke-opacity=".8" marker-end="url(#bd-m-idx)"/>
+<line x1="150" y1="154" x2="230" y2="154" stroke="var(--acc)" stroke-opacity=".4"/>
+<text x="190" y="167" text-anchor="middle" font-size="11" fill="var(--acc)">Baco</text>
+<line x1="230" y1="163" x2="337" y2="294" stroke="var(--acc)" stroke-opacity=".8" marker-end="url(#bd-m-idx)"/>
+<text x="190" y="190" text-anchor="middle" fill="var(--soft)">…</text>
+</g></svg>
+<figcaption>Indice primario sparso: basta una voce (l’ultimo cognome) per ogni blocco del file ordinato.</figcaption></figure>
 <div class="exam"><b class="lbl">Regole da sapere</b>L’indice <b>primario</b> di solito è <b>sparso</b> (se denso permette di lavorare sugli indirizzi senza accedere ai record). L’indice <b>secondario deve essere denso</b>: il file non è ordinato su quel campo, quindi ogni valore va indicizzato. Puntatori ai blocchi: più compatti; puntatori ai record: permettono operazioni solo sull’indice.</div>
 <h4>Dimensione di un indice</h4>
 <p>L record, B dimensione del blocco, R lunghezza del record, K lunghezza della chiave, P lunghezza dell’indirizzo:</p>
@@ -795,6 +1956,41 @@ con.rollback();</pre>
 <ul><li><b>Albero binario di ricerca:</b> a sinistra etichette minori, a destra maggiori; ricerca pari alla profondità, logaritmica nel caso medio.</li>
 <li><b>Albero di ricerca di ordine P:</b> ogni nodo ha fino a P figli e P−1 etichette ordinate; nell’i-esimo sottoalbero le etichette stanno tra la (i−1)-esima e la i-esima. Un nodo = un blocco, quindi <b>fan-out</b> molto grande; la ricerca dentro il nodo è sequenziale ma in memoria centrale. Ancora rigido.</li>
 <li><b>B-tree:</b> ogni nodo è un blocco e l’albero è <b>perfettamente bilanciato</b> (tutte le foglie allo stesso livello), grazie al <b>riempimento parziale</b> (in media 70%) e a <b>riorganizzazioni locali</b>.</li></ul>
+<figure class="diagram"><svg viewBox="0 0 640 212" role="img" aria-label="Nodo di un albero di ricerca: puntatori P0..PF alternati alle chiavi K1..KF; P0 porta alle chiavi minori di K1, Pi a quelle tra Ki e Ki+1, PF a quelle maggiori di KF">
+<g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+<defs><marker id="bd-m-node" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<rect x="102" y="20" width="435" height="40" fill="var(--surface)" stroke="currentColor" stroke-width="1.4"/>
+<text x="124.5" y="45" text-anchor="middle" font-size="14" fill="var(--acc)" font-style="italic"><tspan>P</tspan><tspan dy="4" font-size="10">0</tspan><tspan dy="-4"></tspan></text>
+<line x1="147" y1="20" x2="147" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="169.5" y="45" text-anchor="middle" font-size="14" font-style="italic"><tspan>K</tspan><tspan dy="4" font-size="10">1</tspan><tspan dy="-4"></tspan></text>
+<line x1="192" y1="20" x2="192" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="214.5" y="45" text-anchor="middle" font-size="14" fill="var(--acc)" font-style="italic"><tspan>P</tspan><tspan dy="4" font-size="10">1</tspan><tspan dy="-4"></tspan></text>
+<line x1="237" y1="20" x2="237" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="267.0" y="45" text-anchor="middle" font-size="14">…</text>
+<line x1="297" y1="20" x2="297" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="319.5" y="45" text-anchor="middle" font-size="14" font-style="italic"><tspan>K</tspan><tspan dy="4" font-size="10">i</tspan><tspan dy="-4"></tspan></text>
+<line x1="342" y1="20" x2="342" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="364.5" y="45" text-anchor="middle" font-size="14" fill="var(--acc)" font-style="italic"><tspan>P</tspan><tspan dy="4" font-size="10">i</tspan><tspan dy="-4"></tspan></text>
+<line x1="387" y1="20" x2="387" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="417.0" y="45" text-anchor="middle" font-size="14">…</text>
+<line x1="447" y1="20" x2="447" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="469.5" y="45" text-anchor="middle" font-size="14" font-style="italic"><tspan>K</tspan><tspan dy="4" font-size="10">F</tspan><tspan dy="-4"></tspan></text>
+<line x1="492" y1="20" x2="492" y2="60" stroke="currentColor" stroke-opacity=".5"/>
+<text x="514.5" y="45" text-anchor="middle" font-size="14" fill="var(--acc)" font-style="italic"><tspan>P</tspan><tspan dy="4" font-size="10">F</tspan><tspan dy="-4"></tspan></text>
+<line x1="124.5" y1="58" x2="130" y2="118" stroke="currentColor" marker-end="url(#bd-m-node)"/>
+<path d="M130 122 L162 168 L98 168 Z" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<line x1="364.5" y1="58" x2="330" y2="118" stroke="currentColor" marker-end="url(#bd-m-node)"/>
+<path d="M330 122 L362 168 L298 168 Z" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<line x1="514.5" y1="58" x2="530" y2="118" stroke="currentColor" marker-end="url(#bd-m-node)"/>
+<path d="M530 122 L562 168 L498 168 Z" fill="none" stroke="currentColor" stroke-opacity=".6"/>
+<text x="130" y="186" text-anchor="middle" font-size="11">sotto-albero che contiene</text>
+<text x="330" y="186" text-anchor="middle" font-size="11">sotto-albero che contiene</text>
+<text x="530" y="186" text-anchor="middle" font-size="11">sotto-albero che contiene</text>
+<text x="130" y="201" text-anchor="middle" font-size="11"><tspan>le chiavi K &lt; K</tspan><tspan dy="4" font-size="9">1</tspan></text>
+<text x="330" y="201" text-anchor="middle" font-size="11"><tspan>le chiavi K</tspan><tspan dy="4" font-size="9">i</tspan><tspan dy="-4"> &lt; K &lt; K</tspan><tspan dy="4" font-size="9">i+1</tspan></text>
+<text x="530" y="201" text-anchor="middle" font-size="11"><tspan>le chiavi K &gt; K</tspan><tspan dy="4" font-size="9">F</tspan></text>
+</g></svg>
+<figcaption>Ogni puntatore porta ai valori compresi tra le chiavi che ha ai lati.</figcaption></figure>
 <p><b>Split e merge:</b> inserimenti ed eliminazioni partono da una ricerca fino a una foglia. Se nella foglia c’è posto si inserisce, altrimenti il nodo si <b>divide</b> (split) e serve un puntatore in più nel padre, risalendo anche fino alla radice; il riempimento resta sempre <b>sopra il 50%</b>. Le eliminazioni possono ridurre i nodi (merge). Modificare la chiave = eliminare + inserire.</p>
 <div class="tbl"><table><tr><th></th><th>B-tree</th><th>B+-tree</th></tr>
 <tr><td>Chiavi</td><td>Quelle nei nodi intermedi <b>non</b> si ripetono nelle foglie</td><td><b>Tutte</b> le chiavi sono nelle foglie (quelle intermedie sono ripetute)</td></tr>
