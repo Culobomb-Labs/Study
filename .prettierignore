@@ -9,6 +9,7 @@
 !Unisa/index.html
 !Unisa/news.html
 !Unisa/segnalazioni.html
+!Unisa/sessione.html
 !Unisa/sw.js
 Unisa/assets/*.min.js
 # corsi.js è già ordinato (un documento per riga) e tra le righe CORSI deve restare JSON valido

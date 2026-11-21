@@ -40,6 +40,9 @@
   const ROOT = (me && me.dataset.root) || "./";
   const PAGE = decodeURIComponent((me && me.dataset.page) || "index.html");
   const IS_HOME = PAGE === "index.html";
+  // pagina della Sessione d'esami (sessione.html): i suoi dati stanno in "ua-sessione" (vedi assets/sessione.js)
+  const IS_SESS_PAGE = PAGE === "sessione.html";
+  const SESS_KEY = "ua-sessione";
   const CORSI = window.CORSI || [];
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
   const NEWS_CORSI = CORSI.concat(
@@ -77,6 +80,7 @@
     bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
+    cal: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="m9 15 2 2 4-4"/></svg>',
     chev: '<svg class="ua-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
     swap: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 10.5-4"/><path d="M15 14h7M19 11l3 3-3 3"/></svg>',
     logout:
@@ -211,10 +215,11 @@
   }
 
   /* ---------------- barra in basso (schede, stile iOS) ----------------
-     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Indice (telefono, nei quaderni),
-     Cerca, News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto l'accesso), con la scheda della
-     pagina in cui sei evidenziata. "Torna su" è un bottone rotondo
-     a parte, sopra la barra, che compare dopo un po' di scorrimento. */
+     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Cerca, Sessione (la sessione d'esami),
+     News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto l'accesso), con la scheda della
+     pagina in cui sei evidenziata. "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po'
+     di scorrimento. Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
+     quando compare "Torna su", si mette sopra l'Indice. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
     const tab = (tag, cls, attrs, icon, label) =>
@@ -223,12 +228,13 @@
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
     dock.innerHTML = `<div class="ua-tabs">
       ${tab("a", "ua-dock-home" + (IS_HOME ? " is-on" : ""), `href="${ROOT}index.html"` + (IS_HOME ? ` ${on}` : ""), ICON.home, "Home")}
-      ${idx ? tab("button", "ua-dock-idx", 'type="button"', ICON.book, "Indice") : ""}
       ${tab("button", "ua-open-search", `type="button" data-kbd="${KBD}" aria-keyshortcuts="${KBD_ARIA}"`, ICON.search, "Cerca")}
+      ${tab("a", "ua-dock-sess" + (IS_SESS_PAGE ? " is-on" : ""), `href="${ROOT}sessione.html"` + (IS_SESS_PAGE ? ` ${on}` : ""), ICON.cal, "Sessione")}
       ${tab("a", "ua-dock-news" + (IS_NEWS_PAGE ? " is-on" : ""), `href="${ROOT}news.html"` + (IS_NEWS_PAGE ? ` ${on}` : ""), ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
       ${tab("button", "ua-open-sync", 'type="button" aria-haspopup="dialog"', ICON.user, "Profilo")}
     </div>
-    <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
+    <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>
+    ${idx ? `<button type="button" class="ua-idx-fab" aria-label="Indice degli appunti">${ICON.book}</button>` : ""}`;
     document.body.append(dock);
     const smooth = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
     const toTop = () => window.scrollTo({ top: 0, behavior: smooth() });
@@ -239,7 +245,7 @@
       })
     ); // la scheda della pagina in cui sei riporta in cima
     if (idx)
-      dock.querySelector(".ua-dock-idx").addEventListener("click", () => {
+      dock.querySelector(".ua-idx-fab").addEventListener("click", () => {
         const d = idx.querySelector("details");
         if (d) d.open = true;
         idx.scrollIntoView({ behavior: smooth(), block: "start" });
@@ -943,12 +949,18 @@
       if (d.progressKey) PROGRESS_KEYS.add(d.progressKey);
     })
   );
-  // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-...") e l'aspetto (tema e barra)
+  // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-..."), la Sessione
+  // d'esami (piano e spunte, "ua-sessione") e l'aspetto (tema e barra)
   const isPref = k => k === THEME_KEY || k === GLASS_KEY;
   const applyPref = k => (k === THEME_KEY ? applyTheme(getTheme()) : applyGlass(getGlass())); // cambia subito, senza ricaricare
-  const isSynced = k => typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || isPref(k));
+  const isSynced = k =>
+    typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || k === SESS_KEY || isPref(k));
   const IS_QUIZ = !!(here && here.d.kind === "Quiz");
-  const usesKey = k => IS_HOME || (here && here.d.progressKey === k) || (IS_QUIZ && k.startsWith("quiz-"));
+  const usesKey = k =>
+    IS_HOME ||
+    (here && here.d.progressKey === k) ||
+    (IS_QUIZ && k.startsWith("quiz-")) ||
+    (IS_SESS_PAGE && k === SESS_KEY);
 
   const origSet = Storage.prototype.setItem,
     origRemove = Storage.prototype.removeItem;
@@ -1490,6 +1502,7 @@
         ).join("")}</div>
         <p class="ua-ap-note">${u ? "Tema e barra sono salvati sul tuo account: valgono su tutti i dispositivi dove accedi." : "Salvati su questo dispositivo. Accedi per averli uguali su tutti."}</p></div>
       <ul class="ua-ap-menu">
+        ${item("ua-ap-sess", ICON.cal, "La mia sessione", "Esami, date e piano giorno per giorno", `${ROOT}sessione.html`)}
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-ap-uni-btn" aria-expanded="false" aria-controls="ua-ap-uni"><span class="ua-nt-ic">${servIcon("uni")}</span><span class="ua-nt-txt"><b>Servizi UNISA</b><span>Esse3, E-learning e Biblioteca</span></span>${ICON.chev}</button>
@@ -2045,6 +2058,8 @@
       box.innerHTML = notifControl();
     });
   }
+  // le pagine che disegnano un riquadro [data-ua-nt] dopo l'avvio (es. sessione.html) chiedono di riempirlo
+  document.addEventListener("ua-nt-refresh", refreshNotifControls);
   document.addEventListener("click", e => {
     const s = e.target.closest && e.target.closest("[data-news-switch]");
     if (!s) return;

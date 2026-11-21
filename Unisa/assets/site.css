@@ -824,7 +824,8 @@ a.ua-ni:hover {
   box-sizing: border-box;
 }
 .ua-tabs,
-.ua-dock .ua-up {
+.ua-dock .ua-up,
+.ua-dock .ua-idx-fab {
   position: relative;
   isolation: isolate;
   background: var(--ua-glass);
@@ -833,7 +834,8 @@ a.ua-ni:hover {
   box-shadow: var(--ua-glass-shadow);
 }
 .ua-tabs::before,
-.ua-dock .ua-up::before {
+.ua-dock .ua-up::before,
+.ua-dock .ua-idx-fab::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1053,12 +1055,35 @@ a.ua-ni:hover {
   transform: none;
   pointer-events: auto;
 }
-.ua-dock-idx {
-  display: none !important;
-} /* l'indice serve solo su telefono: su PC resta fisso a lato */
+/* Indice dei quaderni: bottone rotondo di vetro, come "Torna su" e nello stesso punto.
+   Serve solo su telefono (su PC l'indice resta fisso a lato); quando compare "Torna su", si mette sopra l'Indice. */
+.ua-dock .ua-idx-fab {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  display: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  color: inherit;
+  cursor: pointer;
+}
+.ua-dock .ua-idx-fab svg {
+  width: 20px;
+  height: 20px;
+}
+.ua-dock .ua-idx-fab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
 @media (max-width: 900px) {
-  .ua-dock-idx {
-    display: flex !important;
+  .ua-dock .ua-idx-fab {
+    display: grid;
+  }
+  .ua-dock:has(.ua-idx-fab) .ua-up {
+    bottom: calc(100% + 68px);
   }
 }
 @media (max-width: 640px) {
@@ -1742,6 +1767,14 @@ a.ua-ni.has-thumb {
 }
 .ua-ap-report b {
   color: var(--ua-warn);
+}
+/* "La mia sessione": icona col gradiente del sito, come la card "Sessione" in home */
+.ua-ap-sess .ua-nt-ic {
+  color: #fff;
+  background: linear-gradient(135deg, var(--ua-c-is), var(--ua-c-bd));
+}
+.ua-ap-sess + li {
+  margin-top: 4px;
 }
 /* "Servizi UNISA": si apre come "Sposta le spunte"; dentro i link a Esse3, E-learning e Biblioteca (in viola) */
 .ua-ap-uni {

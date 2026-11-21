@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Sessione · Appunti Unisa</title>
+    <meta
+      name="description"
+      content="Organizza la sessione d'esami: scegli gli esami e le date, e ricevi un piano giorno per giorno."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <style>
+      /* La pagina usa i colori comuni del sito (assets/site.css, variabili --ua-...), collegati in pubblicazione.
+         Indice: pagina · titolo · moduli (esami, tempo, ripasso, promemoria) · riepilogo · giorni del calendario · stampa */
+
+      /* pagina */
+      html {
+        background: var(--ua-bg, #fff);
+      }
+      body {
+        margin: 0;
+        background: var(--ua-bg, #fff);
+        color: var(--ua-ink, #111418);
+        font:
+          400 16px/1.55 "IBM Plex Sans",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 40px max(20px, env(safe-area-inset-right, 0px)) 120px
+          max(20px, env(safe-area-inset-left, 0px));
+      }
+      .eyebrow,
+      .ss-k {
+        font:
+          500 12.5px/1 "IBM Plex Mono",
+          ui-monospace,
+          monospace;
+        color: var(--ua-muted, #5d636b);
+      }
+      .eyebrow a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+      .ss-k {
+        display: block;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 10px;
+      }
+
+      /* titolo: gradiente del sito (viola → blu → verde), come il bordo della card "Sessione" in home */
+      h1 {
+        font:
+          800 clamp(36px, 8vw, 52px)/1 "Schibsted Grotesk",
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        letter-spacing: -0.02em;
+        margin: 12px 0 10px;
+        width: fit-content;
+        padding-right: 0.04em;
+        background: linear-gradient(100deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      h2 {
+        font:
+          700 21px/1.2 "Schibsted Grotesk",
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        letter-spacing: -0.01em;
+        margin: 34px 0 12px;
+      }
+      .lede {
+        color: var(--ua-muted, #5d636b);
+        margin: 0 0 26px;
+        max-width: 58ch;
+      }
+      .muted {
+        color: var(--ua-muted, #5d636b);
+      }
+      .ss-wait {
+        color: var(--ua-muted, #5d636b);
+      }
+
+      /* moduli */
+      fieldset {
+        margin: 0 0 16px;
+        padding: 18px 20px 20px;
+        border: 1px solid var(--ua-line);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--ua-soft) 45%, var(--ua-bg));
+      }
+      legend {
+        padding: 0 6px;
+        font-weight: 600;
+      }
+      label {
+        cursor: pointer;
+      }
+      input[type="date"],
+      input[type="number"],
+      select,
+      textarea {
+        box-sizing: border-box;
+        min-height: 42px;
+        padding: 8px 12px;
+        border: 1px solid var(--ua-line);
+        border-radius: 10px;
+        background: var(--ua-bg);
+        color: var(--ua-ink);
+        font: inherit;
+      }
+      textarea {
+        width: 100%;
+        min-height: 84px;
+        resize: vertical;
+      }
+      .ss-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 14px;
+      }
+      .ss-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+        color: var(--ua-muted);
+      }
+      .ss-field > :not(span) {
+        color: var(--ua-ink);
+      }
+      .ss-exam {
+        position: relative;
+        display: grid;
+        gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        border: 1px solid var(--ua-line);
+        border-left: 4px solid var(--c, var(--ua-line));
+        border-radius: 12px;
+        background: var(--ua-bg);
+      }
+      .ss-exam-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 10px;
+        align-items: end;
+      }
+      .ss-exam-top select {
+        width: 100%;
+      }
+      .ss-x {
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--ua-line);
+        border-radius: 10px;
+        background: none;
+        color: var(--ua-muted);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .ss-x:hover {
+        color: var(--ua-warn);
+        border-color: var(--ua-warn-line);
+      }
+      .ss-seg {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 3px;
+        border: 1px solid var(--ua-line);
+        border-radius: 12px;
+      }
+      .ss-seg label {
+        position: relative;
+      }
+      .ss-seg input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .ss-seg span {
+        display: block;
+        padding: 6px 12px;
+        border-radius: 9px;
+        font-size: 14px;
+        color: var(--ua-muted);
+      }
+      .ss-seg input:checked + span {
+        background: var(--ua-ink);
+        color: var(--ua-bg);
+        font-weight: 600;
+      }
+      .ss-seg input:focus-visible + span {
+        outline: 2px solid var(--ua-ink);
+        outline-offset: 2px;
+      }
+      .ss-note a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+      .ss-note {
+        margin: 0;
+        font-size: 13.5px;
+        color: var(--ua-muted);
+      }
+      .ss-days {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .ss-chip input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .ss-chip span {
+        display: block;
+        padding: 6px 12px;
+        border: 1px solid var(--ua-line);
+        border-radius: 999px;
+        font-size: 14px;
+        color: var(--ua-muted);
+      }
+      .ss-chip input:checked + span {
+        border-color: var(--ua-ink);
+        color: var(--ua-ink);
+        font-weight: 600;
+      }
+      .ss-chip input:focus-visible + span {
+        outline: 2px solid var(--ua-ink);
+        outline-offset: 2px;
+      }
+      input[type="range"] {
+        flex: 1;
+        min-width: 160px;
+        accent-color: var(--ua-c-is);
+      }
+      output {
+        min-width: 64px;
+        font-weight: 600;
+      }
+      .ss-check {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+      }
+      .ss-check input {
+        width: 18px;
+        height: 18px;
+        margin-top: 3px;
+        accent-color: var(--ua-c-is);
+      }
+      .ss-check small {
+        display: block;
+        color: var(--ua-muted);
+        font-size: 13.5px;
+      }
+      .ss-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .ss-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 42px;
+        padding: 9px 18px;
+        border: 1px solid var(--ua-line);
+        border-radius: 999px;
+        background: none;
+        color: var(--ua-ink);
+        font: 600 15px/1.2 inherit;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .ss-btn:hover {
+        border-color: var(--ua-muted);
+      }
+      .ss-btn.solid {
+        border-color: var(--ua-ink);
+        background: var(--ua-ink);
+        color: var(--ua-bg);
+      }
+      .ss-btn.danger {
+        color: var(--ua-warn);
+        border-color: var(--ua-warn-line);
+      }
+      .ss-btn[disabled] {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .ss-msg {
+        font-size: 14px;
+        color: var(--ua-warn);
+      }
+      .ss-warn,
+      .ss-info {
+        margin: 0 0 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 14.5px;
+      }
+      .ss-warn {
+        background: var(--ua-warn-soft);
+        border: 1px solid var(--ua-warn-line);
+      }
+      .ss-info {
+        background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--ua-bg));
+        border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, var(--ua-line));
+      }
+
+      /* riepilogo: un riquadro per esame, con conto alla rovescia e avanzamento */
+      .ss-exams {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 10px;
+      }
+      .ss-ex {
+        display: grid;
+        gap: 4px;
+        padding: 14px 16px;
+        border: 1px solid var(--ua-line);
+        border-radius: 14px;
+        background: radial-gradient(
+          260px 120px at 0 0,
+          color-mix(in srgb, var(--c) 16%, transparent),
+          transparent 70%
+        );
+      }
+      .ss-ex-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .ss-code {
+        font:
+          600 12px/1 "IBM Plex Mono",
+          monospace;
+        color: var(--c);
+      }
+      .ss-cd {
+        font:
+          500 12px/1 "IBM Plex Mono",
+          monospace;
+        padding: 4px 9px;
+        border-radius: 999px;
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 14%, transparent);
+        white-space: nowrap;
+      }
+      .ss-ex b {
+        font-size: 15.5px;
+        line-height: 1.3;
+      }
+      .ss-bar {
+        height: 6px;
+        margin-top: 6px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--ua-ink) 10%, transparent);
+        overflow: hidden;
+      }
+      .ss-bar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--c);
+      }
+
+      /* giorni del calendario */
+      .ss-day {
+        margin-bottom: 12px;
+        border: 1px solid var(--ua-line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .ss-day.today {
+        border: 1.5px solid transparent;
+        background:
+          linear-gradient(var(--ua-bg), var(--ua-bg)) padding-box,
+          linear-gradient(120deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+      }
+      .ss-dh {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 16px;
+        background: color-mix(in srgb, var(--ua-soft) 55%, transparent);
+      }
+      .ss-dt {
+        display: grid;
+        justify-items: center;
+        line-height: 1.1;
+        font:
+          500 11.5px/1.15 "IBM Plex Mono",
+          monospace;
+        color: var(--ua-muted);
+      }
+      .ss-dt b {
+        font:
+          700 22px/1.1 "Schibsted Grotesk",
+          sans-serif;
+        color: var(--ua-ink);
+      }
+      .ss-dh h3 {
+        margin: 0;
+        font-size: 15.5px;
+        line-height: 1.3;
+      }
+      .ss-tag {
+        display: inline-block;
+        margin: 0 6px 3px 0;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font:
+          500 11.5px/1.4 "IBM Plex Mono",
+          monospace;
+        color: var(--c, var(--ua-ink));
+        background: color-mix(in srgb, var(--c, var(--ua-ink)) 13%, transparent);
+      }
+      .ss-min {
+        font:
+          500 12.5px/1 "IBM Plex Mono",
+          monospace;
+        color: var(--ua-muted);
+      }
+      .ss-day ul {
+        list-style: none;
+        margin: 0;
+        padding: 6px 8px 8px;
+      }
+      .ss-task label {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: start;
+        padding: 9px 8px;
+        border-radius: 10px;
+      }
+      .ss-task label:hover {
+        background: color-mix(in srgb, var(--ua-soft) 60%, transparent);
+      }
+      .ss-task input {
+        width: 19px;
+        height: 19px;
+        margin-top: 2px;
+        accent-color: var(--ua-c-is);
+      }
+      .ss-tx {
+        min-width: 0;
+      }
+      .ss-tx b {
+        font-weight: 600;
+      }
+      .ss-tx b::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin: 0 8px 1px 0;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .ss-tx small {
+        display: block;
+        margin-top: 2px;
+        font-size: 13.5px;
+        line-height: 1.45;
+        color: var(--ua-muted);
+      }
+      .ss-tx a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+      .ss-task.done .ss-tx b {
+        text-decoration: line-through;
+        color: var(--ua-muted);
+      }
+      .ss-tm {
+        font:
+          500 12.5px/1.6 "IBM Plex Mono",
+          monospace;
+        color: var(--ua-muted);
+        white-space: nowrap;
+      }
+      .ss-day.exam {
+        border-color: color-mix(in srgb, var(--c) 50%, var(--ua-line));
+        background: color-mix(in srgb, var(--c) 9%, var(--ua-bg));
+      }
+      .ss-day.exam .ss-dh {
+        background: none;
+      }
+      .ss-day.done .ss-dh h3::after {
+        content: " ✓";
+        color: var(--ua-c-mp);
+      }
+      details.ss-past {
+        margin-bottom: 14px;
+      }
+      details.ss-past summary {
+        cursor: pointer;
+        color: var(--ua-muted);
+        font-size: 14.5px;
+        margin-bottom: 10px;
+      }
+      .ss-empty {
+        padding: 16px;
+        border: 1px dashed var(--ua-line);
+        border-radius: 14px;
+        color: var(--ua-muted);
+      }
+      .ss-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 26px 0 0;
+      }
+      @media (max-width: 560px) {
+        fieldset {
+          padding: 14px 14px 16px;
+        }
+        .ss-exam-top {
+          grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .ss-exam-top .ss-date {
+          grid-column: 1;
+          grid-row: 2;
+        }
+        .ss-dh {
+          grid-template-columns: 44px minmax(0, 1fr) auto;
+          padding: 10px 12px;
+        }
+        .ss-actions .ss-btn {
+          flex: 1;
+        }
+        /* riepilogo degli esami su due colonne: con un riquadro per riga occuperebbe tutto lo schermo */
+        .ss-exams {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .ss-ex {
+          padding: 12px;
+        }
+        .ss-ex b {
+          font-size: 14.5px;
+        }
+        .ss-cd {
+          padding: 3px 7px;
+          font-size: 11px;
+        }
+      }
+
+      /* stampa: solo il calendario */
+      @media print {
+        .eyebrow,
+        .lede,
+        .ss-tools,
+        .ss-info,
+        details.ss-past {
+          display: none !important;
+        }
+        .ss-day {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="eyebrow"><a href="index.html">Appunti Unisa</a> · Sessione</div>
+      <h1>Sessione</h1>
+      <p class="lede">
+        Scegli gli esami e le date degli appelli: il piano giorno per giorno lo preparo io, con i capitoli dei
+        piani di studio. Se resti indietro, si sistema da solo.
+      </p>
+      <div id="ss-app"><p class="ss-wait">Carico la sessione…</p></div>
+    </main>
+
+    <script src="assets/sessione.js"></script>
+    <script>
+      /* Pagina della Sessione: modulo (esami, tempo, ripasso, promemoria) e calendario con le spunte.
+         I dati e il piano li prepara assets/sessione.js; qui si disegna. Lo script comune (site.js) e corsi.js
+         li aggiunge la pubblicazione in fondo alla pagina: per questo si parte a DOMContentLoaded. */
+      document.addEventListener("DOMContentLoaded", () => {
+        const S = window.SESSIONE;
+        const ROOT = "./";
+        const app = document.getElementById("ss-app");
+        const esc = s =>
+          String(s == null ? "" : s).replace(
+            /[&<>"]/g,
+            c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]
+          );
+        const courses = S.courses();
+        const courseOf = code => courses.find(c => c.code === code);
+        let editing = false;
+
+        /* ---------- modulo ---------- */
+        const YEARS = [
+          ["1° anno", c => c.year === 1],
+          ["2° anno", c => c.year === 2],
+          ["3° anno", c => c.year === 3 && !c.opt],
+          ["3° anno · a scelta", c => c.year === 3 && c.opt]
+        ];
+        const courseOptions = sel =>
+          `<option value="">Scegli il corso…</option>` +
+          YEARS.map(
+            ([lbl, f]) =>
+              `<optgroup label="${lbl}">${courses
+                .filter(f)
+                .map(
+                  c => `<option value="${c.code}" ${c.code === sel ? "selected" : ""}>${esc(c.name)}</option>`
+                )
+                .join("")}</optgroup>`
+          ).join("");
+        const seg = (name, list, val) =>
+          `<div class="ss-seg" role="radiogroup">${list
+            .map(
+              ([v, t]) =>
+                `<label><input type="radio" name="${name}" value="${v}" ${String(v) === String(val) ? "checked" : ""}><span>${t}</span></label>`
+            )
+            .join("")}</div>`;
+        let nExam = 0;
+        function examRow(e = {}) {
+          const k = nExam++;
+          const c = courseOf(e.code);
+          return `<div class="ss-exam" data-k="${k}" style="--c:${c ? c.color : "var(--ua-line)"}">
+            <div class="ss-exam-top">
+              <label class="ss-field"><span>Esame</span><select name="code">${courseOptions(e.code)}</select></label>
+              <label class="ss-field ss-date"><span>Data dell'appello</span><input type="date" name="date" value="${esc(e.date || "")}" min="${S.today()}"></label>
+              <button type="button" class="ss-x" aria-label="Togli questo esame">×</button>
+            </div>
+            <div class="ss-field"><span>Quanto lo sai già</span>${seg(
+              "lv" + k,
+              S.LEVELS.map(l => [l.v, l.t]),
+              e.lv || 0
+            )}</div>
+            <div class="ss-extra">${extraFields(c, e, k)}</div>
+          </div>`;
+        }
+        // campi che dipendono dal corso: la prova (IS) oppure ore e capitoli (corsi senza piano sul sito)
+        function extraFields(c, e, k) {
+          if (!c) return "";
+          if (c.piano)
+            return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">piano di studio</a> di ${esc(c.name)}.</p>${
+              c.code === "IS"
+                ? `<div class="ss-field"><span>Prova</span>${seg(
+                    "scope" + k,
+                    [
+                      ["completa", "Esame completo"],
+                      ["prima", "Prima prova"]
+                    ],
+                    e.scope || "completa"
+                  )}</div>`
+                : ""
+            }`;
+          return `<div class="ss-row">
+              <label class="ss-field"><span>Ore di studio che ti servono (circa)</span><input type="number" name="hours" min="5" max="200" step="5" value="${esc(e.hours || 30)}" style="width:120px"></label>
+            </div>
+            <label class="ss-field"><span>Capitoli o argomenti, uno per riga (facoltativo: se li scrivi, li trovi nel piano da spuntare)</span><textarea name="chapters" placeholder="es. Limiti&#10;Derivate&#10;Integrali">${esc(e.chapters || "")}</textarea></label>`;
+        }
+        function form(st) {
+          const cfg = (st && st.cfg) || {
+            exams: [{}],
+            start: S.today(),
+            hours: 3,
+            days: [1, 2, 3, 4, 5, 6],
+            ded: 2,
+            notify: false
+          };
+          nExam = 0;
+          app.innerHTML = `<form id="ss-form" novalidate>
+            <fieldset><legend>Gli esami della sessione</legend>
+              <div id="ss-exams">${(cfg.exams.length ? cfg.exams : [{}]).map(examRow).join("")}</div>
+              <button type="button" class="ss-btn" id="ss-add">+ Aggiungi esame</button>
+            </fieldset>
+            <fieldset><legend>Quanto tempo hai</legend>
+              <div class="ss-row">
+                <label class="ss-field"><span>Comincio il</span><input type="date" name="start" value="${esc(cfg.start && cfg.start > S.today() ? cfg.start : S.today())}" min="${S.today()}"></label>
+              </div>
+              <div class="ss-row" style="margin-top:14px">
+                <label class="ss-field" style="flex:1"><span>Ore al giorno</span><input type="range" name="hours" min="1" max="10" step="0.5" value="${cfg.hours}"></label>
+                <output id="ss-hours"></output>
+              </div>
+              <p class="ss-note" style="margin:14px 0 8px">Giorni in cui puoi studiare</p>
+              <div class="ss-days">${[1, 2, 3, 4, 5, 6, 0]
+                .map(
+                  d =>
+                    `<label class="ss-chip"><input type="checkbox" name="wd" value="${d}" ${cfg.days.includes(d) ? "checked" : ""}><span>${S.WD_LONG[d]}</span></label>`
+                )
+                .join("")}</div>
+            </fieldset>
+            <fieldset><legend>Ripasso prima di ogni esame</legend>
+              <div class="ss-field"><span>Giorni di solo ripasso e simulazione, subito prima dell'appello</span>${seg(
+                "ded",
+                [
+                  [1, "1 giorno"],
+                  [2, "2 giorni"],
+                  [3, "3 giorni"]
+                ],
+                cfg.ded
+              )}</div>
+              <p class="ss-note" style="margin-top:10px">Negli altri giorni gli esami vanno in parallelo: quello più vicino prende più tempo.</p>
+            </fieldset>
+            <fieldset><legend>Promemoria</legend>
+              <label class="ss-check"><input type="checkbox" name="notify" ${cfg.notify ? "checked" : ""}><span><b>Promemoria del mattino</b><small>Ogni mattina verso le 7:30 una notifica con cosa studiare oggi. Serve l'accesso con Google (dal Profilo) e le notifiche attive su questo dispositivo.</small></span></label>
+              <div data-ua-nt style="margin-top:12px"></div>
+            </fieldset>
+            <div class="ss-actions">
+              <button type="submit" class="ss-btn solid">${st ? "Aggiorna il piano" : "Genera il mio piano"}</button>
+              ${st ? `<button type="button" class="ss-btn" id="ss-cancel">Annulla</button>` : ""}
+              <span class="ss-msg" id="ss-msg" role="alert"></span>
+            </div>
+          </form>`;
+          const f = app.querySelector("#ss-form");
+          const hours = f.querySelector('input[name="hours"][type="range"]');
+          const showHours = () => {
+            const h = +hours.value;
+            f.querySelector("#ss-hours").textContent =
+              `${String(h).replace(".", ",")} ${h === 1 ? "ora" : "ore"}`;
+          };
+          hours.addEventListener("input", showHours);
+          showHours();
+          f.querySelector("#ss-add").addEventListener("click", () => {
+            f.querySelector("#ss-exams").insertAdjacentHTML("beforeend", examRow({}));
+          });
+          f.addEventListener("click", e => {
+            const x = e.target.closest(".ss-x");
+            if (x) {
+              const rows = f.querySelectorAll(".ss-exam");
+              if (rows.length > 1) x.closest(".ss-exam").remove();
+              else x.closest(".ss-exam").outerHTML = examRow({});
+            }
+          });
+          f.addEventListener("change", e => {
+            if (e.target.name !== "code") return;
+            const row = e.target.closest(".ss-exam"),
+              c = courseOf(e.target.value);
+            row.style.setProperty("--c", c ? c.color : "var(--ua-line)");
+            row.querySelector(".ss-extra").innerHTML = extraFields(c, {}, row.dataset.k);
+          });
+          const cancel = f.querySelector("#ss-cancel");
+          if (cancel)
+            cancel.addEventListener("click", () => {
+              editing = false;
+              render();
+            });
+          f.addEventListener("submit", e => {
+            e.preventDefault();
+            submit(f, st);
+          });
+          // l'interruttore delle notifiche lo disegna site.js (stesso del Profilo)
+          document.dispatchEvent(new Event("ua-nt-refresh"));
+        }
+        function readForm(f) {
+          const exams = [...f.querySelectorAll(".ss-exam")].map(row => {
+            const k = row.dataset.k,
+              val = n => (row.querySelector(`[name="${n}"]`) || {}).value;
+            const lv = row.querySelector(`input[name="lv${k}"]:checked`);
+            const scope = row.querySelector(`input[name="scope${k}"]:checked`);
+            const e = { code: val("code"), date: val("date"), lv: lv ? +lv.value : 0 };
+            if (scope) e.scope = scope.value;
+            if (row.querySelector('[name="hours"]')) {
+              e.hours = Math.max(5, +val("hours") || 30);
+              e.chapters = val("chapters") || "";
+            }
+            return e;
+          });
+          return {
+            exams,
+            start: f.querySelector('[name="start"]').value || S.today(),
+            hours: +f.querySelector('input[name="hours"][type="range"]').value,
+            days: [...f.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value),
+            ded: +(f.querySelector('input[name="ded"]:checked') || { value: 2 }).value,
+            notify: f.querySelector('[name="notify"]').checked
+          };
+        }
+        async function submit(f, st) {
+          const msg = f.querySelector("#ss-msg"),
+            btn = f.querySelector('button[type="submit"]');
+          const cfg = readForm(f);
+          const t = S.today();
+          const err = cfg.exams.some(e => !e.code)
+            ? "Scegli il corso di ogni esame (o togli le righe vuote)."
+            : cfg.exams.some(e => !e.date)
+              ? "Inserisci la data di ogni esame."
+              : cfg.exams.some(e => e.date <= t)
+                ? "Le date degli esami devono essere da domani in poi."
+                : new Set(cfg.exams.map(e => e.code)).size < cfg.exams.length
+                  ? "C'è lo stesso esame due volte."
+                  : !cfg.days.length
+                    ? "Scegli almeno un giorno in cui puoi studiare."
+                    : cfg.exams.every(e => e.date <= cfg.start)
+                      ? "La data di inizio deve venire prima degli esami."
+                      : "";
+          if (err) {
+            msg.textContent = err;
+            return;
+          }
+          msg.textContent = "";
+          btn.disabled = true;
+          btn.textContent = "Preparo il piano…";
+          const next = Object.assign({ v: 1, done: {} }, st || {}, { cfg });
+          try {
+            await S.build(next, ROOT);
+            S.save(next);
+            editing = false;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } catch (e2) {
+            msg.textContent = (e2 && e2.message) || "Qualcosa è andato storto: riprova.";
+            btn.disabled = false;
+            btn.textContent = st ? "Aggiorna il piano" : "Genera il mio piano";
+          }
+        }
+
+        /* ---------- calendario ---------- */
+        const when = n => (n === 0 ? "oggi" : n === 1 ? "domani" : `tra ${n} giorni`);
+        function taskRow(st, task) {
+          const it = S.info(st, task),
+            c = courseOf(it.c) || {};
+          const inside = it.parts
+            ? Object.keys(it.parts)
+                .map(k => ({ read: "lettura", draw: "esercizio", open: "domanda aperta", quiz: "quiz" })[k])
+                .join(" · ")
+            : "";
+          const links = [
+            it.href ? `<a href="${esc(it.href)}">apri il capitolo</a>` : "",
+            it.quiz ? `<a href="${esc(it.quiz)}">quiz</a>` : ""
+          ]
+            .filter(Boolean)
+            .join(" · ");
+          // sotto il titolo: cosa fare, cosa c'è dentro (se non è solo lettura) e i link
+          const sub = [
+            it.s ? esc(it.s) : "",
+            inside && inside !== "lettura" ? "Dentro: " + inside : "",
+            links
+          ]
+            .filter(Boolean)
+            .join(" · ");
+          return `<li class="ss-task${it.done ? " done" : ""}" style="--c:${c.color || "var(--ua-muted)"}"><label>
+            <input type="checkbox" data-id="${esc(it.id)}" ${it.done ? "checked" : ""}>
+            <span class="ss-tx"><b>${esc(it.t)}${it.part ? ` (parte ${it.part})` : ""}</b><small>${esc(c.code || "")} · ${sub}</small></span>
+            <span class="ss-tm">${it.m ? S.fmtMin(it.m) : ""}</span></label></li>`;
+        }
+        function dayCard(st, d) {
+          const dt = S.parse(d.date),
+            t = S.today();
+          const head = `<div class="ss-dt">${S.WD[dt.getDay()]}<b>${dt.getDate()}</b>${S.MESI[dt.getMonth()]}</div>`;
+          if (d.exam) {
+            const c = courseOf(d.exam) || { name: d.exam, color: "var(--ua-muted)" };
+            return `<section class="ss-day exam" style="--c:${c.color}"><div class="ss-dh">${head}
+              <div><span class="ss-tag">Esame</span><h3>${esc(c.name)}</h3><span class="muted" style="font-size:14px">Colazione, niente argomenti nuovi. Leggi bene le domande prima di rispondere.</span></div><span></span></div></section>`;
+          }
+          const done = st.done || {};
+          const codes = [...new Set(d.tasks.map(x => (st.plan.items[x.iid] || {}).c).filter(Boolean))];
+          const tot = d.tasks.reduce((a, x) => a + x.m, 0);
+          const all = d.tasks.length && d.tasks.every(x => done[x.id] || !x.m);
+          const dc = d.ded ? courseOf(d.ded) : null;
+          const tags =
+            (d.date === t ? `<span class="ss-tag">Oggi</span>` : "") +
+            (dc ? `<span class="ss-tag" style="--c:${dc.color}">Solo ${esc(dc.code)}: ripasso</span>` : "");
+          // con un solo esame il nome intero, con più esami le sigle (i nomi interi non starebbero su una riga)
+          const title =
+            codes.length === 1 ? (courseOf(codes[0]) || { name: codes[0] }).name : codes.join(" · ");
+          return `<section class="ss-day${d.date === t ? " today" : ""}${all ? " done" : ""}" ${d.date === t ? 'id="oggi"' : ""}>
+            <div class="ss-dh">${head}<div>${tags}<h3>${esc(title)}</h3></div><span class="ss-min">${S.fmtMin(tot)}</span></div>
+            <ul>${d.tasks.map(x => taskRow(st, x)).join("")}</ul></section>`;
+        }
+        function examCards(st) {
+          const sm = S.summary(st);
+          const done = st.done || {};
+          return `<div class="ss-exams">${st.cfg.exams
+            .slice()
+            .sort((a, b) => (a.date < b.date ? -1 : 1))
+            .map(e => {
+              const c = courseOf(e.code) || { name: e.code, color: "var(--ua-muted)" };
+              const pcs = st.plan.days
+                .flatMap(d => d.tasks)
+                .filter(x => (st.plan.items[x.iid] || {}).c === e.code && x.m);
+              const tot = pcs.reduce((a, x) => a + x.m, 0),
+                ok = pcs.filter(x => done[x.id]).reduce((a, x) => a + x.m, 0);
+              const n = S.daysBetween(S.today(), e.date);
+              return `<div class="ss-ex" style="--c:${c.color}">
+                <div class="ss-ex-top"><span class="ss-code">${esc(e.code)}</span><span class="ss-cd">${n < 0 ? "fatto" : when(n)}</span></div>
+                <b>${esc(c.name)}</b><span class="muted" style="font-size:13.5px">${S.fmtDay(e.date)}${e.scope === "prima" ? " · prima prova" : ""}</span>
+                <div class="ss-bar" title="${tot ? Math.round((100 * ok) / tot) : 0}% fatto"><i style="width:${tot ? (100 * ok) / tot : 0}%"></i></div>
+              </div>`;
+            })
+            .join(
+              ""
+            )}</div>${sm ? `<p class="ss-note" style="margin-top:10px">Avanzamento della sessione: <b>${sm.pct}%</b></p>` : ""}`;
+        }
+        function plan(st) {
+          const t = S.today();
+          const days = st.plan.days;
+          const past = days.filter(d => d.date < t && !d.exam);
+          const todayDays = days.filter(d => d.date === t);
+          const future = days.filter(d => d.date > t);
+          const rp = st.plan.replanned;
+          const notice =
+            rp && Date.now() - rp.at < 3 * 86400000
+              ? `<p class="ss-info">Ho spostato da oggi in poi ${rp.n === 1 ? "1 attività rimasta indietro" : rp.n + " attività rimaste indietro"}: il piano è già aggiornato.</p>`
+              : "";
+          app.innerHTML = `${notice}${(st.plan.warnings || []).map(w => `<p class="ss-warn">${esc(w)}</p>`).join("")}${(st.plan.notes || []).map(w => `<p class="ss-info">${esc(w)}</p>`).join("")}
+            ${examCards(st)}
+            <h2>Oggi</h2>
+            ${todayDays.length ? todayDays.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Oggi niente in programma: goditi il giorno libero.</p>`}
+            <h2>Prossimi giorni</h2>
+            ${future.length ? future.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Non c'è altro in programma.</p>`}
+            ${past.length ? `<details class="ss-past"><summary>Giorni passati (${past.length})</summary>${past.map(d => dayCard(st, d)).join("")}</details>` : ""}
+            <h2>Promemoria</h2>
+            <label class="ss-check"><input type="checkbox" id="ss-notify" ${st.cfg.notify ? "checked" : ""}><span><b>Promemoria del mattino</b><small>Ogni mattina verso le 7:30 una notifica con cosa studiare oggi. Serve l'accesso con Google (dal Profilo) e le notifiche attive su questo dispositivo.</small></span></label>
+            <div data-ua-nt style="margin-top:12px"></div>
+            <div class="ss-tools">
+              <button type="button" class="ss-btn solid" id="ss-edit">Modifica la sessione</button>
+              <button type="button" class="ss-btn" id="ss-print">Stampa</button>
+              <button type="button" class="ss-btn danger" id="ss-del">Elimina la sessione</button>
+            </div>`;
+          app.querySelectorAll('.ss-task input[type="checkbox"]').forEach(cb =>
+            cb.addEventListener("change", () => {
+              const cur = S.load() || st;
+              S.toggle(cur, cb.dataset.id, cb.checked);
+              S.save(cur);
+              const y = window.scrollY;
+              render();
+              window.scrollTo(0, y);
+            })
+          );
+          app
+            .querySelectorAll(".ss-tx a")
+            .forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+          app.querySelector("#ss-notify").addEventListener("change", e => {
+            const cur = S.load() || st;
+            cur.cfg.notify = e.target.checked;
+            S.save(cur);
+          });
+          app.querySelector("#ss-edit").addEventListener("click", () => {
+            editing = true;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+          app.querySelector("#ss-print").addEventListener("click", () => window.print());
+          app.querySelector("#ss-del").addEventListener("click", () => {
+            if (!confirm("Eliminare la sessione? Il piano e le spunte della sessione verranno cancellati."))
+              return;
+            S.clear();
+            render();
+          });
+          document.dispatchEvent(new Event("ua-nt-refresh"));
+        }
+
+        function render() {
+          const st = S.load();
+          if (!st || !st.plan || editing) return form(st);
+          // attività rimaste indietro: si spostano da sole da oggi in poi
+          if (S.replanOffline(st)) S.save(st);
+          plan(st);
+        }
+        render();
+        // arrivando da "Apri il piano" (#oggi) si va subito al giorno di oggi
+        if (location.hash === "#oggi") {
+          const el = document.getElementById("oggi");
+          if (el) el.scrollIntoView({ block: "start" });
+        }
+      });
+    </script>
+  </body>
+</html>

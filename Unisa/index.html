@@ -649,10 +649,277 @@
         }
       }
 
-      /* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
-      .resume-wrap {
+      /* sessione d'esami + riprendi da dove eri: affiancate su computer (la sessione più larga), una sotto l'altra
+         su telefono; se una delle due non c'è, l'altra prende tutta la larghezza */
+      .duo {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 14px;
         padding-block: 0 18px;
       }
+      .duo:has(> [hidden]) {
+        grid-template-columns: 1fr;
+      }
+      .duo:not(:has(> :not([hidden]))) {
+        display: none;
+      }
+      @media (max-width: 860px) {
+        .duo {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* sessione d'esami: card da "strumento" (bordo col gradiente del sito, intestazione, settimana, attività
+         di oggi da spuntare e pulsante), diversa dalle card dei corsi. La riempie lo script qui sotto. */
+      .tool {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 20px 18px;
+        border: 1.5px solid transparent;
+        border-radius: 18px;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--surface), var(--surface)) padding-box,
+          linear-gradient(120deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+        box-shadow: 0 10px 30px -22px color-mix(in srgb, var(--ua-c-bd) 70%, transparent);
+      }
+      .tool-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tool-ic {
+        display: grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--ua-c-is), var(--ua-c-bd));
+      }
+      .tool-k {
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+      }
+      .tool-pc {
+        margin-left: auto;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .tool-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .tool-t {
+        font-family: var(--f-display);
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      .tool-t small {
+        font-family: var(--f-body);
+        font-weight: 400;
+        font-size: 14px;
+        letter-spacing: 0;
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      .tool-p {
+        margin: 0;
+        font-size: 14.5px;
+        color: var(--muted);
+      }
+      .tool-cd {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 14%, transparent);
+        white-space: nowrap;
+      }
+      .tool-cd b {
+        font-size: 14px;
+      }
+      .wk {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+      .wk-d {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 6px 0 7px;
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--ink) 5%, transparent);
+      }
+      .wk-d small {
+        font-family: var(--f-mono);
+        font-size: 10.5px;
+        color: var(--muted);
+      }
+      .wk-d b {
+        font-size: 15px;
+      }
+      .wk-d.is-today {
+        color: var(--bg);
+        background: var(--ink);
+      }
+      .wk-d.is-today small {
+        color: inherit;
+        opacity: 0.75;
+      }
+      .wk-d.is-exam {
+        box-shadow: inset 0 0 0 1.5px var(--c);
+      }
+      .wk-dots {
+        display: flex;
+        gap: 3px;
+        height: 6px;
+        align-items: center;
+      }
+      .wk-dots i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .wk-dots em {
+        font-style: normal;
+        font-family: var(--f-mono);
+        font-size: 9.5px;
+        line-height: 1;
+        color: var(--c);
+      }
+      .wk-d.is-today .wk-dots em {
+        color: inherit;
+      }
+      .tool-tasks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .tool-tasks label {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 6px 4px;
+        font-size: 14.5px;
+        cursor: pointer;
+      }
+      .tool-tasks input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--ua-c-is);
+      }
+      .tool-tasks span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tool-tasks input:checked + span {
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+      .tool-tasks em {
+        font-style: normal;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .tool-more {
+        font-size: 13.5px;
+        color: var(--muted);
+        padding-left: 32px;
+      }
+      .tool-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: auto;
+      }
+      .tool-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .tool-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-family: var(--f-mono);
+        font-size: 12px;
+      }
+      .tool-chip i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+      .tool-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 14.5px;
+        color: var(--bg);
+        background: var(--ink);
+        text-decoration: none;
+        transition: transform 0.2s var(--ua-ease);
+      }
+      .tool-btn:hover {
+        transform: translateY(-1px);
+      }
+      .tool-btn:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
+      }
+      @media (max-width: 520px) {
+        .tool {
+          padding: 14px 16px 16px;
+        }
+        .tool-k {
+          font-size: 10.5px;
+          letter-spacing: 0.04em;
+        }
+        .tool-t {
+          font-size: 18px;
+        }
+        .tool-t small {
+          display: block;
+          margin: 2px 0 0;
+        }
+        .tool-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
       .resume {
         position: relative;
         isolation: isolate;
@@ -770,6 +1037,81 @@
         }
         .resume-t {
           font-size: 17px;
+        }
+      }
+      /* riprendi accanto alla sessione (solo su computer): stessa altezza della card della sessione, con avanzamento
+         del documento e pulsante "Continua", così lo spazio non resta vuoto. Altrimenti resta la striscia compatta. */
+      .res-prog,
+      .res-foot {
+        display: none;
+      }
+      @media (min-width: 861px) {
+        .duo:has(#sess-card:not([hidden])) .resume {
+          height: 100%;
+          box-sizing: border-box;
+          grid-template-columns: 34px minmax(0, 1fr);
+          grid-template-rows: auto auto 1fr auto;
+          gap: 4px 14px;
+          padding: 16px 20px 18px;
+        }
+        .duo:has(#sess-card:not([hidden])) .resume .arrow {
+          display: none;
+        }
+        .duo:has(#sess-card:not([hidden])) .resume-t {
+          white-space: normal;
+        }
+        .duo:has(#sess-card:not([hidden])) .resume-t small {
+          display: block;
+          margin: 4px 0 0;
+        }
+        .duo:has(#sess-card:not([hidden])) .res-prog:not([hidden]) {
+          grid-column: 1 / -1;
+          align-self: end;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 10px;
+          font-family: var(--f-mono);
+          font-size: 12px;
+          color: var(--muted);
+        }
+        .res-prog > span:first-child {
+          flex: 1;
+          height: 6px;
+          border-radius: 999px;
+          background: color-mix(in srgb, var(--ink) 10%, transparent);
+          overflow: hidden;
+        }
+        .res-prog i {
+          display: block;
+          height: 100%;
+          border-radius: inherit;
+          background: var(--c);
+        }
+        .duo:has(#sess-card:not([hidden])) .res-foot {
+          grid-column: 1 / -1;
+          align-self: end;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          margin-top: 4px;
+        }
+        .res-foot small {
+          font-family: var(--f-mono);
+          font-size: 12px;
+          color: var(--muted);
+        }
+        .res-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 9px 16px;
+          border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
+          border-radius: 999px;
+          font-weight: 600;
+          font-size: 14.5px;
+          color: var(--c);
         }
       }
 
@@ -1341,13 +1683,24 @@
       </div>
     </header>
 
-    <div class="wrap resume-wrap" id="resume-wrap" hidden>
-      <a class="resume" id="resume" href="#">
-        <span class="resume-dot" aria-hidden="true"></span>
-        <span class="resume-k">Riprendi da dove eri</span>
-        <span class="resume-t" id="resume-t"></span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
+    <!-- sessione d'esami e "riprendi da dove eri": affiancate su computer, una sotto l'altra su telefono -->
+    <div class="wrap duo">
+      <div class="tool" id="sess-card" hidden></div>
+      <div class="resume-cell" id="resume-wrap" hidden>
+        <a class="resume" id="resume" href="#">
+          <span class="resume-dot" aria-hidden="true"></span>
+          <span class="resume-k">Riprendi da dove eri</span>
+          <span class="resume-t" id="resume-t"></span>
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="res-prog" hidden
+            ><span><i></i></span><span class="res-pc"></span
+          ></span>
+          <span class="res-foot"
+            ><small class="res-last"></small
+            ><span class="res-btn">Continua <span aria-hidden="true">→</span></span></span
+          >
+        </a>
+      </div>
     </div>
 
     <main class="wrap">
@@ -1532,6 +1885,7 @@
     </footer>
 
     <script src="assets/corsi.js"></script>
+    <script src="assets/sessione.js"></script>
     <script>
       const COURSES = window.CORSI || [];
       const fmt = iso =>
@@ -1657,9 +2011,19 @@
           };
         return null;
       }
+      let resumeDoc = null; // documento di "Riprendi da dove eri" (per il suo avanzamento, vedi sotto)
       function paintInfo(data) {
         const files = (data && data.files) || {},
           prog = (data && data.progress) || {};
+        if (resumeDoc && resumeDoc.progressKey) {
+          const p = progressOf(resumeDoc.progressKey, prog[resumeDoc.path]);
+          const box = document.querySelector("#resume .res-prog");
+          if (p && p.total) {
+            box.querySelector("i").style.width = (100 * p.done) / p.total + "%";
+            box.querySelector(".res-pc").textContent = `${p.done}/${p.total} ${p.what.split(" ")[0]}`;
+            box.hidden = false;
+          }
+        }
         document.querySelectorAll(".dinfo").forEach(i => {
           const parts = [i.dataset.kind];
           const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
@@ -1729,7 +2093,92 @@
               ? rtf.format(-Math.round(mins / 60), "hour")
               : rtf.format(-Math.round(mins / 1440), "day");
         box.querySelector(".resume-k").textContent = "Riprendi da dove eri · " + when;
+        box.querySelector(".res-last").textContent = last.n
+          ? "Ultima lettura: " + last.n.toLowerCase()
+          : found.d.kind;
         document.getElementById("resume-wrap").hidden = false;
+        resumeDoc = found.d;
+      })();
+
+      /* Sessione d'esami: card da "strumento" (dati e piano in assets/sessione.js, pagina completa sessione.html).
+         Senza sessione invita a crearla; con la sessione mostra il prossimo esame, la settimana, le attività di oggi
+         (si spuntano anche da qui) e gli altri esami. Le attività rimaste indietro si spostano da sole. */
+      (function () {
+        const S = window.SESSIONE,
+          card = document.getElementById("sess-card");
+        if (!S || !card) return;
+        const esc = s =>
+          String(s == null ? "" : s).replace(
+            /[&<>"]/g,
+            c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]
+          );
+        const head = pct =>
+          `<div class="tool-head"><span class="tool-ic"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="m9 15 2 2 4-4"/></svg></span><span class="tool-k">Strumento · Sessione d'esami</span>${pct == null ? "" : `<span class="tool-pc">${pct}% fatto</span>`}</div>`;
+        const when = n => (n === 0 ? "<b>oggi</b>" : n === 1 ? "<b>domani</b>" : `<b>${n}</b> giorni`);
+        function draw() {
+          const st = S.load();
+          if (st && S.replanOffline(st)) S.save(st);
+          const sm = S.summary(st);
+          if (!sm || !sm.next) {
+            card.innerHTML = `${head(null)}
+              <div class="tool-t">Organizza la tua sessione</div>
+              <p class="tool-p">Scegli gli esami e le date degli appelli: il piano giorno per giorno lo preparo io, con i capitoli dei piani di studio. Se resti indietro, si sistema da solo.</p>
+              <div class="tool-foot"><span></span><a class="tool-btn" href="sessione.html">Inizia <span aria-hidden="true">→</span></a></div>`;
+            card.hidden = false;
+            return;
+          }
+          const n = sm.next,
+            c = n.course || { name: n.code, color: "var(--muted)" };
+          const week = sm.week
+            .map((w, i) => {
+              const d = S.parse(w.date);
+              const ec = w.exam ? sm.color(w.exam) : "";
+              const dots = w.exam
+                ? `<em style="--c:${ec}">${esc(w.exam)}</em>`
+                : w.codes.map(code => `<i style="--c:${sm.color(code)}"></i>`).join("");
+              return `<span class="wk-d${i === 0 ? " is-today" : ""}${w.exam ? " is-exam" : ""}" ${w.exam ? `style="--c:${ec}"` : ""}><small>${S.WD[d.getDay()]}</small><b>${d.getDate()}</b><span class="wk-dots">${dots}</span></span>`;
+            })
+            .join("");
+          const examToday = sm.exams.find(e => e.inDays === 0);
+          const MAX = 4;
+          const tasks = sm.today.filter(x => x.m > 0);
+          const list = examToday
+            ? `<p class="tool-p">Oggi c'è l'esame di <b>${esc(examToday.course ? examToday.course.name : examToday.code)}</b>. In bocca al lupo!</p>`
+            : tasks.length
+              ? `<ul class="tool-tasks">${tasks
+                  .slice(0, MAX)
+                  .map(
+                    x =>
+                      `<li><label><input type="checkbox" data-id="${esc(x.id)}" ${x.done ? "checked" : ""}><span>${esc(x.t)}${x.part ? ` (${x.part})` : ""}</span><em>${esc(x.c)} · ${S.fmtMin(x.m)}</em></label></li>`
+                  )
+                  .join(
+                    ""
+                  )}</ul>${tasks.length > MAX ? `<span class="tool-more">${tasks.length - MAX === 1 ? "e un'altra" : "e altre " + (tasks.length - MAX)} nel piano</span>` : ""}`
+              : `<p class="tool-p">Oggi niente in programma: giorno libero.</p>`;
+          const others = sm.exams
+            .slice(1)
+            .map(
+              e =>
+                `<span class="tool-chip" style="--c:${e.course ? e.course.color : "var(--muted)"}"><i></i>${esc(e.code)} · ${e.inDays} gg</span>`
+            )
+            .join("");
+          card.innerHTML = `${head(sm.pct)}
+            <div class="tool-row"><div class="tool-t">${esc(c.name)} <small>${S.fmtDay(n.date)}</small></div><span class="tool-cd" style="--c:${c.color}">${when(n.inDays)}</span></div>
+            <div class="wk" aria-label="I prossimi 7 giorni">${week}</div>
+            ${list}
+            <div class="tool-foot"><div class="tool-chips">${others}</div><a class="tool-btn" href="sessione.html#oggi">Apri il piano <span aria-hidden="true">→</span></a></div>`;
+          card.hidden = false;
+          card.querySelectorAll(".tool-tasks input").forEach(cb =>
+            cb.addEventListener("change", () => {
+              const cur = S.load();
+              if (!cur) return;
+              S.toggle(cur, cb.dataset.id, cb.checked);
+              S.save(cur);
+              draw();
+            })
+          );
+        }
+        draw();
       })();
       window.addEventListener("pageshow", e => {
         if (e.persisted) location.reload();

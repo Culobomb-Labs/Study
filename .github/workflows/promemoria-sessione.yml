@@ -1,0 +1,29 @@
+name: Promemoria sessione
+# Ogni mattina manda il promemoria della Sessione d'esami a chi l'ha attivato (attività di oggi, o "in bocca al lupo"
+# il giorno dell'esame). Gli orari di GitHub sono in UTC: 6:23 UTC sono le 7:23 d'inverno e le 8:23 d'estate in Italia.
+# (GitHub può ritardare un po' gli avvii programmati: di solito il promemoria arriva entro 15 minuti.)
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: promemoria-sessione
+  cancel-in-progress: false
+jobs:
+  promemoria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --prefix .github/scripts --no-save --no-audit --no-fund firebase-admin@14
+      - name: Manda i promemoria della sessione
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node .github/scripts/promemoria_sessione.mjs
