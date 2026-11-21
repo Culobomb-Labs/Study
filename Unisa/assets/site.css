@@ -1743,6 +1743,29 @@ a.ua-ni.has-thumb {
 .ua-ap-report b {
   color: var(--ua-warn);
 }
+/* "Servizi UNISA": si apre come "Sposta le spunte"; dentro i link a Esse3, E-learning e Biblioteca (in viola) */
+.ua-ap-uni {
+  gap: 4px;
+  padding: 4px 6px 8px;
+}
+.ua-ap-uni-link {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  background: var(--ua-bg);
+}
+.ua-ap-uni-link:hover {
+  background: var(--ua-bg);
+  outline: 1px solid var(--ua-line);
+}
+.ua-ap-uni-btn .ua-nt-ic,
+.ua-ap-uni-link .ua-nt-ic {
+  color: var(--ua-c-is);
+  background: color-mix(in srgb, var(--ua-c-is) 16%, transparent);
+}
+.ua-ap-go {
+  padding-right: 4px;
+  color: var(--ua-muted);
+  font-size: 15px;
+}
 button.ua-np-all {
   appearance: none;
   border: 0;

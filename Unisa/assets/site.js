@@ -1396,6 +1396,51 @@
     });
   }
 
+  /* servizi UNISA: un solo elenco per la voce "Servizi UNISA" della tendina Profilo e per la tendina
+     della colonna "Link esterni" in fondo alla home. Per aggiungere, togliere o cambiare un link basta modificare qui. */
+  const SERVIZI = [
+    {
+      ic: "esse3",
+      href: "https://esse3web.unisa.it/Root.do",
+      t: "Esse3",
+      x: "Carriera, esami e prenotazioni"
+    },
+    {
+      ic: "elearning",
+      href: "https://elearning.informatica.unisa.it/el-platform/",
+      t: "E-learning Informatica",
+      x: "Materiale e avvisi dei corsi"
+    },
+    {
+      ic: "biblio",
+      href: "https://www.biblioteche.unisa.it/chiedi-al-bibliotecario",
+      t: "Biblioteca UNISA",
+      x: "Chiedi al bibliotecario"
+    }
+  ];
+  // disegni delle icone: l'edificio per il gruppo, poi uno per ogni servizio
+  const SERVIZI_IC = {
+    uni: '<path d="M3 21h18"/><path d="M5 21V10M19 21V10M9 21V10M15 21V10"/><path d="M2 10 12 4l10 6z"/>',
+    esse3: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>',
+    elearning: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+    biblio:
+      '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>'
+  };
+  // tendina Profilo: 16 px e tratto 2, come le altre icone; fondo della home: 18 px e tratto 1.8, come le cartelle Drive
+  const servIcon = (k, size = 16, stroke = 2) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SERVIZI_IC[k]}</svg>`;
+  // home: riempie la tendina "Servizi UNISA" sotto le cartelle Drive (resta nascosta finché non è pronta)
+  function buildServizi() {
+    const box = document.querySelector("[data-ua-servizi]");
+    if (!box) return;
+    box.querySelector(".drives-sum .drive-s").textContent = SERVIZI.length + " link";
+    box.querySelector(".drives-list").innerHTML = SERVIZI.map(
+      s =>
+        `<a class="drive uni" href="${s.href}" target="_blank" rel="noopener"><span class="drive-ic">${servIcon(s.ic, 18, 1.8)}</span><span class="drive-t">${s.t}</span><span class="drive-s">${s.x}</span><span class="drive-go" aria-hidden="true">↗</span></a>`
+    ).join("");
+    box.hidden = false;
+  }
+
   /* tendina Profilo (accesso, aspetto, spunte): sopra la scheda Profilo su PC, dal basso su telefono */
   let ap = null,
     apTrigger = null;
@@ -1447,6 +1492,11 @@
       <ul class="ua-ap-menu">
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
+        <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-ap-uni-btn" aria-expanded="false" aria-controls="ua-ap-uni"><span class="ua-nt-ic">${servIcon("uni")}</span><span class="ua-nt-txt"><b>Servizi UNISA</b><span>Esse3, E-learning e Biblioteca</span></span>${ICON.chev}</button>
+          <div class="ua-ap-move ua-ap-uni" id="ua-ap-uni" hidden>${SERVIZI.map(
+            s =>
+              `<a class="ua-ap-item ua-ap-uni-link" href="${s.href}" target="_blank" rel="noopener"><span class="ua-nt-ic">${servIcon(s.ic)}</span><span class="ua-nt-txt"><b>${s.t}</b><span>${s.x}</span></span><span class="ua-ap-go" aria-hidden="true">↗</span></a>`
+          ).join("")}</div></li>
         ${u ? item("ua-ap-switch ua-do-switch", ICON.swap, "Accedi con un altro account", "Scegli un altro account Google") : ""}
         ${item("ua-ap-report", ICON.bug, "Segnala un problema", "Qualcosa non va negli appunti o nel sito?", `${ROOT}segnalazioni.html`)}
       </ul>
@@ -1472,6 +1522,17 @@
         out.disabled = true;
         signOutNow();
       });
+    const uniBtn = ap.querySelector(".ua-ap-uni-btn"),
+      uniList = ap.querySelector(".ua-ap-uni");
+    uniBtn.addEventListener("click", () => {
+      const open = uniBtn.getAttribute("aria-expanded") !== "true";
+      uniBtn.setAttribute("aria-expanded", String(open));
+      uniList.hidden = !open;
+      if (open) {
+        if (!phone()) placeBox(ap.querySelector(".ua-np-box"), apTrigger);
+        uniList.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    });
     const exp = ap.querySelector(".ua-do-export"),
       move = ap.querySelector(".ua-ap-move");
     exp.addEventListener("click", () => {
@@ -2629,6 +2690,7 @@
   }
   buildBar();
   buildCopyright();
+  buildServizi();
   buildDock();
   buildPalette();
   loadNews();
