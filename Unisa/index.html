@@ -1132,7 +1132,7 @@
         border-top-color: color-mix(in srgb, var(--line) 70%, transparent);
       }
       @media (max-width: 760px) {
-        /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due pulsanti affiancati, poi i link esterni */
+        /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due scritte colorate affiancate, poi i link esterni */
         .site-foot .wrap {
           padding-block: 30px 26px;
         }
@@ -1174,10 +1174,7 @@
           width: 100%;
           justify-content: center;
           box-sizing: border-box;
-          padding: 12px;
-          border: 1px solid var(--line);
-          border-radius: 12px;
-          background: var(--surface);
+          padding: 10px; /* niente riquadro, ma l'area da toccare resta comoda */
           font-weight: 600;
         }
         .f-links a:hover {
@@ -1189,13 +1186,9 @@
         /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
         .f-links a[href="news.html"] {
           color: var(--ua-g-bell2);
-          background: color-mix(in srgb, var(--ua-g-bell1) 12%, var(--surface));
-          border-color: color-mix(in srgb, var(--ua-g-bell1) 40%, var(--line));
         }
         .f-links a[href="segnalazioni.html"] {
           color: var(--ua-warn);
-          background: var(--ua-warn-soft);
-          border-color: var(--ua-warn-line);
         }
       }
       .f-links a[href="news.html"] .f-dot {
