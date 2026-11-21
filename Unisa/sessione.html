@@ -685,6 +685,9 @@
         let editing = false;
         // esami che di solito hanno il progetto: la casella "C'è il progetto" parte già spuntata
         const PRJ_DEFAULT = ["BD", "IS", "PD"];
+        /* esami in cui la traccia del progetto arriva pochi giorni prima dell'esame: giorni proposti e ore di
+           esercizio pratico prima della traccia (PD: la traccia arriva circa 3-5 giorni prima) */
+        const PRJ_LATE = { PD: { fromDays: 5, pra: 10 } };
         /* Promemoria, due modi a scelta, a ore intere dalle 7 alle 23:
            - "orari": da 1 a 4 al giorno, alle ore scelte (orari proposti quando cambi il numero);
            - "ogni": ogni 1, 2, 3 o 4 ore, dalle … alle ….
@@ -765,12 +768,31 @@
           return courseFields(c, e, k) + projectFields(c, e);
         }
         function projectFields(c, e) {
-          const p = e.prj || { on: PRJ_DEFAULT.includes(c.code) };
+          const late = PRJ_LATE[c.code] || { fromDays: 0, pra: 10 };
+          const p = e.prj || Object.assign({ on: PRJ_DEFAULT.includes(c.code) }, PRJ_LATE[c.code]);
+          const from = p.fromDays || 0;
+          const opts = [
+            [0, "Ce l'ho già"],
+            [3, "3 giorni prima dell'esame"],
+            [4, "4 giorni prima"],
+            [5, "5 giorni prima"],
+            [7, "7 giorni prima"],
+            [10, "10 giorni prima"]
+          ];
           return `<div class="ss-prj">
             <label class="ss-check"><input type="checkbox" name="prj" ${p.on ? "checked" : ""}><span><b>C'è il progetto</b><small>Ogni giorno un po' di progetto fino alla consegna, insieme allo studio</small></span></label>
-            <div class="ss-row ss-prj-f" ${p.on ? "" : "hidden"}>
-              <label class="ss-field"><span>Ore che ti servono (circa)</span><input type="number" name="prjHours" min="2" max="300" step="1" value="${esc(p.hours || 20)}" style="width:120px"></label>
-              <label class="ss-field"><span>Consegna (se vuoto: il giorno dell'esame)</span><input type="date" name="prjDate" value="${esc(p.date || "")}" min="${S.today()}"></label>
+            <div class="ss-prj-f" ${p.on ? "" : "hidden"}>
+              <div class="ss-row">
+                <label class="ss-field"><span>Ore che ti servono (circa)</span><input type="number" name="prjHours" min="2" max="300" step="1" value="${esc(p.hours || 20)}" style="width:120px"></label>
+                <label class="ss-field"><span>Consegna (se vuoto: il giorno dell'esame)</span><input type="date" name="prjDate" value="${esc(p.date || "")}" min="${S.today()}"></label>
+              </div>
+              <div class="ss-row" style="margin-top:12px">
+                <label class="ss-field"><span>La traccia del progetto</span><select name="prjFrom">${opts
+                  .map(([v, t]) => `<option value="${v}" ${v === from ? "selected" : ""}>${t}</option>`)
+                  .join("")}</select></label>
+                <label class="ss-field ss-pra" ${from ? "" : "hidden"}><span>Ore di esercizio pratico prima della traccia</span><input type="number" name="prjPra" min="0" max="100" step="1" value="${esc(p.pra != null ? p.pra : late.pra)}" style="width:120px"></label>
+              </div>
+              <p class="ss-note ss-pra" style="margin-top:8px" ${from ? "" : "hidden"}>Prima che arrivi la traccia il piano mette blocchi di esercizio sulla parte pratica; i blocchi di progetto partono dal giorno della traccia.</p>
             </div>
           </div>`;
         }
@@ -977,6 +999,8 @@
           f.addEventListener("change", e => {
             const row = e.target.closest(".ss-exam");
             if (e.target.name === "prj") row.querySelector(".ss-prj-f").hidden = !e.target.checked;
+            if (e.target.name === "prjFrom")
+              row.querySelectorAll(".ss-pra").forEach(x => (x.hidden = !+e.target.value));
             if (e.target.name !== "code") return;
             const c = courseOf(e.target.value);
             row.style.setProperty("--c", c ? c.color : "var(--ua-line)");
@@ -1013,7 +1037,9 @@
               e.prj = {
                 on: prj.checked,
                 hours: Math.max(2, +val("prjHours") || 20),
-                date: val("prjDate") || ""
+                date: val("prjDate") || "",
+                fromDays: +val("prjFrom") || 0,
+                pra: Math.max(0, +val("prjPra") || 0)
               };
             return e;
           });
@@ -1096,7 +1122,7 @@
             <span class="ss-tx"><b>${esc(it.t)}${it.part ? ` (parte ${it.part})` : ""}</b><small>${esc(c.code || "")} · ${sub}</small></span>
             <span class="ss-tm">${it.m ? S.fmtMin(it.m) : ""}</span></label></li>`;
         }
-        // etichette "Consegna progetto" per un giorno (le consegne sono segni a parte nel piano: vedi sessione.js)
+        // etichette "Consegna progetto" (segni a parte nel piano: vedi sessione.js) e "Arriva la traccia" per un giorno
         const dueTags = (st, date) =>
           st.plan.days
             .filter(x => x.due && x.date === date)
@@ -1104,6 +1130,14 @@
               const c = courseOf(x.due) || { code: x.due, color: "var(--ua-muted)" };
               return `<span class="ss-tag ss-due" style="--c:${c.color}">Consegna progetto ${esc(c.code)}</span>`;
             })
+            .concat(
+              st.cfg.exams
+                .filter(e => S.prjFrom(e) === date)
+                .map(e => {
+                  const c = courseOf(e.code) || { code: e.code, color: "var(--ua-muted)" };
+                  return `<span class="ss-tag ss-due" style="--c:${c.color}">Arriva la traccia ${esc(c.code)} (circa)</span>`;
+                })
+            )
             .join("");
         function dayCard(st, d) {
           const dt = S.parse(d.date),
@@ -1149,7 +1183,9 @@
                   .flatMap(d => d.tasks)
                   .filter(x => {
                     const it = st.plan.items[x.iid] || {};
-                    return it.c === e.code && x.m && (k === "prj" ? it.k === "prj" : it.k !== "prj");
+                    // nella barra del progetto anche l'esercizio pratico prima della traccia
+                    const isPrj = it.k === "prj" || it.k === "pra";
+                    return it.c === e.code && x.m && (k === "prj" ? isPrj : !isPrj);
                   });
               const pct = list => {
                 const tot = list.reduce((a, x) => a + x.m, 0);
@@ -1165,7 +1201,7 @@
                 <div class="ss-bar" title="Studio: ${Math.round(study)}% fatto"><i style="width:${study}%"></i></div>
                 ${
                   prj.length
-                    ? `<span class="ss-prj-l">Progetto · consegna ${S.fmtDay(S.prjDate(e))}</span><div class="ss-bar prj" title="Progetto: ${Math.round(pct(prj))}% fatto"><i style="width:${pct(prj)}%"></i></div>`
+                    ? `<span class="ss-prj-l">Progetto · ${S.prjFrom(e) ? `traccia ~${S.fmtDay(S.prjFrom(e))}, ` : ""}consegna ${S.fmtDay(S.prjDate(e))}</span><div class="ss-bar prj" title="Progetto: ${Math.round(pct(prj))}% fatto"><i style="width:${pct(prj)}%"></i></div>`
                     : ""
                 }
               </div>`;
