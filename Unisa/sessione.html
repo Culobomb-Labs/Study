@@ -335,6 +335,18 @@
         border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, var(--ua-line));
       }
 
+      /* progetto nel modulo: casella, poi ore e consegna */
+      .ss-prj {
+        padding-top: 12px;
+        border-top: 1px dashed var(--ua-line);
+      }
+      .ss-prj-f {
+        margin-top: 12px;
+      }
+      .ss-ore select {
+        min-width: 110px;
+      }
+
       /* riepilogo: un riquadro per esame, con conto alla rovescia e avanzamento */
       .ss-exams {
         display: grid;
@@ -385,6 +397,23 @@
         border-radius: 999px;
         background: color-mix(in srgb, var(--ua-ink) 10%, transparent);
         overflow: hidden;
+      }
+      .ss-prj-l {
+        margin-top: 6px;
+        font-size: 12.5px;
+        color: var(--ua-muted);
+      }
+      .ss-bar.prj {
+        margin-top: 4px;
+      }
+      .ss-bar.prj i {
+        background: repeating-linear-gradient(
+          135deg,
+          var(--c),
+          var(--c) 6px,
+          color-mix(in srgb, var(--c) 60%, transparent) 6px,
+          color-mix(in srgb, var(--c) 60%, transparent) 12px
+        );
       }
       .ss-bar i {
         display: block;
@@ -517,6 +546,15 @@
       .ss-day.exam .ss-dh {
         background: none;
       }
+      /* consegna di un progetto: come l'esame, ma col bordo tratteggiato */
+      .ss-day.due {
+        border-style: dashed;
+        background: color-mix(in srgb, var(--c) 5%, var(--ua-bg));
+      }
+      .ss-tag.ss-due {
+        outline: 1px dashed var(--c);
+        outline-offset: -1px;
+      }
       .ss-day.done .ss-dh h3::after {
         content: " ✓";
         color: var(--ua-c-mp);
@@ -620,6 +658,38 @@
         const courses = S.courses();
         const courseOf = code => courses.find(c => c.code === code);
         let editing = false;
+        // esami che di solito hanno il progetto: la casella "C'è il progetto" parte già spuntata
+        const PRJ_DEFAULT = ["BD", "IS", "PD"];
+        /* Promemoria, due modi a scelta, a ore intere dalle 7 alle 23:
+           - "orari": da 1 a 4 al giorno, alle ore scelte (orari proposti quando cambi il numero);
+           - "ogni": ogni 1, 2, 3 o 4 ore, dalle … alle ….
+           In cfg.ore si salvano sempre le ore effettive: le legge il controllo su GitHub
+           (.github/scripts/promemoria_sessione.mjs), che così non deve sapere quale modo è stato scelto. */
+        const ORE = Array.from({ length: 17 }, (_, i) => i + 7);
+        const ORE_DEFAULT = { 1: [10], 2: [10, 18], 3: [10, 15, 20], 4: [9, 13, 17, 21] };
+        const oreOgni = (ogni, dalle, alle) => {
+          const out = [];
+          for (let h = dalle; h <= alle; h += ogni) out.push(h);
+          return out;
+        };
+        // impostazioni dei promemoria di una sessione (anche di quelle salvate prima dei due modi)
+        const notifOf = cfg => {
+          const mode = cfg.notifMode === "ogni" ? "ogni" : "orari";
+          const orari =
+            cfg.orari && cfg.orari.length
+              ? cfg.orari
+              : mode === "orari" && cfg.ore && cfg.ore.length
+                ? cfg.ore
+                : ORE_DEFAULT[1];
+          return {
+            notify: !!cfg.notify,
+            mode,
+            orari,
+            ogni: cfg.ogni || 2,
+            dalle: cfg.dalle || 9,
+            alle: cfg.alle || 21
+          };
+        };
 
         /* ---------- modulo ---------- */
         const YEARS = [
@@ -664,9 +734,22 @@
             <div class="ss-extra">${extraFields(c, e, k)}</div>
           </div>`;
         }
-        // campi che dipendono dal corso: la prova (IS) oppure ore e capitoli (corsi senza piano sul sito)
+        // campi che dipendono dal corso: la prova (IS) oppure ore e capitoli (corsi senza piano sul sito); poi il progetto
         function extraFields(c, e, k) {
           if (!c) return "";
+          return courseFields(c, e, k) + projectFields(c, e);
+        }
+        function projectFields(c, e) {
+          const p = e.prj || { on: PRJ_DEFAULT.includes(c.code) };
+          return `<div class="ss-prj">
+            <label class="ss-check"><input type="checkbox" name="prj" ${p.on ? "checked" : ""}><span><b>C'è il progetto</b><small>Ogni giorno un po' di progetto fino alla consegna, insieme allo studio</small></span></label>
+            <div class="ss-row ss-prj-f" ${p.on ? "" : "hidden"}>
+              <label class="ss-field"><span>Ore che ti servono (circa)</span><input type="number" name="prjHours" min="2" max="300" step="1" value="${esc(p.hours || 20)}" style="width:120px"></label>
+              <label class="ss-field"><span>Consegna (se vuoto: il giorno dell'esame)</span><input type="date" name="prjDate" value="${esc(p.date || "")}" min="${S.today()}"></label>
+            </div>
+          </div>`;
+        }
+        function courseFields(c, e, k) {
           if (c.piano)
             return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">piano di studio</a> di ${esc(c.name)}.</p>${
               c.code === "IS"
@@ -674,7 +757,8 @@
                     "scope" + k,
                     [
                       ["completa", "Esame completo"],
-                      ["prima", "Prima prova"]
+                      ["prima", "Prima prova"],
+                      ["seconda", "Seconda prova"]
                     ],
                     e.scope || "completa"
                   )}</div>`
@@ -685,6 +769,113 @@
             </div>
             <label class="ss-field"><span>Capitoli o argomenti, uno per riga (facoltativo: se li scrivi, li trovi nel piano da spuntare)</span><textarea name="chapters" placeholder="es. Limiti&#10;Derivate&#10;Integrali">${esc(e.chapters || "")}</textarea></label>`;
         }
+        function notifBox(cfg) {
+          const n = notifOf(cfg);
+          const hourSel = (name, h, list, label) =>
+            `<label class="ss-field"><span>${label}</span><select name="${name}">${list
+              .map(x => `<option value="${x}" ${x === h ? "selected" : ""}>${x}:00</option>`)
+              .join("")}</select></label>`;
+          const orariSel = orari =>
+            orari
+              .map((h, i) => hourSel("ora", h, ORE, orari.length > 1 ? i + 1 + "° promemoria" : "Alle"))
+              .join("");
+          return `<div class="ss-notif">
+            <label class="ss-check"><input type="checkbox" name="notify" ${n.notify ? "checked" : ""}><span><b>Promemoria</b><small>Il primo del giorno dice cosa studiare oggi; gli altri ricordano solo le attività di oggi non ancora fatte (se hai finito, non arrivano). Serve l'accesso con Google (dal Profilo) e le notifiche attive su questo dispositivo.</small></span></label>
+            <div class="ss-notif-f" ${n.notify ? "" : "hidden"}>
+              <div class="ss-field" style="margin-top:12px"><span>Come</span>${seg(
+                "nMode",
+                [
+                  ["orari", "A orari precisi"],
+                  ["ogni", "Ogni tot ore"]
+                ],
+                n.mode
+              )}</div>
+              <div class="ss-m-orari" ${n.mode === "orari" ? "" : "hidden"}>
+                <div class="ss-field" style="margin-top:12px"><span>Quante volte al giorno</span>${seg(
+                  "nOre",
+                  [1, 2, 3, 4].map(x => [x, x === 1 ? "1 volta" : x + " volte"]),
+                  n.orari.length
+                )}</div>
+                <div class="ss-row ss-ore" style="margin-top:12px">${orariSel(n.orari)}</div>
+              </div>
+              <div class="ss-m-ogni" ${n.mode === "ogni" ? "" : "hidden"}>
+                <div class="ss-field" style="margin-top:12px"><span>Ogni</span>${seg(
+                  "nOgni",
+                  [1, 2, 3, 4].map(x => [x, x === 1 ? "1 ora" : x + " ore"]),
+                  n.ogni
+                )}</div>
+                <div class="ss-row ss-ore" style="margin-top:12px">${hourSel("dalle", n.dalle, ORE.slice(0, -1), "Dalle")}${hourSel("alle", n.alle, ORE.slice(1), "Alle")}</div>
+              </div>
+              <p class="ss-note ss-when" style="margin-top:10px"></p>
+              <p class="ss-note">Di solito arrivano entro un quarto d'ora dall'orario.</p>
+            </div>
+            <div data-ua-nt style="margin-top:12px"></div>
+          </div>`;
+        }
+        // legge il riquadro dei promemoria (ore = le ore effettive, in tutti e due i modi)
+        function readNotif(box) {
+          const val = n =>
+            (
+              box.querySelector(`input[name="${n}"]:checked`) ||
+              box.querySelector(`select[name="${n}"]`) ||
+              {}
+            ).value;
+          const mode = val("nMode") === "ogni" ? "ogni" : "orari";
+          const orari = [...new Set([...box.querySelectorAll('select[name="ora"]')].map(x => +x.value))].sort(
+            (a, b) => a - b
+          );
+          const ogni = +val("nOgni") || 2,
+            dalle = +val("dalle") || 9,
+            alle = Math.max(+val("alle") || 21, dalle + 1);
+          return {
+            notify: box.querySelector('[name="notify"]').checked,
+            notifMode: mode,
+            orari,
+            ogni,
+            dalle,
+            alle,
+            ore: mode === "ogni" ? oreOgni(ogni, dalle, alle) : orari
+          };
+        }
+        // riga riassuntiva: quando arriveranno e quanti al giorno
+        function showWhen(box) {
+          const ore = readNotif(box).ore.map(h => h + ":00");
+          const list =
+            ore.length > 4 ? `${ore.slice(0, 3).join(", ")} … ${ore[ore.length - 1]}` : ore.join(", ");
+          box.querySelector(".ss-when").textContent =
+            `Arrivano alle ${list} · ${ore.length === 1 ? "1 al giorno" : ore.length + " al giorno"}.`;
+        }
+        // onChange (facoltativo) viene chiamato a ogni modifica, con le impostazioni lette
+        function bindNotif(box, onChange) {
+          showWhen(box);
+          box.addEventListener("change", e => {
+            const name = e.target.name;
+            if (name === "notify") box.querySelector(".ss-notif-f").hidden = !e.target.checked;
+            if (name === "nMode") {
+              box.querySelector(".ss-m-orari").hidden = e.target.value !== "orari";
+              box.querySelector(".ss-m-ogni").hidden = e.target.value !== "ogni";
+            }
+            if (name === "nOre") {
+              // nuovo numero di promemoria: orari proposti, tenendo quelli già scelti se possibile
+              const k = +e.target.value,
+                cur = readNotif(box).orari;
+              const div = document.createElement("div");
+              div.innerHTML = notifBox({
+                notify: true,
+                orari: cur.length >= k ? cur.slice(0, k) : ORE_DEFAULT[k]
+              });
+              box.querySelector(".ss-m-orari .ss-ore").replaceWith(div.querySelector(".ss-m-orari .ss-ore"));
+            }
+            if (name === "dalle" || name === "alle") {
+              // "alle" deve venire dopo "dalle"
+              const d = box.querySelector('select[name="dalle"]'),
+                a = box.querySelector('select[name="alle"]');
+              if (+a.value <= +d.value) a.value = String(Math.min(23, +d.value + 1));
+            }
+            showWhen(box);
+            if (onChange) onChange(readNotif(box));
+          });
+        }
         function form(st) {
           const cfg = (st && st.cfg) || {
             exams: [{}],
@@ -692,7 +883,10 @@
             hours: 3,
             days: [1, 2, 3, 4, 5, 6],
             ded: 2,
-            notify: false
+            notify: false,
+            notifMode: "orari",
+            orari: ORE_DEFAULT[1],
+            ore: ORE_DEFAULT[1]
           };
           nExam = 0;
           app.innerHTML = `<form id="ss-form" novalidate>
@@ -728,10 +922,7 @@
               )}</div>
               <p class="ss-note" style="margin-top:10px">Negli altri giorni gli esami vanno in parallelo: quello più vicino prende più tempo.</p>
             </fieldset>
-            <fieldset><legend>Promemoria</legend>
-              <label class="ss-check"><input type="checkbox" name="notify" ${cfg.notify ? "checked" : ""}><span><b>Promemoria del mattino</b><small>Ogni mattina verso le 7:30 una notifica con cosa studiare oggi. Serve l'accesso con Google (dal Profilo) e le notifiche attive su questo dispositivo.</small></span></label>
-              <div data-ua-nt style="margin-top:12px"></div>
-            </fieldset>
+            <fieldset><legend>Promemoria</legend>${notifBox(cfg)}</fieldset>
             <div class="ss-actions">
               <button type="submit" class="ss-btn solid">${st ? "Aggiorna il piano" : "Genera il mio piano"}</button>
               ${st ? `<button type="button" class="ss-btn" id="ss-cancel">Annulla</button>` : ""}
@@ -759,12 +950,14 @@
             }
           });
           f.addEventListener("change", e => {
+            const row = e.target.closest(".ss-exam");
+            if (e.target.name === "prj") row.querySelector(".ss-prj-f").hidden = !e.target.checked;
             if (e.target.name !== "code") return;
-            const row = e.target.closest(".ss-exam"),
-              c = courseOf(e.target.value);
+            const c = courseOf(e.target.value);
             row.style.setProperty("--c", c ? c.color : "var(--ua-line)");
             row.querySelector(".ss-extra").innerHTML = extraFields(c, {}, row.dataset.k);
           });
+          bindNotif(f.querySelector(".ss-notif"));
           const cancel = f.querySelector("#ss-cancel");
           if (cancel)
             cancel.addEventListener("click", () => {
@@ -790,6 +983,13 @@
               e.hours = Math.max(5, +val("hours") || 30);
               e.chapters = val("chapters") || "";
             }
+            const prj = row.querySelector('[name="prj"]');
+            if (prj)
+              e.prj = {
+                on: prj.checked,
+                hours: Math.max(2, +val("prjHours") || 20),
+                date: val("prjDate") || ""
+              };
             return e;
           });
           return {
@@ -798,7 +998,7 @@
             hours: +f.querySelector('input[name="hours"][type="range"]').value,
             days: [...f.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value),
             ded: +(f.querySelector('input[name="ded"]:checked') || { value: 2 }).value,
-            notify: f.querySelector('[name="notify"]').checked
+            ...readNotif(f.querySelector(".ss-notif"))
           };
         }
         async function submit(f, st) {
@@ -818,7 +1018,9 @@
                     ? "Scegli almeno un giorno in cui puoi studiare."
                     : cfg.exams.every(e => e.date <= cfg.start)
                       ? "La data di inizio deve venire prima degli esami."
-                      : "";
+                      : cfg.exams.some(e => e.prj && e.prj.on && e.prj.date && e.prj.date <= t)
+                        ? "La consegna dei progetti deve essere da domani in poi."
+                        : "";
           if (err) {
             msg.textContent = err;
             return;
@@ -869,6 +1071,15 @@
             <span class="ss-tx"><b>${esc(it.t)}${it.part ? ` (parte ${it.part})` : ""}</b><small>${esc(c.code || "")} · ${sub}</small></span>
             <span class="ss-tm">${it.m ? S.fmtMin(it.m) : ""}</span></label></li>`;
         }
+        // etichette "Consegna progetto" per un giorno (le consegne sono segni a parte nel piano: vedi sessione.js)
+        const dueTags = (st, date) =>
+          st.plan.days
+            .filter(x => x.due && x.date === date)
+            .map(x => {
+              const c = courseOf(x.due) || { code: x.due, color: "var(--ua-muted)" };
+              return `<span class="ss-tag ss-due" style="--c:${c.color}">Consegna progetto ${esc(c.code)}</span>`;
+            })
+            .join("");
         function dayCard(st, d) {
           const dt = S.parse(d.date),
             t = S.today();
@@ -876,7 +1087,12 @@
           if (d.exam) {
             const c = courseOf(d.exam) || { name: d.exam, color: "var(--ua-muted)" };
             return `<section class="ss-day exam" style="--c:${c.color}"><div class="ss-dh">${head}
-              <div><span class="ss-tag">Esame</span><h3>${esc(c.name)}</h3><span class="muted" style="font-size:14px">Colazione, niente argomenti nuovi. Leggi bene le domande prima di rispondere.</span></div><span></span></div></section>`;
+              <div><span class="ss-tag">Esame</span>${dueTags(st, d.date)}<h3>${esc(c.name)}</h3><span class="muted" style="font-size:14px">Colazione, niente argomenti nuovi. Leggi bene le domande prima di rispondere.</span></div><span></span></div></section>`;
+          }
+          if (d.due) {
+            const c = courseOf(d.due) || { name: d.due, color: "var(--ua-muted)" };
+            return `<section class="ss-day exam due" style="--c:${c.color}"><div class="ss-dh">${head}
+              <div><span class="ss-tag">Consegna</span><h3>Progetto di ${esc(c.name)}</h3><span class="muted" style="font-size:14px">Ricontrolla che il progetto sia completo e consegnalo.</span></div><span></span></div></section>`;
           }
           const done = st.done || {};
           const codes = [...new Set(d.tasks.map(x => (st.plan.items[x.iid] || {}).c).filter(Boolean))];
@@ -885,7 +1101,8 @@
           const dc = d.ded ? courseOf(d.ded) : null;
           const tags =
             (d.date === t ? `<span class="ss-tag">Oggi</span>` : "") +
-            (dc ? `<span class="ss-tag" style="--c:${dc.color}">Solo ${esc(dc.code)}: ripasso</span>` : "");
+            (dc ? `<span class="ss-tag" style="--c:${dc.color}">Solo ${esc(dc.code)}: ripasso</span>` : "") +
+            dueTags(st, d.date);
           // con un solo esame il nome intero, con più esami le sigle (i nomi interi non starebbero su una riga)
           const title =
             codes.length === 1 ? (courseOf(codes[0]) || { name: codes[0] }).name : codes.join(" · ");
@@ -901,16 +1118,31 @@
             .sort((a, b) => (a.date < b.date ? -1 : 1))
             .map(e => {
               const c = courseOf(e.code) || { name: e.code, color: "var(--ua-muted)" };
-              const pcs = st.plan.days
-                .flatMap(d => d.tasks)
-                .filter(x => (st.plan.items[x.iid] || {}).c === e.code && x.m);
-              const tot = pcs.reduce((a, x) => a + x.m, 0),
-                ok = pcs.filter(x => done[x.id]).reduce((a, x) => a + x.m, 0);
+              // avanzamento: studio e progetto separati
+              const pcs = k =>
+                st.plan.days
+                  .flatMap(d => d.tasks)
+                  .filter(x => {
+                    const it = st.plan.items[x.iid] || {};
+                    return it.c === e.code && x.m && (k === "prj" ? it.k === "prj" : it.k !== "prj");
+                  });
+              const pct = list => {
+                const tot = list.reduce((a, x) => a + x.m, 0);
+                return tot ? (100 * list.filter(x => done[x.id]).reduce((a, x) => a + x.m, 0)) / tot : 0;
+              };
+              const study = pct(pcs("top")),
+                prj = e.prj && e.prj.on ? pcs("prj") : [];
               const n = S.daysBetween(S.today(), e.date);
+              const scope = { prima: " · prima prova", seconda: " · seconda prova" }[e.scope] || "";
               return `<div class="ss-ex" style="--c:${c.color}">
                 <div class="ss-ex-top"><span class="ss-code">${esc(e.code)}</span><span class="ss-cd">${n < 0 ? "fatto" : when(n)}</span></div>
-                <b>${esc(c.name)}</b><span class="muted" style="font-size:13.5px">${S.fmtDay(e.date)}${e.scope === "prima" ? " · prima prova" : ""}</span>
-                <div class="ss-bar" title="${tot ? Math.round((100 * ok) / tot) : 0}% fatto"><i style="width:${tot ? (100 * ok) / tot : 0}%"></i></div>
+                <b>${esc(c.name)}</b><span class="muted" style="font-size:13.5px">${S.fmtDay(e.date)}${scope}</span>
+                <div class="ss-bar" title="Studio: ${Math.round(study)}% fatto"><i style="width:${study}%"></i></div>
+                ${
+                  prj.length
+                    ? `<span class="ss-prj-l">Progetto · consegna ${S.fmtDay(S.prjDate(e))}</span><div class="ss-bar prj" title="Progetto: ${Math.round(pct(prj))}% fatto"><i style="width:${pct(prj)}%"></i></div>`
+                    : ""
+                }
               </div>`;
             })
             .join(
@@ -920,7 +1152,7 @@
         function plan(st) {
           const t = S.today();
           const days = st.plan.days;
-          const past = days.filter(d => d.date < t && !d.exam);
+          const past = days.filter(d => d.date < t && !d.exam && !d.due);
           const todayDays = days.filter(d => d.date === t);
           const future = days.filter(d => d.date > t);
           const rp = st.plan.replanned;
@@ -936,8 +1168,7 @@
             ${future.length ? future.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Non c'è altro in programma.</p>`}
             ${past.length ? `<details class="ss-past"><summary>Giorni passati (${past.length})</summary>${past.map(d => dayCard(st, d)).join("")}</details>` : ""}
             <h2>Promemoria</h2>
-            <label class="ss-check"><input type="checkbox" id="ss-notify" ${st.cfg.notify ? "checked" : ""}><span><b>Promemoria del mattino</b><small>Ogni mattina verso le 7:30 una notifica con cosa studiare oggi. Serve l'accesso con Google (dal Profilo) e le notifiche attive su questo dispositivo.</small></span></label>
-            <div data-ua-nt style="margin-top:12px"></div>
+            ${notifBox(st.cfg)}
             <div class="ss-tools">
               <button type="button" class="ss-btn solid" id="ss-edit">Modifica la sessione</button>
               <button type="button" class="ss-btn" id="ss-print">Stampa</button>
@@ -956,9 +1187,10 @@
           app
             .querySelectorAll(".ss-tx a")
             .forEach(a => a.addEventListener("click", e => e.stopPropagation()));
-          app.querySelector("#ss-notify").addEventListener("change", e => {
+          // promemoria: si salvano subito, senza rifare il piano
+          bindNotif(app.querySelector(".ss-notif"), v => {
             const cur = S.load() || st;
-            cur.cfg.notify = e.target.checked;
+            Object.assign(cur.cfg, v);
             S.save(cur);
           });
           app.querySelector("#ss-edit").addEventListener("click", () => {

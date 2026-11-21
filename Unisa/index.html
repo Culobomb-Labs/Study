@@ -783,6 +783,10 @@
       .wk-d.is-exam {
         box-shadow: inset 0 0 0 1.5px var(--c);
       }
+      .wk-d.is-due {
+        outline: 1.5px dashed var(--c);
+        outline-offset: -1.5px;
+      }
       .wk-dots {
         display: flex;
         gap: 3px;
@@ -859,24 +863,30 @@
       }
       .tool-chips {
         display: flex;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
       }
       .tool-chip {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 3px 10px;
+        padding: 3px 8px;
         border: 1px solid var(--line);
         border-radius: 999px;
         font-family: var(--f-mono);
-        font-size: 12px;
+        font-size: 11.5px;
+        white-space: nowrap;
       }
       .tool-chip i {
         width: 7px;
         height: 7px;
         border-radius: 50%;
         background: var(--c);
+      }
+      .tool-chip i.due {
+        background: none;
+        border: 1.5px dashed var(--c);
+        box-sizing: border-box;
       }
       .tool-btn {
         display: inline-flex;
@@ -2132,15 +2142,19 @@
           const week = sm.week
             .map((w, i) => {
               const d = S.parse(w.date);
-              const ec = w.exam ? sm.color(w.exam) : "";
+              // giorno d'esame: sigla e cerchio pieno; consegna di un progetto: cerchio tratteggiato
+              const mark = w.exam || w.due,
+                ec = mark ? sm.color(mark) : "";
               const dots = w.exam
                 ? `<em style="--c:${ec}">${esc(w.exam)}</em>`
                 : w.codes.map(code => `<i style="--c:${sm.color(code)}"></i>`).join("");
-              return `<span class="wk-d${i === 0 ? " is-today" : ""}${w.exam ? " is-exam" : ""}" ${w.exam ? `style="--c:${ec}"` : ""}><small>${S.WD[d.getDay()]}</small><b>${d.getDate()}</b><span class="wk-dots">${dots}</span></span>`;
+              const cls = (i === 0 ? " is-today" : "") + (w.exam ? " is-exam" : w.due ? " is-due" : "");
+              const tip = w.exam ? `Esame ${w.exam}` : w.due ? `Consegna progetto ${w.due}` : "";
+              return `<span class="wk-d${cls}" ${mark ? `style="--c:${ec}" title="${esc(tip)}"` : ""}><small>${S.WD[d.getDay()]}</small><b>${d.getDate()}</b><span class="wk-dots">${dots}</span></span>`;
             })
             .join("");
           const examToday = sm.exams.find(e => e.inDays === 0);
-          const MAX = 4;
+          const MAX = 3; // attività di oggi mostrate nella card (le altre sono nel piano)
           const tasks = sm.today.filter(x => x.m > 0);
           const list = examToday
             ? `<p class="tool-p">Oggi c'è l'esame di <b>${esc(examToday.course ? examToday.course.name : examToday.code)}</b>. In bocca al lupo!</p>`
@@ -2155,13 +2169,25 @@
                     ""
                   )}</ul>${tasks.length > MAX ? `<span class="tool-more">${tasks.length - MAX === 1 ? "e un'altra" : "e altre " + (tasks.length - MAX)} nel piano</span>` : ""}`
               : `<p class="tool-p">Oggi niente in programma: giorno libero.</p>`;
-          const others = sm.exams
+          // in basso: gli altri esami e le consegne dei progetti, per data (le 2 più vicine: le altre sono nel piano);
+          // esame e consegna dello stesso corso nello stesso giorno diventano una scadenza sola
+          const next = sm.exams
             .slice(1)
-            .map(
-              e =>
-                `<span class="tool-chip" style="--c:${e.course ? e.course.color : "var(--muted)"}"><i></i>${esc(e.code)} · ${e.inDays} gg</span>`
-            )
-            .join("");
+            .map(e => ({ d: e.date, code: e.code, n: e.inDays, c: e.course, exam: true }));
+          sm.dues.forEach(e => {
+            const same = next.find(x => x.exam && x.code === e.code && x.d === e.date);
+            if (same) same.prj = true;
+            else if (!(e.code === n.code && e.date === n.date))
+              next.push({ d: e.date, code: e.code, n: e.inDays, c: e.course });
+          });
+          next.sort((a, b) => (a.d < b.d ? -1 : 1));
+          const chip = x =>
+            `<span class="tool-chip" style="--c:${x.c ? x.c.color : "var(--muted)"}">${
+              x.exam
+                ? `<i></i>${esc(x.code)}${x.prj ? " + progetto" : ""}`
+                : `<i class="due"></i>Consegna ${esc(x.code)}`
+            } · ${x.n} gg</span>`;
+          const others = next.slice(0, 2).map(chip).join("");
           card.innerHTML = `${head(sm.pct)}
             <div class="tool-row"><div class="tool-t">${esc(c.name)} <small>${S.fmtDay(n.date)}</small></div><span class="tool-cd" style="--c:${c.color}">${when(n.inDays)}</span></div>
             <div class="wk" aria-label="I prossimi 7 giorni">${week}</div>

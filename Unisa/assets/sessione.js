@@ -6,15 +6,17 @@
    - date e tempi .............. giorni in formato AAAA-MM-GG, minuti → "1 h 30"
    - salvataggio ............... localStorage "ua-sessione" (si sincronizza con l'account: vedi isSynced in site.js)
    - argomenti ................. letti dai piani di studio del sito (TOPICS), oppure capitoli/blocchi di studio
-   - piano ..................... divisione "mista": in parallelo, ma gli ultimi giorni prima di ogni esame solo per lui
+   - piano ..................... divisione "mista": in parallelo, ma gli ultimi giorni prima di ogni esame solo per lui;
+                                 il progetto (se c'è) è una traccia in più, con la sua data di consegna
    - ricalcolo ................. le attività rimaste indietro si spostano da oggi in poi
    - riepilogo ................. quello che serve alla card della home
 
    Cosa si salva in "ua-sessione" (i testi stanno una volta sola in plan.items; i giorni hanno solo i pezzi):
    { v: 1,
-     cfg:  { exams: [{ code, date, lv, scope, hours, chapters }], start, hours, days, ded, notify },
+     cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date } }],
+             start, hours, days, ded, notify, ore: [ore dei promemoria] },
      plan: { built, start, recap, items: { iid: { c, k, t, top, s, m, href, quiz } },
-             days: [{ date, exam?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned },
+             days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned },
      done: { idPezzo: true } } */
 (function () {
   const KEY = "ua-sessione";
@@ -179,7 +181,13 @@
     const add = (id, o) =>
       items.push(Object.assign({ iid: `${exam.code}.${id}`, c: exam.code, k: "top" }, o));
     if (data) {
-      const topics = exam.scope === "prima" ? data.topics.filter(t => !t.full) : data.topics;
+      // IS: prima prova = argomenti senza "full"; seconda prova = solo quelli "full" (non c'erano nella prima)
+      const topics =
+        exam.scope === "prima"
+          ? data.topics.filter(t => !t.full)
+          : exam.scope === "seconda"
+            ? data.topics.filter(t => t.full)
+            : data.topics;
       const verb = lv === 2 ? "Ripassa" : lv === 1 ? "Rileggi" : "Studia";
       topics.forEach(t => {
         const parts = { read: Math.max(15, r5(t.min * f)) };
@@ -236,6 +244,34 @@
     return items;
   }
 
+  /* Il progetto di un esame (se c'è): blocchi da un'ora fino alla consegna, su una traccia a parte
+     (tr = "<sigla>#prj"), così va in parallelo allo studio e non si accorcia mai di nascosto. */
+  const PRJ = "#prj";
+  const prjDate = e => (e.prj && e.prj.date) || e.date;
+  function projectItems(exam) {
+    const p = exam.prj;
+    if (!p || !p.on || !(p.hours > 0)) return [];
+    const total = Math.round(p.hours * 60),
+      n = Math.ceil(total / 60);
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const m = i === n - 1 ? total - 60 * (n - 1) || 60 : 60;
+      out.push({
+        iid: `${exam.code}.prj${i}`,
+        c: exam.code,
+        tr: exam.code + PRJ,
+        k: "prj",
+        t: `Progetto · blocco ${i + 1} di ${n}`,
+        top: `progetto, blocco ${i + 1}`,
+        s: "Avanza col progetto: codice, documentazione e prove",
+        pri: 3,
+        parts: { read: m },
+        m
+      });
+    }
+    return out;
+  }
+
   // se il tempo non basta: 1) via esercizio e domanda aperta dagli argomenti meno importanti, 2) si accorcia tutto
   function compress(items, ratio) {
     const out = items.map(i => Object.assign({}, i, { parts: Object.assign({}, i.parts) }));
@@ -272,8 +308,16 @@
     // l'esame di oggi resta nel calendario, ma per lui non si studia più
     const shown = cfg.exams.filter(e => e.date >= start).sort(byDateAsc);
     const exams = shown.filter(e => e.date > start);
+    // le tracce: lo studio di ogni esame (scadenza: l'esame) e i progetti (scadenza: la consegna)
+    const projects = cfg.exams
+      .filter(e => e.prj && e.prj.on && (itemsByExam[e.code + PRJ] || []).length && prjDate(e) > start)
+      .map(e => ({ code: e.code + PRJ, date: prjDate(e) }));
+    const tracks = exams.map(e => ({ code: e.code, date: e.date })).concat(projects);
+    const dues = cfg.exams
+      .filter(e => e.prj && e.prj.on && prjDate(e) >= start)
+      .map(e => ({ code: e.code, date: prjDate(e) }));
     const examDates = new Set(exams.map(e => e.date));
-    const last = exams.length ? exams[exams.length - 1].date : start;
+    const last = tracks.reduce((a, t) => (t.date > a ? t.date : a), start);
 
     // giorni in cui si studia (non quelli degli esami)
     const study = [];
@@ -291,7 +335,7 @@
     });
 
     const queue = {};
-    exams.forEach(e => (queue[e.code] = (itemsByExam[e.code] || []).map(i => ({ iid: i.iid, left: i.m }))));
+    tracks.forEach(e => (queue[e.code] = (itemsByExam[e.code] || []).map(i => ({ iid: i.iid, left: i.m }))));
     const remaining = code => queue[code].reduce((a, i) => a + i.left, 0);
     const days = study.map(s => ({ date: s, ded: dedOf[s] || null, tasks: [], used: 0 }));
     const take = (day, code, budget) => {
@@ -315,10 +359,10 @@
       day.used += got;
     };
 
-    // giorni normali: ognuno degli esami ancora da preparare riceve il suo ritmo
+    // giorni normali: ognuna delle tracce ancora da finire (studio e progetti) riceve il suo ritmo
     days.forEach((day, i) => {
       if (day.ded) return;
-      const active = exams.filter(e => e.date > day.date && remaining(e.code) > 0);
+      const active = tracks.filter(e => e.date > day.date && remaining(e.code) > 0);
       if (!active.length) return;
       const rate = {};
       active.forEach(e => {
@@ -333,12 +377,12 @@
     });
     // quanto resta prima dei giorni dedicati: serve a decidere se accorciare (quei giorni sono per il ripasso)
     const beforeDed = {};
-    exams.forEach(e => (beforeDed[e.code] = remaining(e.code)));
-    // nei giorni dedicati prima finisce quello che è rimasto, poi (dopo) il ripasso
+    tracks.forEach(e => (beforeDed[e.code] = remaining(e.code)));
+    // nei giorni dedicati prima finisce lo studio rimasto di quell'esame, poi (dopo) il ripasso
     exams.forEach(e => days.filter(d => d.ded === e.code).forEach(d => take(d, e.code, cap - d.used)));
     const left = {};
-    exams.forEach(e => (left[e.code] = remaining(e.code)));
-    return { cap, ded, shown, exams, days, left, beforeDed, queue };
+    tracks.forEach(e => (left[e.code] = remaining(e.code)));
+    return { cap, ded, shown, exams, tracks, dues, days, left, beforeDed, queue };
   }
 
   // giorni dedicati: ripasso dei capitoli più importanti, poi l'ultimo giorno simulazione e ripasso a memoria
@@ -346,7 +390,10 @@
     const extras = {};
     s.exams.forEach(e => {
       const mine = s.days.filter(d => d.ded === e.code);
-      const topics = items.filter(i => i.c === e.code).sort((a, b) => (b.pri || 0) - (a.pri || 0));
+      // solo i capitoli (non i blocchi del progetto), dai più importanti
+      const topics = items
+        .filter(i => i.c === e.code && i.k === "top")
+        .sort((a, b) => (b.pri || 0) - (a.pri || 0));
       const quiz = (topics.find(i => i.quiz) || {}).quiz || "";
       let n = 0;
       const add = (d, o) => {
@@ -399,6 +446,10 @@
     return extras;
   }
 
+  // ordine dei giorni: per data; a parità di data prima lo studio, poi la consegna, poi l'esame
+  const rank = d => (d.exam ? 2 : d.due ? 1 : 0);
+  const byDay = (a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : rank(a) - rank(b));
+
   /* Il piano da `start` in poi. itemsByExam: attività con i minuti che restano.
      Restituisce i giorni, le attività (anche quelle di ripasso) e gli avvisi. */
   function generate(cfg, itemsByExam, opts) {
@@ -409,15 +460,17 @@
        e si riprova (al massimo 4 volte, e mai sotto metà del tempo pieno): così il ripasso resta. */
     const cutFor = new Set(),
       full = {};
+    // (i progetti non si accorciano: se non ci stanno, si accorcia lo studio e, se non basta, avviso in rosso)
     s.exams.forEach(e => (full[e.code] = (work[e.code] || []).reduce((a, i) => a + i.m, 0)));
-    for (let round = 0; round < 4 && s.exams.some(e => s.beforeDed[e.code] > 0); round++) {
+    const late = code => s.beforeDed[code] + (s.beforeDed[code + PRJ] || 0);
+    for (let round = 0; round < 4 && s.exams.some(e => late(e.code) > 0); round++) {
       work = Object.assign({}, work);
       let changed = false;
       s.exams.forEach(e => {
         const need = (work[e.code] || []).reduce((a, i) => a + i.m, 0);
         const floor = full[e.code] * 0.5;
-        if (s.beforeDed[e.code] > 0 && need > floor + 5) {
-          const target = Math.max(floor, (need - s.beforeDed[e.code]) * 0.97);
+        if (late(e.code) > 0 && need > floor + 5) {
+          const target = Math.max(floor, (need - late(e.code)) * 0.97);
           work[e.code] = compress(work[e.code], target / need);
           cutFor.add(e.code);
           changed = true;
@@ -426,8 +479,8 @@
       if (!changed) break;
       s = schedule(cfg, work, opts.start);
     }
-    // se ancora non basta (pochissimi giorni): l'avanzo va nei giorni dedicati o, se non ci sono, nell'ultimo giorno utile
-    s.exams.forEach(e => {
+    // se ancora non basta (pochissimi giorni): l'avanzo va nei giorni dedicati o, se non ci sono, negli ultimi giorni utili
+    s.tracks.forEach(e => {
       if (!s.left[e.code]) return;
       const targets = s.days.filter(d => d.date < e.date && (d.ded === e.code || !d.ded)).slice(-2);
       s.queue[e.code].splice(0).forEach((it, k) => {
@@ -440,19 +493,25 @@
     const extras = addReviews(s, Object.values(items), opts.recap || {});
     // avvisi: in rosso solo quando il tempo non basta davvero; gli esami accorciati e quelli senza giorni
     // di ripasso finiscono in una nota unica (notes), per non riempire lo schermo
-    const nameOf = code => (opts.courseOf(code) || { name: code }).name;
+    const nameOf = code =>
+      code.endsWith(PRJ)
+        ? "Progetto di " + (opts.courseOf(code.slice(0, -PRJ.length)) || { name: code }).name
+        : (opts.courseOf(code) || { name: code }).name;
     const list = names =>
       names.length > 1 ? names.slice(0, -1).join(", ") + " e " + names.slice(-1) : names[0];
     const notes = [],
       cut = [],
       noDed = [];
-    s.exams.forEach(e => {
+    s.tracks.forEach(e => {
       if (s.left[e.code] > 0)
         warnings.push(
-          `${nameOf(e.code)}: anche accorciando, il tempo non basta (mancano circa ${fmtMin(s.left[e.code])}). Aumenta le ore al giorno, aggiungi giorni di studio o anticipa l'inizio.`
+          e.code.endsWith(PRJ)
+            ? `${nameOf(e.code)}: prima della consegna non ci stanno tutte le ore (mancano circa ${fmtMin(s.left[e.code])}): le ho messe negli ultimi giorni. Aumenta le ore al giorno, aggiungi giorni di studio o anticipa l'inizio.`
+            : `${nameOf(e.code)}: anche accorciando, il tempo non basta (mancano circa ${fmtMin(s.left[e.code])}). Aumenta le ore al giorno, aggiungi giorni di studio o anticipa l'inizio.`
         );
       else if (cutFor.has(e.code)) cut.push(nameOf(e.code));
-      if (s.ded > 0 && !s.days.some(d => d.ded === e.code)) noDed.push(nameOf(e.code));
+      if (!e.code.endsWith(PRJ) && s.ded > 0 && !s.days.some(d => d.ded === e.code))
+        noDed.push(nameOf(e.code));
     });
     if (cut.length)
       notes.push(
@@ -466,18 +525,21 @@
       .filter(d => d.tasks.length)
       .map(d => ({ date: d.date, ded: d.ded, tasks: d.tasks }))
       .concat(s.shown.map(e => ({ date: e.date, exam: e.code, tasks: [] })))
-      .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.exam ? 1 : -1));
+      .concat(s.dues.map(e => ({ date: e.date, due: e.code, tasks: [] })))
+      .sort(byDay);
     if (!s.shown.length) warnings.push("Non c'è nessun esame da oggi in poi.");
     return { days, items: Object.assign(items, extras), warnings, notes };
   }
 
-  // attività divise per esame, con i minuti che restano da fare (in ordine di studio)
+  // attività divise per traccia (studio di un esame o suo progetto), con i minuti che restano (in ordine di studio)
+  const isWork = i => i.k === "top" || i.k === "prj";
   function leftByExam(items, doneMin) {
     const out = {};
     Object.values(items).forEach(i => {
-      if (i.k !== "top") return;
-      const left = i.m - (doneMin[i.iid] || 0);
-      if (left >= 5) (out[i.c] = out[i.c] || []).push(Object.assign({}, i, { m: left }));
+      if (!isWork(i)) return;
+      const left = i.m - (doneMin[i.iid] || 0),
+        tr = i.tr || i.c;
+      if (left >= 5) (out[tr] = out[tr] || []).push(Object.assign({}, i, { m: left }));
     });
     return out;
   }
@@ -508,7 +570,7 @@
     st.plan.items = Object.fromEntries(
       Object.entries(st.plan.items)
         .filter(([iid]) => iid in sum)
-        .map(([iid, it]) => [iid, it.k === "top" ? Object.assign({}, it, { m: sum[iid] }) : it])
+        .map(([iid, it]) => [iid, isWork(it) ? Object.assign({}, it, { m: sum[iid] }) : it])
     );
     st.done = Object.fromEntries(Object.entries(st.done || {}).filter(([id]) => ids.has(id)));
   }
@@ -516,17 +578,18 @@
      Quelli non fatti vengono ripianificati da oggi; se due giorni hanno la stessa data, si uniscono. */
   function withDone(st, fresh) {
     const done = st.done || {};
+    const isStudy = d => !d.exam && !d.due;
     const kept = st.plan.days
-      .filter(d => !d.exam)
+      .filter(isStudy)
       .map(d => ({ date: d.date, ded: d.ded || null, tasks: d.tasks.filter(x => done[x.id]) }))
       .filter(d => d.tasks.length);
     const out = fresh.map(d => Object.assign({}, d, { tasks: d.tasks.slice() }));
     kept.forEach(k => {
-      const same = out.find(d => d.date === k.date && !d.exam);
+      const same = out.find(d => d.date === k.date && isStudy(d));
       if (same) same.tasks.unshift(...k.tasks.filter(x => !same.tasks.some(y => y.id === x.id)));
       else out.push(k);
     });
-    return out.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.exam ? 1 : -1));
+    return out.sort(byDay);
   }
 
   /* Costruisce (o ricostruisce) il piano. I giorni già passati restano com'erano, con le loro spunte;
@@ -540,12 +603,15 @@
     for (const e of cfg.exams) {
       const course = courseOf(e.code);
       if (!course) continue;
-      e.name = course.name; // serve al promemoria del mattino (.github/scripts/promemoria_sessione.mjs)
+      e.name = course.name; // serve ai promemoria (.github/scripts/promemoria_sessione.mjs)
       const data = await topicsOf(course, root).catch(() => null);
       if (course.piano && !data)
         throw new Error("Non riesco a leggere il piano di studio di " + course.name + ".");
-      if (data) recap[e.code] = data.recap[e.scope === "prima" ? "prima" : "completa"] || "";
-      buildItems(e, course, data, root).forEach(i => (fresh[i.iid] = i));
+      // ripasso a memoria dell'ultimo giorno: quello della prova scelta, se il piano di studio lo ha
+      if (data) recap[e.code] = data.recap[e.scope || "completa"] || "";
+      buildItems(e, course, data, root)
+        .concat(projectItems(e))
+        .forEach(i => (fresh[i.iid] = i));
     }
     const g = generate(cfg, leftByExam(fresh, doneMin), { start: from, courseOf, recap });
     const old = (st.plan && st.plan.items) || {};
@@ -570,11 +636,19 @@
     if (!st || !st.plan) return [];
     const t = today(),
       done = st.done || {};
-    const open = new Set(st.cfg.exams.filter(e => e.date > t).map(e => e.code));
+    // tracce ancora aperte: lo studio fino all'esame, il progetto fino alla consegna
+    const open = new Set();
+    st.cfg.exams.forEach(e => {
+      if (e.date > t) open.add(e.code);
+      if (e.prj && e.prj.on && prjDate(e) > t) open.add(e.code + PRJ);
+    });
     return st.plan.days
-      .filter(d => d.date < t && !d.exam)
+      .filter(d => d.date < t && !d.exam && !d.due)
       .flatMap(d => d.tasks)
-      .filter(x => !done[x.id] && x.m > 0 && !isReview(x.iid) && open.has((st.plan.items[x.iid] || {}).c));
+      .filter(x => {
+        const it = st.plan.items[x.iid] || {};
+        return !done[x.id] && x.m > 0 && !isReview(x.iid) && open.has(it.tr || it.c);
+      });
   }
   /* Sposta da oggi in poi le attività rimaste indietro, senza rileggere i piani di studio (usa plan.items):
      funziona anche senza rete, quindi anche dalla home. Restituisce quante attività ha spostato. */
@@ -619,7 +693,17 @@
     const all = st.plan.days.flatMap(d => d.tasks).filter(x => x.m > 0);
     const tot = all.reduce((a, x) => a + x.m, 0),
       fatto = all.filter(x => done[x.id]).reduce((a, x) => a + x.m, 0);
-    const todayDay = st.plan.days.find(d => d.date === t && !d.exam);
+    const todayDay = st.plan.days.find(d => d.date === t && !d.exam && !d.due);
+    // consegne dei progetti da oggi in poi
+    const dues = st.cfg.exams
+      .filter(e => e.prj && e.prj.on && prjDate(e) >= t)
+      .map(e => ({
+        code: e.code,
+        date: prjDate(e),
+        course: list.find(c => c.code === e.code),
+        inDays: daysBetween(t, prjDate(e))
+      }))
+      .sort((a, b) => (a.date < b.date ? -1 : 1));
     const week = [];
     for (let i = 0; i < 7; i++) {
       const s = iso(addDays(parse(t), i));
@@ -629,11 +713,13 @@
         codes: [
           ...new Set(ds.flatMap(d => d.tasks.map(x => (st.plan.items[x.iid] || {}).c)).filter(Boolean))
         ],
-        exam: (ds.find(d => d.exam) || {}).exam || null
+        exam: (ds.find(d => d.exam) || {}).exam || null,
+        due: (ds.find(d => d.due) || {}).due || null
       });
     }
     return {
       exams,
+      dues,
       next: exams[0] || null,
       today: todayDay ? todayDay.tasks.map(x => info(st, x)) : [],
       todayMin: todayDay ? todayDay.tasks.reduce((a, x) => a + x.m, 0) : 0,
@@ -665,6 +751,7 @@
     replanOffline,
     summary,
     info,
+    prjDate,
     toggle,
     topicsOf,
     iso,
