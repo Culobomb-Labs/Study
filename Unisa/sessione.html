@@ -574,11 +574,15 @@
         border-radius: 14px;
         color: var(--ua-muted);
       }
+      /* pulsanti del piano (Modifica, Stampa, Elimina): in cima, sotto il titolo; "Elimina" a destra, lontano dagli altri */
       .ss-tools {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        margin: 26px 0 0;
+        margin: 0 0 20px;
+      }
+      .ss-tools .danger {
+        margin-left: auto;
       }
       @media (max-width: 560px) {
         fieldset {
@@ -597,6 +601,11 @@
         }
         .ss-actions .ss-btn {
           flex: 1;
+        }
+        .ss-tools .ss-btn {
+          min-height: 38px;
+          padding: 7px 14px;
+          font-size: 14.5px;
         }
         /* riepilogo degli esami su due colonne: con un riquadro per riga occuperebbe tutto lo schermo */
         .ss-exams {
@@ -1160,7 +1169,13 @@
             rp && Date.now() - rp.at < 3 * 86400000
               ? `<p class="ss-info">Ho spostato da oggi in poi ${rp.n === 1 ? "1 attività rimasta indietro" : rp.n + " attività rimaste indietro"}: il piano è già aggiornato.</p>`
               : "";
-          app.innerHTML = `${notice}${(st.plan.warnings || []).map(w => `<p class="ss-warn">${esc(w)}</p>`).join("")}${(st.plan.notes || []).map(w => `<p class="ss-info">${esc(w)}</p>`).join("")}
+          // pulsanti in cima, così non serve scorrere tutto il calendario per trovarli
+          app.innerHTML = `<div class="ss-tools">
+              <button type="button" class="ss-btn solid" id="ss-edit" aria-label="Modifica la sessione">Modifica</button>
+              <button type="button" class="ss-btn" id="ss-print" aria-label="Stampa il piano">Stampa</button>
+              <button type="button" class="ss-btn danger" id="ss-del" aria-label="Elimina la sessione">Elimina</button>
+            </div>
+            ${notice}${(st.plan.warnings || []).map(w => `<p class="ss-warn">${esc(w)}</p>`).join("")}${(st.plan.notes || []).map(w => `<p class="ss-info">${esc(w)}</p>`).join("")}
             ${examCards(st)}
             <h2>Oggi</h2>
             ${todayDays.length ? todayDays.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Oggi niente in programma: goditi il giorno libero.</p>`}
@@ -1168,12 +1183,7 @@
             ${future.length ? future.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Non c'è altro in programma.</p>`}
             ${past.length ? `<details class="ss-past"><summary>Giorni passati (${past.length})</summary>${past.map(d => dayCard(st, d)).join("")}</details>` : ""}
             <h2>Promemoria</h2>
-            ${notifBox(st.cfg)}
-            <div class="ss-tools">
-              <button type="button" class="ss-btn solid" id="ss-edit">Modifica la sessione</button>
-              <button type="button" class="ss-btn" id="ss-print">Stampa</button>
-              <button type="button" class="ss-btn danger" id="ss-del">Elimina la sessione</button>
-            </div>`;
+            ${notifBox(st.cfg)}`;
           app.querySelectorAll('.ss-task input[type="checkbox"]').forEach(cb =>
             cb.addEventListener("change", () => {
               const cur = S.load() || st;
