@@ -319,18 +319,11 @@
         font-size: 14px;
         color: var(--ua-warn);
       }
-      .ss-warn,
       .ss-info {
         margin: 0 0 10px;
         padding: 12px 14px;
         border-radius: 12px;
         font-size: 14.5px;
-      }
-      .ss-warn {
-        background: var(--ua-warn-soft);
-        border: 1px solid var(--ua-warn-line);
-      }
-      .ss-info {
         background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--ua-bg));
         border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, var(--ua-line));
       }
@@ -768,11 +761,13 @@
           return courseFields(c, e, k) + projectFields(c, e);
         }
         function projectFields(c, e) {
-          const late = PRJ_LATE[c.code] || { fromDays: 0, pra: 10 };
+          // l'esercizio pratico prima della traccia è proposto solo per gli esami di PRJ_LATE (oggi PD)
+          const late = PRJ_LATE[c.code] || { fromDays: 0, pra: 0 };
           const p = e.prj || Object.assign({ on: PRJ_DEFAULT.includes(c.code) }, PRJ_LATE[c.code]);
-          const from = p.fromDays || 0;
+          const from = p.fromDate ? "day" : p.fromDays || 0;
           const opts = [
             [0, "Ce l'ho già"],
+            ["day", "In un giorno preciso"],
             [3, "3 giorni prima dell'esame"],
             [4, "4 giorni prima"],
             [5, "5 giorni prima"],
@@ -790,9 +785,10 @@
                 <label class="ss-field"><span>La traccia del progetto</span><select name="prjFrom">${opts
                   .map(([v, t]) => `<option value="${v}" ${v === from ? "selected" : ""}>${t}</option>`)
                   .join("")}</select></label>
+                <label class="ss-field ss-fromdate" ${from === "day" ? "" : "hidden"}><span>Arriva il</span><input type="date" name="prjFromDate" value="${esc(p.fromDate || "")}" min="${S.today()}"></label>
                 <label class="ss-field ss-pra" ${from ? "" : "hidden"}><span>Ore di esercizio pratico prima della traccia</span><input type="number" name="prjPra" min="0" max="100" step="1" value="${esc(p.pra != null ? p.pra : late.pra)}" style="width:120px"></label>
               </div>
-              <p class="ss-note ss-pra" style="margin-top:8px" ${from ? "" : "hidden"}>Prima che arrivi la traccia il piano mette blocchi di esercizio sulla parte pratica; i blocchi di progetto partono dal giorno della traccia.</p>
+              <p class="ss-note ss-pra" style="margin-top:8px" ${from ? "" : "hidden"}>I blocchi di progetto partono dal giorno della traccia. Se metti delle ore di esercizio pratico, prima di quel giorno il piano mette blocchi di esercizio sulla parte pratica.</p>
             </div>
           </div>`;
         }
@@ -999,8 +995,11 @@
           f.addEventListener("change", e => {
             const row = e.target.closest(".ss-exam");
             if (e.target.name === "prj") row.querySelector(".ss-prj-f").hidden = !e.target.checked;
-            if (e.target.name === "prjFrom")
-              row.querySelectorAll(".ss-pra").forEach(x => (x.hidden = !+e.target.value));
+            if (e.target.name === "prjFrom") {
+              const v = e.target.value;
+              row.querySelectorAll(".ss-pra").forEach(x => (x.hidden = v === "0"));
+              row.querySelector(".ss-fromdate").hidden = v !== "day";
+            }
             if (e.target.name !== "code") return;
             const c = courseOf(e.target.value);
             row.style.setProperty("--c", c ? c.color : "var(--ua-line)");
@@ -1038,7 +1037,8 @@
                 on: prj.checked,
                 hours: Math.max(2, +val("prjHours") || 20),
                 date: val("prjDate") || "",
-                fromDays: +val("prjFrom") || 0,
+                fromDays: val("prjFrom") === "day" ? 0 : +val("prjFrom") || 0,
+                fromDate: val("prjFrom") === "day" ? val("prjFromDate") || "" : "",
                 pra: Math.max(0, +val("prjPra") || 0)
               };
             return e;
@@ -1135,7 +1135,7 @@
                 .filter(e => S.prjFrom(e) === date)
                 .map(e => {
                   const c = courseOf(e.code) || { code: e.code, color: "var(--ua-muted)" };
-                  return `<span class="ss-tag ss-due" style="--c:${c.color}">Arriva la traccia ${esc(c.code)} (circa)</span>`;
+                  return `<span class="ss-tag ss-due" style="--c:${c.color}">Arriva la traccia ${esc(c.code)}${S.prjFromExact(e) ? "" : " (circa)"}</span>`;
                 })
             )
             .join("");
@@ -1201,7 +1201,7 @@
                 <div class="ss-bar" title="Studio: ${Math.round(study)}% fatto"><i style="width:${study}%"></i></div>
                 ${
                   prj.length
-                    ? `<span class="ss-prj-l">Progetto · ${S.prjFrom(e) ? `traccia ~${S.fmtDay(S.prjFrom(e))}, ` : ""}consegna ${S.fmtDay(S.prjDate(e))}</span><div class="ss-bar prj" title="Progetto: ${Math.round(pct(prj))}% fatto"><i style="width:${pct(prj)}%"></i></div>`
+                    ? `<span class="ss-prj-l">Progetto · ${S.prjFrom(e) ? `traccia ${S.prjFromExact(e) ? "" : "~"}${S.fmtDay(S.prjFrom(e))}, ` : ""}consegna ${S.fmtDay(S.prjDate(e))}</span><div class="ss-bar prj" title="Progetto: ${Math.round(pct(prj))}% fatto"><i style="width:${pct(prj)}%"></i></div>`
                     : ""
                 }
               </div>`;
@@ -1223,6 +1223,16 @@
             ? `<p class="ss-tip"><b>Facoltativo, se ti serve.</b> I capitoli introduttivi non entrano nel piano: ${list.join(" · ")}</p>`
             : "";
         }
+        /* avvisi del piano: un solo messaggio generico (senza numeri e senza "aumenta le ore"), anche per i piani
+           salvati prima con gli avvisi dettagliati; resta a parte solo "Non c'è nessun esame da oggi in poi" */
+        const NO_EXAMS = "Non c'è nessun esame da oggi in poi.";
+        function planNote(p) {
+          const all = [...(p.warnings || []), ...(p.notes || [])];
+          if (all.includes(NO_EXAMS)) return `<p class="ss-info">${NO_EXAMS}</p>`;
+          return all.length
+            ? `<p class="ss-info">Il piano si adatta ai giorni che ci sono: alcune attività possono essere più brevi o concentrate negli ultimi giorni.</p>`
+            : "";
+        }
         function plan(st) {
           const t = S.today();
           const days = st.plan.days;
@@ -1241,7 +1251,7 @@
               <button type="button" class="ss-btn danger" id="ss-del" aria-label="Elimina la sessione">Elimina</button>
             </div>
             ${introTip(st)}
-            ${notice}${(st.plan.warnings || []).map(w => `<p class="ss-warn">${esc(w)}</p>`).join("")}${(st.plan.notes || []).map(w => `<p class="ss-info">${esc(w)}</p>`).join("")}
+            ${notice}${planNote(st.plan)}
             ${examCards(st)}
             <h2>Oggi</h2>
             ${todayDays.length ? todayDays.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Oggi niente in programma: goditi il giorno libero.</p>`}

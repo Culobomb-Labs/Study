@@ -13,7 +13,7 @@
 
    Cosa si salva in "ua-sessione" (i testi stanno una volta sola in plan.items; i giorni hanno solo i pezzi):
    { v: 1,
-     cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date, fromDays, pra } }],
+     cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date, fromDays, fromDate, pra } }],
              start, hours, days, ded, notify, ore: [ore dei promemoria] },
      plan: { built, start, recap, items: { iid: { c, k, t, top, s, m, href, quiz } },
              days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned,
@@ -249,14 +249,21 @@
 
   /* Il progetto di un esame (se c'è): blocchi da un'ora fino alla consegna, su una traccia a parte
      (tr = "<sigla>#prj"), così va in parallelo allo studio e non si accorcia mai di nascosto.
-     Se la traccia arriva pochi giorni prima dell'esame (prj.fromDays, es. PD), i blocchi partono da quel giorno
+     Se la traccia arriva più tardi (prj.fromDate o prj.fromDays, es. BD o PD), i blocchi partono da quel giorno
      e prima ci sono blocchi di esercizio sulla parte pratica (prj.pra ore, traccia "<sigla>#pra"). */
   const PRJ = "#prj",
     PRA = "#pra";
   const prjDate = e => (e.prj && e.prj.date) || e.date;
-  // giorno in cui arriva la traccia del progetto (null = c'è già)
-  const prjFrom = e =>
-    e.prj && e.prj.on && e.prj.fromDays > 0 ? iso(addDays(parse(e.date), -e.prj.fromDays)) : null;
+  /* giorno in cui arriva la traccia del progetto (null = c'è già): un giorno preciso (prj.fromDate,
+     es. BD) oppure tot giorni prima dell'esame (prj.fromDays, es. PD). Vale solo se è prima della consegna. */
+  const prjFrom = e => {
+    const p = e.prj;
+    if (!p || !p.on) return null;
+    const d = p.fromDate || (p.fromDays > 0 ? iso(addDays(parse(e.date), -p.fromDays)) : null);
+    return d && d < prjDate(e) ? d : null;
+  };
+  // true se il giorno della traccia è preciso (non "circa")
+  const prjFromExact = e => !!(prjFrom(e) && e.prj.fromDate);
   const blocks = (exam, kind, hours, t, s) => {
     const total = Math.round(hours * 60),
       n = Math.ceil(total / 60);
@@ -816,6 +823,7 @@
     info,
     prjDate,
     prjFrom,
+    prjFromExact,
     toggle,
     topicsOf,
     iso,
