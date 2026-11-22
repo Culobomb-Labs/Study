@@ -682,7 +682,9 @@
         const courseOf = code => courses.find(c => c.code === code);
         let editing = false;
         // esami che di solito hanno il progetto: la casella "C'è il progetto" parte già spuntata
-        const PRJ_DEFAULT = ["BD", "IS", "PD"];
+        /* il progetto di IS (Resto 1) lo gestiscono i PM, con le loro scadenze: per IS la casella parte non spuntata
+           (si può sempre spuntare a mano) */
+        const PRJ_DEFAULT = ["BD", "PD"];
         /* esami in cui la traccia del progetto arriva pochi giorni prima dell'esame: giorni proposti e ore di
            esercizio pratico prima della traccia (PD: la traccia arriva circa 3-5 giorni prima) */
         const PRJ_LATE = { PD: { fromDays: 5, pra: 10 } };
@@ -1061,6 +1063,7 @@
           const msg = f.querySelector("#ss-msg"),
             btn = f.querySelector('button[type="submit"]');
           const cfg = readForm(f);
+          cfg.isPrjPm = true; // la sessione è già fatta con la regola del progetto di IS (vedi render)
           const t = S.today();
           const err = cfg.exams.some(e => !e.code)
             ? "Scegli il corso di ogni esame (o togli le righe vuote)."
@@ -1302,13 +1305,29 @@
         function render() {
           const st = S.load();
           if (!st || !st.plan || editing) return form(st);
-          // sessioni salvate prima della regola dei capitoli introduttivi (senza plan.intro): il piano si rifà da solo,
-          // tenendo le spunte, così i capitoli introduttivi escono dal piano e diventano un consiglio
-          if (!st.plan.intro) {
+          /* sessioni salvate quando il progetto di IS era spuntato di base: se è rimasto com'era (20 ore, nessuna data),
+             si toglie una volta sola. Chi lo rispunta dopo lo tiene. */
+          let offIS = [];
+          if (!st.cfg.isPrjPm) {
+            st.cfg.isPrjPm = true;
+            const untouched = p => p && p.on && (p.hours || 20) === 20 && !p.date && !p.fromDays && !p.fromDate;
+            offIS = st.cfg.exams.filter(e => e.code === "IS" && untouched(e.prj));
+            offIS.forEach(e => (e.prj.on = false));
+            if (!offIS.length) S.save(st);
+          }
+          /* il piano si rifà da solo, tenendo le spunte, quando serve: sessioni salvate prima della regola dei capitoli
+             introduttivi (senza plan.intro), prima della simulazione presa dal piano di studio (senza plan.sim) o con il
+             progetto di IS appena tolto */
+          if (!st.plan.intro || !st.plan.sim || offIS.length) {
             app.innerHTML = `<p class="ss-wait">Aggiorno il piano…</p>`;
             S.build(st, ROOT)
               .then(() => S.save(st))
-              .catch(() => (st.plan.intro = {})) // senza rete: riprova la prossima volta
+              .catch(() => {
+                // senza rete: riprova la prossima volta
+                offIS.forEach(e => (e.prj.on = true));
+                if (offIS.length) delete st.cfg.isPrjPm;
+                st.plan.intro = st.plan.intro || {};
+              })
               .then(() => plan(st));
             return;
           }

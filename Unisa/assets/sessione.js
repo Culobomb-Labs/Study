@@ -15,7 +15,7 @@
    { v: 1,
      cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date, fromDays, fromDate, pra } }],
              start, hours, days, ded, notify, ore: [ore dei promemoria] },
-     plan: { built, start, recap, items: { iid: { c, k, t, top, s, m, href, quiz } },
+     plan: { built, start, recap, sim, items: { iid: { c, k, t, top, s, m, href, quiz } },
              days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned,
              intro: { sigla: [{ ch, t, href }] } (capitoli introduttivi: solo consiglio) },
      done: { idPezzo: true } } */
@@ -147,7 +147,7 @@
     { v: 1, t: "L'ho letto", f: 0.6 },
     { v: 2, t: "Lo so bene", f: 0.3 }
   ];
-  // legge TOPICS (e il ripasso finale "recap" di ogni prova) dalla pagina del piano di studio
+  // legge TOPICS (e, per ogni prova, il ripasso finale "recap" e la simulazione "sim") dalla pagina del piano di studio
   const topicCache = {};
   function topicsOf(course, root) {
     if (!course.piano) return Promise.resolve(null);
@@ -163,7 +163,15 @@
           text.replace(/(\w+): \{ topics:[\s\S]*?recap: "((?:[^"\\]|\\.)*)"/g, (_, k, r) => {
             recap[k] = r;
           });
-          return { topics, recap, prove: topics.some(t => t.full) };
+          // simulazione dell'ultimo giorno, la stessa del piano di studio (es. IS: "Seconda prova" nel quiz)
+          const sim = {};
+          text.replace(/(\w+): \{ topics:[\s\S]*?\n\s*sim: (\{.*\}),\s*\n/g, (_, k, o) => {
+            try {
+              const v = Function('"use strict"; return (' + o + ")")();
+              if (v && v.t && v.s) sim[k] = { t: v.t, s: v.s };
+            } catch (e) {}
+          });
+          return { topics, recap, sim, prove: topics.some(t => t.full) };
         })
         .catch(e => {
           delete topicCache[course.code];
@@ -440,7 +448,7 @@
   }
 
   // giorni dedicati: ripasso dei capitoli più importanti, poi l'ultimo giorno simulazione e ripasso a memoria
-  function addReviews(s, items, recap) {
+  function addReviews(s, items, recap, sims) {
     const extras = {};
     s.exams.forEach(e => {
       const mine = s.days.filter(d => d.ded === e.code);
@@ -463,8 +471,12 @@
           add(d, {
             k: "sim",
             m: r5(lc * 0.35),
-            t: "Simulazione d'esame",
-            s: quiz ? "A tempo nel quiz, come se fosse l'esame" : "Esercizi o domande d'esame a tempo",
+            t: sims[e.code] ? sims[e.code].t : "Simulazione d'esame",
+            s: sims[e.code]
+              ? sims[e.code].s
+              : quiz
+              ? "A tempo nel quiz, come se fosse l'esame"
+              : "Esercizi o domande d'esame a tempo",
             href: quiz
           });
           add(d, {
@@ -544,7 +556,7 @@
     });
     const items = {};
     Object.values(work).forEach(list => list.forEach(i => (items[i.iid] = i)));
-    const extras = addReviews(s, Object.values(items), opts.recap || {});
+    const extras = addReviews(s, Object.values(items), opts.recap || {}, opts.sim || {});
     // avvisi: in rosso solo quando il tempo non basta davvero; gli esami accorciati e quelli senza giorni
     // di ripasso finiscono in una nota unica (notes), per non riempire lo schermo
     const courseName = code => (opts.courseOf(code) || { name: code }).name;
@@ -659,6 +671,7 @@
     const doneMin = doneMinutes(st);
     const fresh = {},
       recap = {},
+      sim = {},
       intro = {};
     for (const e of cfg.exams) {
       const course = courseOf(e.code);
@@ -669,6 +682,8 @@
         throw new Error("Non riesco a leggere il piano di studio di " + course.name + ".");
       // ripasso a memoria dell'ultimo giorno: quello della prova scelta, se il piano di studio lo ha
       if (data) recap[e.code] = data.recap[e.scope || "completa"] || "";
+      // simulazione dell'ultimo giorno: quella della prova scelta, se il piano di studio la ha
+      if (data && data.sim && data.sim[e.scope || "completa"]) sim[e.code] = data.sim[e.scope || "completa"];
       // consiglio: i capitoli introduttivi del corso, con il link al quaderno (non contano nel piano)
       const tips = data ? data.topics.filter(t => t.intro) : [];
       if (tips.length)
@@ -681,13 +696,14 @@
         .concat(projectItems(e))
         .forEach(i => (fresh[i.iid] = i));
     }
-    const g = generate(cfg, leftByExam(fresh, doneMin), { start: from, courseOf, recap });
+    const g = generate(cfg, leftByExam(fresh, doneMin), { start: from, courseOf, recap, sim });
     const old = (st.plan && st.plan.items) || {};
     const days = st.plan ? withDone(st, g.days) : g.days;
     st.plan = {
       built: Date.now(),
       start: from,
       recap,
+      sim,
       intro,
       items: Object.assign({}, old, fresh, g.items),
       days,
@@ -729,7 +745,8 @@
     const g = generate(st.cfg, leftByExam(st.plan.items, doneMinutes(st)), {
       start: from,
       courseOf,
-      recap: st.plan.recap || {}
+      recap: st.plan.recap || {},
+      sim: st.plan.sim || {}
     });
     st.plan.items = Object.assign({}, st.plan.items, g.items);
     st.plan.days = withDone(st, g.days);
