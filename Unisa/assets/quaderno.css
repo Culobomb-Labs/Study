@@ -2,10 +2,10 @@
    Usa i colori del sito (--ua-…) e il colore del corso del quaderno (--acc). Niente carta a quadretti:
    sfondo pulito con una luce del colore del corso in alto, capitoli in schede, indice in una scheda fissa. */
 :root {
-  --q-acc: var(--acc, var(--green, #5b3fa3)); /* Android usa --green come colore del corso */
-  --q-bg: var(--ua-bg-page, #ebeae6);
-  --q-card: var(--ua-bg, #f4f3f0);
-  --q-line: var(--ua-line, #d6d5cf);
+  --q-acc: var(--acc, var(--green, #6b4fd8)); /* Android usa --green come colore del corso */
+  --q-bg: var(--ua-bg-page, #f2f4f7);
+  --q-card: var(--ua-bg, #ffffff);
+  --q-line: var(--ua-line, #dde1e6);
   --q-acc2: color-mix(in srgb, var(--q-acc) 55%, #1d6a86);
 }
 @media (prefers-color-scheme: dark) {
@@ -21,15 +21,15 @@
   --q-line: #272b30;
 }
 :root[data-theme="light"] {
-  --q-bg: #ebeae6;
-  --q-card: #f4f3f0;
-  --q-line: #d6d5cf;
+  --q-bg: #f2f4f7;
+  --q-card: #ffffff;
+  --q-line: #dde1e6;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --q-bg: #ebeae6;
-    --q-card: #f4f3f0;
-    --q-line: #d6d5cf;
+    --q-bg: #f2f4f7;
+    --q-card: #ffffff;
+    --q-line: #dde1e6;
   }
 }
 
@@ -341,9 +341,9 @@ pre,
     background 0.2s;
 }
 .check:has(input:checked) {
-  border-color: var(--ok, #2f7d52);
-  background: color-mix(in srgb, var(--ok, #2f7d52) 12%, transparent);
-  color: var(--ok, #2f7d52) !important;
+  border-color: var(--ok, #1c8452);
+  background: color-mix(in srgb, var(--ok, #1c8452) 12%, transparent);
+  color: var(--ok, #1c8452) !important;
 }
 .study {
   border-radius: 22px;

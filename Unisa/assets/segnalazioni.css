@@ -1,12 +1,12 @@
 /* Pagina segnalazioni. Stesso tono caldo del pulsante "Segnala un problema" (site.css, --ua-warn). */
 :root {
   color-scheme: light;
-  --bg: #ebeae6;
-  --surface: #f4f3f0;
+  --bg: #f2f4f7;
+  --surface: #ffffff;
   --ink: #111418;
-  --muted: #5d636b;
-  --line: #d2d1cb;
-  --soft: #e2e1dc;
+  --muted: #5b6370;
+  --line: #dde1e6;
+  --soft: #eef1f4;
   --accent: #c4232b;
   --accent-ink: #fff;
   --accent-soft: #fdeced;
@@ -1069,7 +1069,7 @@ button:focus-visible,
 }
 .report-push > p {
   margin: 0 0 10px;
-  color: var(--ua-muted, #5d636b);
+  color: var(--ua-muted, #5b6370);
   font-size: 14.5px;
   line-height: 1.5;
 }

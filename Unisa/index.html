@@ -46,12 +46,12 @@
     <style>
       /* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
       :root {
-        --bg: #ebeae6;
-        --surface: #f4f3f0;
+        --bg: #f2f4f7;
+        --surface: #ffffff;
         --ink: #111418;
-        --muted: #5d636b;
-        --line: #d2d1cb;
-        --hover: #e2e1dc;
+        --muted: #5b6370;
+        --line: #dde1e6;
+        --hover: #eef1f4;
         --glow: rgba(17, 20, 24, 0.05);
         --ok: #2b7a4b;
         --ok-bg: #e4f2e9;
@@ -165,9 +165,9 @@
           --u-stroke: clamp(3px, 0.05em, 5px);
           --u-fill: color-mix(in srgb, var(--ua-c-is) 20%, var(--bg));
           --u-ls: 0.045em;
-          --u-c1: color-mix(in srgb, var(--ua-c-is) 55%, #000);
-          --u-c2: color-mix(in srgb, var(--ua-c-bd) 55%, #000);
-          --u-c3: color-mix(in srgb, var(--ua-c-mp) 55%, #000);
+          --u-c1: var(--ua-c-is);
+          --u-c2: var(--ua-c-bd);
+          --u-c3: var(--ua-c-mp);
         }
         @media (prefers-color-scheme: dark) {
           :root:not([data-theme="light"]) {
@@ -1615,11 +1615,30 @@
         fill: var(--muted);
         text-transform: uppercase;
       }
-      /* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio è sempre scuro, così i colori risaltano in entrambi i temi */
+      /* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio segue il tema
+         (chiaro col cappello nei colori dei corsi del tema chiaro, scuro coi colori pastello) */
       :root {
+        --s-core: var(--surface);
+        --s-c1: var(--ua-c-is);
+        --s-c2: var(--ua-c-bd);
+        --s-c3: var(--ua-c-mp);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --s-core: #111418;
+          --s-c1: #a58bf0;
+          --s-c2: #7ea6ff;
+          --s-c3: #5fc48c;
+        }
+      }
+      :root[data-theme="dark"] {
+        --s-core: #111418;
         --s-c1: #a58bf0;
         --s-c2: #7ea6ff;
         --s-c3: #5fc48c;
+      }
+      .seal .seal-core {
+        fill: var(--s-core);
       }
       @keyframes sealSpin {
         to {
@@ -1728,9 +1747,9 @@
               <stop offset="1" style="stop-color: var(--s-c3)" />
             </linearGradient>
             <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0">
-              <stop offset="0" style="stop-color: var(--u-c1, #5b3fa3)" />
-              <stop offset=".55" style="stop-color: var(--u-c2, #2350c8)" />
-              <stop offset="1" style="stop-color: var(--u-c3, #2f7d52)" />
+              <stop offset="0" style="stop-color: var(--u-c1, #6b4fd8)" />
+              <stop offset=".55" style="stop-color: var(--u-c2, #2f62e8)" />
+              <stop offset="1" style="stop-color: var(--u-c3, #1c8452)" />
             </linearGradient>
             <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" />
             <g class="ring">
@@ -1740,7 +1759,15 @@
                 </textPath>
               </text>
             </g>
-            <circle cx="80" cy="80" r="35" fill="#111418" stroke="var(--line,#2a2e33)" stroke-width="1" />
+            <circle
+              class="seal-core"
+              cx="80"
+              cy="80"
+              r="35"
+              fill="#111418"
+              stroke="var(--line,#2a2e33)"
+              stroke-width="1"
+            />
             <g
               transform="translate(62 62) scale(.9)"
               fill="none"
