@@ -147,6 +147,11 @@
       .ss-field > :not(span) {
         color: var(--ua-ink);
       }
+      /* display: flex non deve vincere sull'attributo hidden (es. "Arriva il" solo con "In un giorno preciso") */
+      .ss-field[hidden],
+      .ss-note[hidden] {
+        display: none;
+      }
       .ss-exam {
         position: relative;
         display: grid;
