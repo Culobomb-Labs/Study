@@ -195,7 +195,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <legend>Come vuoi studiare</legend>
       <div class="checks">
         <label><input type="checkbox" id="optDraw" checked><span>Esercizi a mano: schemi ER, tavole degli accessi, traduzione, query in algebra e SQL, B+-tree (consigliato)</span></label>
-        <label hidden><input type="checkbox" id="optQuiz"><span>Un quiz del capitolo dopo ogni argomento</span></label>
+        <label><input type="checkbox" id="optQuiz" checked><span>Un quiz del capitolo dopo ogni argomento</span></label>
         <label><input type="checkbox" id="optOpen" checked><span>Domande teoriche scritte (definizione, esempio, confronto)</span></label>
         <label><input type="checkbox" id="optLast" checked><span>Il giorno prima della prova solo ripasso leggero e simulazione</span></label>
         <label hidden><input type="checkbox" id="optGenai" checked><span>Includi la parte "Modellare nell'era GenAI" (se il tempo è poco puoi toglierla)</span></label>
@@ -214,7 +214,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 /* Dati della prova */
 const EXAM_DEFAULT = "";
 const Q = "Quaderno%20di%20Basi%20di%20Dati.html";
-const QUIZ = ""; // il quiz di Basi di Dati non c'è ancora: le attività del quiz non compaiono
+const QUIZ = "Quiz%20BD.html";
 const DRAW_T = "Esercizio a mano";
 const KEY = "piano-esame-bd"; // anche in corsi.js come progressKey: così si sincronizza
 const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
@@ -238,7 +238,7 @@ const TOPICS = [
 const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
   completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
-    sim: {"t": "Simulazione d'esame su carta", "s": "A tempo: uno schema ER da una traccia, la sua traduzione in relazioni e tre query in algebra e SQL. Poi correggi con il quaderno."},
+    sim: {"t": "Simulazione dello scritto", "s": "Nel quiz: una traccia della “Simulazione dello scritto” (5 esercizi, 30 punti, come all’esame). Poi rivedi gli esercizi dove hai perso punti."},
     focus: "modello ER, progettazione logica, mapping, algebra relazionale e SQL",
     recap: "Costrutti e cardinalità dell'ER, analisi delle ridondanze, eliminazione delle gerarchie, regole del mapping, chiavi e integrità referenziale, operatori dell'algebra e cardinalità del join, GROUP BY e HAVING, NOT EXISTS, indici e B+-tree" }
 };
@@ -392,7 +392,7 @@ function generate(cfg) {
   if (lastDay) {
     const lc = Math.min(cap, 150);
     lastDay.tasks = [
-      { k: "sim", m: Math.min(40, lc * 0.35), t: S.sim.t, s: QUIZ ? "A tempo nel quiz, come se fosse l'esame" : S.sim.s, href: QUIZ || undefined },
+      { k: "sim", m: Math.min(40, lc * 0.35), t: S.sim.t, s: S.sim.s, href: QUIZ || undefined },
       { k: "rip", m: Math.min(45, lc * 0.35), t: "Ripassa solo gli errori della simulazione", s: "Riapri i capitoli dove hai sbagliato o esitato" },
       { k: "rip", m: Math.min(30, lc * 0.3), t: "Ripasso a memoria", s: S.recap },
       { k: "rest", m: 0, t: "Stacca presto e dormi bene", s: "Niente argomenti nuovi" }
