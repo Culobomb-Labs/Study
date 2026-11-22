@@ -16,7 +16,9 @@
      cfg:  { exams: [{ code, name, date, lv, scope, hours, chapters, prj: { on, hours, date, fromDays, fromDate, pra } }],
              start, hours, days, ded, notify, ore: [ore dei promemoria] },
      plan: { built, start, recap, sim, items: { iid: { c, k, t, top, s, m, href, quiz } },
-             days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes, replanned,
+             days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes,
+             over: { traccia: { m, dates } } (ore messe negli ultimi giorni),
+             replanned: { at, n, moved, cut, over, ded, seen } (resoconto dell'ultimo ricalcolo: vedi replanOffline),
              intro: { sigla: [{ ch, t, href }] } (capitoli introduttivi: solo consiglio) },
      done: { idPezzo: true } } */
 (function () {
@@ -545,14 +547,20 @@
       if (!changed) break;
       s = schedule(cfg, work, opts.start);
     }
-    // se ancora non basta (pochissimi giorni): l'avanzo va nei giorni dedicati o, se non ci sono, negli ultimi giorni utili
+    /* se ancora non basta (pochissimi giorni): l'avanzo va nei giorni dedicati o, se non ci sono, negli ultimi giorni
+       utili. In `over` restano, per traccia, i minuti messi lì e i giorni (servono al resoconto del ricalcolo). */
+    const over = {};
     s.tracks.forEach(e => {
       if (!s.left[e.code]) return;
       const targets = s.days.filter(d => s.fits(e, d) && (!d.ded || d.ded === e.exam)).slice(-2);
+      const used = new Set();
       s.queue[e.code].splice(0).forEach((it, k) => {
         const d = targets[k % targets.length];
-        if (d) d.tasks.push({ id: pid(it.iid, d.date), iid: it.iid, m: it.left });
+        if (!d) return;
+        d.tasks.push({ id: pid(it.iid, d.date), iid: it.iid, m: it.left });
+        used.add(d.date);
       });
+      if (used.size) over[e.code] = { m: s.left[e.code], dates: [...used].sort() };
     });
     const items = {};
     Object.values(work).forEach(list => list.forEach(i => (items[i.iid] = i)));
@@ -599,7 +607,7 @@
       .concat(s.dues.map(e => ({ date: e.date, due: e.code, tasks: [] })))
       .sort(byDay);
     if (!s.shown.length) warnings.push("Non c'è nessun esame da oggi in poi.");
-    return { days, items: Object.assign(items, extras), warnings, notes };
+    return { days, items: Object.assign(items, extras), warnings, notes, over };
   }
 
   // attività divise per traccia (studio di un esame o suo progetto), con i minuti che restano (in ordine di studio)
@@ -708,7 +716,8 @@
       items: Object.assign({}, old, fresh, g.items),
       days,
       warnings: g.warnings,
-      notes: g.notes
+      notes: g.notes,
+      over: g.over
     };
     tidy(st);
     return st;
@@ -736,13 +745,36 @@
         return !done[x.id] && x.m > 0 && !isReview(x.iid) && open.has(it.tr || it.c);
       });
   }
+  // giorni di solo ripasso (dedicati a un esame e senza studio né progetto) da `from` in poi, per esame
+  function pureDed(plan, from) {
+    const out = {};
+    plan.days.forEach(d => {
+      if (!d.ded || d.date < from) return;
+      out[d.ded] = out[d.ded] || 0;
+      if (!d.tasks.some(x => isWork(plan.items[x.iid] || {}))) out[d.ded]++;
+    });
+    return out;
+  }
+  // nome breve di un'attività nel resoconto: "05 · Requisiti" per i capitoli, "Progetto · blocco 3 di 20" per il resto
+  const shortName = it =>
+    it.k === "top" ? `${it.ch ? it.ch + " · " : ""}${it.top || it.t}` : it.t || "Attività";
+
   /* Sposta da oggi in poi le attività rimaste indietro, senza rileggere i piani di studio (usa plan.items):
-     funziona anche senza rete, quindi anche dalla home. Restituisce quante attività ha spostato. */
+     funziona anche senza rete, quindi anche dalla home. Restituisce quante attività ha spostato.
+     In plan.replanned resta il resoconto di cosa è cambiato (lo mostrano la pagina e la home finché non si chiude):
+     moved = attività spostate e i giorni in cui sono finite; cut = attività accorciate; over = ore messe negli ultimi
+     giorni (solo se sono aumentate); ded = esami con meno giorni di solo ripasso; seen = resoconto chiuso. */
   function replanOffline(st) {
     const late = behind(st);
     if (!late.length) return 0;
     const from = today();
-    const g = generate(st.cfg, leftByExam(st.plan.items, doneMinutes(st)), {
+    const doneMin = doneMinutes(st);
+    // com'era prima: minuti che restano di ogni attività, giorni di solo ripasso e ore negli ultimi giorni
+    const before = {};
+    Object.values(leftByExam(st.plan.items, doneMin)).forEach(list => list.forEach(i => (before[i.iid] = i)));
+    const dedBefore = pureDed(st.plan, from);
+    const overBefore = st.plan.over || {};
+    const g = generate(st.cfg, leftByExam(st.plan.items, doneMin), {
       start: from,
       courseOf,
       recap: st.plan.recap || {},
@@ -753,9 +785,118 @@
     st.plan.start = from;
     st.plan.warnings = g.warnings;
     st.plan.notes = g.notes;
-    st.plan.replanned = { at: Date.now(), n: new Set(late.map(x => x.iid)).size };
+    st.plan.over = g.over;
     tidy(st);
-    return st.plan.replanned.n;
+
+    const done = st.done || {};
+    const ahead = st.plan.days.filter(d => d.date >= from && !d.exam && !d.due);
+    const datesOf = iid => [
+      ...new Set(ahead.filter(d => d.tasks.some(x => x.iid === iid && !done[x.id])).map(d => d.date))
+    ];
+    // i capitoli uno per uno; i blocchi di progetto ed esercizio pratico in una riga sola per traccia (ore e giorni)
+    const KIND = { prj: "Progetto", pra: "Esercizio pratico" };
+    const moved = [],
+      byTrack = {};
+    [...new Set(late.map(x => x.iid))].forEach(iid => {
+      const it = st.plan.items[iid] || before[iid] || {};
+      if (!KIND[it.k]) return moved.push({ c: it.c || "", t: shortName(it), dates: datesOf(iid) });
+      const g = (byTrack[it.tr] = byTrack[it.tr] || { c: it.c || "", k: it.k, m: 0, n: 0, dates: [] });
+      g.m += late.filter(x => x.iid === iid).reduce((a, x) => a + x.m, 0);
+      g.n++;
+      g.dates = [...new Set(g.dates.concat(datesOf(iid)))].sort();
+    });
+    Object.values(byTrack).forEach(g =>
+      moved.push({ c: g.c, t: `${KIND[g.k]}: ${fmtMin(g.m)}`, dates: g.dates, n: g.n })
+    );
+    const cut = [];
+    Object.values(before).forEach(b => {
+      const ni = g.items[b.iid];
+      if (!ni || b.k !== "top") return;
+      const drop = ["draw", "open"].filter(p => b.parts[p] && !(ni.parts || {})[p]);
+      const dropMin = drop.reduce((a, p) => a + b.parts[p], 0);
+      const short = ni.m < b.m - dropMin - 5;
+      if (drop.length || short)
+        cut.push({ c: b.c, ch: b.ch || b.top || "", drop, from: b.m, to: ni.m, short });
+    });
+    const over = Object.entries(g.over)
+      .filter(([code, o]) => o.m > ((overBefore[code] || {}).m || 0) + 5)
+      .map(([code, o]) => ({
+        c: code.split("#")[0],
+        k: code.split("#")[1] || "top",
+        m: o.m,
+        dates: o.dates
+      }));
+    const dedAfter = pureDed(st.plan, from);
+    const ded = Object.entries(dedBefore)
+      .filter(([code, n]) => (dedAfter[code] || 0) < n)
+      .map(([code, n]) => ({ c: code, n: dedAfter[code] || 0, was: n }));
+    const n = moved.reduce((a, x) => a + (x.n || 1), 0);
+    st.plan.replanned = { at: Date.now(), n, moved, cut, over, ded, seen: false };
+    return n;
+  }
+
+  /* Il resoconto dell'ultimo ricalcolo, pronto da mostrare: { sum, groups: [{ h, rows: [{ c, t, x, d }] }] }
+     (c = sigla del corso, t = attività, x = cosa è cambiato, d = capitoli coinvolti). null se non c'è o se è già
+     stato chiuso. I capitoli accorciati sono raggruppati per corso, così la lista resta corta.
+     I resoconti salvati prima (solo { at, n }) restano visibili 3 giorni, come prima, senza dettagli. */
+  function report(st) {
+    const rp = st && st.plan && st.plan.replanned;
+    if (!rp || rp.seen || !rp.n) return null;
+    if (!rp.moved && Date.now() - rp.at > 3 * 86400000) return null;
+    const t = today(),
+      tomorrow = iso(addDays(parse(t), 1));
+    const day = d => (d === t ? "oggi" : d === tomorrow ? "domani" : fmtDay(d));
+    const days = ds => (ds && ds.length ? "→ " + ds.map(day).join(", ") : "");
+    const KIND = { prj: "Progetto", pra: "Esercizio pratico", top: "Studio" };
+    const DROP = { draw: "esercizio", open: "domanda aperta" };
+    const chapters = n => (n === 1 ? "1 capitolo" : `${n} capitoli`);
+    // capitoli accorciati, per corso: una riga per quelli senza esercizio/domanda aperta, una per quelli più brevi
+    const cutRows = [];
+    [...new Set((rp.cut || []).map(x => x.c))].forEach(c => {
+      const mine = rp.cut.filter(x => x.c === c);
+      const drop = mine.filter(x => x.drop.length),
+        short = mine.filter(x => x.short);
+      if (drop.length) {
+        const parts = [...new Set(drop.flatMap(x => x.drop))].map(p => DROP[p]);
+        cutRows.push({ c, t: `${chapters(drop.length)} senza ${parts.join(" e ")}`, d: drop.map(x => x.ch) });
+      }
+      if (short.length)
+        cutRows.push({
+          c,
+          t: `${chapters(short.length)} più ${short.length === 1 ? "breve" : "brevi"}`,
+          x: `${fmtMin(short.reduce((a, x) => a + x.to, 0))} invece di ${fmtMin(short.reduce((a, x) => a + x.from, 0))}`,
+          d: short.map(x => x.ch)
+        });
+    });
+    // numeri dei capitoli, senza ripetizioni (in alcuni corsi più argomenti stanno nello stesso capitolo)
+    cutRows.forEach(r => (r.d = [...new Set(r.d.filter(Boolean))].join(", ")));
+    const groups = [
+      { h: "Spostate", rows: (rp.moved || []).map(x => ({ c: x.c, t: x.t, x: days(x.dates) })) },
+      { h: "Più brevi", rows: cutRows },
+      {
+        h: "Negli ultimi giorni",
+        rows: (rp.over || []).map(x => ({
+          c: x.c,
+          t: `${KIND[x.k] || "Studio"}: ${fmtMin(x.m)}`,
+          x: days(x.dates)
+        }))
+      },
+      {
+        h: "Giorni di solo ripasso",
+        rows: (rp.ded || []).map(x => ({
+          c: x.c,
+          t: "",
+          x: x.n ? `${x.n} invece di ${x.was}` : `nessuno (prima ${x.was})`
+        }))
+      }
+    ].filter(g => g.rows.length);
+    const what = rp.n === 1 ? "1 attività rimasta indietro" : `${rp.n} attività rimaste indietro`;
+    const more = groups.some(g => g.h !== "Spostate") ? " e adattato il piano" : "";
+    return { sum: `Ho spostato da oggi in poi ${what}${more}.`, groups };
+  }
+  // chiude il resoconto (non ricompare finché non c'è un nuovo ricalcolo)
+  function closeReport(st) {
+    if (st && st.plan && st.plan.replanned) st.plan.replanned.seen = true;
   }
 
   /* ---------------- riepilogo ---------------- */
@@ -836,6 +977,8 @@
     build,
     behind,
     replanOffline,
+    report,
+    closeReport,
     summary,
     info,
     prjDate,

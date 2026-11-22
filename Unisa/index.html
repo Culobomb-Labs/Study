@@ -848,6 +848,91 @@
         color: var(--muted);
         white-space: nowrap;
       }
+      /* resoconto del ricalcolo automatico: riquadro azzurro con la ✕ e i dettagli da aprire */
+      .rp {
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--surface));
+        border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, transparent);
+      }
+      .rp-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .rp-top p {
+        flex: 1;
+        margin: 0;
+      }
+      .rp-x {
+        flex: none;
+        width: 28px;
+        height: 28px;
+        margin: -4px -6px 0 0;
+        border: 0;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 14px;
+        color: var(--muted);
+        background: transparent;
+        cursor: pointer;
+      }
+      .rp-x:hover,
+      .rp-x:focus-visible {
+        color: var(--ink);
+        background: color-mix(in srgb, var(--ua-c-bd) 14%, transparent);
+      }
+      .rp-more summary {
+        margin-top: 6px;
+        cursor: pointer;
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      .rp-g h4 {
+        margin: 10px 0 6px;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+      }
+      .rp-g ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 6px;
+      }
+      .rp-g li {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .rp-g li > div {
+        min-width: 0;
+      }
+      .rp-c {
+        padding: 1px 0;
+        text-align: center;
+        border-radius: 999px;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 14%, transparent);
+      }
+      .rp-g em {
+        font-style: normal;
+        white-space: nowrap;
+        color: var(--muted);
+      }
+      .rp-g small {
+        display: block;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
       .tool-more {
         font-size: 13.5px;
         color: var(--muted);
@@ -2125,6 +2210,24 @@
         const head = pct =>
           `<div class="tool-head"><span class="tool-ic"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="m9 15 2 2 4-4"/></svg></span><span class="tool-k">Strumento · Sessione d'esami</span>${pct == null ? "" : `<span class="tool-pc">${pct}% fatto</span>`}</div>`;
         const when = n => (n === 0 ? "<b>oggi</b>" : n === 1 ? "<b>domani</b>" : `<b>${n}</b> giorni`);
+        /* resoconto dell'ultimo ricalcolo automatico (lo stesso della pagina Sessione): una riga con la ✕ e i
+           dettagli da aprire. Resta finché non si chiude, qui o nella pagina. */
+        function replanBox(st, sm) {
+          const r = S.report(st);
+          if (!r) return "";
+          const row = x =>
+            `<li><span class="rp-c" style="--c:${sm.color(x.c)}">${esc(x.c)}</span><div>${x.t ? `<span>${esc(x.t)}</span> ` : ""}${x.x ? `<em>${esc(x.x)}</em>` : ""}${x.d ? `<small>${esc(x.d)}</small>` : ""}</div></li>`;
+          const groups = r.groups
+            .map(g => `<div class="rp-g"><h4>${esc(g.h)}</h4><ul>${g.rows.map(row).join("")}</ul></div>`)
+            .join("");
+          return `<div class="rp" role="status">
+              <div class="rp-top">
+                <p>${esc(r.sum)}</p>
+                <button type="button" class="rp-x" aria-label="Chiudi il resoconto">✕</button>
+              </div>
+              ${groups ? `<details class="rp-more"><summary>Mostra dettagli</summary>${groups}</details>` : ""}
+            </div>`;
+        }
         function draw() {
           const st = S.load();
           if (st && S.replanOffline(st)) S.save(st);
@@ -2189,6 +2292,7 @@
             } · ${x.n} gg</span>`;
           const others = next.slice(0, 2).map(chip).join("");
           card.innerHTML = `${head(sm.pct)}
+            ${replanBox(st, sm)}
             <div class="tool-row"><div class="tool-t">${esc(c.name)} <small>${S.fmtDay(n.date)}</small></div><span class="tool-cd" style="--c:${c.color}">${when(n.inDays)}</span></div>
             <div class="wk" aria-label="I prossimi 7 giorni">${week}</div>
             ${list}
@@ -2203,6 +2307,15 @@
               draw();
             })
           );
+          const rpX = card.querySelector(".rp-x");
+          if (rpX)
+            rpX.addEventListener("click", () => {
+              const cur = S.load();
+              if (!cur) return;
+              S.closeReport(cur);
+              S.save(cur);
+              draw();
+            });
         }
         draw();
       })();

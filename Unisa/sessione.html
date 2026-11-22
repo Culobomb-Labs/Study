@@ -332,6 +332,85 @@
         background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--ua-bg));
         border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, var(--ua-line));
       }
+      /* resoconto del ricalcolo automatico: riepilogo con la ✕, poi i dettagli da aprire */
+      .ss-rp-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .ss-rp-top p {
+        flex: 1;
+        margin: 0;
+      }
+      .ss-rp-x {
+        flex: none;
+        width: 28px;
+        height: 28px;
+        margin: -4px -6px 0 0;
+        border: 0;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 14px;
+        color: var(--ua-muted);
+        background: transparent;
+        cursor: pointer;
+      }
+      .ss-rp-x:hover,
+      .ss-rp-x:focus-visible {
+        color: var(--ua-ink);
+        background: color-mix(in srgb, var(--ua-c-bd) 14%, transparent);
+      }
+      .ss-rp-more summary {
+        margin-top: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--ua-muted);
+      }
+      .ss-rp-g h4 {
+        margin: 12px 0 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ua-muted);
+      }
+      .ss-rp-g ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 6px;
+      }
+      .ss-rp-g li {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        align-items: baseline;
+        gap: 8px;
+        font-size: 14px;
+      }
+      .ss-rp-g li > div {
+        min-width: 0;
+      }
+      .ss-rp-c {
+        padding: 1px 0;
+        text-align: center;
+        border-radius: 999px;
+        font-family: var(--f-mono, ui-monospace, monospace);
+        font-size: 11.5px;
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 14%, transparent);
+      }
+      .ss-rp-g em {
+        font-style: normal;
+        white-space: nowrap;
+        color: var(--ua-muted);
+      }
+      .ss-rp-g small {
+        display: block;
+        font-size: 12.5px;
+        color: var(--ua-muted);
+      }
+
       /* consiglio: i capitoli introduttivi, facoltativi (non entrano nel piano) */
       .ss-tip {
         margin: 0 0 10px;
@@ -1242,17 +1321,35 @@
             ? `<p class="ss-info">Il piano si adatta ai giorni che ci sono: alcune attività possono essere più brevi o concentrate negli ultimi giorni.</p>`
             : "";
         }
+        /* resoconto dell'ultimo ricalcolo automatico (S.report): una riga, poi i dettagli da aprire (cosa è stato
+           spostato e dove, cosa è più breve, cosa è finito negli ultimi giorni, i giorni di solo ripasso).
+           Resta finché non si chiude con la ✕; tono neutro, niente rosso e niente "aumenta le ore". */
+        function replanBox(st) {
+          const r = S.report(st);
+          if (!r) return "";
+          const row = x => {
+            const c = courseOf(x.c) || { code: x.c, color: "var(--ua-muted)" };
+            return `<li><span class="ss-rp-c" style="--c:${c.color}">${esc(x.c)}</span><div>${x.t ? `<span>${esc(x.t)}</span> ` : ""}${x.x ? `<em>${esc(x.x)}</em>` : ""}${x.d ? `<small>${esc(x.d)}</small>` : ""}</div></li>`;
+          };
+          const groups = r.groups
+            .map(g => `<div class="ss-rp-g"><h4>${esc(g.h)}</h4><ul>${g.rows.map(row).join("")}</ul></div>`)
+            .join("");
+          return `<div class="ss-info ss-rp" role="status">
+              <div class="ss-rp-top">
+                <p>${esc(r.sum)}</p>
+                <button type="button" class="ss-rp-x" id="ss-rp-x" aria-label="Chiudi il resoconto">✕</button>
+              </div>
+              ${groups ? `<details class="ss-rp-more"><summary>Mostra dettagli</summary>${groups}</details>` : ""}
+            </div>`;
+        }
         function plan(st) {
           const t = S.today();
           const days = st.plan.days;
           const past = days.filter(d => d.date < t && !d.exam && !d.due);
           const todayDays = days.filter(d => d.date === t);
           const future = days.filter(d => d.date > t);
-          const rp = st.plan.replanned;
-          const notice =
-            rp && Date.now() - rp.at < 3 * 86400000
-              ? `<p class="ss-info">Ho spostato da oggi in poi ${rp.n === 1 ? "1 attività rimasta indietro" : rp.n + " attività rimaste indietro"}: il piano è già aggiornato.</p>`
-              : "";
+          // con il resoconto aperto il messaggio generico non serve (un solo riquadro azzurro alla volta)
+          const notice = replanBox(st);
           // pulsanti in cima, così non serve scorrere tutto il calendario per trovarli
           app.innerHTML = `<div class="ss-tools">
               <button type="button" class="ss-btn solid" id="ss-edit" aria-label="Modifica la sessione">Modifica</button>
@@ -1260,7 +1357,7 @@
               <button type="button" class="ss-btn danger" id="ss-del" aria-label="Elimina la sessione">Elimina</button>
             </div>
             ${introTip(st)}
-            ${notice}${planNote(st.plan)}
+            ${notice || planNote(st.plan)}
             ${examCards(st)}
             <h2>Oggi</h2>
             ${todayDays.length ? todayDays.map(d => dayCard(st, d)).join("") : `<p class="ss-empty">Oggi niente in programma: goditi il giorno libero.</p>`}
@@ -1294,6 +1391,16 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
           });
           app.querySelector("#ss-print").addEventListener("click", () => window.print());
+          const rpX = app.querySelector("#ss-rp-x");
+          if (rpX)
+            rpX.addEventListener("click", () => {
+              const cur = S.load() || st;
+              S.closeReport(cur);
+              S.save(cur);
+              const y = window.scrollY;
+              render();
+              window.scrollTo(0, y);
+            });
           app.querySelector("#ss-del").addEventListener("click", () => {
             if (!confirm("Eliminare la sessione? Il piano e le spunte della sessione verranno cancellati."))
               return;
