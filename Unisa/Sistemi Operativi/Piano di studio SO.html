@@ -111,7 +111,8 @@ output{font-family:var(--f-mono);color:var(--ink)}
 .btn.solid{background:var(--c);color:#fff;border-color:var(--c)}
 .btn:focus-visible{outline:2px solid var(--c);outline-offset:2px}
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.warn{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:15px}
+/* avviso del piano: un solo messaggio generico (anche per i piani salvati prima con gli avvisi dettagliati) */
+.plan-note{background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 35%,var(--line));color:var(--ink);border-radius:8px;padding:10px 14px;font-size:15px}
 .status{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-top:20px}
 .status b.big{font-family:var(--f-display);font-size:26px}
 .bar{grid-column:1/-1;height:8px;background:var(--c-soft);border-radius:99px;overflow:hidden}
@@ -423,7 +424,7 @@ function render() {
       <div class="actions no-print"><button class="btn" type="button" id="print">Stampa</button><button class="btn" type="button" id="reset">Rifai il piano</button></div>
       <div class="bar"><i style="width:${all.length ? 100 * nd / all.length : 0}%"></i></div>
     </div>
-    ${(p.warnings || []).map(w => `<p class="warn">${esc(w)}</p>`).join("")}
+    ${(p.warnings || []).length ? `<p class="plan-note">Il piano si adatta ai giorni che ci sono: alcune attività possono essere più brevi o concentrate negli ultimi giorni.</p>` : ""}
     <div class="plan">${p.days.map(d => {
       const dt = parse(d.date), tot = d.tasks.reduce((a, t) => a + t.m, 0);
       const dn = d.tasks.length && d.tasks.every(t => done[t.id]);
