@@ -173,8 +173,13 @@
     }
     bar.innerHTML = `<div class="ua-bar-in"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="uaGrad" gradientUnits="userSpaceOnUse" x1="2" y1="0" x2="22" y2="0"><stop offset="0" style="stop-color:var(--ua-c-is)"/><stop offset=".55" style="stop-color:var(--ua-c-bd)"/><stop offset="1" style="stop-color:var(--ua-c-mp)"/></linearGradient><linearGradient id="uaBell" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-bell1)"/><stop offset="1" style="stop-color:var(--ua-g-bell2)"/></linearGradient><linearGradient id="uaSun" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-sun1)"/><stop offset="1" style="stop-color:var(--ua-g-sun2)"/></linearGradient><linearGradient id="uaMoon" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-moon1)"/><stop offset="1" style="stop-color:var(--ua-g-moon2)"/></linearGradient><linearGradient id="uaAuto" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-auto1)"/><stop offset="1" style="stop-color:var(--ua-g-auto2)"/></linearGradient></defs></svg>
       <nav class="ua-crumbs" aria-label="Percorso">${crumbs}</nav>
-      <button class="ua-btn ua-open-search ua-bar-search" type="button" aria-label="Cerca nel sito" title="Cerca nel sito (${KBD})" aria-keyshortcuts="${KBD_ARIA}">${ICON.search}<span class="ua-bar-search-t">Cerca nel sito</span><span class="ua-kbd">${KBD}</span></button></div>`;
+      <button class="ua-btn ua-open-search ua-bar-search" type="button" aria-label="Cerca nel sito" title="Cerca nel sito (${KBD})" aria-keyshortcuts="${KBD_ARIA}">${ICON.search}<span class="ua-bar-search-t">Cerca nel sito</span><span class="ua-kbd">${KBD}</span></button>
+      <nav class="ua-bar-links" aria-label="Servizi UNISA">${SERVIZI.map(
+        s =>
+          `<a class="ua-bar-link" href="${s.href}" target="_blank" rel="noopener" title="${s.t}: ${s.x}" aria-label="${s.t} (si apre in una nuova scheda)">${servIcon(s.ic)}<span class="ua-bar-link-t">${s.corto}</span></a>`
+      ).join("")}</nav></div>`;
     // la lente resta in alto solo su PC; News e Profilo (e Cerca su telefono) stanno nella barra in basso
+    // i Servizi UNISA stanno a destra su ogni schermo: su schermi stretti restano solo le icone
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
     const fit = () => {
       bar.style.marginLeft = bar.style.marginRight = "0px";
@@ -1408,37 +1413,40 @@
     });
   }
 
-  /* servizi UNISA: un solo elenco per la voce "Servizi UNISA" della tendina Profilo e per la tendina
-     della colonna "Link esterni" in fondo alla home. Per aggiungere, togliere o cambiare un link basta modificare qui. */
+  /* servizi UNISA: un solo elenco per i link a destra della barra in alto e per la tendina
+     della colonna "Link esterni" in fondo alla home. Per aggiungere, togliere o cambiare un link basta modificare qui.
+     "corto" è la scritta nella barra in alto, "t" e "x" il nome completo e la descrizione. */
   const SERVIZI = [
     {
       ic: "esse3",
       href: "https://esse3web.unisa.it/Root.do",
       t: "Esse3",
+      corto: "Esse3",
       x: "Carriera, esami e prenotazioni"
     },
     {
       ic: "elearning",
       href: "https://elearning.informatica.unisa.it/el-platform/",
       t: "E-learning Informatica",
+      corto: "E-learning",
       x: "Materiale e avvisi dei corsi"
     },
     {
       ic: "biblio",
       href: "https://www.biblioteche.unisa.it/chiedi-al-bibliotecario",
       t: "Biblioteca UNISA",
+      corto: "Biblioteca",
       x: "Chiedi al bibliotecario"
     }
   ];
-  // disegni delle icone: l'edificio per il gruppo, poi uno per ogni servizio
+  // disegni delle icone: uno per ogni servizio
   const SERVIZI_IC = {
-    uni: '<path d="M3 21h18"/><path d="M5 21V10M19 21V10M9 21V10M15 21V10"/><path d="M2 10 12 4l10 6z"/>',
     esse3: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>',
     elearning: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
     biblio:
       '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>'
   };
-  // tendina Profilo: 16 px e tratto 2, come le altre icone; fondo della home: 18 px e tratto 1.8, come le cartelle Drive
+  // barra in alto: 16 px e tratto 2, come le altre icone; fondo della home: 18 px e tratto 1.8, come le cartelle Drive
   const servIcon = (k, size = 16, stroke = 2) =>
     `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SERVIZI_IC[k]}</svg>`;
   // home: riempie la tendina "Servizi UNISA" sotto le cartelle Drive (resta nascosta finché non è pronta)
@@ -1505,11 +1513,6 @@
         ${item("ua-ap-sess", ICON.cal, "La mia sessione", "Esami, date e piano giorno per giorno", `${ROOT}sessione.html`)}
         <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-do-export" aria-expanded="false" aria-controls="ua-ap-move"><span class="ua-nt-ic">${ICON.sync}</span><span class="ua-nt-txt"><b>Sposta le spunte</b><span>${u ? "Con un link o un QR" : "Senza account, con un link o un QR"}</span></span>${ICON.chev}</button>
           <div class="ua-ap-move" id="ua-ap-move" hidden></div></li>
-        <li class="ua-ap-exp"><button type="button" class="ua-ap-item ua-ap-uni-btn" aria-expanded="false" aria-controls="ua-ap-uni"><span class="ua-nt-ic">${servIcon("uni")}</span><span class="ua-nt-txt"><b>Servizi UNISA</b><span>Esse3, E-learning e Biblioteca</span></span>${ICON.chev}</button>
-          <div class="ua-ap-move ua-ap-uni" id="ua-ap-uni" hidden>${SERVIZI.map(
-            s =>
-              `<a class="ua-ap-item ua-ap-uni-link" href="${s.href}" target="_blank" rel="noopener"><span class="ua-nt-ic">${servIcon(s.ic)}</span><span class="ua-nt-txt"><b>${s.t}</b><span>${s.x}</span></span><span class="ua-ap-go" aria-hidden="true">↗</span></a>`
-          ).join("")}</div></li>
         ${u ? item("ua-ap-switch ua-do-switch", ICON.swap, "Accedi con un altro account", "Scegli un altro account Google") : ""}
         ${item("ua-ap-report", ICON.bug, "Segnala un problema", "Qualcosa non va negli appunti o nel sito?", `${ROOT}segnalazioni.html`)}
       </ul>
@@ -1535,17 +1538,6 @@
         out.disabled = true;
         signOutNow();
       });
-    const uniBtn = ap.querySelector(".ua-ap-uni-btn"),
-      uniList = ap.querySelector(".ua-ap-uni");
-    uniBtn.addEventListener("click", () => {
-      const open = uniBtn.getAttribute("aria-expanded") !== "true";
-      uniBtn.setAttribute("aria-expanded", String(open));
-      uniList.hidden = !open;
-      if (open) {
-        if (!phone()) placeBox(ap.querySelector(".ua-np-box"), apTrigger);
-        uniList.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      }
-    });
     const exp = ap.querySelector(".ua-do-export"),
       move = ap.querySelector(".ua-ap-move");
     exp.addEventListener("click", () => {
