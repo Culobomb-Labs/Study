@@ -649,24 +649,16 @@
         }
       }
 
-      /* sessione d'esami + riprendi da dove eri: affiancate su computer (la sessione più larga), una sotto l'altra
-         su telefono; se una delle due non c'è, l'altra prende tutta la larghezza */
+      /* sessione d'esami + riprendi da dove eri: una sotto l'altra (su computer come su telefono); la card "riprendi"
+         è una striscia compatta */
       .duo {
         display: grid;
-        grid-template-columns: 1.35fr 1fr;
+        grid-template-columns: 1fr;
         gap: 14px;
         padding-block: 0 18px;
       }
-      .duo:has(> [hidden]) {
-        grid-template-columns: 1fr;
-      }
       .duo:not(:has(> :not([hidden]))) {
         display: none;
-      }
-      @media (max-width: 860px) {
-        .duo {
-          grid-template-columns: 1fr;
-        }
       }
 
       /* sessione d'esami: card da "strumento" (bordo col gradiente del sito, intestazione, settimana, attività
@@ -1014,7 +1006,8 @@
         }
       }
 
-      /* riprendi da dove eri: stessa scheda dei corsi (raggio, alone di colore in alto a sinistra, filo in cima, sollevamento al passaggio) */
+      /* riprendi da dove eri: a pillola, diversa dalle card dei corsi (niente alone di colore né filo in cima):
+         tessera col tipo di documento, testo e pulsante "Continua" a destra */
       .resume {
         position: relative;
         isolation: isolate;
@@ -1023,31 +1016,18 @@
         grid-template-columns: 34px minmax(0, 1fr) auto;
         gap: 2px 14px;
         align-items: center;
-        padding: 16px 22px;
+        padding: 10px 12px 10px 14px;
         border: 1px solid var(--line);
-        border-radius: 18px;
+        border-radius: 999px;
         text-decoration: none;
-        background:
-          radial-gradient(420px 180px at 0 0, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%),
-          var(--surface);
+        background: var(--surface);
         transition:
-          transform 0.25s var(--ua-ease),
           border-color 0.25s,
-          box-shadow 0.25s;
-      }
-      .resume::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--c), transparent 85%);
+          background 0.25s;
       }
       .resume:hover {
-        transform: translateY(-3px);
         border-color: color-mix(in srgb, var(--c) 45%, var(--line));
-        box-shadow: 0 14px 34px -18px color-mix(in srgb, var(--c) 60%, transparent);
+        background: color-mix(in srgb, var(--c) 7%, var(--surface));
       }
       .resume:focus-visible {
         outline: 2px solid var(--ink);
@@ -1060,7 +1040,7 @@
         place-items: center;
         width: 34px;
         height: 34px;
-        border-radius: 10px;
+        border-radius: 50%;
         font: 700 14px/1 var(--f-display);
         color: var(--c);
         background: color-mix(in srgb, var(--c) 16%, transparent);
@@ -1104,24 +1084,49 @@
         color: var(--muted);
         margin-left: 8px;
       }
-      .resume .arrow {
+      /* pulsante "Continua" a destra */
+      .res-btn {
         grid-row: 1 / span 2;
         grid-column: 3;
-      }
-      .resume:hover .arrow {
-        transform: translateX(4px);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 14.5px;
         color: var(--c);
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+      .res-btn span {
+        transition: transform 0.25s var(--ua-ease);
+      }
+      .resume:hover .res-btn {
+        background: var(--c);
+        color: var(--bg);
+      }
+      .resume:hover .res-btn span {
+        transform: translateX(3px);
       }
       @media (max-width: 520px) {
         .resume {
           grid-template-columns: 30px minmax(0, 1fr) auto;
           gap: 2px 12px;
-          padding: 14px 16px;
+          padding: 9px 10px 9px 12px;
         }
         .resume-dot {
           width: 30px;
           height: 30px;
-          border-radius: 9px;
+        }
+        /* su telefono del pulsante resta solo la freccia */
+        .res-btn {
+          padding: 6px 11px;
+        }
+        .res-btn b {
+          display: none;
         }
         .resume-k {
           font-size: 10.5px;
@@ -1134,82 +1139,6 @@
           font-size: 17px;
         }
       }
-      /* riprendi accanto alla sessione (solo su computer): stessa altezza della card della sessione, con avanzamento
-         del documento e pulsante "Continua", così lo spazio non resta vuoto. Altrimenti resta la striscia compatta. */
-      .res-prog,
-      .res-foot {
-        display: none;
-      }
-      @media (min-width: 861px) {
-        .duo:has(#sess-card:not([hidden])) .resume {
-          height: 100%;
-          box-sizing: border-box;
-          grid-template-columns: 34px minmax(0, 1fr);
-          grid-template-rows: auto auto 1fr auto;
-          gap: 4px 14px;
-          padding: 16px 20px 18px;
-        }
-        .duo:has(#sess-card:not([hidden])) .resume .arrow {
-          display: none;
-        }
-        .duo:has(#sess-card:not([hidden])) .resume-t {
-          white-space: normal;
-        }
-        .duo:has(#sess-card:not([hidden])) .resume-t small {
-          display: block;
-          margin: 4px 0 0;
-        }
-        .duo:has(#sess-card:not([hidden])) .res-prog:not([hidden]) {
-          grid-column: 1 / -1;
-          align-self: end;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-top: 10px;
-          font-family: var(--f-mono);
-          font-size: 12px;
-          color: var(--muted);
-        }
-        .res-prog > span:first-child {
-          flex: 1;
-          height: 6px;
-          border-radius: 999px;
-          background: color-mix(in srgb, var(--ink) 10%, transparent);
-          overflow: hidden;
-        }
-        .res-prog i {
-          display: block;
-          height: 100%;
-          border-radius: inherit;
-          background: var(--c);
-        }
-        .duo:has(#sess-card:not([hidden])) .res-foot {
-          grid-column: 1 / -1;
-          align-self: end;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          margin-top: 4px;
-        }
-        .res-foot small {
-          font-family: var(--f-mono);
-          font-size: 12px;
-          color: var(--muted);
-        }
-        .res-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 9px 16px;
-          border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
-          border-radius: 999px;
-          font-weight: 600;
-          font-size: 14.5px;
-          color: var(--c);
-        }
-      }
-
       /* avanzamento */
       .prog {
         grid-column: 1;
@@ -1778,7 +1707,7 @@
       </div>
     </header>
 
-    <!-- sessione d'esami e "riprendi da dove eri": affiancate su computer, una sotto l'altra su telefono -->
+    <!-- sessione d'esami e "riprendi da dove eri": una sotto l'altra, la seconda è una striscia compatta -->
     <div class="wrap duo">
       <div class="tool" id="sess-card" hidden></div>
       <div class="resume-cell" id="resume-wrap" hidden>
@@ -1786,14 +1715,7 @@
           <span class="resume-dot" aria-hidden="true"></span>
           <span class="resume-k">Riprendi da dove eri</span>
           <span class="resume-t" id="resume-t"></span>
-          <span class="arrow" aria-hidden="true">→</span>
-          <span class="res-prog" hidden
-            ><span><i></i></span><span class="res-pc"></span
-          ></span>
-          <span class="res-foot"
-            ><small class="res-last"></small
-            ><span class="res-btn">Continua <span aria-hidden="true">→</span></span></span
-          >
+          <span class="res-btn"><b>Continua </b><span aria-hidden="true">→</span></span>
         </a>
       </div>
     </div>
@@ -2106,19 +2028,9 @@
           };
         return null;
       }
-      let resumeDoc = null; // documento di "Riprendi da dove eri" (per il suo avanzamento, vedi sotto)
       function paintInfo(data) {
         const files = (data && data.files) || {},
           prog = (data && data.progress) || {};
-        if (resumeDoc && resumeDoc.progressKey) {
-          const p = progressOf(resumeDoc.progressKey, prog[resumeDoc.path]);
-          const box = document.querySelector("#resume .res-prog");
-          if (p && p.total) {
-            box.querySelector("i").style.width = (100 * p.done) / p.total + "%";
-            box.querySelector(".res-pc").textContent = `${p.done}/${p.total} ${p.what.split(" ")[0]}`;
-            box.hidden = false;
-          }
-        }
         document.querySelectorAll(".dinfo").forEach(i => {
           const parts = [i.dataset.kind];
           const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
@@ -2188,11 +2100,7 @@
               ? rtf.format(-Math.round(mins / 60), "hour")
               : rtf.format(-Math.round(mins / 1440), "day");
         box.querySelector(".resume-k").textContent = "Riprendi da dove eri · " + when;
-        box.querySelector(".res-last").textContent = last.n
-          ? "Ultima lettura: " + last.n.toLowerCase()
-          : found.d.kind;
         document.getElementById("resume-wrap").hidden = false;
-        resumeDoc = found.d;
       })();
 
       /* Sessione d'esami: card da "strumento" (dati e piano in assets/sessione.js, pagina completa sessione.html).
