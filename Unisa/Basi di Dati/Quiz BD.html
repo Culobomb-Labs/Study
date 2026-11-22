@@ -148,6 +148,17 @@ button{font:inherit;color:inherit}
 .retrace{margin:0 0 14px}
 .retrace summary{cursor:pointer;font-family:var(--f-mono);font-size:13px;color:var(--c);margin-bottom:10px}
 .extext{font-size:16.5px;margin:0 0 18px}
+.vts{display:flex;flex-wrap:wrap;gap:8px}
+.vt{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer}
+.vt:hover{border-color:var(--muted)}
+.vt:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.vt.ok.on{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.vt.mid.on{background:var(--c-soft);border-color:var(--c);color:var(--c)}
+.vt.ko.on{background:var(--ko-bg);border-color:var(--ko);color:var(--ko)}
+.byc.votes li{grid-template-columns:minmax(0,1fr) auto}
+.byc small{color:var(--muted);font-size:12.5px}
+.vlab{font-family:var(--f-mono);font-size:13px;font-weight:500}
+.vlab.ok{color:var(--ok)} .vlab.mid{color:var(--c)} .vlab.ko{color:var(--ko)}
 .pts{display:flex;flex-wrap:wrap;gap:8px}
 .pt{appearance:none;min-width:42px;height:40px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-family:var(--f-mono);font-weight:500;cursor:pointer}
 .pt:hover{border-color:var(--muted)}
@@ -918,7 +929,7 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione dello scritto</h2>
-      <p>Tracce inventate con la stessa struttura delle prove di Polese e Caruccio: carico applicativo (9), mapping (4), algebra e SQL (7), JDBC (5), B+-tree (5). Scrivi le risposte, confronta con la soluzione e datti i punti: il totale è su 30.</p>
+      <p>Tracce inventate con la stessa struttura delle prove di Polese e Caruccio: carico applicativo (9), mapping (4), algebra e SQL (7), JDBC (5), B+-tree (5). Scrivi le risposte, confronta con la soluzione e segna se erano giuste, parzialmente giuste o sbagliate.</p>
       <div class="traces">${traces}</div>
     </section>
     <p class="label">Un capitolo alla volta</p>
@@ -1068,8 +1079,15 @@ function result(restored) {
 }
 
 /* Simulazione dello scritto: una traccia (descrizione, schema, operazioni) e i suoi 5 esercizi, uno alla volta.
-   Si scrive la risposta, si apre la soluzione e ci si danno i punti (0 … punti dell'esercizio). Totale su 30.
+   Si scrive la risposta, si apre la soluzione e ci si valuta come nel quiz di SO: giusto, parzialmente giusto, sbagliato.
+   Il punteggio su 30 è solo indicativo (giusto = tutti i punti dell'esercizio, parzialmente = metà, sbagliato = 0).
    Il migliore e l'ultimo punteggio di ogni traccia restano in load().scritto[id]. */
+const VOTI = [
+  { k: "ok", t: "Giusto", f: 1 },
+  { k: "mid", t: "Parzialmente giusto", f: 0.5 },
+  { k: "ko", t: "Sbagliato", f: 0 }
+];
+const voto = k => VOTI.find(v => v.k === k);
 const traccia = id => TRACCE.find(t => t.id === id);
 const fmtPt = v => String(v).replace(".", ",");
 function traceBox(t) {
@@ -1082,7 +1100,7 @@ function markScroll() {
 }
 function scrittoStart(id) {
   const t = traccia(id);
-  run = { mode: "scritto", title: t.titolo, t, i: -1, answers: t.es.map(() => ({ text: "", pts: null, open: false, photo: null })) };
+  run = { mode: "scritto", title: t.titolo, t, i: -1, answers: t.es.map(() => ({ text: "", voto: null, pts: null, open: false, photo: null })) };
   try { if (history.state && history.state.quiz) history.replaceState({ quiz: 1 }, ""); else history.pushState({ quiz: 1 }, ""); } catch (e) {}
   scrittoCover();
 }
@@ -1095,7 +1113,7 @@ function scrittoCover() {
     <div class="bar"><i style="width:0"></i></div>
     <h2 class="q">${esc(t.titolo)}</h2>
     ${traceBox(t)}
-    <p class="note">Come all’esame: 5 esercizi, 30 punti (9 + 4 + 7 + 5 + 5). Scrivi le risposte o, per schemi e alberi, disegnali su carta; poi confronta con la soluzione e datti i punti.</p>
+    <p class="note">Come all’esame: 5 esercizi, 30 punti (9 + 4 + 7 + 5 + 5). Scrivi le risposte o, per schemi e alberi, disegnali su carta; poi confronta con la soluzione e segna se ogni risposta è giusta, parzialmente giusta o sbagliata.</p>
     <div class="next"><button class="btn solid" type="button" id="go">Inizia l’esercizio 1 →</button></div>`;
   app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   app.querySelector("#go").onclick = () => { run.i = 0; scrittoAsk(); };
@@ -1147,18 +1165,19 @@ function scrittoAsk() {
   const after = app.querySelector("#after");
   const showSol = () => {
     a.open = true;
-    const chips = Array.from({ length: ex.punti + 1 }, (_, k) => `<button class="pt${a.pts === k ? " on" : ""}" type="button" data-p="${k}" aria-pressed="${a.pts === k}">${k}</button>`).join("");
+    const chips = VOTI.map(v => `<button class="vt ${v.k}${a.voto === v.k ? " on" : ""}" type="button" data-v="${v.k}" aria-pressed="${a.voto === v.k}">${v.t}</button>`).join("");
     after.innerHTML = `
       ${a.photo ? `<p class="label" style="margin-top:18px">Confronta la tua foto con la soluzione</p>` : ""}
-      <div class="fb sol"><b>Soluzione</b>${ex.sol}<p class="crit"><b>Come darti i punti</b> (indicativo): ${esc(ex.criteri)}.</p></div>
-      <p class="label" style="margin-top:18px">Quanti punti ti dai? (su ${ex.punti})</p>
-      <div class="pts" role="group" aria-label="Punti">${chips}</div>
+      <div class="fb sol"><b>Soluzione</b>${ex.sol}<p class="crit"><b>Cosa deve esserci</b> (${ex.punti} punti all’esame): ${esc(ex.criteri)}.</p></div>
+      <p class="label" style="margin-top:18px">Com’è andata la tua risposta?</p>
+      <div class="vts" role="group" aria-label="Valutazione">${chips}</div>
       <div class="next">
         ${run.i > 0 ? `<button class="btn" type="button" id="prev">← Esercizio ${run.i}</button>` : ""}
         <button class="btn solid" type="button" id="next" ${a.pts === null ? "disabled" : ""}>${last ? "Vedi il risultato" : `Esercizio ${run.i + 2} →`}</button></div>`;
-    after.querySelectorAll(".pt").forEach(b => b.onclick = () => {
-      a.pts = +b.dataset.p;
-      after.querySelectorAll(".pt").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
+    after.querySelectorAll(".vt").forEach(b => b.onclick = () => {
+      a.voto = b.dataset.v;
+      a.pts = ex.punti * voto(a.voto).f;
+      after.querySelectorAll(".vt").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
       after.querySelector("#next").disabled = false;
     });
     const prev = after.querySelector("#prev");
@@ -1184,14 +1203,16 @@ function scrittoResult() {
   const prev = saved.scritto[t.id];
   saved.scritto[t.id] = { best: Math.max(tot, prev ? prev.best : 0), last: tot };
   store(saved);
-  const rows = t.es.map((ex, i) => `<li><span>Esercizio ${i + 1}</span><span class="m"><i style="width:${100 * run.answers[i].pts / ex.punti}%"></i></span><span class="v">${run.answers[i].pts}/${ex.punti}</span></li>`).join("");
+  const rows = t.es.map((ex, i) => { const v = voto(run.answers[i].voto); return `<li><span>Esercizio ${i + 1} <small>(${ex.punti} punti)</small></span><span class="vlab ${v.k}">${v.t}</span></li>`; }).join("");
+  const count = k => run.answers.filter(a => a.voto === k).length;
   const verdict = tot >= 27 ? "Ottimo: sei pronto per lo scritto." : tot >= 18 ? "Sufficiente. Rivedi gli esercizi dove hai perso punti e prova un’altra traccia." : tot >= 14 ? "Ci sei quasi: ripassa i capitoli degli esercizi più deboli e rifalla tra qualche giorno." : "Da ripassare: riprendi il quaderno, poi riprova la traccia.";
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <p class="label">Simulazione dello scritto · ${esc(t.titolo)}</p>
-    <div class="score"><b>${fmtPt(tot)}/30</b><span>${tot >= 18 ? "sufficiente" : "non ancora sufficiente"}</span></div>
+    <div class="score"><b>${count("ok")}/${t.es.length}</b><span>${count("ok") === 1 ? "giusto" : "giusti"}${count("mid") ? ` · ${count("mid")} ${count("mid") === 1 ? "parzialmente giusto" : "parzialmente giusti"}` : ""}${count("ko") ? ` · ${count("ko")} ${count("ko") === 1 ? "sbagliato" : "sbagliati"}` : ""}</span></div>
     <p class="verdict">${verdict}</p>
-    <p class="label">Per esercizio</p><ul class="byc">${rows}</ul>
+    <p class="label">Per esercizio</p><ul class="byc votes">${rows}</ul>
+    <p class="note">Punteggio indicativo: <b>${fmtPt(tot)}/30</b> (giusto = tutti i punti dell’esercizio, parzialmente giusto = metà, sbagliato = 0).</p>
     <div class="actions">
       <button class="btn solid" type="button" id="again">Rifai questa traccia</button>
       <button class="btn" type="button" id="back">Torna a tutti i quiz</button>

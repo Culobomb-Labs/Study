@@ -785,7 +785,8 @@
             <label class="ss-check"><input type="checkbox" name="prj" ${p.on ? "checked" : ""}><span><b>C'è il progetto</b><small>Ogni giorno un po' di progetto fino alla consegna, insieme allo studio</small></span></label>
             <div class="ss-prj-f" ${p.on ? "" : "hidden"}>
               <div class="ss-row">
-                <label class="ss-field"><span>Ore che ti servono (circa)</span><input type="number" name="prjHours" min="2" max="300" step="1" value="${esc(p.hours || 20)}" style="width:120px"></label>
+                <!-- le ore del progetto non si chiedono più: 20 di base, le sessioni salvate tengono le loro -->
+                <input type="hidden" name="prjHours" value="${esc(p.hours || 20)}">
                 <label class="ss-field"><span>Consegna (se vuoto: il giorno dell'esame)</span><input type="date" name="prjDate" value="${esc(p.date || "")}" min="${S.today()}"></label>
               </div>
               <div class="ss-row" style="margin-top:12px">
