@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano di studio di Ingegneria del Software</title>
-<meta name="description" content="Piano di studio personalizzato di Ingegneria del Software per la prima prova intercorso, la seconda prova o l'esame completo, con gli argomenti e i capitoli del quaderno.">
+<meta name="description" content="Piano di studio personalizzato di Ingegneria del Software per la prima prova intercorso, la seconda prova o la prova completa, con gli argomenti e i capitoli del quaderno.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -159,7 +159,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 <div class="wrap">
   <div class="eyebrow">Ingegneria del Software · piano di studio</div>
   <h1>Piano di studio</h1>
-  <p class="lede">Un piano fatto su misura per quello che devi preparare: la prima prova intercorso, la seconda prova o l'esame completo. Più sotto trovi anche gli argomenti della prima prova e i capitoli del quaderno dove studiarli.</p>
+  <p class="lede">Un piano fatto su misura per quello che devi preparare: la prima prova intercorso, la seconda prova o la prova completa. Più sotto trovi anche gli argomenti della prima prova e i capitoli del quaderno dove studiarli.</p>
 
   <nav class="tabs no-print" aria-label="In questa pagina">
     <a href="#argomenti" data-t="argomenti">Argomenti prima prova</a>
@@ -242,7 +242,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <legend>Per quale prova</legend>
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
         <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 20</small></span></label>
-        <label class="scope off" title="Gli argomenti non sono ancora stati comunicati"><input type="radio" name="scope" value="seconda" disabled><span><b>Seconda prova</b><small>argomenti non ancora disponibili</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="seconda"><span><b>Seconda prova</b><small>gli argomenti che non erano nella prima · cap. 05, 09–19</small></span></label>
         <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 02–20</small></span></label>
       </div>
     </fieldset>
@@ -405,6 +405,11 @@ const SCOPES = {
     sim: { t: "Simulazione prima prova", s: "Nel quiz: \"Prima prova\" (15 domande, 30 minuti, punteggio d'esame). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
+  // seconda prova: gli argomenti "full", cioè quelli che non erano nella prima (come nella Sessione)
+  seconda: { topics: () => STUDY.filter(t => t.full), exam: "", examLbl: "La prova è il",
+    sim: { t: "Simulazione seconda prova", s: "Nel quiz: \"Seconda prova\" (15 domande sui capitoli restanti, 30 minuti, punteggio d'esame). Poi rivedi gli errori." },
+    focus: "system design, design pattern e testing",
+    recap: "Modelli di ciclo di vita, stili architetturali, pattern e indizi, mapping, formule BVA/WECT/SECT, V(G), integrazione, ruoli e cerimonie Scrum" },
   completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
     sim: { t: "Simulazione prova completa", s: "Nel quiz: \"Prova completa\" (25 domande). Poi rivedi gli errori." },
     focus: "class diagram, casi d'uso, sequence e black-box testing",
@@ -590,7 +595,7 @@ function render() {
   const ex = parse(p.exam);
   box.innerHTML = `
     <div class="status">
-      <div><span class="tag">${p.scope === "completa" ? "Piano per la prova completa" : "Piano per la prima prova"}</span><br><b class="big">${nd}/${all.length}</b> <span class="muted">attività fatte</span></div>
+      <div><span class="tag">${{ completa: "Piano per la prova completa", seconda: "Piano per la seconda prova" }[p.scope] || "Piano per la prima prova"}</span><br><b class="big">${nd}/${all.length}</b> <span class="muted">attività fatte</span></div>
       <div class="actions no-print"><button class="btn" type="button" id="print">Stampa</button><button class="btn" type="button" id="reset">Rifai il piano</button></div>
       <div class="bar"><i style="width:${all.length ? 100 * nd / all.length : 0}%"></i></div>
     </div>
@@ -609,7 +614,7 @@ function render() {
           ${t.m ? `<span class="tm">${fmtMin(t.m)}</span>` : ""}</label></li>`).join("")}</ul>
       </section>`;
     }).join("")}
-      <section class="dcard exam-day"><div class="dh"><div class="dt">${WD[ex.getDay()]}<b>${ex.getDate()}</b>${MESI[ex.getMonth()]}</div><div><h3>${p.scope === "completa" ? "Esame" : "Prima prova intercorso"}</h3><span style="opacity:.75;font-size:14.5px">Colazione, niente roba nuova. Leggi tutte le opzioni prima di scegliere.</span></div><span></span></div></section>
+      <section class="dcard exam-day"><div class="dh"><div class="dt">${WD[ex.getDay()]}<b>${ex.getDate()}</b>${MESI[ex.getMonth()]}</div><div><h3>${{ completa: "Esame", seconda: "Seconda prova" }[p.scope] || "Prima prova intercorso"}</h3><span style="opacity:.75;font-size:14.5px">Colazione, niente roba nuova. Leggi tutte le opzioni prima di scegliere.</span></div><span></span></div></section>
     </div>`;
   box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener("change", () => {
     const s = load(); s.done = s.done || {}; if (cb.checked) s.done[cb.dataset.id] = true; else delete s.done[cb.dataset.id]; save(s); render();

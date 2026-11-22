@@ -1314,12 +1314,14 @@ function chapterRun(cid) {
   const st = loadStats(), last = (st._ultimo || {})[cid] || [];
   return shuffle(pick(Q.filter(q => q.c === cid), PER_GIRO, last));
 }
-/* Due simulazioni: "sim" = prova intercorso (15 domande: 5 uscite alla prova del 5 novembre, almeno 1 per capitolo della prova),
-   "simtutto" = tutto il corso (25 domande, almeno 1 per capitolo). */
+/* Tre simulazioni: "sim" = prova intercorso (15 domande: 5 uscite alla prova del 5 novembre, almeno 1 per capitolo della prova),
+   "sim2" = seconda prova (15 domande sui capitoli restanti, cioè quelli che non erano nella prima: 05 e 09–19,
+   almeno 1 per capitolo; i capitoli introduttivi non entrano), "simtutto" = tutto il corso (25 domande, almeno 1 per capitolo). */
 /* Le domande con d: n vengono dal "Deposito domande" del corso (le più probabili all'esame):
    ogni simulazione ne contiene almeno metà; "dep" usa solo quelle. */
 const SIMS = {
   sim: { title: "Simulazione prima prova", tot: 15, min: 1, x: 5, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
+  sim2: { title: "Simulazione seconda prova", tot: 15, min: 1, dep: 0.5, chaps: () => CHAPTERS.filter(c => !c.p && c.id !== "minuta") },
   simtutto: { title: "Simulazione prova completa", tot: 25, min: 1, dep: 0.5, chaps: () => CHAPTERS },
   dep: { title: "Domande del deposito", tot: 30, min: 0, dep: 1, chaps: () => CHAPTERS }
 };
@@ -1372,16 +1374,17 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione</h2>
-      <p><b>Prima prova</b> · 15 domande sui capitoli della prova intercorso (02, 03, 04, 06, 07, 08 e 20), 30 minuti.<br><b>Prova completa</b> · 25 domande su tutto il corso, senza limite di tempo.<br>Punteggio d'esame: +1 per risposta giusta, −0,25 per sbagliata, 0 se non rispondi. Puoi muoverti tra le domande e le correzioni le vedi alla fine.</p>
+      <p><b>Prima prova</b> · 15 domande sui capitoli della prova intercorso (02, 03, 04, 06, 07, 08 e 20), 30 minuti.<br><b>Seconda prova</b> · 15 domande sui capitoli restanti, cioè quelli che non erano nella prima (05 e 09–19), 30 minuti.<br><b>Prova completa</b> · 25 domande su tutto il corso, senza limite di tempo.<br>Punteggio d'esame: +1 per risposta giusta, −0,25 per sbagliata, 0 se non rispondi. Puoi muoverti tra le domande e le correzioni le vedi alla fine.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <div class="actions"><button class="btn" type="button" id="go-sim">Prima prova →</button>
-      <button class="btn" type="button" id="go-sim2" disabled aria-disabled="true" title="Non ancora disponibile">Seconda prova</button>
+      <button class="btn" type="button" id="go-sim2">Seconda prova →</button>
       <button class="btn" type="button" id="go-simtutto">Prova completa (25) →</button></div>
     </section>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
     <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
   app.querySelector("#go-sim").onclick = () => start(SIMS.sim.title, simRun("sim"), null, "sim");
+  app.querySelector("#go-sim2").onclick = () => start(SIMS.sim2.title, simRun("sim2"), null, "sim2");
   app.querySelector("#go-simtutto").onclick = () => start(SIMS.simtutto.title, simRun("simtutto"), null, "simtutto");
   app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
     const c = chap(b.dataset.c);
@@ -1390,12 +1393,12 @@ function home() {
   window.scrollTo({ top: 0 });
 }
 
-/* Prima prova (key "sim"): 30 minuti, punteggio d'esame (+1 giusta, −0,25 sbagliata, 0 non risposta). */
+/* Prima e seconda prova (key "sim" e "sim2"): 30 minuti, punteggio d'esame (+1 giusta, −0,25 sbagliata, 0 non risposta). */
 const SIM_MIN = 30;
 let timerId = null;
 const fmtT = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
 const fmtPt = x => x.toLocaleString("it-IT", { maximumFractionDigits: 2 });
-const isExam = r => r && (r.key === "sim" || r.key === "simtutto"); // simulazioni con punteggio d'esame
+const isExam = r => r && (r.key === "sim" || r.key === "sim2" || r.key === "simtutto"); // simulazioni con punteggio d'esame
 function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
 function tick() {
   if (!run || !run.deadline) { stopTimer(); return; }
@@ -1410,7 +1413,7 @@ function timeUp() {
   run.timeUp = true;
   finish();
 }
-/* Simulazioni (Prima prova, Prova completa): come all'esame ci si muove tra le domande, si può cambiare risposta
+/* Simulazioni (Prima prova, Seconda prova, Prova completa): come all'esame ci si muove tra le domande, si può cambiare risposta
    (di nuovo sulla stessa la toglie) e le correzioni si vedono solo dopo la consegna. */
 function goto(j) { run.i = j; askExam(); window.scrollTo({ top: 0 }); }
 function examSelect(k) {
@@ -1462,7 +1465,7 @@ function start(title, questions, chapterId, key, from) {
   }) };
   if (key) rememberRun(key, run.items);
   stopTimer();
-  if (key === "sim") { run.t0 = Date.now(); run.deadline = run.t0 + SIM_MIN * 60000; }
+  if (key === "sim" || key === "sim2") { run.t0 = Date.now(); run.deadline = run.t0 + SIM_MIN * 60000; }
   try { if (history.state && history.state.quiz) history.replaceState({ quiz: 1 }, ""); else history.pushState({ quiz: 1 }, ""); } catch (e) {}
   ask();
   if (run.deadline) startTimer();
