@@ -169,8 +169,8 @@ output{font-family:var(--f-mono);color:var(--ink)}
   </nav>
 
   <div class="exam">
-    <div class="day">ven<b>6</b>nov</div>
-    <div><h3>Prima prova intercorso</h3><p>Cinque dispense: Requirements Elicitation, Intro UML, Analisi dei requisiti, Class e sequence diagram, Pull-based development e code review.</p></div>
+    <div class="day">ven<b>18</b>dic</div>
+    <div><h3>Seconda prova intercorso</h3><p>Gli argomenti precisi non sono ancora stati comunicati. Per ora il piano usa i capitoli che non erano nella prima prova: ciclo di vita, system design, agenti, object design, testing e Scrum (cap. 05, 09–19).</p></div>
     <div class="cd" id="cd"></div>
   </div>
 
@@ -242,7 +242,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
       <legend>Per quale prova</legend>
       <div class="scopes" role="radiogroup" aria-label="Per quale prova">
         <label class="scope"><input type="radio" name="scope" value="prima" checked><span><b>Prima prova</b><small>intercorso · ven 6 novembre · cap. 02, 03, 04, 06, 07, 08, 20</small></span></label>
-        <label class="scope"><input type="radio" name="scope" value="seconda"><span><b>Seconda prova</b><small>gli argomenti che non erano nella prima · cap. 05, 09–19</small></span></label>
+        <label class="scope"><input type="radio" name="scope" value="seconda"><span><b>Seconda prova</b><small>intercorso · ven 18 dicembre · cap. 05, 09–19 (argomenti da confermare)</small></span></label>
         <label class="scope"><input type="radio" name="scope" value="completa"><span><b>Prova completa</b><small>tutto il corso · cap. 02–20</small></span></label>
       </div>
     </fieldset>
@@ -287,7 +287,7 @@ output{font-family:var(--f-mono);color:var(--ink)}
 
 <script>
 /* Dati della prova */
-const EXAM_DEFAULT = "2026-11-06";
+const EXAM_DEFAULT = "2026-12-18"; // la prossima prova: la seconda (la prima era il 6 novembre)
 const Q = "Quaderno%20di%20Ingegneria%20del%20Software.html";
 const DRAW_T = "Esercizio a mano";
 const KEY = "piano-intercorso-ingsw"; // anche in corsi.js come progressKey: così si sincronizza
@@ -406,7 +406,7 @@ const SCOPES = {
     focus: "class diagram, casi d'uso e sequence",
     recap: "Sei relazioni del class diagram, molteplicità, include/extend, frame del sequence, regole BCE, FURPS+, SMART, MoSCoW" },
   // seconda prova: gli argomenti "full", cioè quelli che non erano nella prima (come nella Sessione)
-  seconda: { topics: () => STUDY.filter(t => t.full), exam: "", examLbl: "La prova è il",
+  seconda: { topics: () => STUDY.filter(t => t.full), exam: "2026-12-18", examLbl: "La prova è il",
     sim: { t: "Simulazione seconda prova", s: "Nel quiz: \"Seconda prova\" (15 domande sui capitoli restanti, 30 minuti, punteggio d'esame). Poi rivedi gli errori." },
     focus: "system design, design pattern e testing",
     recap: "Modelli di ciclo di vita, stili architetturali, pattern e indizi, mapping, formule BVA/WECT/SECT, V(G), integrazione, ruoli e cerimonie Scrum" },
