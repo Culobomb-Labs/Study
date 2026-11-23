@@ -1830,6 +1830,64 @@
           </nav>
           <nav class="drives" aria-label="Link esterni">
             <span class="f-k">Link esterni</span>
+            <!-- servizi UNISA: i link li aggiunge assets/site.js (elenco SERVIZI, lo stesso della tendina Profilo) -->
+            <details class="drives-menu" data-ua-servizi hidden>
+              <summary class="drive drives-sum uni">
+                <span class="drive-ic"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 21h18" />
+                    <path d="M5 21V10M19 21V10M9 21V10M15 21V10" />
+                    <path d="M2 10 12 4l10 6z" /></svg
+                ></span>
+                <span class="drive-t">Servizi UNISA</span>
+                <span class="drive-s">link</span>
+                <span class="drives-chev" aria-hidden="true"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" /></svg
+                ></span>
+              </summary>
+              <div class="drives-list"></div>
+            </details>
+            <!-- Linktree CoScienze: scheda a parte (non è una cartella Drive) -->
+            <a class="drive" href="https://linktr.ee/coscienze" target="_blank" rel="noopener">
+              <span class="drive-ic"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg
+              ></span>
+              <span class="drive-t">Linktree CoScienze</span>
+              <span class="drive-s">Tutti i link della community</span>
+              <span class="drive-go" aria-hidden="true">↗</span>
+            </a>
             <details class="drives-menu">
               <summary class="drive drives-sum">
                 <span class="drive-ic"
@@ -1849,7 +1907,7 @@
                     /></svg
                 ></span>
                 <span class="drive-t">Google Drive</span>
-                <span class="drive-s">3 cartelle</span>
+                <span class="drive-s">5 cartelle</span>
                 <span class="drives-chev" aria-hidden="true"
                   ><svg
                     viewBox="0 0 24 24"
@@ -1893,32 +1951,6 @@
                 </a>
                 <a
                   class="drive"
-                  href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <span class="drive-ic"
-                    ><svg
-                      viewBox="0 0 24 24"
-                      width="18"
-                      height="18"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
-                      /></svg
-                  ></span>
-                  <span class="drive-t">3° anno Drive Coscienze</span>
-                  <span class="drive-s">Raccolta comune · file del 3° anno</span>
-                  <span class="drive-go" aria-hidden="true">↗</span>
-                </a>
-                <a
-                  class="drive"
                   href="https://drive.google.com/drive/folders/1zCH-GBLavEM2ar-yLCgkt90IKUyu0NOb"
                   target="_blank"
                   rel="noopener"
@@ -1939,48 +1971,89 @@
                         d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
                       /></svg
                   ></span>
-                  <span class="drive-t">Drive Coscienze</span>
-                  <span class="drive-s">Raccolta comune · file dei corsi</span>
+                  <span class="drive-t">Drive appunti Coscienze</span>
+                  <span class="drive-s">Raccolta comune · appunti 2° e 3° anno</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1kCIsetzpsI69KIssV_3P3jP1LxTjppAP"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">1° anno Drive Coscienze</span>
+                  <span class="drive-s">Raccolta comune · file del 1° anno</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1PrRDy3vqKNK1y7oNIlf4cKWpeGXcaIAJ"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">2° anno Materiale e tracce</span>
+                  <span class="drive-s">Libri, appunti e prove d’esame</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">3° anno Materiale e tracce</span>
+                  <span class="drive-s">Libri, appunti e prove d’esame</span>
                   <span class="drive-go" aria-hidden="true">↗</span>
                 </a>
               </div>
-            </details>
-            <!-- servizi UNISA: i link li aggiunge assets/site.js (elenco SERVIZI, lo stesso della tendina Profilo) -->
-            <details class="drives-menu" data-ua-servizi hidden>
-              <summary class="drive drives-sum uni">
-                <span class="drive-ic"
-                  ><svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M3 21h18" />
-                    <path d="M5 21V10M19 21V10M9 21V10M15 21V10" />
-                    <path d="M2 10 12 4l10 6z" /></svg
-                ></span>
-                <span class="drive-t">Servizi UNISA</span>
-                <span class="drive-s">link</span>
-                <span class="drives-chev" aria-hidden="true"
-                  ><svg
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="m6 9 6 6 6-6" /></svg
-                ></span>
-              </summary>
-              <div class="drives-list"></div>
             </details>
           </nav>
         </div>
