@@ -19,10 +19,15 @@
              days: [{ date, exam?, due?, ded?, tasks: [{ id, iid, m }] }], warnings, notes,
              over: { traccia: { m, dates } } (ore messe negli ultimi giorni),
              replanned: { at, n, moved, cut, over, ded, seen } (resoconto dell'ultimo ricalcolo: vedi replanOffline),
-             intro: { sigla: [{ ch, t, href }] } (capitoli introduttivi: solo consiglio) },
+             intro: { sigla: [{ ch, t, href }] } (capitoli introduttivi: solo consiglio),
+             introV (versione dei capitoli introduttivi con cui è fatto il piano: vedi INTRO_V) },
      done: { idPezzo: true } } */
 (function () {
   const KEY = "ua-sessione";
+  /* Versione dei capitoli introduttivi: si aumenta di 1 quando un capitolo diventa introduttivo in un piano di studio
+     ("intro": true). Le sessioni salvate con una versione più vecchia si rifanno da sole una volta, tenendo le spunte.
+     1 = IS, MP e PD 00–01; 2 = anche BD 02 (23 novembre 2026). */
+  const INTRO_V = 2;
 
   /* ---------------- catalogo ---------------- */
   // code: sigla; site: sigla del corso in assets/corsi.js (se ha appunti sul sito); year: anno; opt: corso a scelta
@@ -713,6 +718,7 @@
       recap,
       sim,
       intro,
+      introV: INTRO_V,
       items: Object.assign({}, old, fresh, g.items),
       days,
       warnings: g.warnings,
@@ -965,6 +971,7 @@
 
   window.SESSIONE = {
     KEY,
+    INTRO_V,
     LEVELS,
     WD,
     WD_LONG,

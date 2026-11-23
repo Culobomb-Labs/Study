@@ -1429,9 +1429,10 @@
             if (!offIS.length) S.save(st);
           }
           /* il piano si rifà da solo, tenendo le spunte, quando serve: sessioni salvate prima della regola dei capitoli
-             introduttivi (senza plan.intro), prima della simulazione presa dal piano di studio (senza plan.sim) o con il
-             progetto di IS appena tolto */
-          if (!st.plan.intro || !st.plan.sim || offIS.length) {
+             introduttivi (senza plan.intro) o con capitoli introduttivi più vecchi (plan.introV < S.INTRO_V, es. BD 02),
+             prima della simulazione presa dal piano di studio (senza plan.sim) o con il progetto di IS appena tolto */
+          const oldIntro = (st.plan.introV || 1) < S.INTRO_V;
+          if (!st.plan.intro || oldIntro || !st.plan.sim || offIS.length) {
             app.innerHTML = `<p class="ss-wait">Aggiorno il piano…</p>`;
             S.build(st, ROOT)
               .then(() => S.save(st))
