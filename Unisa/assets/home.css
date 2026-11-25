@@ -1320,7 +1320,7 @@ footer a {
 }
 .f-grid {
   display: grid;
-  grid-template-columns: 1fr 0.65fr 1.35fr;
+  grid-template-columns: 1fr 1.35fr;
   gap: 32px 48px;
   align-items: start;
 }
@@ -1381,44 +1381,6 @@ footer a {
     linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
   border: 1px solid transparent;
 }
-.f-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.f-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 14.5px;
-  white-space: nowrap;
-  color: var(--ink);
-  text-decoration: none;
-  transition:
-    color 0.2s,
-    transform 0.2s var(--ua-ease);
-}
-.f-links a:hover {
-  color: var(--c, var(--ink));
-  transform: translateX(3px);
-}
-.f-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--c, var(--muted));
-  flex: none;
-}
-.f-links b {
-  font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: 12px;
-  color: var(--c, var(--muted));
-  min-width: 22px;
-}
 .site-foot .drives {
   width: auto;
   gap: 8px;
@@ -1450,7 +1412,7 @@ body:has(.site-foot) .ua-copy {
   border-top-color: color-mix(in srgb, var(--line) 70%, transparent);
 }
 @media (max-width: 760px) {
-  /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due scritte colorate affiancate, poi i link esterni */
+  /* telefono: aggiornamento e versione su una riga, poi i link esterni */
   .site-foot .wrap {
     padding-block: 30px 26px;
   }
@@ -1478,42 +1440,6 @@ body:has(.site-foot) .ua-copy {
   .f-brand #built {
     font-size: 18px;
   }
-  .f-col .f-k {
-    display: none;
-  }
-  .f-links {
-    flex-direction: row;
-    gap: 10px;
-  }
-  .f-links li {
-    flex: 1;
-  }
-  .f-links a {
-    width: 100%;
-    justify-content: center;
-    box-sizing: border-box;
-    padding: 10px; /* niente riquadro, ma l'area da toccare resta comoda */
-    font-weight: 600;
-  }
-  .f-links a:hover {
-    transform: none;
-  }
-  .f-links .f-dot {
-    display: none;
-  }
-  /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
-  .f-links a[href="news.html"] {
-    color: var(--ua-g-bell2);
-  }
-  .f-links a[href="segnalazioni.html"] {
-    color: var(--ua-warn);
-  }
-}
-.f-links a[href="news.html"] .f-dot {
-  background: linear-gradient(135deg, var(--ua-g-bell1), var(--ua-g-bell2));
-}
-.f-links a[href="segnalazioni.html"] .f-dot {
-  background: var(--ua-warn);
 }
 @media (prefers-reduced-motion: reduce) {
   body,
