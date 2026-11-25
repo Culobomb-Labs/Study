@@ -42,6 +42,7 @@
   --ua-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ua-g-bell1: #d97706;
   --ua-g-bell2: #ea580c;
+  --ua-g-bug: #e11d48;
   --ua-g-sun1: #ca8a04;
   --ua-g-sun2: #d97706;
   --ua-g-moon1: #4f46e5;
@@ -77,6 +78,7 @@
     --ua-c-poo: #ff6f61;
     --ua-g-bell1: #fbbf24;
     --ua-g-bell2: #fb923c;
+    --ua-g-bug: #fb7185;
     --ua-g-sun1: #fde047;
     --ua-g-sun2: #fbbf24;
     --ua-g-moon1: #818cf8;
@@ -98,6 +100,7 @@
   --ua-glass-shadow: 0 12px 34px -8px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(0, 0, 0, 0.5);
   --ua-g-bell1: #fbbf24;
   --ua-g-bell2: #fb923c;
+  --ua-g-bug: #fb7185;
   --ua-g-sun1: #fde047;
   --ua-g-sun2: #fbbf24;
   --ua-g-moon1: #818cf8;
@@ -407,6 +410,97 @@
 .ua-news-dot[hidden] {
   display: none;
 }
+
+/* ---------- News e Segnalazioni: selettore in cima alle due pagine ---------- */
+/* stesso vetro della barra in basso (sfondo, bordo che rifrange, ombra); ogni voce ha il suo colore:
+   News ambra → arancio come il campanello, Segnala rosso come l'insetto */
+.ua-subnav {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  gap: 2px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 22px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--ua-glass);
+  -webkit-backdrop-filter: var(--ua-glass-fx);
+  backdrop-filter: var(--ua-glass-fx);
+  box-shadow: var(--ua-glass-shadow);
+  font: 500 14px/1 var(--ua-font);
+  color: var(--ua-ink);
+}
+.ua-subnav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.2px;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    var(--ua-glass-rim),
+    var(--ua-glass-rim2) 35%,
+    var(--ua-glass-rim2) 65%,
+    var(--ua-glass-rim)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+/* --k: colore dell'icona (cambia col tema); --f1/--f2: sfondo pieno della voce attiva, scuro in tutti e due i
+   temi perché la scritta bianca resti leggibile */
+.ua-subnav-news {
+  --k: var(--ua-g-bell2);
+  --f1: #d97706;
+  --f2: #ea580c;
+}
+.ua-subnav-segn {
+  --k: var(--ua-g-bug);
+  --f1: #dc2626;
+  --f2: #e11d48;
+}
+.ua-subnav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s var(--ua-ease);
+}
+.ua-subnav svg {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  color: var(--k);
+}
+@media (hover: hover) {
+  .ua-subnav a:not([aria-current="page"]):hover {
+    background: color-mix(in srgb, var(--ua-glass-on) 45%, transparent);
+  }
+}
+/* la voce della pagina in cui sei è piena del suo colore */
+.ua-subnav a[aria-current="page"] {
+  background: linear-gradient(135deg, var(--f1), var(--f2));
+  color: #fff;
+  font-weight: 600;
+}
+.ua-subnav a[aria-current="page"] svg {
+  color: currentColor;
+}
+.ua-subnav a:focus-visible {
+  outline: 2px solid var(--ua-ink);
+  outline-offset: 2px;
+}
+.reports-page > .ua-subnav {
+  margin: 28px 0 0;
+} /* Segnalazioni: la testata ha già il suo spazio sopra */
 
 .ua-np {
   position: fixed;

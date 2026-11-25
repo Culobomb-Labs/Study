@@ -44,7 +44,7 @@
   const IS_SESS_PAGE = PAGE === "sessione.html";
   // pagina con l'elenco dei corsi (corsi.html): la scheda Corsi della barra in basso
   const IS_CORSI_PAGE = PAGE === "corsi.html";
-  // pagina Segnalazioni: ci si arriva dalla striscia in fondo alla home, quindi nella barra in basso resta accesa Home
+  // pagina Segnalazioni: sta sotto la scheda News della barra in basso, insieme alla pagina News
   const IS_SEGN_PAGE = PAGE === "segnalazioni.html";
   const SESS_KEY = "ua-sessione";
   const CORSI = window.CORSI || [];
@@ -229,11 +229,27 @@
      Sessione (la sessione d'esami), News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto
      l'accesso), con la scheda della pagina in cui sei evidenziata. Corsi resta accesa anche dentro un quaderno,
      un piano di studio o un quiz, con un pallino del colore del corso: toccandola si apre l'elenco dei corsi
-     posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Nella pagina Segnalazioni resta
-     accesa Home (ci si arriva dalla striscia in fondo alla home).
+     posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Allo stesso modo News resta accesa
+     anche nella pagina Segnalazioni (in cima alle due pagine c'è un selettore per passare dall'una all'altra).
      "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento.
      Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
      quando compare "Torna su", si mette sopra l'Indice. */
+  /* ---------------- News e Segnalazioni: selettore in cima alla pagina ----------------
+     Le due pagine stanno sotto la stessa scheda News della barra in basso: in cima a ognuna una pillola
+     "News | Segnala un problema" porta all'altra, con evidenziata quella in cui sei. */
+  function buildSubnav() {
+    if (!IS_NEWS_PAGE && !IS_SEGN_PAGE) return;
+    const main = document.querySelector("main");
+    if (!main) return;
+    const link = (cls, href, icon, label, on) =>
+      `<a class="${cls}" href="${ROOT}${href}"${on ? ' aria-current="page"' : ""}>${icon}<span>${label}</span></a>`;
+    const nav = el("nav", { class: "ua-subnav", "aria-label": "News e segnalazioni" });
+    nav.innerHTML =
+      link("ua-subnav-news", "news.html", ICON.bell, "News", IS_NEWS_PAGE) +
+      link("ua-subnav-segn", "segnalazioni.html", ICON.bug, "Segnala un problema", IS_SEGN_PAGE);
+    main.prepend(nav);
+  }
+
   function buildDock() {
     const idx = document.querySelector("nav.idx");
     // here: la scheda è quella della pagina (o della sezione) in cui sei; page: è proprio questa pagina
@@ -247,10 +263,10 @@
       : "";
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
     dock.innerHTML = `<div class="ua-tabs">
-      ${tab({ cls: "ua-dock-home", attrs: `href="${ROOT}index.html"`, icon: ICON.home, label: "Home", here: IS_HOME || IS_SEGN_PAGE, page: IS_HOME })}
+      ${tab({ cls: "ua-dock-home", attrs: `href="${ROOT}index.html"`, icon: ICON.home, label: "Home", here: IS_HOME })}
       ${tab({ cls: "ua-dock-corsi", attrs: `href="${corsiHref}"`, icon: ICON.cap + corsiDot, label: "Corsi", here: IS_CORSI_PAGE || !!here, page: IS_CORSI_PAGE })}
       ${tab({ cls: "ua-dock-sess", attrs: `href="${ROOT}sessione.html"`, icon: ICON.cal, label: "Sessione", here: IS_SESS_PAGE })}
-      ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: ICON.bell + '<span class="ua-news-dot" hidden></span>', label: "News", here: IS_NEWS_PAGE })}
+      ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: ICON.bell + '<span class="ua-news-dot" hidden></span>', label: "News", here: IS_NEWS_PAGE || IS_SEGN_PAGE, page: IS_NEWS_PAGE })}
       ${tab({ tag: "button", cls: "ua-open-sync", attrs: 'type="button" aria-haspopup="dialog"', icon: ICON.user, label: "Profilo" })}
     </div>
     <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>
@@ -2715,6 +2731,7 @@
   buildCopyright();
   buildServizi();
   buildDock();
+  buildSubnav();
   buildPalette();
   loadNews();
   buildSyncDialog();
