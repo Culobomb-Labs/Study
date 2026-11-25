@@ -486,6 +486,13 @@
             total: meta.ids.length,
             what: "capitoli fatti"
           };
+        // piani di studio: il piano generato è salvato nel browser con le sue attività (plan.days[].tasks)
+        // e le spunte (done), quindi il totale dipende dal piano di ognuno
+        if (saved.plan && Array.isArray(saved.plan.days)) {
+          const tasks = saved.plan.days.flatMap(d => d.tasks || []),
+            done = saved.done || {};
+          return { done: tasks.filter(t => done[t.id]).length, total: tasks.length, what: "attività fatte" };
+        }
         if (meta && meta.total)
           return {
             done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length),

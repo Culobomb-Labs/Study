@@ -1744,6 +1744,14 @@ body:has(.site-foot) .ua-copy {
   gap: 10px;
   font-weight: 600;
 }
+/* con più schede per riga l'intestazione è sempre alta due righe (i nomi lunghi vanno a capo):
+   così le barre di schede vicine stanno alla stessa altezza */
+@media (min-width: 641px) {
+  .pg-h {
+    min-height: 3em;
+    min-height: 2lh;
+  }
+}
 .pg-code {
   display: grid;
   place-items: center;

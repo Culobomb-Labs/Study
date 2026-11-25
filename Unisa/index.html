@@ -422,6 +422,13 @@
             done: meta.ids.filter(id => saved[id] === true).length,
             total: meta.ids.length
           };
+        // piani di studio: il piano generato è salvato nel browser con le sue attività (plan.days[].tasks)
+        // e le spunte (done), quindi il totale dipende dal piano di ognuno
+        if (saved.plan && Array.isArray(saved.plan.days)) {
+          const tasks = saved.plan.days.flatMap(d => d.tasks || []),
+            done = saved.done || {};
+          return { done: tasks.filter(t => done[t.id]).length, total: tasks.length };
+        }
         if (meta && meta.total)
           return {
             done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length),
@@ -450,7 +457,8 @@
           card.append(head);
           for (const d of c.docs) {
             const p = d.progressKey ? progressOf(d.progressKey, prog[d.path]) : null;
-            if (!p || !p.done) continue;
+            // quaderni: solo se hai spuntato qualcosa; piani di studio: appena hai generato il piano
+            if (!p || !p.total || (!p.done && d.kind !== "Piano di studio")) continue;
             const row = document.createElement("div");
             row.className = "pg-row";
             const k = document.createElement("span");
