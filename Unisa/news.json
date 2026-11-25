@@ -2,6 +2,14 @@
   "_come_si_usa": "Le notizie per documenti nuovi o aggiornati si creano da sole (per evitarlo scrivi [no news] nel messaggio del commit). Il modo comodo per scriverne una: Actions → Pubblica una news (un modulo da compilare). A mano: aggiungi la notizia IN CIMA alla lista news. Campi: id (unico, es. 2026-10-28-quiz), data (AAAA-MM-GG), titolo, testo (facoltativo), corso (facoltativo: IS, MP, PD), link (facoltativo: percorso di una pagina del sito o indirizzo web), immagine (facoltativa: news/img/nome.jpg, dopo averla caricata in Unisa/news/img). Chi ha le notifiche attive la riceve subito dopo la pubblicazione.",
   "news": [
     {
+      "id": "2026-11-25-seminario-ey-matricole-dispari",
+      "data": "2026-11-25",
+      "titolo": "Seminario EY (matricole dispari)",
+      "testo": "Oggi, 25 novembre, dalle 13:30 alle 15:30 in aula P1 (edificio F3): EY incontra gli studenti del Dipartimento di Informatica. Seminario di orientamento in uscita, ricordati di firmare con UNISA Lezioni.",
+      "corso": "AL",
+      "immagine": "news/img/seminario-ey.jpg"
+    },
+    {
       "id": "auto-2026-11-23-89afc1e7",
       "data": "2026-11-23",
       "titolo": "Aggiornato: Piano di studio per l'esame",
