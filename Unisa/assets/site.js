@@ -42,6 +42,10 @@
   const IS_HOME = PAGE === "index.html";
   // pagina della Sessione d'esami (sessione.html): i suoi dati stanno in "ua-sessione" (vedi assets/sessione.js)
   const IS_SESS_PAGE = PAGE === "sessione.html";
+  // pagina con l'elenco dei corsi (corsi.html): la scheda Corsi della barra in basso
+  const IS_CORSI_PAGE = PAGE === "corsi.html";
+  // pagina Segnalazioni: ci si arriva dalla striscia in fondo alla home, quindi nella barra in basso resta accesa Home
+  const IS_SEGN_PAGE = PAGE === "segnalazioni.html";
   const SESS_KEY = "ua-sessione";
   const CORSI = window.CORSI || [];
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
@@ -81,6 +85,7 @@
     sync: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="4" width="12" height="9" rx="1.5"/><path d="M6 17h5"/><rect x="16.5" y="8" width="5.5" height="12" rx="1.3"/><path d="M19.25 17.5h0"/></svg>',
     bug: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.5 9H3.5M20.5 9h-3M6 13H2M22 13h-4M6.5 17.5 3.5 20M17.5 17.5l3 2.5"/></svg>',
     cal: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="m9 15 2 2 4-4"/></svg>',
+    cap: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 12v4c0 1.6 2.5 3 5.5 3s5.5-1.4 5.5-3v-4"/><path d="M21.5 9.5v5"/></svg>',
     chev: '<svg class="ua-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
     swap: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 10.5-4"/><path d="M15 14h7M19 11l3 3-3 3"/></svg>',
     logout:
@@ -168,7 +173,7 @@
     bar.setAttribute("role", "banner");
     let crumbs = `<a class="ua-brand" href="${ROOT}index.html"><svg class="ua-logo" viewBox="0 0 24 24" fill="none" stroke="url(#uaGrad)" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M2 9.6 11.6 5.4l9.6 4.2-9.6 4.2z"/><path d="M6.2 11.7v4.2c0 1.5 2.4 2.7 5.4 2.7s5.4-1.2 5.4-2.7v-4.2"/><path d="M21.2 9.6v5.4"/></svg>Appunti <span class="ua-brand-u">Unisa</span></a>`;
     if (here) {
-      crumbs += `<span class="ua-sep" aria-hidden="true">/</span><a class="ua-crumb" href="${ROOT}index.html#${esc(here.c.code.toLowerCase())}">${esc(here.c.name)}</a>`;
+      crumbs += `<span class="ua-sep" aria-hidden="true">/</span><a class="ua-crumb" href="${ROOT}corsi.html#${esc(here.c.code.toLowerCase())}">${esc(here.c.name)}</a>`;
       crumbs += `<span class="ua-sep" aria-hidden="true">/</span><span class="ua-dot" style="--c:var(--ua-c-${esc(here.c.color)})" aria-hidden="true"></span><span class="ua-crumb ua-here" aria-current="page">${esc(here.d.name)}</span>`;
     }
     bar.innerHTML = `<div class="ua-bar-in"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="uaGrad" gradientUnits="userSpaceOnUse" x1="2" y1="0" x2="22" y2="0"><stop offset="0" style="stop-color:var(--ua-c-is)"/><stop offset=".55" style="stop-color:var(--ua-c-bd)"/><stop offset="1" style="stop-color:var(--ua-c-mp)"/></linearGradient><linearGradient id="uaBell" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-bell1)"/><stop offset="1" style="stop-color:var(--ua-g-bell2)"/></linearGradient><linearGradient id="uaSun" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-sun1)"/><stop offset="1" style="stop-color:var(--ua-g-sun2)"/></linearGradient><linearGradient id="uaMoon" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-moon1)"/><stop offset="1" style="stop-color:var(--ua-g-moon2)"/></linearGradient><linearGradient id="uaAuto" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22"><stop offset="0" style="stop-color:var(--ua-g-auto1)"/><stop offset="1" style="stop-color:var(--ua-g-auto2)"/></linearGradient></defs></svg>
@@ -178,7 +183,7 @@
         s =>
           `<a class="ua-bar-link" href="${s.href}" target="_blank" rel="noopener" title="${s.t}: ${s.x}" aria-label="${s.t} (si apre in una nuova scheda)">${servIcon(s.ic)}<span class="ua-bar-link-t">${s.corto}</span></a>`
       ).join("")}</nav></div>`;
-    // la lente resta in alto solo su PC; News e Profilo (e Cerca su telefono) stanno nella barra in basso
+    // la lente sta in alto su ogni schermo (su telefono più compatta); News e Profilo stanno nella barra in basso
     // i Servizi UNISA stanno a destra su ogni schermo: su schermi stretti restano solo le icone
     /* alcune pagine hanno un margine laterale sul body: la barra lo scavalca e va da bordo a bordo */
     const fit = () => {
@@ -220,23 +225,33 @@
   }
 
   /* ---------------- barra in basso (schede, stile iOS) ----------------
-     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Cerca, Sessione (la sessione d'esami),
-     News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto l'accesso), con la scheda della
-     pagina in cui sei evidenziata. "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po'
-     di scorrimento. Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
+     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Corsi (l'elenco dei corsi),
+     Sessione (la sessione d'esami), News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto
+     l'accesso), con la scheda della pagina in cui sei evidenziata. Corsi resta accesa anche dentro un quaderno,
+     un piano di studio o un quiz, con un pallino del colore del corso: toccandola si apre l'elenco dei corsi
+     posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Nella pagina Segnalazioni resta
+     accesa Home (ci si arriva dalla striscia in fondo alla home).
+     "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento.
+     Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
      quando compare "Torna su", si mette sopra l'Indice. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
-    const tab = (tag, cls, attrs, icon, label) =>
-      `<${tag} class="ua-tab ${cls}" ${attrs}><span class="ua-tab-ic">${icon}</span><span class="ua-label">${label}</span></${tag}>`;
-    const on = 'aria-current="page"';
+    // here: la scheda è quella della pagina (o della sezione) in cui sei; page: è proprio questa pagina
+    const tab = ({ tag = "a", cls, attrs, icon, label, here = false, page = here }) =>
+      `<${tag} class="ua-tab ${cls}${here ? " is-on" : ""}" ${attrs}${here ? " data-here" : ""}${page ? ' aria-current="page"' : ""}><span class="ua-tab-ic">${icon}</span><span class="ua-label">${label}</span></${tag}>`;
+    const corsiHref = here
+      ? `${ROOT}corsi.html?qui=${encodeURIComponent(here.d.path)}#${here.c.code.toLowerCase()}`
+      : `${ROOT}corsi.html`;
+    const corsiDot = here
+      ? `<span class="ua-course-dot" style="--c:var(--ua-c-${esc(here.c.color)})" aria-hidden="true"></span>`
+      : "";
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
     dock.innerHTML = `<div class="ua-tabs">
-      ${tab("a", "ua-dock-home" + (IS_HOME ? " is-on" : ""), `href="${ROOT}index.html"` + (IS_HOME ? ` ${on}` : ""), ICON.home, "Home")}
-      ${tab("button", "ua-open-search", `type="button" data-kbd="${KBD}" aria-keyshortcuts="${KBD_ARIA}"`, ICON.search, "Cerca")}
-      ${tab("a", "ua-dock-sess" + (IS_SESS_PAGE ? " is-on" : ""), `href="${ROOT}sessione.html"` + (IS_SESS_PAGE ? ` ${on}` : ""), ICON.cal, "Sessione")}
-      ${tab("a", "ua-dock-news" + (IS_NEWS_PAGE ? " is-on" : ""), `href="${ROOT}news.html"` + (IS_NEWS_PAGE ? ` ${on}` : ""), ICON.bell + '<span class="ua-news-dot" hidden></span>', "News")}
-      ${tab("button", "ua-open-sync", 'type="button" aria-haspopup="dialog"', ICON.user, "Profilo")}
+      ${tab({ cls: "ua-dock-home", attrs: `href="${ROOT}index.html"`, icon: ICON.home, label: "Home", here: IS_HOME || IS_SEGN_PAGE, page: IS_HOME })}
+      ${tab({ cls: "ua-dock-corsi", attrs: `href="${corsiHref}"`, icon: ICON.cap + corsiDot, label: "Corsi", here: IS_CORSI_PAGE || !!here, page: IS_CORSI_PAGE })}
+      ${tab({ cls: "ua-dock-sess", attrs: `href="${ROOT}sessione.html"`, icon: ICON.cal, label: "Sessione", here: IS_SESS_PAGE })}
+      ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: ICON.bell + '<span class="ua-news-dot" hidden></span>', label: "News", here: IS_NEWS_PAGE })}
+      ${tab({ tag: "button", cls: "ua-open-sync", attrs: 'type="button" aria-haspopup="dialog"', icon: ICON.user, label: "Profilo" })}
     </div>
     <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>
     ${idx ? `<button type="button" class="ua-idx-fab" aria-label="Indice degli appunti">${ICON.book}</button>` : ""}`;
@@ -452,7 +467,7 @@
     // la scheda attiva torna quella della pagina in cui sei davvero
     window.addEventListener("pageshow", e => {
       if (!e.persisted) return;
-      tabs.forEach(o => o.classList.toggle("is-on", o.getAttribute("aria-current") === "page"));
+      tabs.forEach(o => o.classList.toggle("is-on", o.hasAttribute("data-here")));
       bar.classList.remove("is-pressing");
       cancelAnimationFrame(g.raf);
       g.raf = 0;
@@ -963,6 +978,7 @@
   const IS_QUIZ = !!(here && here.d.kind === "Quiz");
   const usesKey = k =>
     IS_HOME ||
+    IS_CORSI_PAGE ||
     (here && here.d.progressKey === k) ||
     (IS_QUIZ && k.startsWith("quiz-")) ||
     (IS_SESS_PAGE && k === SESS_KEY);
@@ -2727,7 +2743,7 @@
       return;
     }
     if (
-      IS_HOME &&
+      (IS_HOME || IS_CORSI_PAGE) &&
       e.key === "/" &&
       pal.hidden &&
       !/input|textarea|select/i.test((document.activeElement || {}).tagName || "")
@@ -2736,7 +2752,7 @@
       openSearch();
     }
   });
-  if (IS_HOME) homeEffects();
+  if (IS_HOME || IS_CORSI_PAGE) homeEffects();
 
   window.UA = { openSearch, closeSearch, setTheme, findPassage, switchAccount };
 })();

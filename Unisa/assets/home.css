@@ -1,0 +1,1892 @@
+/* Stile della Home (index.html) e della pagina Corsi (corsi.html): testata, schede dei corsi,
+   Sessione e Riprendi, piè di pagina. Le parti di una sola pagina sono in fondo, divise per pagina.
+   Lo stile comune a tutto il sito (barre, tema, colori dei corsi) è in assets/site.css. */
+/* Layout: catalogo sobrio, un registro di corsi a righe. Il colore lo portano solo i corsi (lo stesso accento dei rispettivi quaderni). */
+:root {
+  --bg: #f2f4f7;
+  --surface: #ffffff;
+  --ink: #111418;
+  --muted: #5b6370;
+  --line: #dde1e6;
+  --hover: #eef1f4;
+  --glow: rgba(17, 20, 24, 0.05);
+  --ok: #2b7a4b;
+  --ok-bg: #e4f2e9;
+  --wip: #9a5b0c;
+  --wip-bg: #fbefdc;
+  --f-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1012;
+    --surface: #15181b;
+    --ink: #eceef0;
+    --muted: #9aa1a9;
+    --line: #272b30;
+    --hover: #1c2024;
+    --glow: rgba(255, 255, 255, 0.045);
+    --ok: #6fd398;
+    --ok-bg: #16291f;
+    --wip: #f0b45e;
+    --wip-bg: #2e2313;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1012;
+  --surface: #15181b;
+  --ink: #eceef0;
+  --muted: #9aa1a9;
+  --line: #272b30;
+  --hover: #1c2024;
+  --glow: rgba(255, 255, 255, 0.045);
+  --ok: #6fd398;
+  --ok-bg: #16291f;
+  --wip: #f0b45e;
+  --wip-bg: #2e2313;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.55;
+  transition:
+    background-color 0.25s,
+    color 0.25s;
+}
+a {
+  color: inherit;
+}
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* testata */
+.hero .wrap {
+  padding-block: 56px 36px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px 40px;
+  align-items: end;
+}
+.eyebrow {
+  grid-column: 1 / -1;
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+h1 {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(52px, 10vw, 96px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+h1 .h1-l {
+  display: block;
+}
+h1 .h1-l + .h1-l {
+  color: var(--muted);
+}
+/* "Unisa": solo il contorno delle lettere, sfumato dal viola all'azzurro con i colori dei corsi; il punto resta pieno */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) and (-webkit-text-stroke: 1px black) {
+  h1 .h1-l + .h1-l {
+    background: linear-gradient(90deg, var(--u-c1), var(--u-c2) 55%, var(--u-c3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-stroke: var(--u-stroke) transparent;
+    -webkit-text-fill-color: var(--u-fill);
+    color: var(--u-fill);
+    letter-spacing: var(--u-ls);
+  } /* lettere un po' più larghe: con il solo contorno non devono sovrapporsi */
+  /* tema chiaro: bordo più spesso e interno appena colorato, se no su fondo chiaro si legge poco */
+  :root {
+    --u-stroke: clamp(3px, 0.05em, 5px);
+    --u-fill: color-mix(in srgb, var(--ua-c-is) 20%, var(--bg));
+    --u-ls: 0.045em;
+    --u-c1: var(--ua-c-is);
+    --u-c2: var(--ua-c-bd);
+    --u-c3: var(--ua-c-mp);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --u-stroke: clamp(2px, 0.035em, 3.5px);
+      --u-fill: var(--bg);
+      --u-ls: 0.02em;
+      --u-c1: var(--ua-c-is);
+      --u-c2: var(--ua-c-bd);
+      --u-c3: var(--ua-c-mp);
+    }
+  }
+  :root[data-theme="dark"] {
+    --u-stroke: clamp(2px, 0.035em, 3.5px);
+    --u-fill: var(--bg);
+    --u-ls: 0.02em;
+    --u-c1: var(--ua-c-is);
+    --u-c2: var(--ua-c-bd);
+    --u-c3: var(--ua-c-mp);
+  }
+  h1 .h1-dot {
+    -webkit-text-stroke: 0;
+    -webkit-text-fill-color: var(--ink);
+  }
+}
+h1 .h1-dot {
+  color: var(--ink);
+}
+/* titolo in corsivo calligrafico, come le etichette delle statistiche; "Unisa" pieno col gradiente (il solo contorno con un corsivo legato si accavalla) */
+h1 {
+  font-family: "Dancing Script", "Segoe Script", "Brush Script MT", cursive;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+h1 .h1-l + .h1-l {
+  -webkit-text-stroke: 0 !important;
+  -webkit-text-fill-color: transparent !important;
+  letter-spacing: 0 !important;
+  padding-right: 0.08em;
+}
+h1 .h1-dot {
+  -webkit-text-fill-color: var(--ink) !important;
+}
+
+.lede {
+  grid-column: 1;
+  margin: 0;
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: 17px;
+}
+.stats {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(124px, 1fr));
+  gap: 10px;
+}
+.stat {
+  min-width: 112px;
+  padding: 14px 16px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 1px 0 var(--glow);
+}
+.stat b {
+  display: block;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums proportional-nums;
+}
+.stat span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.stat span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+/* numeri delle statistiche: gradiente caldo ambra → arancio → rosa su tutti e due, per staccarli dal resto */
+:root {
+  --st-c1: #d97706;
+  --st-c2: #ea580c;
+  --st-c3: #db2777;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --st-c1: #fbbf24;
+    --st-c2: #fb923c;
+    --st-c3: #f472b6;
+  }
+}
+:root[data-theme="dark"] {
+  --st-c1: #fbbf24;
+  --st-c2: #fb923c;
+  --st-c3: #f472b6;
+}
+.stat b {
+  width: fit-content;
+  background-image: linear-gradient(90deg, var(--st-c1), var(--st-c2) 50%, var(--st-c3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* alone verde acqua → azzurro che segue le lettere, complementare al gradiente caldo dei numeri; etichetta in corsivo calligrafico, grigia */
+:root {
+  --st-dot: #0d9488;
+  --st-dot2: #0284c7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --st-dot: #2dd4bf;
+    --st-dot2: #38bdf8;
+  }
+}
+:root[data-theme="dark"] {
+  --st-dot: #2dd4bf;
+  --st-dot2: #38bdf8;
+}
+.stat span::before,
+.stat:first-child span::before,
+.stat:last-child span::before {
+  content: none;
+}
+.stat span > i {
+  font-style: normal;
+  color: color-mix(in srgb, var(--st-dot) 35%, var(--ink));
+  text-shadow:
+    0 0 3px color-mix(in srgb, var(--st-dot) 70%, transparent),
+    0 0 9px color-mix(in srgb, var(--st-dot) 60%, transparent),
+    0 0 18px color-mix(in srgb, var(--st-dot2) 50%, transparent);
+}
+.stat {
+  overflow: hidden;
+}
+.stat span {
+  gap: 8px;
+  margin-top: 6px;
+  font-family: "Dancing Script", "Segoe Script", "Brush Script MT", cursive;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 21px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* registro corsi */
+.list {
+  border-top: 2px solid var(--ink);
+  margin-bottom: 56px;
+}
+.course {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 20px 28px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 16px;
+}
+.course:target h2 {
+  text-decoration: underline;
+  text-decoration-color: var(--c);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+.code {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--c);
+  letter-spacing: 0.02em;
+  padding-top: 2px;
+}
+.code::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 4px;
+  background: var(--c);
+  margin-bottom: 10px;
+  border-radius: 2px;
+  transition: width 0.35s var(--ua-ease);
+}
+.course:hover .code::before {
+  width: 44px;
+}
+.course h2 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+.meta {
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.docs {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.docs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 70%);
+}
+.docs:hover::before {
+  opacity: 1;
+}
+.docs li {
+  position: relative;
+}
+.docs li + li {
+  border-top: 1px solid var(--line);
+}
+.docs a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 14px;
+  align-items: center;
+  padding: 13px 16px;
+  text-decoration: none;
+}
+.docs a:focus-visible {
+  outline: none;
+  box-shadow: inset 3px 0 0 var(--c);
+  background: var(--hover);
+}
+.dname {
+  font-weight: 600;
+  min-width: 0;
+}
+.dinfo {
+  grid-column: 1;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.arrow {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  color: var(--muted);
+  transition:
+    transform 0.2s var(--ua-ease),
+    color 0.2s;
+}
+.docs a:hover .arrow {
+  transform: translateX(4px);
+  color: var(--c);
+}
+
+/* stato degli appunti */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.resto {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--s);
+  background: var(--s-bg);
+}
+.state::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.state.ok {
+  --s: var(--ok);
+  --s-bg: var(--ok-bg);
+}
+.state.wip {
+  --s: var(--wip);
+  --s-bg: var(--wip-bg);
+}
+.state.wip::before {
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.state.soon {
+  --s: var(--muted);
+  --s-bg: var(--hover);
+}
+.docs-empty {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.docs-empty b {
+  color: var(--ink);
+  font-weight: 600;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+/* corsi come schede: griglia a due colonne, ogni scheda con il colore del suo corso */
+.list {
+  border-top: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.course {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    radial-gradient(420px 180px at 0 0, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%),
+    var(--surface);
+  overflow: hidden;
+  transition:
+    transform 0.25s var(--ua-ease),
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.course:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+  box-shadow: 0 14px 34px -18px color-mix(in srgb, var(--c) 60%, transparent);
+}
+.course::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c), transparent 85%);
+}
+/* sigla grande contornata: prima il contorno, poi il riempimento col colore della scheda (paint-order).
+Così non si vedono le parti interne delle lettere (la barra della A, l'incrocio della M) né i punti dove due lettere si toccano.
+Il contorno è doppio perché metà resta sotto il riempimento; in em, così resta proporzionato anche su telefono. */
+.code {
+  position: absolute;
+  right: 16px;
+  top: 6px;
+  z-index: -1;
+  font-size: 76px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  padding: 0;
+  color: var(--surface);
+  -webkit-text-stroke: 0.04em color-mix(in srgb, var(--c) 40%, transparent);
+  paint-order: stroke fill;
+  opacity: 0.9;
+}
+.code::before {
+  content: none;
+}
+.course h2 {
+  font-size: 24px;
+  padding-right: 118px;
+}
+.docs {
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  gap: 6px;
+  overflow: visible;
+}
+.docs::before {
+  content: none;
+}
+.docs li + li {
+  border-top: 0;
+}
+.docs a {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 1px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--hover);
+  border: 1px solid transparent;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.docs a:hover {
+  border-color: color-mix(in srgb, var(--c) 50%, transparent);
+  background: color-mix(in srgb, var(--c) 8%, var(--hover));
+}
+.docs a::before {
+  content: "Q";
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font: 700 14px/1 var(--f-display);
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+}
+.docs a[data-kind="Piano di studio"]::before {
+  content: "P";
+}
+.docs a[data-kind="Quiz"]::before {
+  content: "?";
+}
+.dname {
+  grid-column: 2;
+}
+.dinfo {
+  grid-column: 2;
+}
+.arrow {
+  grid-column: 3;
+}
+.docs .prog {
+  grid-column: 2 / span 2;
+}
+@media (max-width: 760px) {
+  .list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* sessione d'esami + riprendi da dove eri: una sotto l'altra (su computer come su telefono); la card "riprendi"
+      è una striscia compatta */
+.duo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  padding-block: 0 18px;
+}
+.duo:not(:has(> :not([hidden]))) {
+  display: none;
+}
+
+/* sessione d'esami: card da "strumento" (bordo col gradiente del sito, intestazione, settimana, attività
+      di oggi da spuntare e pulsante), diversa dalle card dei corsi. La riempie lo script qui sotto. */
+.tool {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px 18px;
+  border: 1.5px solid transparent;
+  border-radius: 18px;
+  color: var(--ink);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+  box-shadow: 0 10px 30px -22px color-mix(in srgb, var(--ua-c-bd) 70%, transparent);
+}
+.tool-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tool-ic {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ua-c-is), var(--ua-c-bd));
+}
+.tool-k {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.tool-pc {
+  margin-left: auto;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tool-t {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.tool-t small {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.tool-p {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+.tool-cd {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+  white-space: nowrap;
+}
+.tool-cd b {
+  font-size: 14px;
+}
+.wk {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.wk-d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0 7px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.wk-d small {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.wk-d b {
+  font-size: 15px;
+}
+.wk-d.is-today {
+  color: var(--bg);
+  background: var(--ink);
+}
+.wk-d.is-today small {
+  color: inherit;
+  opacity: 0.75;
+}
+.wk-d.is-exam {
+  box-shadow: inset 0 0 0 1.5px var(--c);
+}
+.wk-d.is-due {
+  outline: 1.5px dashed var(--c);
+  outline-offset: -1.5px;
+}
+.wk-dots {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+  align-items: center;
+}
+.wk-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c);
+}
+.wk-dots em {
+  font-style: normal;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  color: var(--c);
+}
+.wk-d.is-today .wk-dots em {
+  color: inherit;
+}
+.tool-tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tool-tasks label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 4px;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.tool-tasks input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ua-c-is);
+}
+.tool-tasks span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-tasks input:checked + span {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.tool-tasks em {
+  font-style: normal;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* resoconto del ricalcolo automatico: riquadro azzurro con la ✕ e i dettagli da aprire */
+.rp {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  background: color-mix(in srgb, var(--ua-c-bd) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--ua-c-bd) 35%, transparent);
+}
+.rp-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.rp-top p {
+  flex: 1;
+  margin: 0;
+}
+.rp-x {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px -6px 0 0;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.rp-x:hover,
+.rp-x:focus-visible {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ua-c-bd) 14%, transparent);
+}
+.rp-more summary {
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.rp-g h4 {
+  margin: 10px 0 6px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.rp-g ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.rp-g li {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: baseline;
+  gap: 8px;
+}
+.rp-g li > div {
+  min-width: 0;
+}
+.rp-c {
+  padding: 1px 0;
+  text-align: center;
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+.rp-g em {
+  font-style: normal;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.rp-g small {
+  display: block;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tool-more {
+  font-size: 13.5px;
+  color: var(--muted);
+  padding-left: 32px;
+}
+.tool-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.tool-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.tool-chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c);
+}
+.tool-chip i.due {
+  background: none;
+  border: 1.5px dashed var(--c);
+  box-sizing: border-box;
+}
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--bg);
+  background: var(--ink);
+  text-decoration: none;
+  transition: transform 0.2s var(--ua-ease);
+}
+.tool-btn:hover {
+  transform: translateY(-1px);
+}
+.tool-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (max-width: 520px) {
+  .tool {
+    padding: 14px 16px 16px;
+  }
+  .tool-k {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+  }
+  .tool-t {
+    font-size: 18px;
+  }
+  .tool-t small {
+    display: block;
+    margin: 2px 0 0;
+  }
+  .tool-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* riprendi da dove eri: a pillola, diversa dalle card dei corsi (niente alone di colore né filo in cima):
+      tessera col tipo di documento, testo e pulsante "Continua" a destra */
+.resume {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 2px 14px;
+  align-items: center;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-decoration: none;
+  background: var(--surface);
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.resume:hover {
+  border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+  background: color-mix(in srgb, var(--c) 7%, var(--surface));
+}
+.resume:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+/* tessera con la lettera del tipo di documento, come quella dei documenti dei corsi (Q quaderno, P piano di studio, ? quiz) */
+.resume-dot {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font: 700 14px/1 var(--f-display);
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+}
+.resume-dot::before {
+  content: "Q";
+}
+.resume-dot[data-kind="Piano di studio"]::before {
+  content: "P";
+}
+.resume-dot[data-kind="Quiz"]::before {
+  content: "?";
+}
+.resume-k,
+.resume-t {
+  grid-column: 2;
+}
+.resume-k {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.resume-t {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.resume-t small {
+  font-family: var(--f-body);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 8px;
+}
+/* pulsante "Continua" a destra */
+.res-btn {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--c);
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.res-btn span {
+  transition: transform 0.25s var(--ua-ease);
+}
+.resume:hover .res-btn {
+  background: var(--c);
+  color: var(--bg);
+}
+.resume:hover .res-btn span {
+  transform: translateX(3px);
+}
+@media (max-width: 520px) {
+  .resume {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 2px 12px;
+    padding: 9px 10px 9px 12px;
+  }
+  .resume-dot {
+    width: 30px;
+    height: 30px;
+  }
+  /* su telefono del pulsante resta solo la freccia */
+  .res-btn {
+    padding: 6px 11px;
+  }
+  .res-btn b {
+    display: none;
+  }
+  .resume-k {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .resume-t {
+    font-size: 17px;
+  }
+}
+/* avanzamento */
+.prog {
+  grid-column: 1;
+  display: block;
+  height: 3px;
+  margin-top: 8px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.prog i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--c);
+  border-radius: 2px;
+  transition: width 0.6s var(--ua-ease);
+}
+
+footer {
+  border-top: 1px solid var(--line);
+}
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  padding-block: 22px 40px;
+  font-size: 14px;
+  color: var(--muted);
+}
+footer a {
+  text-underline-offset: 3px;
+}
+
+/* cartelle Drive nel piè di pagina */
+.drives {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(380px, 100%);
+}
+.drives-k {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.drive {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1px 12px;
+  align-items: center;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    transform 0.2s var(--ua-ease);
+}
+.drive:hover {
+  border-color: var(--muted);
+  background: var(--hover);
+}
+.drive:active {
+  transform: scale(0.99);
+}
+.drive:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.drive-ic {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--hover);
+  color: var(--ink);
+}
+.drive:hover .drive-ic {
+  background: var(--surface);
+}
+.drive-t {
+  grid-column: 2;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drive-s {
+  grid-column: 2;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.drive-go {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  color: var(--muted);
+  font-size: 16px;
+  transition:
+    transform 0.2s var(--ua-ease),
+    color 0.2s;
+}
+.drive:hover .drive-go {
+  transform: translate(2px, -2px);
+  color: var(--ink);
+}
+/* tendina delle cartelle Drive: si apre toccando "Google Drive" */
+.drives-sum {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.drives-sum::-webkit-details-marker {
+  display: none;
+}
+.drives-chev {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  transition:
+    transform 0.25s var(--ua-ease),
+    color 0.2s;
+}
+.drives-sum:hover .drives-chev,
+.drives-menu[open] .drives-chev {
+  color: var(--ink);
+}
+.drives-menu[open] .drives-chev {
+  transform: rotate(180deg);
+}
+.drives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 0 14px;
+  padding-left: 10px;
+  border-left: 2px solid var(--line);
+}
+.drives-menu[open] .drives-list {
+  animation: drives-in 0.22s var(--ua-ease);
+}
+@keyframes drives-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+/* data e versione: sempre a destra, allineate a destra (su telefono vanno sotto le cartelle, ma restano a destra come su PC) */
+.build-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  margin-left: auto;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .hero .wrap {
+    grid-template-columns: 1fr;
+    padding-block: 36px 26px;
+  }
+  .stats {
+    grid-column: 1;
+    grid-row: auto;
+    max-width: 360px;
+  }
+  .course {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  /* la sigla resta il grande watermark in alto a destra (non una sigla piccola): un po' più piccola che su PC, ma ben leggibile */
+  .code {
+    font-size: clamp(56px, 16vw, 76px);
+    right: 14px;
+  }
+  .course h2 {
+    padding-right: 100px;
+  }
+}
+
+/* piè di pagina: solo ciò che sopra non c'è (ultimo aggiornamento e versione, News e Segnalazioni, link esterni: cartelle Drive e servizi UNISA) */
+.site-foot {
+  position: relative;
+  margin-top: 24px;
+  border-top: 0;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 70%, transparent));
+}
+.site-foot::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ua-c-is),
+    var(--ua-c-bd),
+    var(--ua-c-mp),
+    transparent
+  );
+  opacity: 1;
+  height: 2px;
+}
+.site-foot .wrap {
+  display: block;
+  padding-block: 44px 34px;
+  color: var(--muted);
+}
+.f-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.65fr 1.35fr;
+  gap: 32px 48px;
+  align-items: start;
+}
+.f-k {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.f-logo {
+  display: inline-block;
+  font-family: "Dancing Script", "Segoe Script", cursive;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--ink);
+  text-decoration: none;
+}
+.f-logo span {
+  background: linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-right: 0.08em;
+}
+.f-brand p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 34ch;
+}
+.f-brand .build-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-left: 0;
+  text-align: left;
+}
+.f-brand #built {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.f-brand #version:not(:empty) {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--ink);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+  border: 1px solid transparent;
+}
+.f-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.f-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14.5px;
+  white-space: nowrap;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    transform 0.2s var(--ua-ease);
+}
+.f-links a:hover {
+  color: var(--c, var(--ink));
+  transform: translateX(3px);
+}
+.f-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c, var(--muted));
+  flex: none;
+}
+.f-links b {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--c, var(--muted));
+  min-width: 22px;
+}
+.site-foot .drives {
+  width: auto;
+  gap: 8px;
+}
+.site-foot .drive {
+  background: var(--surface);
+}
+.site-foot .drive-t {
+  white-space: normal;
+}
+.site-foot .drive:hover,
+.site-foot .drives-menu[open] > .drives-sum {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(90deg, var(--ua-c-is), var(--ua-c-bd) 55%, var(--ua-c-mp)) border-box;
+}
+.site-foot .drive-ic {
+  background: color-mix(in srgb, var(--ua-c-bd) 16%, transparent);
+  color: var(--ua-c-bd);
+}
+/* servizi UNISA: stessa tendina delle cartelle Drive, con le icone in viola */
+.site-foot .drive.uni .drive-ic {
+  background: color-mix(in srgb, var(--ua-c-is) 16%, transparent);
+  color: var(--ua-c-is);
+}
+body:has(.site-foot) .ua-copy {
+  margin-top: 0;
+  border-top-color: color-mix(in srgb, var(--line) 70%, transparent);
+}
+@media (max-width: 760px) {
+  /* telefono: aggiornamento e versione su una riga, News e Segnalazioni come due scritte colorate affiancate, poi i link esterni */
+  .site-foot .wrap {
+    padding-block: 30px 26px;
+  }
+  .f-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .f-brand {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+  .f-brand .f-k {
+    margin-bottom: 6px;
+  }
+  .f-brand .build-meta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .f-brand #built {
+    font-size: 18px;
+  }
+  .f-col .f-k {
+    display: none;
+  }
+  .f-links {
+    flex-direction: row;
+    gap: 10px;
+  }
+  .f-links li {
+    flex: 1;
+  }
+  .f-links a {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 10px; /* niente riquadro, ma l'area da toccare resta comoda */
+    font-weight: 600;
+  }
+  .f-links a:hover {
+    transform: none;
+  }
+  .f-links .f-dot {
+    display: none;
+  }
+  /* News col colore del campanello, Segnalazioni come "Segnala un problema" nel pannello del profilo */
+  .f-links a[href="news.html"] {
+    color: var(--ua-g-bell2);
+  }
+  .f-links a[href="segnalazioni.html"] {
+    color: var(--ua-warn);
+  }
+}
+.f-links a[href="news.html"] .f-dot {
+  background: linear-gradient(135deg, var(--ua-g-bell1), var(--ua-g-bell2));
+}
+.f-links a[href="segnalazioni.html"] .f-dot {
+  background: var(--ua-warn);
+}
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .drive,
+  .drive-go,
+  .drives-chev,
+  .arrow,
+  .code::before,
+  .docs::before,
+  .resume {
+    transition: none;
+  }
+  .state.wip::before {
+    animation: none;
+  }
+  .drives-menu[open] .drives-list {
+    animation: none;
+  }
+}
+.hero .wrap {
+  position: relative;
+}
+.stats {
+  grid-row: 3 !important;
+  align-self: start;
+}
+.lede {
+  align-self: start;
+}
+.seal {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: center;
+  align-self: center;
+  width: 168px;
+  height: 168px;
+  color: var(--ink);
+}
+.seal svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.seal .ring {
+  transform-origin: 80px 80px;
+  animation: sealSpin 48s linear infinite;
+}
+.seal text {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  fill: var(--muted);
+  text-transform: uppercase;
+}
+/* cappello al centro del sigillo: stesso gradiente della scritta "Unisa"; il cerchio segue il tema
+      (chiaro col cappello nei colori dei corsi del tema chiaro, scuro coi colori pastello) */
+:root {
+  --s-core: var(--surface);
+  --s-c1: var(--ua-c-is);
+  --s-c2: var(--ua-c-bd);
+  --s-c3: var(--ua-c-mp);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --s-core: #111418;
+    --s-c1: #a58bf0;
+    --s-c2: #7ea6ff;
+    --s-c3: #5fc48c;
+  }
+}
+:root[data-theme="dark"] {
+  --s-core: #111418;
+  --s-c1: #a58bf0;
+  --s-c2: #7ea6ff;
+  --s-c3: #5fc48c;
+}
+.seal .seal-core {
+  fill: var(--s-core);
+}
+@keyframes sealSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 720px) {
+  .seal {
+    grid-column: auto;
+    grid-row: auto;
+    position: absolute;
+    right: max(14px, env(safe-area-inset-right, 0px));
+    top: 92px;
+    width: 100px;
+    height: 100px;
+  }
+  .stats {
+    grid-row: auto !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seal .ring {
+    animation: none;
+  }
+}
+/* testata compatta: titolo su una riga, sigillo grande a destra e numeri come due pillole sotto il testo
+      (su telefono il titolo resta su due righe, così il sigillo piccolo non lo copre) */
+.stats {
+  display: flex;
+  gap: 8px;
+  max-width: none;
+}
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.stat b {
+  font-size: 22px;
+}
+.stat span {
+  margin-top: 0;
+  font-size: 19px;
+}
+.lede {
+  text-wrap: balance;
+}
+@media (min-width: 721px) {
+  .hero .wrap {
+    padding-block: 34px 26px;
+    gap: 8px 40px;
+    align-items: center;
+  }
+  h1 {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: clamp(56px, 7vw, 84px);
+  }
+  h1 .h1-l {
+    display: inline;
+  }
+  h1 .h1-l + .h1-l {
+    margin-left: 0.22em;
+  }
+  .lede {
+    grid-row: 3;
+    max-width: 62ch;
+    font-size: 18px;
+  }
+  .seal {
+    grid-row: 2 / span 3;
+    align-self: center;
+    justify-self: end;
+    width: 190px;
+    height: 190px;
+  }
+  .stats {
+    grid-column: 1;
+    grid-row: 4 !important;
+  }
+}
+
+/* ================================================================
+   Home (index.html): sotto Sessione e Riprendi ci sono i tuoi progressi, le ultime news e la striscia
+   delle segnalazioni. L'elenco completo dei corsi sta nella pagina Corsi.
+   ================================================================ */
+/* testata più bassa della pagina Corsi: in Home conta di più quello che c'è sotto */
+@media (min-width: 721px) {
+  .hero-sm .wrap {
+    padding-block: 26px 18px;
+  }
+  .hero-sm h1 {
+    font-size: clamp(44px, 5vw, 60px);
+  }
+  .hero-sm .seal {
+    width: 130px;
+    height: 130px;
+  }
+}
+.home-sec {
+  margin-bottom: 34px;
+}
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sec-head h2 {
+  font-family: var(--f-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.sec-more {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.sec-more:hover {
+  color: var(--ink);
+}
+/* i tuoi progressi: una scheda per ogni corso iniziato, con le barre dei documenti con le spunte */
+.pg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.pg-c {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.pg-c:hover {
+  border-color: color-mix(in srgb, var(--c) 50%, var(--line));
+}
+.pg-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+.pg-code {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 8px;
+  font: 700 13px/1 var(--f-display);
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+}
+.pg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.pg-row .prog {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.pg-empty {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 14px;
+}
+/* ultime news: le tre più recenti, righe compatte */
+.nm {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.nm a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 12px;
+  padding: 12px 16px;
+  color: inherit;
+  text-decoration: none;
+}
+.nm a + a {
+  border-top: 1px solid var(--line);
+}
+.nm a:hover {
+  background: var(--hover);
+}
+.nm-d {
+  grid-row: 1 / span 2;
+  font: 500 12px/1.6 var(--f-mono);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.nm-t {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nm-x {
+  font-size: 13px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nm-x b {
+  color: var(--c);
+  font-weight: 600;
+}
+/* striscia delle segnalazioni: una riga sola, sotto le news; rosso come il link Segnalazioni del piè di pagina */
+.rep {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 14px;
+  margin-bottom: 34px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.rep:hover {
+  border-color: color-mix(in srgb, #e5484d 45%, var(--line));
+  background: color-mix(in srgb, #e5484d 5%, var(--surface));
+}
+.rep-ic {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #e5484d;
+  background: color-mix(in srgb, #e5484d 14%, transparent);
+}
+.rep-t {
+  font-weight: 600;
+}
+.rep-x {
+  font-size: 13px;
+  color: var(--muted);
+}
+.rep-go {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .rep-go b {
+    display: none;
+  } /* su telefono resta solo la freccia */
+}
+
+/* ================================================================
+   Pagina Corsi (corsi.html): il corso e la pagina da cui arrivi toccando Corsi nella barra in basso
+   (?qui=percorso#codice): scheda del corso evidenziata e "sei qui" sul documento
+   ================================================================ */
+.course.is-here {
+  border-color: color-mix(in srgb, var(--c) 70%, var(--line));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c) 70%, transparent),
+    0 14px 34px -18px color-mix(in srgb, var(--c) 60%, transparent);
+}
+.docs a.is-here {
+  border-color: color-mix(in srgb, var(--c) 60%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, var(--hover));
+}
+.docs a.is-here .here-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+}

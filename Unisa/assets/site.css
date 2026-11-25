@@ -237,7 +237,7 @@
 .ua-btn svg {
   flex: none;
 }
-/* lente nella barra in alto (solo PC): bordo col gradiente dei corsi, come il sigillo della home.
+/* lente nella barra in alto (su ogni schermo): bordo col gradiente dei corsi, come il sigillo della home.
    Margini automatici ai lati: sta al centro dello spazio libero tra il percorso e i Servizi UNISA.
    Se manca spazio si accorcia prima la ricerca (fino a 220 px) e solo dopo il nome del documento. */
 .ua-bar-search {
@@ -357,12 +357,39 @@
   .ua-crumbs .ua-sep:last-of-type {
     display: inline;
   }
+  /* su telefono del marchio resta il cappello (la scritta si legge ancora con i lettori di schermo):
+     lo spazio serve alla ricerca e al nome del documento */
+  .ua-brand {
+    gap: 0;
+    font-size: 0;
+  }
+  /* su telefono la ricerca resta in alto come su PC, più compatta e senza la scorciatoia da tastiera.
+     Nelle pagine dei corsi lo spazio serve al nome del documento: lì resta solo la lente */
   .ua-bar-search {
+    flex: 1 1 0;
+    min-width: 38px;
+    height: 36px;
+    margin-inline: 0;
+    padding: 0 10px;
+    gap: 8px;
+  }
+  .ua-bar-search-t {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ua-bar-search .ua-kbd {
     display: none;
-  } /* su telefono Cerca sta nella barra in basso */
-  .ua-bar-links {
-    margin-left: auto;
-  } /* senza ricerca, i Servizi UNISA vanno comunque a destra */
+  }
+  .ua-crumbs:has(.ua-here) ~ .ua-bar-search {
+    flex: none;
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+  .ua-crumbs:has(.ua-here) ~ .ua-bar-search .ua-bar-search-t {
+    display: none;
+  }
 }
 
 /* ---------- news: pallino sulla scheda, tendine, pagina ---------- */
@@ -1051,6 +1078,18 @@ a.ua-ni:hover {
   font-size: 11.5px;
   box-shadow: 0 0 0 1.5px var(--ua-glass-rim);
 } /* foto Google nella scheda Profilo */
+/* pallino del colore del corso sulla scheda Corsi, quando sei in un quaderno, piano di studio o quiz */
+.ua-course-dot {
+  position: absolute;
+  top: -1px;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c, var(--ua-muted));
+  box-shadow: 0 0 0 2px var(--ua-bg);
+  pointer-events: none;
+}
 .ua-dock :focus-visible {
   outline: 2px solid var(--ua-ink);
   outline-offset: -3px;
@@ -1060,33 +1099,6 @@ a.ua-ni:hover {
 } /* con il dito il bordo di selezione si sommerebbe alla lente */
 .ua-dock [hidden] {
   display: none;
-}
-/* col mouse, sopra Cerca compare la scorciatoia da tastiera (Ctrl K o ⌘ K) */
-@media (hover: hover) and (pointer: fine) {
-  .ua-tab[data-kbd]::after {
-    content: attr(data-kbd);
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translate(-50%, 4px);
-    font: 500 11px/1 var(--ua-mono);
-    color: var(--ua-muted);
-    background: var(--ua-bg);
-    border: 1px solid var(--ua-line);
-    border-radius: 6px;
-    padding: 5px 7px;
-    white-space: nowrap;
-    box-shadow: var(--ua-shadow);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity 0.15s,
-      transform 0.15s var(--ua-ease);
-  }
-  .ua-tab[data-kbd]:hover::after {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
 }
 /* Torna su: bottone rotondo di vetro sopra la barra, compare dopo un po' di scorrimento */
 .ua-dock .ua-up {

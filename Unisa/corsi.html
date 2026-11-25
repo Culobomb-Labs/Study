@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Corsi · Appunti Unisa</title>
+    <link rel="icon" href="icon.svg?v=10" type="image/svg+xml" />
+    <link rel="icon" href="favicon.ico?v=10" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="favicon-32.png?v=10" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=10" />
+    <meta
+      name="description"
+      content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque."
+    />
+    <meta name="theme-color" content="#111418" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Appunti Unisa" />
+    <meta property="og:title" content="Appunti Unisa" />
+    <meta
+      property="og:description"
+      content="Gli appunti dei corsi di Informatica all'Università di Salerno, da leggere ovunque."
+    />
+    <meta property="og:url" content="https://culobomb-labs.github.io/Study/" />
+    <meta property="og:image" content="https://culobomb-labs.github.io/Study/og.png?v=4" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="it_IT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      try {
+        var d = document.documentElement,
+          t = localStorage.getItem("ua-theme"),
+          g = localStorage.getItem("ua-glass");
+        if (t && t != "auto") d.setAttribute("data-theme", t);
+        if (g) d.setAttribute("data-glass", g);
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Dancing+Script:wght@600;700&display=swap"
+    />
+    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/home.css" />
+  </head>
+  <body>
+    <div id="ua-bar" class="ua-bar"></div>
+
+    <header class="hero">
+      <div class="wrap">
+        <div class="eyebrow" data-ua-rise>Università degli Studi di Salerno · Informatica</div>
+        <h1 data-ua-rise>
+          <span class="h1-l">Tutti i</span><span class="h1-l">corsi<span class="h1-dot">.</span></span>
+        </h1>
+        <p class="lede" data-ua-rise>
+          Quaderni, piani di studio e quiz di ogni corso. Scegli il corso e apri il materiale: si legge dal
+          browser, anche da telefono.
+        </p>
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 160 160">
+            <defs><path id="sealPath" d="M80 80m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0" /></defs>
+            <linearGradient id="sealGrad" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="36" y2="0">
+              <stop offset="0" style="stop-color: var(--s-c1)" />
+              <stop offset=".55" style="stop-color: var(--s-c2)" />
+              <stop offset="1" style="stop-color: var(--s-c3)" />
+            </linearGradient>
+            <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="150" y2="0">
+              <stop offset="0" style="stop-color: var(--u-c1, #6b4fd8)" />
+              <stop offset=".55" style="stop-color: var(--u-c2, #2f62e8)" />
+              <stop offset="1" style="stop-color: var(--u-c3, #1c8452)" />
+            </linearGradient>
+            <circle cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" />
+            <g class="ring">
+              <text textLength="322.7" lengthAdjust="spacing">
+                <textPath href="#sealPath" textLength="322.7" lengthAdjust="spacing">
+                  Appunti · Unisa · Informatica · 2° &amp; 3° anno ·
+                </textPath>
+              </text>
+            </g>
+            <circle
+              class="seal-core"
+              cx="80"
+              cy="80"
+              r="35"
+              fill="#111418"
+              stroke="var(--line,#2a2e33)"
+              stroke-width="1"
+            />
+            <g
+              transform="translate(62 62) scale(.9)"
+              fill="none"
+              stroke="url(#sealGrad)"
+              stroke-width="2.4"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+            >
+              <path d="M4 15 20 8l16 7-16 7z" />
+              <path d="M11 18.5v7c0 2.5 4 4.5 9 4.5s9-2 9-4.5v-7" />
+              <path d="M36 15v9" />
+            </g>
+          </svg>
+        </div>
+        <div class="stats" aria-label="Riepilogo" data-ua-rise>
+          <div class="stat">
+            <b id="n-courses">0</b><span><i>Corsi</i></span>
+          </div>
+          <div class="stat">
+            <b id="n-docs">0</b><span><i>Documenti</i></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <main class="wrap">
+      <div class="list" id="list"></div>
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap">
+        <div class="f-grid">
+          <div class="f-brand">
+            <span class="f-k">Ultimo aggiornamento</span>
+            <div class="build-meta"><span id="built">—</span><span id="version"></span></div>
+          </div>
+          <nav class="f-col" aria-label="Sito">
+            <span class="f-k">Sito</span>
+            <ul class="f-links">
+              <li>
+                <a href="news.html"><i class="f-dot"></i>News</a>
+              </li>
+              <li>
+                <a href="segnalazioni.html"><i class="f-dot"></i>Segnalazioni</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="drives" aria-label="Link esterni">
+            <span class="f-k">Link esterni</span>
+            <!-- servizi UNISA: i link li aggiunge assets/site.js (elenco SERVIZI, lo stesso della tendina Profilo) -->
+            <details class="drives-menu" data-ua-servizi hidden>
+              <summary class="drive drives-sum uni">
+                <span class="drive-ic"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 21h18" />
+                    <path d="M5 21V10M19 21V10M9 21V10M15 21V10" />
+                    <path d="M2 10 12 4l10 6z" /></svg
+                ></span>
+                <span class="drive-t">Servizi UNISA</span>
+                <span class="drive-s">link</span>
+                <span class="drives-chev" aria-hidden="true"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" /></svg
+                ></span>
+              </summary>
+              <div class="drives-list"></div>
+            </details>
+            <!-- Linktree CoScienze: scheda a parte (non è una cartella Drive) -->
+            <a class="drive" href="https://linktr.ee/coscienze" target="_blank" rel="noopener">
+              <span class="drive-ic"
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg
+              ></span>
+              <span class="drive-t">Linktree CoScienze</span>
+              <span class="drive-s">Tutti i link della community</span>
+              <span class="drive-go" aria-hidden="true">↗</span>
+            </a>
+            <details class="drives-menu">
+              <summary class="drive drives-sum">
+                <span class="drive-ic"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                    /></svg
+                ></span>
+                <span class="drive-t">Google Drive</span>
+                <span class="drive-s">5 cartelle</span>
+                <span class="drives-chev" aria-hidden="true"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" /></svg
+                ></span>
+              </summary>
+              <div class="drives-list">
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/11VGt2yU2TcJ0YTDlRR3sFl-5oCN9-s5x"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">UNI Files</span>
+                  <span class="drive-s">Raccolta personale · file dei corsi</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1zCH-GBLavEM2ar-yLCgkt90IKUyu0NOb"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">Drive appunti Coscienze</span>
+                  <span class="drive-s">Raccolta comune · appunti di tutti gli anni</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1kCIsetzpsI69KIssV_3P3jP1LxTjppAP"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">1° anno Drive Coscienze</span>
+                  <span class="drive-s">Raccolta comune · file del 1° anno</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1PrRDy3vqKNK1y7oNIlf4cKWpeGXcaIAJ"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">2° anno Materiale e tracce</span>
+                  <span class="drive-s">Libri, appunti e prove d’esame</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+                <a
+                  class="drive"
+                  href="https://drive.google.com/drive/folders/1ZPV0_dibgw077Vhidw-UsqgjxhG8LbI3"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="drive-ic"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2h9A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                      /></svg
+                  ></span>
+                  <span class="drive-t">3° anno Materiale e tracce</span>
+                  <span class="drive-s">Libri, appunti e prove d’esame</span>
+                  <span class="drive-go" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </details>
+          </nav>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/corsi.js"></script>
+    <script>
+      const COURSES = window.CORSI || [];
+      const fmt = iso =>
+        new Intl.DateTimeFormat("it-IT", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/Rome"
+        }).format(new Date(iso));
+      const list = document.getElementById("list");
+      let updates = {};
+
+      function render() {
+        list.textContent = "";
+        for (const c of COURSES) {
+          const row = document.createElement("section");
+          row.className = "course";
+          row.id = c.code.toLowerCase();
+          row.style.setProperty("--c", `var(--ua-c-${c.color}, var(--ua-muted))`);
+          row.setAttribute("data-ua-rise", "");
+          const code = document.createElement("div");
+          code.className = "code";
+          code.textContent = c.code;
+          const info = document.createElement("div");
+          const h2 = document.createElement("h2");
+          h2.textContent = c.name;
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          meta.textContent = c.docs.length
+            ? `${c.meta} · ${c.docs.length} ${c.docs.length === 1 ? "documento" : "documenti"}`
+            : `${c.meta} · appunti in arrivo`;
+          info.append(h2, meta);
+          const tags = document.createElement("div");
+          tags.className = "tags";
+          if (c.resto) {
+            const r = document.createElement("div");
+            r.className = "resto";
+            r.textContent = `Resto ${c.resto}`;
+            r.title = `Appunti del canale Resto ${c.resto}: per l'altro canale programma e docente possono essere diversi`;
+            tags.append(r);
+          }
+          if (c.stato) {
+            const st = document.createElement("div");
+            const ok = c.stato === "aggiornato",
+              soon = c.stato === "in-arrivo";
+            st.className = "state " + (ok ? "ok" : soon ? "soon" : "wip");
+            st.textContent = ok ? "Appunti aggiornati" : soon ? "In arrivo" : "In aggiornamento";
+            st.title = ok
+              ? "Gli appunti coprono tutte le lezioni fatte finora"
+              : soon
+                ? "Il corso è nel sito, gli appunti arrivano a breve"
+                : "Gli appunti vengono completati man mano che il corso va avanti";
+            tags.append(st);
+          }
+          if (tags.children.length) info.append(tags);
+          const ul = document.createElement("ul");
+          ul.className = "docs";
+          for (const d of c.docs) {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = d.path.split("/").map(encodeURIComponent).join("/");
+            a.dataset.kind = d.kind;
+            const n = document.createElement("span");
+            n.className = "dname";
+            n.textContent = d.name;
+            const i = document.createElement("span");
+            i.className = "dinfo";
+            i.dataset.path = d.path;
+            i.dataset.kind = d.kind;
+            if (d.progressKey) i.dataset.key = d.progressKey;
+            const ar = document.createElement("span");
+            ar.className = "arrow";
+            ar.setAttribute("aria-hidden", "true");
+            ar.textContent = "→";
+            a.append(n, i, ar);
+            if (d.progressKey) {
+              const pr = document.createElement("span");
+              pr.className = "prog";
+              pr.setAttribute("aria-hidden", "true");
+              pr.append(document.createElement("i"));
+              a.append(pr);
+            }
+            li.append(a);
+            ul.append(li);
+          }
+          if (!c.docs.length) {
+            const empty = document.createElement("div");
+            empty.className = "docs-empty";
+            empty.innerHTML = `<b>Appunti in arrivo.</b> I quaderni di ${c.name.replace(/[<&>]/g, "")} verranno caricati a breve.`;
+            row.append(code, info, empty);
+            list.append(row);
+            continue;
+          }
+          row.append(code, info, ul);
+          list.append(row);
+        }
+      }
+      render();
+      const nDocs = COURSES.reduce((n, c) => n + c.docs.length, 0);
+      document.getElementById("n-courses").textContent = COURSES.length;
+      document.getElementById("n-docs").textContent = nDocs;
+      document.getElementById("n-courses").dataset.uaCount = COURSES.length;
+      document.getElementById("n-docs").dataset.uaCount = nDocs;
+      /* Avanzamento: legge le spunte salvate nel browser dalle pagine (capitoli fatti, attività del piano) */
+      function progressOf(key, meta) {
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(key)) || {};
+        } catch (e) {}
+        if (meta && meta.ids)
+          return {
+            done: meta.ids.filter(id => saved[id] === true).length,
+            total: meta.ids.length,
+            what: "capitoli fatti"
+          };
+        if (meta && meta.total)
+          return {
+            done: Math.min(meta.total, Object.values(saved).filter(v => v === true).length),
+            total: meta.total,
+            what: "attività fatte"
+          };
+        return null;
+      }
+      function paintInfo(data) {
+        const files = (data && data.files) || {},
+          prog = (data && data.progress) || {};
+        document.querySelectorAll(".dinfo").forEach(i => {
+          const parts = [i.dataset.kind];
+          const p = i.dataset.key ? progressOf(i.dataset.key, prog[i.dataset.path]) : null;
+          if (p) parts.push(`${p.done}/${p.total} ${p.what}`);
+          if (files[i.dataset.path]) parts.push("aggiornato il " + fmt(files[i.dataset.path]));
+          i.textContent = parts.join(" · ");
+          const bar = i.parentElement.querySelector(".prog i");
+          if (bar) bar.style.width = p && p.total ? (100 * p.done) / p.total + "%" : "0%";
+        });
+      }
+      paintInfo(null);
+
+      /* updates.json viene generato dal deploy: date di aggiornamento e capitoli di ogni quaderno */
+      fetch("updates.json")
+        .then(r => (r.ok ? r.json() : null))
+        .then(data => {
+          if (!data) return;
+          paintInfo(data);
+          if (data.built) {
+            const built = new Date(data.built);
+            const time = new Intl.DateTimeFormat("it-IT", {
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "Europe/Rome"
+            }).format(built);
+            const date = new Intl.DateTimeFormat("it-IT", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              timeZone: "Europe/Rome"
+            }).format(built);
+            document.getElementById("built").textContent = `${date}, ${time}`;
+          }
+          if (data.version) document.getElementById("version").textContent = "ver. " + data.version;
+        })
+        .catch(() => {});
+
+      /* arrivo dalla scheda Corsi di un quaderno, piano di studio o quiz (?qui=percorso#codice):
+         la scheda del corso si evidenzia e il documento da cui arrivi è segnato "sei qui" */
+      (function () {
+        const qui = new URLSearchParams(location.search).get("qui");
+        if (!qui) return;
+        const info = [...list.querySelectorAll(".dinfo")].find(i => i.dataset.path === qui);
+        if (!info) return;
+        const a = info.closest("a"),
+          course = a.closest(".course"),
+          arrow = a.querySelector(".arrow");
+        a.classList.add("is-here");
+        course.classList.add("is-here");
+        arrow.textContent = "sei qui";
+        arrow.classList.add("here-tag");
+        arrow.removeAttribute("aria-hidden");
+        requestAnimationFrame(() => course.scrollIntoView({ block: "center" }));
+      })();
+      window.addEventListener("pageshow", e => {
+        if (e.persisted) location.reload();
+      });
+    </script>
+    <script src="assets/site.js" data-root="./" data-page="corsi.html"></script>
+  </body>
+</html>

@@ -48,6 +48,8 @@ VERSION_TAG = re.compile(r"\[(major|minor|patch|no version)\]", re.I)
 VERSION_RANK = {"no version": 0, "patch": 1, "minor": 2, "major": 3}
 NEWS_FILES = re.compile(r"^Unisa/news(?:\.json$|/)")
 COURSES_FILE = SRC + "/assets/corsi.js"
+# pagine che collegano già da sole stile e script comuni: la pubblicazione non li aggiunge di nuovo
+OWN_SCRIPT_PAGES = {"index.html", "corsi.html"}
 CHAPTER_SECTION = re.compile(r'<section\b[^>]*\bclass="ch"')
 NEW_QUESTIONS = 10  # domande nuove in un quiz che valgono un minor
 QUIZ_QUESTION = re.compile(r'[{,]\s*"?q"?\s*:\s*"')  # chiave q di ogni domanda, in qualunque ordine
@@ -385,7 +387,7 @@ def main():
             date = last_commit_date(os.path.join(SRC, rel))
             if date:
                 updates[rel] = date
-            if not name.endswith(".html") or rel == "index.html":
+            if not name.endswith(".html") or rel in OWN_SCRIPT_PAGES:
                 continue
             with open(full, encoding="utf-8") as f:
                 page = f.read()
