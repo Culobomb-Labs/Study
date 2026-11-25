@@ -408,6 +408,7 @@
     </footer>
 
     <script src="assets/corsi.js"></script>
+    <script src="assets/seminari.js"></script>
     <script src="assets/sessione.js"></script>
     <script>
       const COURSES = window.CORSI || [];
@@ -437,9 +438,58 @@
         return null;
       }
 
+      /* una riga della scheda: nome a sinistra, valore a destra e, se c'è un totale, la barra sotto */
+      function progRow(label, value, done, total) {
+        const row = document.createElement("div");
+        row.className = "pg-row";
+        const k = document.createElement("span");
+        k.textContent = label;
+        const n = document.createElement("span");
+        n.textContent = value;
+        row.append(k, n);
+        if (total) {
+          const bar = document.createElement("span");
+          bar.className = "prog";
+          const fill = document.createElement("i");
+          fill.style.width = (100 * done) / total + "%";
+          bar.append(fill);
+          row.append(bar);
+        }
+        return row;
+      }
+
+      /* Accompagnamento al lavoro: firme dei seminari della propria parità e prossimo seminario
+         (dati in assets/seminari.js). Compare solo a chi ha iniziato il corso: un capitolo spuntato,
+         la parità scelta o una firma. Senza parità, la riga ricorda di sceglierla nel Profilo. */
+      const DAY_SHORT = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "numeric", month: "short" });
+      function addFirme(card) {
+        const F = window.SEMINARI_FIRME;
+        if (!F) return;
+        const st = F.stato();
+        if (!st.parita && !st.qualcuna && !card.querySelector(".pg-row")) return;
+        if (!st.parita) {
+          const ask = progRow("Firme", "Scegli pari o dispari →");
+          ask.classList.add("pg-ask");
+          card.append(ask);
+          return;
+        }
+        if (!st.totale) return;
+        card.append(progRow("Firme", `${st.firmate}/${st.totale}`, st.firmate, st.totale));
+        if (st.prossimo) {
+          const next = document.createElement("p");
+          next.className = "pg-next";
+          const when =
+            st.prossimo.d === st.oggi ? "Oggi" : "Prossimo: " + DAY_SHORT.format(new Date(st.prossimo.d + "T12:00:00"));
+          next.textContent = `${when} · ${st.prossimo.t}`;
+          card.append(next);
+        }
+      }
+
       /* I tuoi progressi: una scheda per ogni corso iniziato, con le barre dei documenti già cominciati.
          Gli altri corsi e documenti sono nella pagina Corsi. */
+      let lastProgress = null;
       function drawProgress(data) {
+        lastProgress = data;
         const prog = (data && data.progress) || {};
         const box = document.getElementById("pg");
         box.textContent = "";
@@ -459,20 +509,9 @@
             const p = d.progressKey ? progressOf(d.progressKey, prog[d.path]) : null;
             // quaderni: solo se hai spuntato qualcosa; piani di studio: appena hai generato il piano
             if (!p || !p.total || (!p.done && d.kind !== "Piano di studio")) continue;
-            const row = document.createElement("div");
-            row.className = "pg-row";
-            const k = document.createElement("span");
-            k.textContent = d.kind;
-            const n = document.createElement("span");
-            n.textContent = `${p.done}/${p.total}`;
-            const bar = document.createElement("span");
-            bar.className = "prog";
-            const fill = document.createElement("i");
-            fill.style.width = (100 * p.done) / p.total + "%";
-            bar.append(fill);
-            row.append(k, n, bar);
-            card.append(row);
+            card.append(progRow(d.kind, `${p.done}/${p.total}`, p.done, p.total));
           }
+          if (c.code === "AL") addFirme(card);
           if (card.querySelector(".pg-row")) box.append(card);
         }
         if (!box.children.length) {
@@ -483,6 +522,14 @@
         }
       }
       drawProgress(null);
+      // "Scegli pari o dispari" apre il Profilo invece della pagina del corso
+      document.getElementById("pg").addEventListener("click", e => {
+        if (!e.target.closest(".pg-ask") || !window.uaApriProfilo) return;
+        e.preventDefault();
+        window.uaApriProfilo();
+      });
+      // parità scelta nel Profilo: la scheda AL si aggiorna subito
+      window.addEventListener("ua-al-matricola", () => drawProgress(lastProgress));
 
       /* updates.json viene generato dal deploy: date di aggiornamento e capitoli di ogni quaderno */
       fetch("updates.json")

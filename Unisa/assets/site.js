@@ -167,6 +167,34 @@
     if (e.key === GLASS_KEY) applyGlass(getGlass());
   });
 
+  /* ---------------- parità della matricola ----------------
+     Pari o dispari (l'ultima cifra della matricola), scelta nella tendina Profilo oppure nel calendario di
+     Accompagnamento al lavoro: serve a contare le firme dei seminari e a mostrare il prossimo (home e
+     calendario, vedi assets/seminari.js). Con l'accesso Google si sincronizza come le spunte.
+     Quando cambia, la pagina riceve l'evento "ua-al-matricola" e si ridisegna. */
+  const MATR_KEY = "al-matricola";
+  const MATRICOLE = [
+    ["pari", "Pari"],
+    ["dispari", "Dispari"]
+  ];
+  function getMatricola() {
+    try {
+      const p = localStorage.getItem(MATR_KEY);
+      return p === "pari" || p === "dispari" ? p : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function setMatricola(p) {
+    try {
+      localStorage.setItem(MATR_KEY, p);
+    } catch (e) {}
+    window.dispatchEvent(new Event("ua-al-matricola"));
+  }
+  window.addEventListener("storage", e => {
+    if (e.key === MATR_KEY) window.dispatchEvent(new Event("ua-al-matricola"));
+  });
+
   /* ---------------- barra in alto ---------------- */
   function buildBar() {
     let bar = document.getElementById("ua-bar");
@@ -998,17 +1026,20 @@
       if (d.progressKey) PROGRESS_KEYS.add(d.progressKey);
     })
   );
+  // Accompagnamento al lavoro: parità della matricola, firme dei seminari e checklist del CV
+  const AL_KEYS = [MATR_KEY, "al-firme", "al-cv-checklist"];
   // cosa si sincronizza: le spunte (progressKey in corsi.js), i risultati dei quiz (chiavi "quiz-..."), la Sessione
-  // d'esami (piano e spunte, "ua-sessione") e l'aspetto (tema e barra)
+  // d'esami (piano e spunte, "ua-sessione"), le chiavi di Accompagnamento al lavoro e l'aspetto (tema e barra)
   const isPref = k => k === THEME_KEY || k === GLASS_KEY;
   const applyPref = k => (k === THEME_KEY ? applyTheme(getTheme()) : applyGlass(getGlass())); // cambia subito, senza ricaricare
   const isSynced = k =>
-    typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || k === SESS_KEY || isPref(k));
+    typeof k === "string" && (PROGRESS_KEYS.has(k) || k.startsWith("quiz-") || k === SESS_KEY || AL_KEYS.includes(k) || isPref(k));
   const IS_QUIZ = !!(here && here.d.kind === "Quiz");
   const usesKey = k =>
     IS_HOME ||
     IS_CORSI_PAGE ||
     (here && here.d.progressKey === k) ||
+    (here && here.c.code === "AL" && AL_KEYS.includes(k)) ||
     (IS_QUIZ && k.startsWith("quiz-")) ||
     (IS_SESS_PAGE && k === SESS_KEY);
 
@@ -1542,6 +1573,13 @@
     ap.querySelector(".ua-np-in").innerHTML = `
       <div class="ua-np-head"><h2>Profilo</h2><button type="button" class="ua-np-close" aria-label="Chiudi">×</button></div>
       <div class="ua-ap-body">${top}</div>
+      <div class="ua-ap-look"><b class="ua-ap-look-t">Matricola</b>
+        <span class="ua-ap-look-l" id="ua-matr-t">Ultima cifra della matricola</span>
+        <div class="ua-seg ua-matr-seg" role="radiogroup" aria-labelledby="ua-matr-t">${MATRICOLE.map(
+          ([k, t]) =>
+            `<button type="button" role="radio" data-matr="${k}" aria-checked="${getMatricola() === k}">${t}</button>`
+        ).join("")}</div>
+        <p class="ua-ap-note">Serve per Accompagnamento al lavoro: in home vedi le firme dei seminari della tua parità e il prossimo seminario.${u ? " Salvata sul tuo account." : ""}</p></div>
       <div class="ua-ap-look"><b class="ua-ap-look-t">Aspetto</b>
         <span class="ua-ap-look-l" id="ua-theme-t">Tema</span>
         <div class="ua-seg ua-theme-seg" role="radiogroup" aria-labelledby="ua-theme-t">${THEMES.map(
@@ -1577,6 +1615,12 @@
     ap.querySelectorAll(".ua-glass-seg button").forEach(b =>
       b.addEventListener("click", () => setGlass(b.dataset.glass))
     );
+    ap.querySelectorAll(".ua-matr-seg button").forEach(b =>
+      b.addEventListener("click", () => {
+        setMatricola(b.dataset.matr);
+        ap.querySelectorAll(".ua-matr-seg button").forEach(x => x.setAttribute("aria-checked", String(x === b)));
+      })
+    );
     const out = ap.querySelector(".ua-do-logout");
     if (out)
       out.addEventListener("click", () => {
@@ -1608,6 +1652,11 @@
     document.querySelectorAll(".ua-open-sync").forEach(b => b.setAttribute("aria-expanded", "true"));
     ap.querySelector(".ua-np-box").focus({ preventScroll: true });
   }
+  // usata dalla home (scheda AL, "Scegli pari o dispari"): apre la tendina dalla scheda Profilo visibile
+  window.uaApriProfilo = () => {
+    const t = [...document.querySelectorAll(".ua-open-sync")].find(b => b.offsetParent !== null);
+    openAccount(t);
+  };
   function closeAccount(noFocus) {
     if (!ap || ap.hidden) return;
     ap.hidden = true;
