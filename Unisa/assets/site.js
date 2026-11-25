@@ -44,8 +44,13 @@
   const IS_SESS_PAGE = PAGE === "sessione.html";
   // pagina con l'elenco dei corsi (corsi.html): la scheda Corsi della barra in basso
   const IS_CORSI_PAGE = PAGE === "corsi.html";
-  // pagina Segnalazioni: sta sotto la scheda News della barra in basso, insieme alla pagina News
+  // pagina Segnalazioni: sta sotto la stessa scheda della barra in basso della pagina News
   const IS_SEGN_PAGE = PAGE === "segnalazioni.html";
+  // la scheda della barra in basso con News e Segnalazioni: nome e icona (sempre uguali, come Corsi)
+  const BOARD_TAB = {
+    label: "Bacheca",
+    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4.5l-4 4-4 1.5-1.5 1.5 7 7 1.5-1.5 1.5-4 4-4"/><path d="M9 15l-4.5 4.5"/><path d="M14.5 4l5.5 5.5"/></svg>'
+  };
   const SESS_KEY = "ua-sessione";
   const CORSI = window.CORSI || [];
   // corsi delle news: quelli della home più quelli che compaiono solo nelle news (se non sono già in home)
@@ -224,18 +229,8 @@
     window.addEventListener("resize", fit);
   }
 
-  /* ---------------- barra in basso (schede, stile iOS) ----------------
-     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Corsi (l'elenco dei corsi),
-     Sessione (la sessione d'esami), News (la pagina delle notizie) e Profilo (con la foto Google se hai fatto
-     l'accesso), con la scheda della pagina in cui sei evidenziata. Corsi resta accesa anche dentro un quaderno,
-     un piano di studio o un quiz, con un pallino del colore del corso: toccandola si apre l'elenco dei corsi
-     posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Allo stesso modo News resta accesa
-     anche nella pagina Segnalazioni (in cima alle due pagine c'è un selettore per passare dall'una all'altra).
-     "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento.
-     Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
-     quando compare "Torna su", si mette sopra l'Indice. */
   /* ---------------- News e Segnalazioni: selettore in cima alla pagina ----------------
-     Le due pagine stanno sotto la stessa scheda News della barra in basso: in cima a ognuna una pillola
+     Le due pagine stanno sotto la stessa scheda Bacheca della barra in basso: in cima a ognuna una pillola
      "News | Segnala un problema" porta all'altra, con evidenziata quella in cui sei. */
   function buildSubnav() {
     if (!IS_NEWS_PAGE && !IS_SEGN_PAGE) return;
@@ -250,6 +245,17 @@
     main.prepend(nav);
   }
 
+  /* ---------------- barra in basso (schede, stile iOS) ----------------
+     In tutte le pagine la barra in alto scorre via: qui restano le schede Home, Corsi (l'elenco dei corsi),
+     Sessione (la sessione d'esami), Bacheca (News e Segnalazioni) e Profilo (con la foto Google se hai fatto
+     l'accesso), con la scheda della pagina in cui sei evidenziata. Corsi resta accesa anche dentro un quaderno,
+     un piano di studio o un quiz, con un pallino del colore del corso: toccandola si apre l'elenco dei corsi
+     posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Allo stesso modo Bacheca resta
+     accesa in News e in Segnalazioni, con un segno piccolo che dice quale delle due (campanello o insetto);
+     nelle altre pagine al posto del segno c'è il pallino delle news da leggere.
+     "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento.
+     Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
+     quando compare "Torna su", si mette sopra l'Indice. */
   function buildDock() {
     const idx = document.querySelector("nav.idx");
     // here: la scheda è quella della pagina (o della sezione) in cui sei; page: è proprio questa pagina
@@ -261,12 +267,19 @@
     const corsiDot = here
       ? `<span class="ua-course-dot" style="--c:var(--ua-c-${esc(here.c.color)})" aria-hidden="true"></span>`
       : "";
+    // come per i corsi, un segno piccolo dice in quale pagina della sezione sei: campanello in News, insetto in
+    // Segnalazioni; nelle altre pagine al suo posto c'è il pallino delle news da leggere
+    const boardMark = IS_NEWS_PAGE
+      ? `<span class="ua-sub-badge ua-sub-news" aria-hidden="true">${ICON.bell}</span>`
+      : IS_SEGN_PAGE
+        ? `<span class="ua-sub-badge ua-sub-segn" aria-hidden="true">${ICON.bug}</span>`
+        : '<span class="ua-news-dot" hidden></span>';
     const dock = el("div", { class: "ua-dock", role: "navigation", "aria-label": "Navigazione rapida" });
     dock.innerHTML = `<div class="ua-tabs">
       ${tab({ cls: "ua-dock-home", attrs: `href="${ROOT}index.html"`, icon: ICON.home, label: "Home", here: IS_HOME })}
       ${tab({ cls: "ua-dock-corsi", attrs: `href="${corsiHref}"`, icon: ICON.cap + corsiDot, label: "Corsi", here: IS_CORSI_PAGE || !!here, page: IS_CORSI_PAGE })}
       ${tab({ cls: "ua-dock-sess", attrs: `href="${ROOT}sessione.html"`, icon: ICON.cal, label: "Sessione", here: IS_SESS_PAGE })}
-      ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: ICON.bell + '<span class="ua-news-dot" hidden></span>', label: "News", here: IS_NEWS_PAGE || IS_SEGN_PAGE, page: IS_NEWS_PAGE })}
+      ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: BOARD_TAB.icon + boardMark, label: BOARD_TAB.label, here: IS_NEWS_PAGE || IS_SEGN_PAGE, page: IS_NEWS_PAGE })}
       ${tab({ tag: "button", cls: "ua-open-sync", attrs: 'type="button" aria-haspopup="dialog"', icon: ICON.user, label: "Profilo" })}
     </div>
     <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>
@@ -1806,8 +1819,8 @@
 
   /* ---------------- news e notifiche ----------------
      Le notizie stanno in news.json (nella cartella Unisa). Per pubblicarne una basta aggiungerla in cima alla lista.
-     - la scheda News della barra in basso porta alla pagina news.html (elenco completo e interruttore delle notifiche);
-       il pallino rosso sulla scheda segnala le notizie non ancora lette
+     - la scheda Bacheca della barra in basso porta alla pagina news.html (elenco completo e interruttore delle
+       notifiche); il pallino rosso sulla scheda segnala le notizie non ancora lette
      - con le notifiche attive, ogni notizia nuova arriva come notifica del sistema quando apri il sito
        (e, se il sito è installato come app su Android/PC, anche controllando in sottofondo) */
   const NEWS_SEEN = "news-lette",
@@ -1897,10 +1910,12 @@
   function paintNewsDot() {
     const k = unread().length;
     document.querySelectorAll(".ua-dock-news").forEach(b => {
-      // scheda News della barra in basso
+      // scheda della barra in basso con News e Segnalazioni (in quelle due pagine al posto del pallino c'è il segno)
       const dot = b.querySelector(".ua-news-dot");
       if (dot) dot.hidden = !k;
-      const l = k ? `News, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere` : "News";
+      const l = k
+        ? `${BOARD_TAB.label}, ${k} ${k === 1 ? "notizia" : "notizie"} da leggere`
+        : BOARD_TAB.label;
       b.setAttribute("aria-label", l);
       b.title = l;
     });

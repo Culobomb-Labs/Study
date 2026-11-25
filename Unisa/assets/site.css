@@ -1173,6 +1173,32 @@ a.ua-ni:hover {
   box-shadow: 0 0 0 1.5px var(--ua-glass-rim);
 } /* foto Google nella scheda Profilo */
 /* pallino del colore del corso sulla scheda Corsi, quando sei in un quaderno, piano di studio o quiz */
+/* segno piccolo sulla scheda della bacheca (News e Segnalazioni), come il pallino del corso su Corsi:
+   campanello arancione in News, insetto rosso in Segnalazioni */
+.ua-sub-badge {
+  position: absolute;
+  top: -5px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--ua-bg);
+  box-shadow: 0 0 0 1.5px var(--ua-bg);
+  pointer-events: none;
+}
+.ua-sub-news {
+  color: var(--ua-g-bell2);
+}
+.ua-sub-segn {
+  color: var(--ua-g-bug);
+}
+.ua-tab-ic .ua-sub-badge svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.2;
+}
 .ua-course-dot {
   position: absolute;
   top: -1px;
