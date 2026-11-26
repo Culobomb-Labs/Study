@@ -21,7 +21,7 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
       { "name": "Programma d'esame di Ingegneria del Software", "kind": "Programma d'esame", "path": "Ingenieria del Software/Piano di studio IS.html", "progressKey": "piano-intercorso-ingsw" },
-      { "name": "Quiz, capitoli 01–20", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
+      { "name": "Quiz, capitoli 02–20", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {
@@ -33,7 +33,7 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" },
       { "name": "Programma d'esame di Mobile Programming", "kind": "Programma d'esame", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" },
-      { "name": "Quiz, capitoli 01–21", "kind": "Quiz", "path": "Mobile Programming/Quiz MP.html" }
+      { "name": "Quiz, capitoli 02–21", "kind": "Quiz", "path": "Mobile Programming/Quiz MP.html" }
     ]
   },
   {
@@ -72,7 +72,7 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Basi di Dati", "kind": "Quaderno", "path": "Basi di Dati/Quaderno di Basi di Dati.html", "progressKey": "quaderno-basi-done" },
       { "name": "Programma d'esame di Basi di Dati", "kind": "Programma d'esame", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" },
-      { "name": "Quiz, capitoli 02–10", "kind": "Quiz", "path": "Basi di Dati/Quiz BD.html" }
+      { "name": "Quiz, capitoli 03–10", "kind": "Quiz", "path": "Basi di Dati/Quiz BD.html" }
     ]
   },
   {

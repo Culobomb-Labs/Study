@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Quiz di Basi di Dati · Capitoli 02–10</title>
-<meta name="description" content="Quiz di Basi di Dati sui capitoli 02–10 del quaderno e simulazione dello scritto con tracce sul modello delle prove d’esame.">
+<title>Quiz di Basi di Dati · Capitoli 03–10</title>
+<meta name="description" content="Quiz di Basi di Dati sui capitoli 03–10 del quaderno e simulazione dello scritto con tracce sul modello delle prove d’esame.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -183,19 +183,18 @@ body.running .lede{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Basi di Dati · capitoli 02–10</div>
+  <div class="eyebrow">Basi di Dati · capitoli 03–10</div>
   <h1>Quiz di Basi di Dati</h1>
-  <p class="lede">Domande costruite su come è fatto lo scritto di Polese e Caruccio: carico applicativo e ridondanze, ristrutturazione, mapping, algebra relazionale, SQL, JDBC e B+-tree. Capitoli 02–10, con la stessa numerazione del quaderno. Per le domande aperte scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
+  <p class="lede">Domande costruite su come è fatto lo scritto di Polese e Caruccio: carico applicativo e ridondanze, ristrutturazione, mapping, algebra relazionale, SQL, JDBC e B+-tree. Capitoli 03–10, con la stessa numerazione del quaderno: il capitolo 02 è introduttivo e non ha domande. Per le domande aperte scrivi la risposta, confrontala con la soluzione e valuta se l’avevi centrata.</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
 <script>
-/* Domande: capitoli 02–10 di Basi di Dati (numerazione del quaderno), costruite sugli esercizi dello scritto
+/* Domande: capitoli 03–10 di Basi di Dati (il 02 è introduttivo, quindi niente domande) (numerazione del quaderno), costruite sugli esercizi dello scritto
    (prove di Polese e Caruccio 2022-23 … 2024-25: carico applicativo, ristrutturazione, mapping, algebra, SQL, JDBC, B+-tree).
    o con UNA voce = domanda aperta (o[0] è la soluzione da confrontare; se ha più righe si mostra come codice);
    o con QUATTRO voci = risposta multipla (la prima è quella giusta, vengono mescolate). Tutto preso dal quaderno. */
 const CHAPTERS = [
-  { id: "dbms", n: "02", t: "Concetti di base e architetture dei DBMS" },
   { id: "er", n: "03", t: "Progettazione e modello ER" },
   { id: "logica", n: "04", t: "Progettazione logica" },
   { id: "relazionale", n: "05", t: "Il modello relazionale" },
@@ -206,22 +205,6 @@ const CHAPTERS = [
   { id: "fisica", n: "10", t: "Progettazione fisica" }
 ];
 const Q = [
-  // 02 · Concetti di base e architetture dei DBMS
-  { c: "dbms", q: "MySQL è un database?", o: ["No: è un DBMS, il database è l’insieme di dati che gestisce", "Sì, è il database relazionale più diffuso", "Sì, ma solo se contiene almeno una tabella", "No: è un linguaggio di interrogazione"], e: "DBMS = l’applicativo (come Word), database = l’insieme di dati (come il file .DOC)." },
-  { c: "dbms", q: "Dove stanno i metadati di una base di dati?", o: ["Nel catalogo di sistema (dizionario dei dati)", "Nei programmi applicativi che usano i dati", "In un file di log separato", "Solo nella documentazione del progettista"], e: "Il DBMS consulta il catalogo per conoscere la struttura dei file di quel database." },
-  { c: "dbms", q: "Aggiungi un indice su CORSO per Denominazione e la query “corsi del secondo semestre” resta identica, solo più veloce. Che indipendenza è?", o: ["Indipendenza fisica", "Indipendenza logica", "Indipendenza esterna", "Indipendenza transazionale"], e: "Si cambia lo schema interno senza cambiare lo schema logico." },
-  { c: "dbms", q: "Cambi una tabella dello schema logico e la vista ESAMI SUPERATI usata dai programmi non deve cambiare. Che indipendenza è?", o: ["Indipendenza logica", "Indipendenza fisica", "Indipendenza dal DBMS", "Indipendenza dei mapping"], e: "Cambiano solo le definizioni delle viste e i mapping, non gli schemi esterni e i programmi." },
-  { c: "dbms", q: "Quale indipendenza dei dati si ottiene più facilmente?", o: ["Quella fisica", "Quella logica", "Sono ugualmente facili", "Nessuna delle due si può ottenere davvero"], e: "Da non confondere: l’indipendenza fisica si ottiene più facilmente di quella logica." },
-  { c: "dbms", q: "Schema o istanza: cosa cambia molto rapidamente?", o: ["L’istanza (aspetto estensionale)", "Lo schema (aspetto intensionale)", "Entrambi allo stesso modo", "Nessuno dei due"], e: "Lo schema è sostanzialmente invariante nel tempo; l’istanza sono i valori attuali." },
-  { c: "dbms", q: "Perché un DML di alto livello come SQL si dice set-at-a-time?", o: ["Perché una sola istruzione può ritrovare molti record insieme", "Perché lavora un record alla volta", "Perché funziona solo dentro un linguaggio host", "Perché definisce gli insiemi di attributi delle tabelle"], e: "Il DML di basso livello invece è record-at-a-time e richiede l’iterazione." },
-  { c: "dbms", q: "Quale linguaggio specifica lo schema interno quando logico e interno sono ben distinti?", o: ["SDL (Storage Definition Language)", "DDL (Data Definition Language)", "VDL (View Definition Language)", "DML (Data Manipulation Language)"], e: "Allora il DDL definisce solo lo schema logico; nei DBMS moderni SQL li integra tutti." },
-  { c: "dbms", q: "Nell’architettura ANSI/SPARC, quali dati esistono davvero?", o: ["Solo quelli a livello fisico (interno)", "Quelli del livello esterno", "Quelli dello schema logico", "Una copia per ogni livello"], e: "I tre schemi sono solo descrizioni: gli unici dati reali sono a livello fisico." },
-  { c: "dbms", q: "Qual è il principale svantaggio dell’approccio file processing rispetto al DBMS?", o: ["Ridondanza e alto rischio di inconsistenze, con forte accoppiamento programma/dati", "Il costo del software da acquistare", "Programmi meno efficienti", "L’impossibilità di salvare dati persistenti"], e: "Ogni programma ha i suoi file e la descrizione della loro struttura, ripetuta e incoerente." },
-  { c: "dbms", q: "Qual è uno svantaggio dell’architettura a 3 livelli?", o: ["I due livelli di mapping creano overhead e il catalogo è più grande", "Non permette l’indipendenza dei dati", "Obbliga a usare un DBMS special-purpose", "Impedisce le viste per gruppi di utenti"], e: "In cambio dà flessibilità, scalabilità e reale indipendenza dei dati." },
-  { c: "dbms", q: "Che cos’è una transazione per il sistema?", o: ["Una sequenza indivisibile di operazioni: o tutte o nessuna", "Un programma per un’attività frequente, come un versamento", "Un’interrogazione in sola lettura", "Un backup periodico della base di dati"], e: "Per l’utente invece è il programma predefinito (versamento, certificato, prenotazione)." },
-  { c: "dbms", q: "Un DML inglobato in un linguaggio general-purpose come si chiama?", o: ["Data sublanguage", "Query language", "Storage definition language", "Host language"], e: "Il linguaggio general-purpose è l’host language; il DML di alto livello usato da solo è il query language." },
-  { c: "dbms", q: "Chi autorizza l’accesso, coordina e monitora l’uso della base di dati?", o: ["Il DBA (DataBase Administrator)", "Il database designer", "L’utente naive", "L’analista di sistema"], e: "Il progettista invece sceglie le strutture e sviluppa le viste." },
-  { c: "dbms", q: "Che cosa sono i “dati condivisi” in una base di dati?", o: ["Dati usati da più settori dell’azienda", "Dati copiati in più file per sicurezza", "Dati visibili solo al DBA", "Dati salvati sia in memoria sia su disco"], e: "Senza un DBMS la condivisione porta a ridondanza e rischio di incoerenza." },
 
   // 03 · Progettazione e modello ER
   { c: "er", q: "Lo stesso studente può sostenere lo stesso esame più volte. Esame va modellato come…", o: ["Entità, perché la coppia studente–corso si ripeterebbe", "Associazione molti a molti tra Studente e Corso", "Attributo multivalore di Studente", "Associazione ricorsiva su Studente"], e: "Trabocchetto: in un’associazione non ci possono essere occorrenze ripetute." },
