@@ -21,7 +21,7 @@ window.CORSI =
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
       { "name": "Programma d'esame di Ingegneria del Software", "kind": "Programma d'esame", "path": "Ingenieria del Software/Piano di studio IS.html", "progressKey": "piano-intercorso-ingsw" },
-      { "name": "Quiz, capitoli 01–19", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
+      { "name": "Quiz, capitoli 01–20", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
   {
