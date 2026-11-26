@@ -187,6 +187,26 @@
     return topicCache[course.code];
   }
 
+  /* Esercizi dei capitoli (ESERCIZI) e tracce della simulazione dello scritto (TRACCE) dal quiz del corso,
+     per "solo pratica". Sono dati scritti da noi nel quiz (oggi: esercizi in PD, tracce in PD e BD). */
+  const quizCache = {};
+  function quizOf(course, root) {
+    if (!course.quiz) return Promise.resolve(null);
+    const arr = (text, name) => {
+      const m = text.match(new RegExp("const " + name + " = (\\[[\\s\\S]*?\\n\\]);"));
+      return m ? Function('"use strict"; return (' + m[1] + ")")() : [];
+    };
+    if (!quizCache[course.code])
+      quizCache[course.code] = fetch(href(root, course.quiz))
+        .then(r => (r.ok ? r.text() : Promise.reject(new Error(r.status))))
+        .then(text => ({ esercizi: arr(text, "ESERCIZI"), tracce: arr(text, "TRACCE") }))
+        .catch(e => {
+          delete quizCache[course.code];
+          throw e;
+        });
+    return quizCache[course.code];
+  }
+
   /* Cosa vuoi esercitare, per ogni esame (exam.mode): "teoria", "pratica" o "entrambe".
      Le sessioni salvate prima (senza mode) valgono "entrambe", cioè come prima. */
   const MODES = [
@@ -200,17 +220,20 @@
      Per i corsi con piano di studio: lettura + (esercizio, domanda aperta, quiz). "parts" serve a togliere gli extra
      se il tempo non basta. Per gli altri corsi: i capitoli scritti da chi studia, oppure blocchi da un'ora.
      Solo teoria: niente esercizio. Solo pratica: ripasso breve + esercizio (pr: 1, l'esercizio non si toglie mai),
-     solo per i capitoli che hanno un esercizio.
+     solo per i capitoli che hanno un esercizio. Se il quiz del corso ha esercizi e tracce (qz), "solo pratica" li usa:
+     vedi pratica() qui sotto.
      Livello: quello dell'esame (exam.lv), oppure quello scelto per il singolo capitolo (exam.lvs[id]). */
   const lvOf = (exam, id) =>
     exam.lvs && LEVELS[exam.lvs[id]] ? exam.lvs[id] : LEVELS[exam.lv] ? exam.lv : 0;
-  function buildItems(exam, course, data, root) {
+  function buildItems(exam, course, data, root, qz) {
     const lv = exam.lv || 0,
       f = (LEVELS[lv] || LEVELS[0]).f,
       mode = modeOf(exam);
     const items = [];
     const add = (id, o) =>
       items.push(Object.assign({ iid: `${exam.code}.${id}`, c: exam.code, k: "top" }, o));
+    if (data && mode === "pratica" && qz && (qz.esercizi.length || qz.tracce.length))
+      return pratica(exam, course, data, root, qz, add, items);
     if (data) {
       /* I capitoli introduttivi ("intro" nel piano di studio) non entrano mai: sono solo un consiglio (plan.intro).
          IS: prima prova = argomenti senza "full"; seconda prova = quelli "full" (non c'erano nella prima) */
@@ -300,6 +323,112 @@
       }
     }
     return items;
+  }
+
+  /* "Solo pratica" con il quiz del corso, in quest'ordine:
+     1. gli esercizi guidati dei capitoli (ESERCIZI, senza quelli di teoria): per ogni capitolo che ne ha, un ripasso
+        breve e i suoi esercizi, ognuno con i suoi minuti e il link che lo apre (#es-<id>). I capitoli senza esercizi
+        non entrano; se il quiz non ha esercizi, si usa l'esercizio tipo del programma (draw);
+     2. la preparazione completa: le tracce dello scritto solo sulla parte pratica (#trp-<id>, 5 minuti a punto), la
+        prima quando resta circa il 15% degli esercizi, le altre dopo, con in mezzo "Rifai gli esercizi sbagliati".
+     Tutto con pr: 1 (non si toglie quando il tempo è poco, si accorcia soltanto). */
+  function pratica(exam, course, data, root, qz, add, items) {
+    const study = data.topics.filter(t => !t.intro);
+    const topics =
+      exam.scope === "prima"
+        ? study.filter(t => !t.full)
+        : exam.scope === "seconda"
+          ? study.filter(t => t.full)
+          : study;
+    const quiz = hash => href(root, course.quiz, hash);
+    const ex = qz.esercizi.filter(x => !x.teoria);
+    topics.forEach(t => {
+      const lv = lvOf(exam, t.id),
+        mine = ex.filter(x => x.c === t.cid);
+      if (ex.length && !mine.length) return;
+      if (!ex.length && !t.draw) return;
+      const rev = Math.max(10, r5(t.min * LEVELS[lv].f * 0.3));
+      const base = {
+        top: t.t,
+        ch: t.ch,
+        pri: t.pri || 3,
+        ex: t.draw || "",
+        pr: 1,
+        href: course.quaderno ? href(root, course.quaderno, t.cid) : "",
+        sq: quiz()
+      };
+      if (!mine.length) {
+        const parts = { rev, draw: lv === 0 ? 25 : lv === 1 ? 20 : 15 };
+        add(t.id, Object.assign({ t: `Esercizio: ${t.t}`, s: t.draw, parts, m: rev + parts.draw }, base));
+        return;
+      }
+      // un'attività per esercizio (si fa tutta in un giorno: whole); il ripasso breve va con il primo
+      mine.forEach((x, j) => {
+        const parts = j ? { es: x.min } : { rev, es: x.min };
+        add(
+          `${t.id}.${x.id}`,
+          Object.assign({}, base, {
+            t: `Esercizio guidato: ${x.t}`,
+            s: `${t.ch} · ${t.t}${j ? "" : " · prima un ripasso breve del capitolo"}`,
+            es: 1,
+            whole: 1,
+            parts,
+            m: Object.values(parts).reduce((a, b) => a + b, 0),
+            quiz: quiz("es-" + x.id)
+          })
+        );
+      });
+    });
+    // preparazione completa: tracce solo sulla parte pratica, e tra una e l'altra gli esercizi sbagliati
+    const tr = qz.tracce.map((x, i) => {
+      const pp = x.es.filter(e => !e.teoria),
+        pts = pp.reduce((a, e) => a + e.punti, 0);
+      return {
+        iid: `${exam.code}.tr${i}`,
+        c: exam.code,
+        k: "top",
+        t: `Simulazione · solo parte pratica: ${x.titolo}`,
+        s: `Nel quiz, a tempo come all’esame: ${pp.length} parti, ${pts} punti. Poi rivedi le parti dove hai perso punti.`,
+        top: x.titolo,
+        pri: 5,
+        pr: 1,
+        trc: 1, // traccia della simulazione (tr è il nome della traccia del piano: studio, progetto…)
+        whole: 1,
+        parts: { sim: r5(pts * 5) },
+        m: r5(pts * 5),
+        quiz: quiz("trp-" + x.id),
+        sq: quiz()
+      };
+    });
+    const redo = i => ({
+      iid: `${exam.code}.rifai${i}`,
+      c: exam.code,
+      k: "top",
+      t: "Rifai gli esercizi sbagliati",
+      s: "Nel quiz, quelli che hai segnato Sbagliato o Parzialmente giusto, senza guida",
+      top: "esercizi sbagliati",
+      pri: 4,
+      pr: 1,
+      redo: 1,
+      parts: { es: 45 },
+      m: 45,
+      quiz: quiz(),
+      sq: quiz()
+    });
+    if (!tr.length) return items;
+    // la prima traccia quando gli esercizi sono quasi finiti (circa l'ultimo 15% dei minuti)
+    const tot = items.reduce((a, i) => a + i.m, 0);
+    let acc = 0,
+      at = items.length;
+    for (let i = 0; i < items.length; i++) {
+      acc += items[i].m;
+      if (acc >= tot * 0.85) {
+        at = i + 1;
+        break;
+      }
+    }
+    const rest = tr.slice(1).flatMap((x, i) => (ex.length ? [redo(i), x] : [x]));
+    return items.slice(0, at).concat(tr[0], items.slice(at), rest);
   }
 
   /* Il progetto di un esame (se c'è): blocchi da un'ora fino alla consegna, su una traccia a parte
@@ -395,6 +524,10 @@
      3. se il tempo non basta, si riprova con le attività accorciate (compress), finché ci stanno. */
   function schedule(cfg, itemsByExam, start) {
     const cap = Math.round(cfg.hours * 60);
+    // giorni con meno tempo (cfg.off): "Niente studio" toglie il giorno, "Mezza giornata" dà metà delle ore
+    const off = {};
+    (cfg.off || []).forEach(o => (off[o.date] = o.half ? r5(cap / 2) : 0));
+    const capOf = s => (s in off ? off[s] : cap);
     const ded = Math.max(0, cfg.ded == null ? 2 : cfg.ded);
     const byDateAsc = (a, b) => (a.date < b.date ? -1 : 1);
     // l'esame di oggi resta nel calendario, ma per lui non si studia più
@@ -422,7 +555,7 @@
     const study = [];
     for (let d = parse(start); iso(d) < last; d = addDays(d, 1)) {
       const s = iso(d);
-      if (cfg.days.includes(d.getDay()) && !examDates.has(s)) study.push(s);
+      if (cfg.days.includes(d.getDay()) && !examDates.has(s) && capOf(s) > 0) study.push(s);
     }
     // giorni dedicati: per ogni esame (dal più vicino) gli ultimi giorni prima della sua data, dopo l'esame precedente
     const dedOf = {};
@@ -434,15 +567,28 @@
     });
 
     const queue = {};
-    tracks.forEach(e => (queue[e.code] = (itemsByExam[e.code] || []).map(i => ({ iid: i.iid, left: i.m }))));
+    /* whole: un esercizio guidato o la simulazione di una traccia si fa tutto in un giorno (la simulazione a tempo,
+       come all'esame), anche se va un po' oltre il ritmo del giorno */
+    tracks.forEach(
+      e =>
+        (queue[e.code] = (itemsByExam[e.code] || []).map(i => ({ iid: i.iid, left: i.m, whole: !!i.whole })))
+    );
     const remaining = code => queue[code].reduce((a, i) => a + i.left, 0);
-    const days = study.map(s => ({ date: s, ded: dedOf[s] || null, tasks: [], used: 0 }));
+    const days = study.map(s => ({ date: s, ded: dedOf[s] || null, tasks: [], used: 0, cap: capOf(s) }));
     const take = (day, code, budget) => {
       let got = 0;
       const q = queue[code];
       while (q.length && got < budget - 4) {
         const it = q[0],
           room = budget - got;
+        if (it.whole) {
+          // tutta oggi, se nella giornata c'è posto; altrimenti un altro giorno
+          if (it.left > day.cap - day.used - got + 10) break;
+          day.tasks.push({ id: pid(it.iid, day.date), iid: it.iid, m: it.left });
+          got += it.left;
+          q.shift();
+          continue;
+        }
         // un'attività breve non si spezza; una lunga sì, se nel giorno resta abbastanza spazio
         if (it.left <= room + 10) {
           day.tasks.push({ id: pid(it.iid, day.date), iid: it.iid, m: it.left });
@@ -469,9 +615,9 @@
         rate[e.code] = remaining(e.code) / Math.max(1, left);
       });
       const total = Object.values(rate).reduce((a, b) => a + b, 0);
-      const scale = total > cap ? cap / total : 1;
+      const scale = total > day.cap ? day.cap / total : 1;
       active.forEach(e =>
-        take(day, e.code, Math.min(Math.max(15, rate[e.code] * scale), cap - day.used + 5))
+        take(day, e.code, Math.min(Math.max(15, rate[e.code] * scale), day.cap - day.used + 5))
       );
     });
     // quanto resta prima dei giorni dedicati: serve a decidere se accorciare (quei giorni sono per il ripasso)
@@ -483,9 +629,9 @@
       days
         .filter(d => d.ded === e.code)
         .forEach(d => {
-          take(d, e.code, cap - d.used);
+          take(d, e.code, d.cap - d.used);
           const prj = projects.find(x => x.exam === e.code);
-          if (prj && fits(prj, d)) take(d, prj.code, cap - d.used);
+          if (prj && fits(prj, d)) take(d, prj.code, d.cap - d.used);
         })
     );
     // per i progetti conta quello che resta anche dopo i giorni dedicati (lì il progetto può andare)
@@ -502,7 +648,9 @@
       const mine = s.days.filter(d => d.ded === e.code);
       // solo i capitoli (non i blocchi del progetto), dai più importanti
       const topics = items
-        .filter(i => i.c === e.code && i.k === "top")
+        .filter(i => i.c === e.code && i.k === "top" && !i.trc && !i.redo)
+        // un capitolo una volta sola (in "solo pratica" ci sono più esercizi per capitolo)
+        .filter((i, k, all) => all.findIndex(x => x.top === i.top) === k)
         .sort((a, b) => (b.pri || 0) - (a.pri || 0));
       // il quiz per la simulazione c'è anche in "solo pratica" (sq); i piani salvati prima hanno solo quiz
       const qi = topics.find(i => i.sq || i.quiz) || {};
@@ -516,7 +664,7 @@
       };
       mine.forEach((d, j) => {
         if (j === mine.length - 1) {
-          const lc = Math.min(s.cap, 150) - d.used;
+          const lc = Math.min(d.cap, 150) - d.used;
           if (lc < 30) return;
           add(d, {
             k: "sim",
@@ -525,8 +673,8 @@
             s: sims[e.code]
               ? sims[e.code].s
               : quiz
-              ? "A tempo nel quiz, come se fosse l'esame"
-              : "Esercizi o domande d'esame a tempo",
+                ? "A tempo nel quiz, come se fosse l'esame"
+                : "Esercizi o domande d'esame a tempo",
             href: quiz
           });
           add(d, {
@@ -544,17 +692,19 @@
           add(d, { k: "rest", m: 0, t: "Stacca presto e dormi bene", s: "Niente argomenti nuovi" });
         } else {
           // ripasso a blocchi di 45 minuti, dai capitoli più importanti
-          for (let w = 0; s.cap - d.used >= 30 && topics.length && w < 6; w++) {
+          for (let w = 0; d.cap - d.used >= 30 && topics.length && w < 6; w++) {
             const t = topics[(j * 6 + w) % topics.length];
             add(d, {
               k: "rip",
-              m: Math.min(45, r5(s.cap - d.used)),
+              m: Math.min(45, r5(d.cap - d.used)),
               t: `Ripasso: ${t.top}`,
-              s: t.pr
-                ? "Rifai l'esercizio del capitolo senza guardare la soluzione"
-                : t.quiz
-                  ? "Rileggi le parti segnate e rifai il quiz del capitolo"
-                  : "Rileggi le parti segnate e ripeti a voce",
+              s: t.es
+                ? "Rifai gli esercizi del capitolo senza guida"
+                : t.pr
+                  ? "Rifai l'esercizio del capitolo senza guardare la soluzione"
+                  : t.quiz
+                    ? "Rileggi le parti segnate e rifai il quiz del capitolo"
+                    : "Rileggi le parti segnate e ripeti a voce",
               href: t.href || ""
             });
           }
@@ -750,7 +900,14 @@
           t: t.t,
           href: course.quaderno ? href(root, course.quaderno, t.cid) : ""
         }));
-      buildItems(e, course, data, root)
+      // "solo pratica": esercizi e tracce dal quiz del corso (senza rete si usa l'esercizio tipo del programma)
+      const qz = modeOf(e) === "pratica" ? await quizOf(course, root).catch(() => null) : null;
+      if (qz && qz.tracce.length)
+        sim[e.code] = {
+          t: "Simulazione · solo parte pratica",
+          s: "Nel quiz: una traccia dello scritto, solo la parte pratica, a tempo come all’esame. Poi rivedi le parti dove hai perso punti."
+        };
+      buildItems(e, course, data, root, qz)
         .concat(projectItems(e))
         .forEach(i => (fresh[i.iid] = i));
     }

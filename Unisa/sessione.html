@@ -294,6 +294,25 @@
         outline: 2px solid var(--ua-ink);
         outline-offset: 2px;
       }
+      /* giorni con meno tempo: la data e la ✕ sopra, quanto si studia sotto */
+      .ss-off {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        border: 1px solid var(--ua-line);
+        border-radius: 12px;
+        background: var(--ua-bg);
+      }
+      .ss-off .ss-x {
+        grid-column: 3;
+      }
+      .ss-off .ss-seg {
+        grid-column: 1 / -1;
+        justify-self: start;
+      }
       input[type="range"] {
         flex: 1;
         min-width: 160px;
@@ -866,6 +885,23 @@
             )
             .join("")}</div>`;
         let nExam = 0;
+        let nOff = 0;
+        // un giorno con meno tempo: "Niente studio" o "Mezza giornata" (metà delle ore al giorno)
+        function offRow(o = {}) {
+          const k = nOff++;
+          return `<div class="ss-off">
+            <input type="date" name="offDate" value="${esc(o.date || "")}" min="${S.today()}" aria-label="Giorno">
+            <button type="button" class="ss-x" aria-label="Togli questo giorno">×</button>
+            ${seg(
+              "off" + k,
+              [
+                ["no", "Niente studio"],
+                ["half", "Mezza giornata"]
+              ],
+              o.half ? "half" : "no"
+            )}
+          </div>`;
+        }
         function examRow(e = {}) {
           const k = nExam++;
           const c = courseOf(e.code);
@@ -876,7 +912,7 @@
               <button type="button" class="ss-x" aria-label="Togli questo esame">×</button>
             </div>
             <div class="ss-field"><span>Cosa vuoi esercitare</span>${seg("mode" + k, S.MODES, S.modeOf(e))}</div>
-            <p class="ss-note ss-mode">Teoria: studio, domande aperte e quiz. Pratica: esercizi, con un ripasso breve del capitolo prima.</p>
+            <p class="ss-note ss-mode">Teoria: studio, domande aperte e quiz. Pratica: gli esercizi guidati dei capitoli, ognuno con un ripasso breve, poi le simulazioni della sola parte pratica (dove il quiz le ha).</p>
             ${scopeField(c, e, k)}
             <div class="ss-field"><span>Quanto lo sai già</span>${seg(
               "lv" + k,
@@ -1135,6 +1171,7 @@
             ore: ORE_DEFAULT[1]
           };
           nExam = 0;
+          nOff = 0;
           app.innerHTML = `<form id="ss-form" novalidate>
             <fieldset><legend>Gli esami della sessione</legend>
               <div id="ss-exams">${examsWith(cfg.exams, add).map(examRow).join("")}</div>
@@ -1155,6 +1192,13 @@
                     `<label class="ss-chip"><input type="checkbox" name="wd" value="${d}" ${cfg.days.includes(d) ? "checked" : ""}><span>${S.WD_LONG[d]}</span></label>`
                 )
                 .join("")}</div>
+              <p class="ss-note" style="margin:16px 0 4px">Giorni con meno tempo · facoltativo</p>
+              <p class="ss-note" style="margin:0 0 8px">Per un imprevisto: quel giorno il piano non mette niente, oppure metà delle tue ore.</p>
+              <div id="ss-offs">${(cfg.off || [])
+                .filter(o => o.date >= S.today())
+                .map(offRow)
+                .join("")}</div>
+              <button type="button" class="ss-btn" id="ss-off-add">+ Aggiungi un giorno</button>
             </fieldset>
             <fieldset><legend>Ripasso prima di ogni esame</legend>
               <div class="ss-field"><span>Giorni di solo ripasso e simulazione, subito prima dell'appello</span>${seg(
@@ -1187,8 +1231,15 @@
           f.querySelector("#ss-add").addEventListener("click", () => {
             f.querySelector("#ss-exams").insertAdjacentHTML("beforeend", examRow({}));
           });
+          f.querySelector("#ss-off-add").addEventListener("click", () => {
+            f.querySelector("#ss-offs").insertAdjacentHTML("beforeend", offRow({}));
+          });
           f.addEventListener("click", e => {
             const x = e.target.closest(".ss-x");
+            if (x && x.closest(".ss-off")) {
+              x.closest(".ss-off").remove();
+              return;
+            }
             if (x) {
               const rows = f.querySelectorAll(".ss-exam");
               if (rows.length > 1) x.closest(".ss-exam").remove();
@@ -1291,9 +1342,20 @@
             start: f.querySelector('[name="start"]').value || S.today(),
             hours: +f.querySelector('input[name="hours"][type="range"]').value,
             days: [...f.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value),
+            off: readOff(f),
             ded: +(f.querySelector('input[name="ded"]:checked') || { value: 2 }).value,
             ...readNotif(f.querySelector(".ss-notif"))
           };
+        }
+        // i giorni con meno tempo: uno per data (vale l'ultimo), in ordine
+        function readOff(f) {
+          const byDate = {};
+          f.querySelectorAll(".ss-off").forEach(r => {
+            const date = r.querySelector('[name="offDate"]').value;
+            const v = r.querySelector('input[type="radio"]:checked');
+            if (date) byDate[date] = { date, half: !!v && v.value === "half" };
+          });
+          return Object.values(byDate).sort((a, b) => (a.date < b.date ? -1 : 1));
         }
         async function submit(f, st) {
           const msg = f.querySelector("#ss-msg"),
@@ -1349,6 +1411,8 @@
                     ({
                       read: "lettura",
                       rev: "ripasso breve",
+                      es: "esercizi guidati",
+                      sim: "simulazione",
                       draw: "esercizio",
                       open: "domanda aperta",
                       quiz: "quiz"
@@ -1358,14 +1422,16 @@
             : "";
           const links = [
             it.href ? `<a href="${esc(it.href)}">apri il capitolo</a>` : "",
-            it.quiz ? `<a href="${esc(it.quiz)}">quiz</a>` : ""
+            it.quiz
+              ? `<a href="${esc(it.quiz)}">${it.trc ? "apri la traccia" : it.es ? "apri gli esercizi" : "quiz"}</a>`
+              : ""
           ]
             .filter(Boolean)
             .join(" · ");
           // sotto il titolo: cosa fare, cosa c'è dentro (se non è solo lettura) e i link
           const sub = [
             it.s ? esc(it.s) : "",
-            inside && inside !== "lettura" ? "Dentro: " + inside : "",
+            inside && inside.includes(" · ") ? "Dentro: " + inside : "",
             links
           ]
             .filter(Boolean)
