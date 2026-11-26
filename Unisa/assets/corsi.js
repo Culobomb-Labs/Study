@@ -71,7 +71,7 @@ window.CORSI =
     "color": "bd",
     "docs": [
       { "name": "Quaderno di Basi di Dati", "kind": "Quaderno", "path": "Basi di Dati/Quaderno di Basi di Dati.html", "progressKey": "quaderno-basi-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" },
+      { "name": "Programma d'esame", "kind": "Piano di studio", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" },
       { "name": "Quiz, capitoli 02–10", "kind": "Quiz", "path": "Basi di Dati/Quiz BD.html" }
     ]
   },

@@ -105,7 +105,17 @@ output{font-family:var(--f-mono);color:var(--ink)}
 .seg input:focus-visible + span{outline:2px solid var(--c);outline-offset:-2px}
 .checks{display:grid;gap:8px}
 .checks label{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.checks label[hidden]{display:none}
 .checks input{accent-color:var(--c);margin-top:4px}
+.sub-l{font-size:14px;margin:0 0 8px}
+/* Cosa vuoi esercitare: selettore come nella Sessione */
+.mode-seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:3px;border:1px solid var(--line);border-radius:12px}
+.mode-seg label{position:relative}
+.mode-seg input{position:absolute;opacity:0;pointer-events:none}
+.mode-seg span{display:block;padding:6px 12px;border-radius:9px;font-size:14px;color:var(--muted);cursor:pointer}
+.mode-seg input:checked + span{background:var(--ink);color:var(--bg);font-weight:600}
+.mode-seg input:focus-visible + span{outline:2px solid var(--ink);outline-offset:2px}
+.mode-note{font-size:13.5px;margin:8px 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
 .btn:hover{border-color:var(--muted)}
 .btn.solid{background:var(--c);color:#fff;border-color:var(--c)}
@@ -194,10 +204,14 @@ output{font-family:var(--f-mono);color:var(--ink)}
     </fieldset>
     <fieldset>
       <legend>Come vuoi studiare</legend>
+      <p class="muted sub-l" id="modeLbl">Cosa vuoi esercitare</p>
+      <div class="mode-seg" role="radiogroup" aria-labelledby="modeLbl">
+        <label><input type="radio" name="mode" value="teoria"><span>Teoria</span></label>
+        <label><input type="radio" name="mode" value="pratica"><span>Pratica</span></label>
+        <label><input type="radio" name="mode" value="entrambe" checked><span>Entrambe</span></label>
+      </div>
+      <p class="muted mode-note">Teoria: studio del capitolo, domande aperte scritte, domande lampo e quiz del capitolo. Pratica: scrivere ed eseguire il codice in Android Studio, con un ripasso breve del capitolo prima.</p>
       <div class="checks">
-        <label><input type="checkbox" id="optDraw" checked><span>Esercizi pratici: scrivere ed eseguire il codice in Android Studio (consigliato)</span></label>
-        <label><input type="checkbox" id="optQuiz" checked><span>Un quiz del capitolo dopo ogni argomento</span></label>
-        <label><input type="checkbox" id="optOpen" checked><span>Domande aperte scritte (definizione, esempio, confronto)</span></label>
         <label><input type="checkbox" id="optLast" checked><span>Il giorno prima della prova solo ripasso leggero e simulazione</span></label>
         <label hidden><input type="checkbox" id="optGenai" checked><span>Includi la parte "Modellare nell'era GenAI" (se il tempo è poco puoi toglierla)</span></label>
       </div>
@@ -286,6 +300,10 @@ function paintLevels(scope) {
   $("#examLbl").textContent = SCOPES[scope].examLbl;
 }
 function currentScope() { return "completa"; }
+/* Cosa vuoi esercitare: "teoria", "pratica" o "entrambe". I piani salvati prima (senza "mode")
+   valgono "entrambe", oppure "teoria" se avevano tolto gli esercizi. */
+const modeOf = cfg => cfg.mode || (cfg.opts && cfg.opts.optDraw === false ? "teoria" : "entrambe");
+function currentMode() { return (document.querySelector('input[name="mode"]:checked') || { value: "entrambe" }).value; }
 function buildForm(cfg) {
   const today = iso(new Date()), scope = scopeOf(cfg);
   const sr = document.querySelector(`input[name="scope"][value="${scope}"]`); if (sr) sr.checked = true;
@@ -297,7 +315,8 @@ function buildForm(cfg) {
   levelMemo = Object.assign({}, cfg.levels || {});
   lastScope = scope;
   paintLevels(scope);
-  ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => { if (cfg.opts && k in cfg.opts) $("#" + k).checked = cfg.opts[k]; });
+  ["optLast", "optGenai"].forEach(k => { if (cfg.opts && k in cfg.opts) $("#" + k).checked = cfg.opts[k]; });
+  const mr = document.querySelector(`input[name="mode"][value="${modeOf(cfg)}"]`); if (mr) mr.checked = true;
   showHours();
 }
 function showHours() { const h = +$("#hours").value; $("#hoursOut").textContent = `${String(h).replace(".", ",")} ${h === 1 ? "ora" : "ore"}`; }
@@ -314,9 +333,9 @@ document.querySelectorAll('input[name="scope"]').forEach(r => r.addEventListener
 }));
 function readForm() {
   const levels = Object.assign({}, levelMemo); SCOPES[currentScope()].topics().forEach(t => { const r = document.querySelector(`input[name="lv-${t.id}"]:checked`); levels[t.id] = r ? +r.value : 0; });
-  const opts = {}; ["optDraw", "optQuiz", "optOpen", "optLast", "optGenai"].forEach(k => opts[k] = $("#" + k).checked);
+  const opts = {}; ["optLast", "optGenai"].forEach(k => opts[k] = $("#" + k).checked);
   return { scope: currentScope(), start: $("#start").value, exam: $("#exam").value, hours: +$("#hours").value,
-    days: [...document.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value), levels, opts };
+    days: [...document.querySelectorAll('input[name="wd"]:checked')].map(i => +i.value), levels, opts, mode: currentMode() };
 }
 
 /* Generazione del piano */
@@ -333,15 +352,23 @@ function generate(cfg) {
 
   // blocchi di lavoro per ogni argomento
   const S = SCOPES[scopeOf(cfg)];
-  const topics = S.topics().filter(t => !t.optional || cfg.opts[t.optional]);
+  // solo pratica: restano solo i capitoli che hanno un esercizio
+  const mode = modeOf(cfg);
+  const topics = S.topics().filter(t => (!t.optional || cfg.opts[t.optional]) && (mode !== "pratica" || t.draw));
   const blocks = topics.map(t => {
     const lv = cfg.levels[t.id] || 0, f = LEVELS[lv].f, q = Q + "#" + t.cid;
     const items = [];
-    items.push({ k: "read", m: Math.max(15, t.min * f), t: lv === 2 ? "Ripassa velocemente" : lv === 1 ? "Rileggi con attenzione" : "Studia", s: t.read, href: q });
-    if (cfg.opts.optDraw && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: DRAW_T, s: t.draw });
-    if (cfg.opts.optOpen && lv < 2) items.push({ k: "open", m: 10, t: "Domanda aperta scritta", s: t.open });
-    items.push({ k: "lampo", m: 5, t: "Domande lampo del capitolo", s: "Copri la risposta e dilla ad alta voce", href: q });
-    if (cfg.opts.optQuiz && QUIZ) items.push({ k: "quiz", m: 10, t: `Quiz del capitolo ${t.ch}`, s: "Un giro da 10 domande, punta all'80%", href: QUIZ });
+    if (mode === "pratica") {
+      // solo pratica: un ripasso breve del capitolo e l'esercizio, anche se il capitolo lo sai già bene
+      items.push({ k: "read", m: Math.max(10, t.min * f * 0.3), t: "Ripasso breve del capitolo", s: t.read, href: q });
+      items.push({ k: "draw", m: lv === 0 ? 25 : lv === 1 ? 20 : 15, t: DRAW_T, s: t.draw });
+    } else {
+      items.push({ k: "read", m: Math.max(15, t.min * f), t: lv === 2 ? "Ripassa velocemente" : lv === 1 ? "Rileggi con attenzione" : "Studia", s: t.read, href: q });
+      if (mode === "entrambe" && lv < 2) items.push({ k: "draw", m: lv === 0 ? 25 : 20, t: DRAW_T, s: t.draw });
+      if (lv < 2) items.push({ k: "open", m: 10, t: "Domanda aperta scritta", s: t.open });
+      items.push({ k: "lampo", m: 5, t: "Domande lampo del capitolo", s: "Copri la risposta e dilla ad alta voce", href: q });
+      if (QUIZ) items.push({ k: "quiz", m: 10, t: `Quiz del capitolo ${t.ch}`, s: "Un giro da 10 domande, punta all'80%", href: QUIZ });
+    }
     return { t, lv, items, m: items.reduce((a, i) => a + i.m, 0) };
   });
   let need = blocks.reduce((a, b) => a + b.m, 0);
@@ -353,7 +380,7 @@ function generate(cfg) {
     for (const b of order) {
       if (need <= have) break;
       const before = b.m;
-      b.items = b.items.filter(i => i.k !== "draw" && i.k !== "open" || b.t.pri >= 5);
+      b.items = b.items.filter(i => (i.k !== "draw" || mode === "pratica") && i.k !== "open" || b.t.pri >= 5);
       b.m = b.items.reduce((a, i) => a + i.m, 0); need -= before - b.m;
     }
     if (need > have) {
@@ -399,7 +426,7 @@ function generate(cfg) {
     }
     while (free >= 25 && weak.length) {
       const b = weak[wi++ % weak.length];
-      day.tasks.push({ k: "rip", m: 25, t: `Ripasso: ${b.t.t}`, s: (QUIZ ? "Rileggi le parti segnate e rifai il quiz del capitolo finché arrivi all'80%" : "Rileggi le parti segnate e rifai le domande lampo del capitolo finché le sai tutte"), href: Q + "#" + b.t.cid, topic: b.t });
+      day.tasks.push({ k: "rip", m: 25, t: `Ripasso: ${b.t.t}`, s: (mode === "pratica" ? "Rifai l'esercizio del capitolo senza guardare la soluzione" : (QUIZ ? "Rileggi le parti segnate e rifai il quiz del capitolo finché arrivi all'80%" : "Rileggi le parti segnate e rifai le domande lampo del capitolo finché le sai tutte")), href: Q + "#" + b.t.cid, topic: b.t });
       day.used += 25; free -= 25;
     }
   });

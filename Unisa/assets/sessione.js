@@ -87,6 +87,7 @@
         opt: !!e.opt,
         color: c ? `var(--ua-c-${c.color})` : ALTRI_COLORI[k++ % ALTRI_COLORI.length],
         piano: piano ? piano.path : null,
+        pianoT: piano ? piano.name : "",
         quaderno: quad ? quad.path : null,
         quiz: quiz ? quiz.path : null
       };
@@ -187,12 +188,27 @@
     return topicCache[course.code];
   }
 
+  /* Cosa vuoi esercitare, per ogni esame (exam.mode): "teoria", "pratica" o "entrambe".
+     Le sessioni salvate prima (senza mode) valgono "entrambe", cioè come prima. */
+  const MODES = [
+    ["teoria", "Teoria"],
+    ["pratica", "Pratica"],
+    ["entrambe", "Entrambe"]
+  ];
+  const modeOf = exam => (exam.mode === "teoria" || exam.mode === "pratica" ? exam.mode : "entrambe");
+
   /* Le attività di un esame, prima di dividerle nei giorni: una per capitolo.
      Per i corsi con piano di studio: lettura + (esercizio, domanda aperta, quiz). "parts" serve a togliere gli extra
-     se il tempo non basta. Per gli altri corsi: i capitoli scritti da chi studia, oppure blocchi da un'ora. */
+     se il tempo non basta. Per gli altri corsi: i capitoli scritti da chi studia, oppure blocchi da un'ora.
+     Solo teoria: niente esercizio. Solo pratica: ripasso breve + esercizio (pr: 1, l'esercizio non si toglie mai),
+     solo per i capitoli che hanno un esercizio.
+     Livello: quello dell'esame (exam.lv), oppure quello scelto per il singolo capitolo (exam.lvs[id]). */
+  const lvOf = (exam, id) =>
+    exam.lvs && LEVELS[exam.lvs[id]] ? exam.lvs[id] : LEVELS[exam.lv] ? exam.lv : 0;
   function buildItems(exam, course, data, root) {
     const lv = exam.lv || 0,
-      f = (LEVELS[lv] || LEVELS[0]).f;
+      f = (LEVELS[lv] || LEVELS[0]).f,
+      mode = modeOf(exam);
     const items = [];
     const add = (id, o) =>
       items.push(Object.assign({ iid: `${exam.code}.${id}`, c: exam.code, k: "top" }, o));
@@ -200,30 +216,43 @@
       /* I capitoli introduttivi ("intro" nel piano di studio) non entrano mai: sono solo un consiglio (plan.intro).
          IS: prima prova = argomenti senza "full"; seconda prova = quelli "full" (non c'erano nella prima) */
       const study = data.topics.filter(t => !t.intro);
-      const topics =
+      const topics = (
         exam.scope === "prima"
           ? study.filter(t => !t.full)
           : exam.scope === "seconda"
             ? study.filter(t => t.full)
-            : study;
-      const verb = lv === 2 ? "Ripassa" : lv === 1 ? "Rileggi" : "Studia";
+            : study
+      ).filter(t => mode !== "pratica" || t.draw);
       topics.forEach(t => {
-        const parts = { read: Math.max(15, r5(t.min * f)) };
-        if (lv < 2 && t.draw) parts.draw = lv === 0 ? 25 : 20;
-        if (lv < 2 && t.open) parts.open = 10;
-        if (course.quiz) parts.quiz = 10;
-        const o = {
-          t: `${verb}: ${t.t}`,
+        const lv = lvOf(exam, t.id),
+          f = LEVELS[lv].f,
+          verb = lv === 2 ? "Ripassa" : lv === 1 ? "Rileggi" : "Studia";
+        let parts, o;
+        if (mode === "pratica") {
+          // un ripasso breve del capitolo e l'esercizio, anche se il capitolo lo sai già bene
+          parts = { rev: Math.max(10, r5(t.min * f * 0.3)), draw: lv === 0 ? 25 : lv === 1 ? 20 : 15 };
+          o = { t: `Esercizio: ${t.t}`, s: t.draw, pr: 1 };
+        } else {
+          parts = { read: Math.max(15, r5(t.min * f)) };
+          if (mode === "entrambe" && lv < 2 && t.draw) parts.draw = lv === 0 ? 25 : 20;
+          if (lv < 2 && t.open) parts.open = 10;
+          if (course.quiz) parts.quiz = 10;
+          o = { t: `${verb}: ${t.t}`, s: t.read || "" };
+        }
+        Object.assign(o, {
           top: t.t,
           ch: t.ch,
           pri: t.pri || 3,
-          s: t.read || "",
           ex: t.draw || "",
           parts,
           m: Object.values(parts).reduce((a, b) => a + b, 0)
-        };
+        });
         if (course.quaderno) o.href = href(root, course.quaderno, t.cid);
-        if (course.quiz) o.quiz = href(root, course.quiz);
+        // il link al quiz solo se il quiz è tra le attività; sq = quiz per la simulazione dell'ultimo giorno
+        if (course.quiz) {
+          if (parts.quiz) o.quiz = href(root, course.quiz);
+          o.sq = href(root, course.quiz);
+        }
         add(t.id, o);
       });
     } else {
@@ -232,13 +261,25 @@
         .split("\n")
         .map(s => s.trim())
         .filter(Boolean);
+      // senza piano di studio la scelta teoria/pratica cambia solo il consiglio di ogni attività
+      const tip = {
+        teoria: ["Leggi, fai uno schema e ripeti a voce", "Vai avanti col programma: appunti e slide"],
+        pratica: [
+          "Fai esercizi e tracce d'esame su questo argomento",
+          "Vai avanti con esercizi e tracce d'esame del corso"
+        ],
+        entrambe: [
+          "Leggi, fai uno schema, ripeti a voce e fai qualche esercizio",
+          "Vai avanti col programma: appunti, slide ed esercizi"
+        ]
+      }[mode];
       if (chapters.length) {
         const m = Math.max(20, r5(total / chapters.length));
         chapters.forEach((c, i) =>
           add(`cap${i}`, {
-            t: `${lv === 2 ? "Ripassa" : "Studia"}: ${c}`,
+            t: `${mode === "pratica" ? "Esercizi" : lv === 2 ? "Ripassa" : "Studia"}: ${c}`,
             top: c,
-            s: "Leggi, fai uno schema e ripeti a voce",
+            s: tip[0],
             pri: 3,
             parts: { read: m },
             m
@@ -251,7 +292,7 @@
           add(`blocco${i}`, {
             t: `Studio · blocco ${i + 1} di ${n}`,
             top: `blocco ${i + 1}`,
-            s: "Vai avanti col programma: appunti, slide ed esercizi",
+            s: tip[1],
             pri: 3,
             parts: { read: m },
             m
@@ -323,12 +364,13 @@
     return out;
   }
 
-  // se il tempo non basta: 1) via esercizio e domanda aperta dagli argomenti meno importanti, 2) si accorcia tutto
+  /* se il tempo non basta: 1) via esercizio e domanda aperta dagli argomenti meno importanti
+     (in "solo pratica", pr, l'esercizio resta), 2) si accorcia tutto */
   function compress(items, ratio) {
     const out = items.map(i => Object.assign({}, i, { parts: Object.assign({}, i.parts) }));
     const need = () => out.reduce((a, i) => a + i.m, 0);
     const target = need() * ratio;
-    const order = out.filter(i => i.parts.draw || i.parts.open).sort((a, b) => a.pri - b.pri);
+    const order = out.filter(i => !i.pr && (i.parts.draw || i.parts.open)).sort((a, b) => a.pri - b.pri);
     for (const i of order) {
       if (need() <= target || i.pri >= 5) break;
       delete i.parts.draw;
@@ -463,7 +505,9 @@
       const topics = items
         .filter(i => i.c === e.code && i.k === "top")
         .sort((a, b) => (b.pri || 0) - (a.pri || 0));
-      const quiz = (topics.find(i => i.quiz) || {}).quiz || "";
+      // il quiz per la simulazione c'è anche in "solo pratica" (sq); i piani salvati prima hanno solo quiz
+      const qi = topics.find(i => i.sq || i.quiz) || {};
+      const quiz = qi.sq || qi.quiz || "";
       let n = 0;
       const add = (d, o) => {
         const iid = `${e.code}.x${n++}@${d.date}`;
@@ -507,9 +551,11 @@
               k: "rip",
               m: Math.min(45, r5(s.cap - d.used)),
               t: `Ripasso: ${t.top}`,
-              s: t.quiz
-                ? "Rileggi le parti segnate e rifai il quiz del capitolo"
-                : "Rileggi le parti segnate e ripeti a voce",
+              s: t.pr
+                ? "Rifai l'esercizio del capitolo senza guardare la soluzione"
+                : t.quiz
+                  ? "Rileggi le parti segnate e rifai il quiz del capitolo"
+                  : "Rileggi le parti segnate e ripeti a voce",
               href: t.href || ""
             });
           }
@@ -973,6 +1019,9 @@
     KEY,
     INTRO_V,
     LEVELS,
+    MODES,
+    modeOf,
+    lvOf,
     WD,
     WD_LONG,
     MESI,

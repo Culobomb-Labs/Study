@@ -228,6 +228,45 @@
         font-size: 13.5px;
         color: var(--ua-muted);
       }
+      /* Livello per capitolo (corsi con programma d'esame): riquadro apribile, chiuso di base */
+      .ss-lvs {
+        padding: 0 12px;
+        border: 1px dashed var(--ua-line);
+        border-radius: 10px;
+      }
+      .ss-lvs summary {
+        padding: 10px 0;
+        font-size: 14px;
+        color: var(--ua-muted);
+        cursor: pointer;
+      }
+      .ss-lvs summary b {
+        color: var(--ua-ink);
+        font-weight: 600;
+      }
+      .ss-lvs-l {
+        display: grid;
+        gap: 12px;
+        padding-bottom: 12px;
+      }
+      .ss-lv-row {
+        display: grid;
+        gap: 6px;
+        font-size: 14px;
+      }
+      .ss-lv-row[hidden] {
+        display: none;
+      }
+      .ss-lv-row .ss-seg span {
+        padding: 4px 10px;
+        font-size: 13px;
+      }
+      @media (min-width: 720px) {
+        .ss-lv-row {
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+        }
+      }
       .ss-days {
         display: flex;
         flex-wrap: wrap;
@@ -836,6 +875,9 @@
               <label class="ss-field ss-date"><span>Data dell'appello</span><input type="date" name="date" value="${esc(e.date || "")}" min="${S.today()}"></label>
               <button type="button" class="ss-x" aria-label="Togli questo esame">×</button>
             </div>
+            <div class="ss-field"><span>Cosa vuoi esercitare</span>${seg("mode" + k, S.MODES, S.modeOf(e))}</div>
+            <p class="ss-note ss-mode">Teoria: studio, domande aperte e quiz. Pratica: esercizi, con un ripasso breve del capitolo prima.</p>
+            ${scopeField(c, e, k)}
             <div class="ss-field"><span>Quanto lo sai già</span>${seg(
               "lv" + k,
               S.LEVELS.map(l => [l.v, l.t]),
@@ -844,7 +886,7 @@
             <div class="ss-extra">${extraFields(c, e, k)}</div>
           </div>`;
         }
-        // campi che dipendono dal corso: la prova (IS) oppure ore e capitoli (corsi senza piano sul sito); poi il progetto
+        // campi che dipendono dal corso: il livello per capitolo oppure ore e capitoli (corsi senza piano sul sito); poi il progetto
         function extraFields(c, e, k) {
           if (!c) return "";
           return courseFields(c, e, k) + projectFields(c, e);
@@ -882,21 +924,86 @@
             </div>
           </div>`;
         }
+        /* Livello per capitolo: chiuso di base; i capitoli si caricano dal programma d'esame quando si apre.
+           Di base ogni capitolo ha il livello dell'esame; si salvano (e.lvs) solo quelli diversi. */
+        function lvsBox(e) {
+          const saved = e.lvs || {},
+            n = Object.keys(saved).filter(id => saved[id] !== (e.lv || 0)).length;
+          return `<details class="ss-lvs" data-lvs="${esc(JSON.stringify(saved))}">
+            <summary><b>Livello per capitolo</b><span class="ss-lvs-n">${lvsCount(n)}</span></summary>
+            <div class="ss-lvs-l"></div>
+          </details>`;
+        }
+        const lvsCount = n =>
+          n ? ` · ${n} ${n === 1 ? "capitolo diverso" : "capitoli diversi"}` : " · facoltativo";
+        const examLv = row =>
+          +(row.querySelector(`input[name="lv${row.dataset.k}"]:checked`) || { value: 0 }).value;
+        function fillLvs(row) {
+          const box = row.querySelector(".ss-lvs");
+          if (!box || box.dataset.ok || box.dataset.wait) return;
+          const c = courseOf(row.querySelector('[name="code"]').value),
+            k = row.dataset.k,
+            saved = JSON.parse(box.dataset.lvs || "{}"),
+            base = examLv(row),
+            list = box.querySelector(".ss-lvs-l");
+          box.dataset.wait = "1";
+          list.innerHTML = `<p class="ss-note">Carico i capitoli…</p>`;
+          S.topicsOf(c, ROOT)
+            .then(data => {
+              list.innerHTML =
+                data.topics
+                  .filter(t => !t.intro)
+                  .map(
+                    t =>
+                      `<div class="ss-lv-row" data-id="${esc(t.id)}" data-full="${t.full ? 1 : ""}" ${t.id in saved ? "data-set" : ""}>
+                        <span>Cap. ${esc(t.ch)} · ${esc(t.t)}</span>${seg(
+                          `lvc${k}-${t.id}`,
+                          S.LEVELS.map(l => [l.v, l.t]),
+                          t.id in saved ? saved[t.id] : base
+                        )}</div>`
+                  )
+                  .join("") +
+                `<p class="ss-note">Di base vale "Quanto lo sai già": cambia solo i capitoli che sai meglio o peggio.</p>`;
+              box.dataset.ok = "1";
+              showScope(row);
+            })
+            .catch(() => {
+              list.innerHTML = `<p class="ss-note">Non riesco a caricare i capitoli: riprova tra poco.</p>`;
+            })
+            .then(() => delete box.dataset.wait);
+        }
+        // IS: nel riquadro solo i capitoli della prova scelta
+        function showScope(row) {
+          const sc = (row.querySelector(`input[name="scope${row.dataset.k}"]:checked`) || {}).value;
+          row.querySelectorAll(".ss-lv-row").forEach(r => {
+            r.hidden = (sc === "prima" && !!r.dataset.full) || (sc === "seconda" && !r.dataset.full);
+          });
+          countLvs(row);
+        }
+        function countLvs(row) {
+          const base = examLv(row),
+            n = [...row.querySelectorAll(".ss-lv-row:not([hidden]) input:checked")].filter(
+              i => +i.value !== base
+            ).length;
+          const out = row.querySelector(".ss-lvs-n");
+          if (out && row.querySelector(".ss-lvs").dataset.ok) out.textContent = lvsCount(n);
+        }
+        // IS: la prova, prima del livello (decide quali capitoli compaiono nel livello per capitolo)
+        function scopeField(c, e, k) {
+          if (!c || c.code !== "IS") return `<div class="ss-scope" hidden></div>`;
+          return `<div class="ss-field ss-scope"><span>Prova</span>${seg(
+            "scope" + k,
+            [
+              ["completa", "Prova completa"],
+              ["prima", "Prima prova"],
+              ["seconda", "Seconda prova"]
+            ],
+            e.scope || "completa"
+          )}</div>`;
+        }
         function courseFields(c, e, k) {
           if (c.piano)
-            return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">piano di studio</a> di ${esc(c.name)}.</p>${
-              c.code === "IS"
-                ? `<div class="ss-field"><span>Prova</span>${seg(
-                    "scope" + k,
-                    [
-                      ["completa", "Prova completa"],
-                      ["prima", "Prima prova"],
-                      ["seconda", "Seconda prova"]
-                    ],
-                    e.scope || "completa"
-                  )}</div>`
-                : ""
-            }`;
+            return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">${/^Programma/.test(c.pianoT) ? "programma d'esame" : "piano di studio"}</a> di ${esc(c.name)}.</p>${lvsBox(e)}`;
           return `<div class="ss-row">
               <label class="ss-field"><span>Ore di studio che ti servono (circa)</span><input type="number" name="hours" min="5" max="200" step="5" value="${esc(e.hours || 30)}" style="width:120px"></label>
             </div>
@@ -1009,7 +1116,13 @@
             if (onChange) onChange(readNotif(box));
           });
         }
-        function form(st) {
+        // gli esami del modulo, con in più il corso "add" (se non c'è già) al posto della riga vuota
+        function examsWith(exams, add) {
+          const list = exams.filter(e => e.code);
+          if (add && !list.some(e => e.code === add)) list.push({ code: add });
+          return list.length ? list : [{}];
+        }
+        function form(st, add) {
           const cfg = (st && st.cfg) || {
             exams: [{}],
             start: S.today(),
@@ -1024,7 +1137,7 @@
           nExam = 0;
           app.innerHTML = `<form id="ss-form" novalidate>
             <fieldset><legend>Gli esami della sessione</legend>
-              <div id="ss-exams">${(cfg.exams.length ? cfg.exams : [{}]).map(examRow).join("")}</div>
+              <div id="ss-exams">${examsWith(cfg.exams, add).map(examRow).join("")}</div>
               <button type="button" class="ss-btn" id="ss-add">+ Aggiungi esame</button>
             </fieldset>
             <fieldset><legend>Quanto tempo hai</legend>
@@ -1090,11 +1203,34 @@
               row.querySelectorAll(".ss-pra").forEach(x => (x.hidden = v === "0"));
               row.querySelector(".ss-fromdate").hidden = v !== "day";
             }
+            if (row && e.target.name === "lv" + row.dataset.k) {
+              // il livello dell'esame vale per i capitoli che non hai cambiato a mano
+              row.querySelectorAll(".ss-lv-row:not([data-set])").forEach(r => {
+                const i = r.querySelector(`input[value="${e.target.value}"]`);
+                if (i) i.checked = true;
+              });
+              countLvs(row);
+            }
+            if (row && e.target.name.startsWith("lvc")) {
+              e.target.closest(".ss-lv-row").dataset.set = "";
+              countLvs(row);
+            }
+            if (row && e.target.name === "scope" + row.dataset.k) showScope(row);
             if (e.target.name !== "code") return;
             const c = courseOf(e.target.value);
             row.style.setProperty("--c", c ? c.color : "var(--ua-line)");
+            row.querySelector(".ss-scope").outerHTML = scopeField(c, {}, row.dataset.k);
             row.querySelector(".ss-extra").innerHTML = extraFields(c, {}, row.dataset.k);
           });
+          // "toggle" non risale: si ascolta in cattura
+          f.addEventListener(
+            "toggle",
+            e => {
+              if (e.target.classList && e.target.classList.contains("ss-lvs") && e.target.open)
+                fillLvs(e.target.closest(".ss-exam"));
+            },
+            true
+          );
           bindNotif(f.querySelector(".ss-notif"));
           const cancel = f.querySelector("#ss-cancel");
           if (cancel)
@@ -1115,7 +1251,24 @@
               val = n => (row.querySelector(`[name="${n}"]`) || {}).value;
             const lv = row.querySelector(`input[name="lv${k}"]:checked`);
             const scope = row.querySelector(`input[name="scope${k}"]:checked`);
+            const mode = row.querySelector(`input[name="mode${k}"]:checked`);
             const e = { code: val("code"), date: val("date"), lv: lv ? +lv.value : 0 };
+            // livello per capitolo: solo quelli diversi dal livello dell'esame
+            const box = row.querySelector(".ss-lvs");
+            if (box) {
+              const lvs = {};
+              if (box.dataset.ok)
+                row.querySelectorAll(".ss-lv-row").forEach(r => {
+                  const i = r.querySelector("input:checked");
+                  if (i && +i.value !== e.lv) lvs[r.dataset.id] = +i.value;
+                });
+              else
+                Object.entries(JSON.parse(box.dataset.lvs || "{}")).forEach(([id, v]) => {
+                  if (v !== e.lv) lvs[id] = v;
+                });
+              if (Object.keys(lvs).length) e.lvs = lvs;
+            }
+            if (mode) e.mode = mode.value;
             if (scope) e.scope = scope.value;
             if (row.querySelector('[name="hours"]')) {
               e.hours = Math.max(5, +val("hours") || 30);
@@ -1191,7 +1344,16 @@
             c = courseOf(it.c) || {};
           const inside = it.parts
             ? Object.keys(it.parts)
-                .map(k => ({ read: "lettura", draw: "esercizio", open: "domanda aperta", quiz: "quiz" })[k])
+                .map(
+                  k =>
+                    ({
+                      read: "lettura",
+                      rev: "ripasso breve",
+                      draw: "esercizio",
+                      open: "domanda aperta",
+                      quiz: "quiz"
+                    })[k]
+                )
                 .join(" · ")
             : "";
           const links = [
@@ -1286,7 +1448,9 @@
               const study = pct(pcs("top")),
                 prj = e.prj && e.prj.on ? pcs("prj") : [];
               const n = S.daysBetween(S.today(), e.date);
-              const scope = { prima: " · prima prova", seconda: " · seconda prova" }[e.scope] || "";
+              const scope =
+                ({ prima: " · prima prova", seconda: " · seconda prova" }[e.scope] || "") +
+                ({ teoria: " · solo teoria", pratica: " · solo pratica" }[S.modeOf(e)] || "");
               return `<div class="ss-ex" style="--c:${c.color}">
                 <div class="ss-ex-top"><span class="ss-code">${esc(e.code)}</span><span class="ss-cd">${n < 0 ? "fatto" : when(n)}</span></div>
                 <b>${esc(c.name)}</b><span class="muted" style="font-size:13.5px">${S.fmtDay(e.date)}${scope}</span>
@@ -1414,8 +1578,19 @@
           document.dispatchEvent(new Event("ua-nt-refresh"));
         }
 
+        // arrivando da "Prepara questo esame" (programma d'esame, ?esame=BD): il corso è già scelto nel modulo
+        let ask = new URLSearchParams(location.search).get("esame");
+        if (ask) history.replaceState(null, "", location.pathname + location.hash);
         function render() {
           const st = S.load();
+          if (ask && courseOf(ask)) {
+            const code = ask;
+            ask = null;
+            if (!st || !st.plan || !st.cfg.exams.some(e => e.code === code)) {
+              if (st && st.plan) editing = true;
+              return form(st, code);
+            }
+          }
           if (!st || !st.plan || editing) return form(st);
           /* sessioni salvate quando il progetto di IS era spuntato di base: se è rimasto com'era (20 ore, nessuna data),
              si toglie una volta sola. Chi lo rispunta dopo lo tiene. */
