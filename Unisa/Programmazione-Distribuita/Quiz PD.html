@@ -192,7 +192,11 @@ button{font:inherit;color:inherit}
 .ex b{font-weight:600;line-height:1.3}
 .ex .s{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
 .ex .k{justify-self:start;font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--c);color:var(--c);border-radius:99px;padding:1px 8px}
-.ex .k.g{background:var(--c);color:#fff}
+/* scelte a pulsanti (con o senza guida, prova completa o solo parte pratica): come nella Sessione */
+.gseg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:3px;border:1px solid var(--line);border-radius:12px;margin:0 0 16px}
+.gseg button{appearance:none;border:0;background:none;font:inherit;font-size:14px;color:var(--muted);padding:6px 12px;border-radius:9px;cursor:pointer}
+.gseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+.gseg button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .passi{font-size:15px;margin:0 0 18px}
 .passi ol{margin:0;padding-left:22px}
 .passi li{margin:6px 0}
@@ -1029,13 +1033,15 @@ const TRACCE = [
         "punti": 4,
         "testo": "<b>d)</b> Dopo aver descritto cos’è Java Message Service (JMS), descrivere dettagliatamente: 1) le differenze tra il modello Point-to-Point e il modello Publish/Subscribe; 2) il ruolo di producer, consumer e Message-Driven Bean; 3) il ruolo degli administered objects.",
         "sol": "<p><b>JMS</b> (oggi Jakarta Messaging) è l’API standard per connettersi a un provider di messaggi, creare un messaggio, inviarlo a una coda o a un topic, riceverlo ed elaborarlo, anche in modo asincrono. Sta ai provider di messaggi come JDBC sta ai database: un’API, tanti prodotti (OpenMQ, MQSeries, SonicMQ…). Il Message-Oriented Middleware è il buffer (il provider): è loosely coupled, chi produce non sa chi consumerà e i due non devono essere attivi nello stesso momento.</p>\n          <p><b>1) P2P e Pub/Sub.</b> Point-to-point (coda): uno-a-uno, ogni messaggio ha un solo destinatario; pull (il ricevente prende i messaggi); nessuna dipendenza temporale (il messaggio aspetta in coda finché non viene consumato o scade); il ricevente conferma con un acknowledge. Publish-subscribe (topic): uno-a-molti, il messaggio va a tutti i subscriber iscritti; push (broadcast); c’è dipendenza temporale: non si ricevono i messaggi pubblicati prima dell’iscrizione né quelli persi mentre si era inattivi.</p>\n          <p><b>2) Ruoli.</b> Il producer manda il messaggio; il consumer lo riceve, in modo sincrono (<code>receive()</code>, blocca finché arriva un messaggio) o asincrono (registra un <code>MessageListener</code>, il provider chiama <code>onMessage()</code>). L’MDB è un consumer asincrono e stateless che gira nell’EJB container: il container riceve i messaggi dalla destination e li consegna all’MDB, e gestisce transazioni, sicurezza, concorrenza e acknowledge. Il session bean invece risponde alle chiamate dei client attraverso un’interfaccia.</p>\n          <p><b>3) Administered objects.</b> Connection factory (serve ai client per creare una connessione) e destination (Queue o Topic: riceve, conserva e distribuisce i messaggi). Li configura l’amministratore, non il codice, e si trovano con JNDI o con <code>@Resource</code>.</p>",
-        "criteri": "definizione di JMS e del MOM (asincrono, loosely coupled); differenze P2P e Pub/Sub su destinatari, pull/push, dipendenza temporale e acknowledge; ruoli di producer, consumer (sincrono e asincrono) e MDB; connection factory e destination come administered objects"
+        "criteri": "definizione di JMS e del MOM (asincrono, loosely coupled); differenze P2P e Pub/Sub su destinatari, pull/push, dipendenza temporale e acknowledge; ruoli di producer, consumer (sincrono e asincrono) e MDB; connection factory e destination come administered objects",
+        "teoria": true
       },
       {
         "punti": 2,
         "testo": "<b>e)</b> Descrivere la legge di Amdahl. Un programma impiega 120 s su un core, di cui 30 s sequenziali: calcolare il tempo e lo speedup con 4 core, e lo speedup massimo.",
         "sol": "<p>Ogni programma ha una parte parallelizzabile (frazione <i>p</i>) e una sequenziale (1 − <i>p</i>) che non si può dividere. <code>Tn = T1 · ( (1 − p) + p/n )</code>, <code>S(n) = 1 / ( (1 − p) + p/n )</code>. Lo speedup è limitato dalla parte sequenziale.</p>\n          <p>Qui p = 90/120 = 0,75. Con 4 core: T4 = 30 + 90/4 = 52,5 s; speedup = 120 / 52,5 ≈ 2,29. Massimo teorico (core infiniti): 1 / (1 − p) = 1 / 0,25 = 4.</p>",
-        "criteri": "formula di Amdahl con la parte sequenziale come limite; p = 0,75; T4 = 52,5 s; speedup ≈ 2,29; massimo = 4"
+        "criteri": "formula di Amdahl con la parte sequenziale come limite; p = 0,75; T4 = 52,5 s; speedup ≈ 2,29; massimo = 4",
+        "teoria": true
       }
     ]
   },
@@ -1068,7 +1074,8 @@ const TRACCE = [
         "punti": 6,
         "testo": "<b>d)</b> Descrivere il ciclo di vita di un’entità JPA (stati, operazioni dell’EntityManager e callback), spiegando cos’è il persistence context e la differenza tra EntityManager application-managed e container-managed.",
         "sol": "<p><b>Stati.</b> <i>new</i>: l’oggetto esiste solo in memoria, JPA non lo conosce. <code>persist()</code> → <i>managed</i>: l’EntityManager lo gestisce e sincronizza lo stato con il database (INSERT al commit). Da managed si va in <i>detached</i> (per esempio con <code>clear()</code>): l’entità torna un POJO, ancora in memoria, e si può passare ad altri livelli. <code>merge()</code> riporta nel persistence context lo stato di un’entità detached e restituisce la copia managed. <code>remove()</code> → <i>removed</i>: i dati spariscono dal database, l’oggetto Java resta in memoria finché non interviene il garbage collector. Le operazioni sono 4: persisting (INSERT), updating (UPDATE), removing (DELETE), loading (SELECT).</p>\n          <p><b>Callback.</b> <code>@PrePersist</code>/<code>@PostPersist</code> prima e dopo il persist (dopo l’INSERT); <code>@PreUpdate</code>/<code>@PostUpdate</code> prima e dopo l’UPDATE; <code>@PreRemove</code>/<code>@PostRemove</code> prima e dopo la rimozione; <code>@PostLoad</code> dopo il caricamento dal database (find, query o refresh).</p>\n          <p><b>Persistence context.</b> L’insieme delle entità managed in un certo momento per una transazione: contiene al massimo un’entità per ID e fa da cache di primo livello prima del flush. L’EntityManager ne gestisce stato e ciclo di vita, fa le query e protegge dagli accessi concorrenti con il locking.</p>\n          <p><b>Application-managed</b>: lo crea l’applicazione (dalla factory) e ne gestisce il ciclo di vita; le transazioni le apre e chiude il programmatore, con commit o rollback. <b>Container-managed</b>: lo inietta il container con <code>@PersistenceContext</code> e gestisce lui le transazioni.</p>",
-        "criteri": "i quattro stati con le operazioni che li collegano (persist, merge, remove, detach/clear); i callback Pre/Post di Persist, Update, Remove e PostLoad; definizione di persistence context (un’entità per ID, cache di primo livello); differenza application-managed e container-managed"
+        "criteri": "i quattro stati con le operazioni che li collegano (persist, merge, remove, detach/clear); i callback Pre/Post di Persist, Update, Remove e PostLoad; definizione di persistence context (un’entità per ID, cache di primo livello); differenza application-managed e container-managed",
+        "teoria": true
       }
     ]
   },
@@ -1101,7 +1108,8 @@ const TRACCE = [
         "punti": 6,
         "testo": "<b>d)</b> Spiegare cosa sono le proprietà ACID di una transazione (con un esempio) e il funzionamento del two-phase commit nelle transazioni distribuite; descrivere infine la differenza tra transazioni container-managed e bean-managed.",
         "sol": "<p><b>Transazione</b>: un insieme di operazioni eseguite come un’unica unità di lavoro: commit se vanno tutte bene, rollback se una fallisce. <b>ACID</b>, con l’esempio del bonifico: <i>Atomicity</i> (tutte o nessuna: prelievo e accredito), <i>Consistency</i> (alla fine i dati sono coerenti: il denaro non sparisce), <i>Isolation</i> (lo stato intermedio non è visibile alle altre transazioni), <i>Durability</i> (dopo il commit le modifiche restano anche se poi qualcosa si rompe).</p>\n          <p><b>Two-phase commit.</b> Il Transaction Manager (TM) coordina i Resource Manager (RM), che gestiscono le risorse e si registrano presso di lui. Serve quando le risorse sono più di una (es. due database): se l’accredito fallisce dopo il prelievo, va annullato anche il prelievo. Fase 1: il TM manda <i>prepare</i> a ogni RM (“sei pronto?”) e ognuno risponde <i>prepared</i>. Fase 2: solo se tutti sono pronti il TM chiede il <i>commit</i>; se anche uno solo non lo è, rollback ovunque. Lo standard è XA (eXtended Architecture); JTA è l’interfaccia usata dall’applicazione e JTS/OTS coordina i transaction manager distribuiti.</p>\n          <p><b>CMT e BMT.</b> Container-managed (il default): il container gestisce la transazione, senza codice JTA; ogni metodo di business gira in una transazione (se il chiamante ne ha già una la usa, altrimenti il container ne apre una) e il container fa begin, poi commit o rollback. Bean-managed: il codice decide quando iniziare, confermare o annullare, con <code>UserTransaction</code> (<code>@TransactionManagement(TransactionManagementType.BEAN)</code>).</p>",
-        "criteri": "definizione di transazione e le quattro proprietà ACID con esempio; ruoli di TM e RM; le due fasi (prepare/prepared, commit o rollback), XA e JTA; differenza tra CMT (container) e BMT (UserTransaction)"
+        "criteri": "definizione di transazione e le quattro proprietà ACID con esempio; ruoli di TM e RM; le due fasi (prepare/prepared, commit o rollback), XA e JTA; differenza tra CMT (container) e BMT (UserTransaction)",
+        "teoria": true
       }
     ]
   },
@@ -1140,24 +1148,24 @@ const TRACCE = [
         "punti": 4,
         "testo": "<b>e)</b> Descrivere le caratteristiche di una Service Oriented Architecture. <i>(Argomento non trattato nel quaderno.)</i>",
         "sol": "<p>Una <b>SOA</b> organizza le funzionalità di un’applicazione come <b>servizi</b>: unità autonome che espongono un’interfaccia (contratto) ben definita e indipendente dalla piattaforma e dal linguaggio di implementazione.</p>\n          <p><b>Caratteristiche:</b> servizi <i>debolmente accoppiati</i> (loosely coupled) e <i>interoperabili</i>, perché si usano standard (per i web service SOAP: WSDL per descrivere il servizio, SOAP su HTTP per comunicare); servizi <i>riusabili</i> e <i>componibili</i> in processi più grandi; spesso senza stato; <i>individuabili</i> tramite un registro dei servizi. I ruoli sono tre: <b>service provider</b> (pubblica il servizio), <b>service requester</b>/consumer (lo usa) e <b>service registry</b> (dove il servizio si pubblica e si cerca).</p>",
-        "criteri": "definizione di servizio e di SOA; loose coupling, interoperabilità e standard (WSDL, SOAP, HTTP); riusabilità e componibilità; i tre ruoli (provider, consumer, registry). Parte non coperta dal quaderno: la soluzione è indicativa"
+        "criteri": "definizione di servizio e di SOA; loose coupling, interoperabilità e standard (WSDL, SOAP, HTTP); riusabilità e componibilità; i tre ruoli (provider, consumer, registry). Parte non coperta dal quaderno: la soluzione è indicativa",
+        "teoria": true
       }
     ]
   }
 ];
 
-/* Esercizi, divisi per capitolo (c = id del capitolo). Due tipi:
-   - "guidato": passo passo, sul modello degli esercizi della prof (Hello World e Biblioteca, cap. 30 del quaderno),
-     con i passi in NetBeans e quello che deve uscire;
-   - "esame": come le parti delle tracce (JPA ed EJB, interceptor, JMS, transazioni, teoria), più thread e socket.
-   min = minuti indicativi. Ci si valuta come nella simulazione dello scritto: giusto, parzialmente giusto, sbagliato;
+/* Esercizi dei capitoli (c = id del capitolo), tutti guidati: consegna, passi, soluzione e cosa deve esserci.
+   Due sono sul modello degli esercizi della prof (Hello World e Biblioteca, cap. 30 del quaderno, con anche quello che
+   deve uscire); gli altri sul modello delle parti delle tracce, più thread e socket. "Senza guida" nasconde i passi
+   (load().guida === false). teoria: true = domanda di teoria (in "solo pratica" la Sessione la salta).
+   Gli esercizi d'esame veri, non guidati, sono le tracce della simulazione dello scritto. min = minuti indicativi. Ci si valuta come nella simulazione dello scritto: giusto, parzialmente giusto, sbagliato;
    l'ultimo voto resta in load().esercizi[id]. Si apre anche da fuori con Quiz%20PD.html#es-<id> (es. dalla Sessione).
    Il codice è stato compilato (con le API Java EE finte) e quello di thread e socket anche eseguito. */
 const ESERCIZI = [
   {
     "id": "g-convertitore",
     "c": "ejb-pratica",
-    "tipo": "guidato",
     "min": 40,
     "t": "Convertitore EJB: un bean stateless e il suo client",
     "testo": "<p>Come l’esercizio <b>Hello World</b> della prof, ma con un calcolo: un EJB stateless <code>Convertitore</code> con il metodo <code>double euroInDollari(double euro)</code> (cambio fisso 1,08) e un client remoto che chiede un importo da tastiera e stampa il risultato.</p>",
@@ -1169,7 +1177,6 @@ const ESERCIZI = [
   {
     "id": "g-videoteca",
     "c": "ejb-pratica",
-    "tipo": "guidato",
     "min": 75,
     "t": "Videoteca: entità, EJB con le operazioni CRUD e database popolato all’avvio",
     "testo": "<p>Come l’esercizio <b>Biblioteca</b> della prof, con i film al posto dei libri. Un’entità <code>Film</code> (id generato, titolo, regista, anno, durata in minuti), un EJB <code>FilmEJB</code> con le operazioni CRUD e una ricerca per regista, un singleton che inserisce due film all’avvio e un client che li elenca, ne crea uno, lo modifica e lo cancella.</p>",
@@ -1181,154 +1188,158 @@ const ESERCIZI = [
   {
     "id": "t-conto",
     "c": "errori",
-    "tipo": "esame",
     "min": 25,
     "t": "Conto condiviso tra due thread",
     "testo": "<p>Una classe <code>Conto</code> ha un campo <code>saldo</code> e un metodo <code>versa(int x)</code>. Due thread fanno ognuno 10.000 versamenti da 1 euro sullo stesso conto.</p><ol><li>Scrivi il programma con due thread (con <code>Runnable</code>) e <code>join</code>, che alla fine stampa il saldo.</li><li>Spiega perché, senza sincronizzazione, il saldo finale può essere minore di 20.000.</li><li>Correggi il programma in modo che stampi sempre 20.000.</li></ol>",
     "sol": "<h4>Il programma corretto</h4><pre>public class Conto {\n\n  private int saldo = 0;\n\n  public synchronized void versa(int x) {   // un thread alla volta\n    saldo = saldo + x;\n  }\n\n  public synchronized int getSaldo() {\n    return saldo;\n  }\n\n  public static void main(String[] args) throws InterruptedException {\n    Conto c = new Conto();\n    Runnable r = () -&gt; {\n      for (int i = 0; i &lt; 10_000; i++) c.versa(1);\n    };\n    Thread t1 = new Thread(r), t2 = new Thread(r);\n    t1.start();\n    t2.start();\n    t1.join();                               // aspetta che finiscano\n    t2.join();\n    System.out.println(&quot;Saldo: &quot; + c.getSaldo());   // sempre 20000\n  }\n}</pre><h4>Perché senza synchronized esce meno di 20.000</h4><p><code>saldo = saldo + x</code> non è atomica: sono tre passi (leggi, somma, scrivi). Se i due thread leggono lo stesso valore prima che l’altro scriva, uno dei due versamenti si perde: è l’<b>interferenza</b> tra thread (race condition). Con <code>synchronized</code> il metodo diventa una sezione critica: chi entra prende il lock dell’oggetto e l’altro aspetta. In alternativa si può usare <code>AtomicInteger</code> con <code>incrementAndGet()</code>.</p>",
-    "criteri": "due thread avviati con start e attesi con join; spiegazione dell’interferenza (lettura-somma-scrittura non atomica); correzione con synchronized (o lock, o AtomicInteger) anche sulla lettura del saldo"
+    "criteri": "due thread avviati con start e attesi con join; spiegazione dell’interferenza (lettura-somma-scrittura non atomica); correzione con synchronized (o lock, o AtomicInteger) anche sulla lettura del saldo",
+    "passi": "<ol><li>Scrivi la classe <code>Conto</code> con il campo <code>saldo</code> e il metodo <code>versa</code>, per ora senza <code>synchronized</code>.</li><li>Nel <code>main</code> crea un <code>Runnable</code> che chiama <code>versa(1)</code> 10.000 volte e passalo a due <code>Thread</code>.</li><li>Avvia i due thread con <code>start()</code> e aspettali con <code>join()</code>: senza <code>join</code> il main stamperebbe il saldo prima che abbiano finito.</li><li>Esegui più volte. Se esce meno di 20.000, ragiona sui tre passi di <code>saldo = saldo + x</code>: leggi, somma, scrivi.</li><li>Aggiungi <code>synchronized</code> a <code>versa</code> e a <code>getSaldo</code> (oppure usa <code>AtomicInteger</code>) e riprova: ora esce sempre 20.000.</li></ol>"
   },
   {
     "id": "t-buffer",
     "c": "sync",
-    "tipo": "esame",
     "min": 35,
     "t": "Produttore e consumatore con un buffer limitato",
     "testo": "<p>Scrivi una classe <code>Buffer</code> che contiene al massimo 5 interi, con i metodi <code>put(int x)</code> e <code>int take()</code>. Se il buffer è pieno <code>put</code> aspetta; se è vuoto <code>take</code> aspetta. Poi un produttore che inserisce i numeri da 1 a 20 e un consumatore che li stampa.</p>",
     "sol": "<h4>Il buffer</h4><pre>public class Buffer {\n\n  private final int[] dati = new int[5];\n  private int n = 0, testa = 0, coda = 0;\n\n  public synchronized void put(int x) throws InterruptedException {\n    while (n == dati.length) wait();      // pieno: aspetta\n    dati[coda] = x;\n    coda = (coda + 1) % dati.length;\n    n++;\n    notifyAll();                          // sveglia chi aspetta di prendere\n  }\n\n  public synchronized int take() throws InterruptedException {\n    while (n == 0) wait();                // vuoto: aspetta\n    int x = dati[testa];\n    testa = (testa + 1) % dati.length;\n    n--;\n    notifyAll();                          // sveglia chi aspetta di inserire\n    return x;\n  }\n}</pre><h4>Produttore e consumatore</h4><pre>Buffer b = new Buffer();\nThread prod = new Thread(() -&gt; {\n  try {\n    for (int i = 1; i &lt;= 20; i++) b.put(i);\n  } catch (InterruptedException e) { }\n});\nThread cons = new Thread(() -&gt; {\n  try {\n    for (int i = 1; i &lt;= 20; i++) System.out.println(b.take());\n  } catch (InterruptedException e) { }\n});\nprod.start();\ncons.start();</pre><p><code>wait</code> va sempre in un <b>while</b>, non in un <code>if</code>: al risveglio la condizione va ricontrollata (un altro thread potrebbe averla cambiata, o il risveglio può essere spurio). <code>wait</code> e <code>notifyAll</code> si chiamano solo dentro <code>synchronized</code>, sullo stesso oggetto.</p>",
-    "criteri": "metodi synchronized; wait dentro un ciclo while sulla condizione (pieno/vuoto); notifyAll dopo ogni modifica; gestione di InterruptedException; buffer circolare o lista con capacità 5"
+    "criteri": "metodi synchronized; wait dentro un ciclo while sulla condizione (pieno/vuoto); notifyAll dopo ogni modifica; gestione di InterruptedException; buffer circolare o lista con capacità 5",
+    "passi": "<ol><li>Decidi come tenere i 5 elementi: un array con due indici (<code>testa</code> e <code>coda</code>) e un contatore <code>n</code>.</li><li>Scrivi <code>put</code> come metodo <code>synchronized</code>: finché il buffer è pieno chiama <code>wait()</code>, poi inserisci in coda e aggiorna indice e contatore.</li><li>Scrivi <code>take</code> allo stesso modo: finché è vuoto aspetta, poi prendi dalla testa.</li><li>Dopo ogni modifica chiama <code>notifyAll()</code>, per svegliare chi aspetta dall’altra parte.</li><li>Attorno a <code>wait</code> usa <code>while</code>, non <code>if</code>: al risveglio la condizione va ricontrollata.</li><li>Crea il produttore e il consumatore come due thread che usano lo stesso <code>Buffer</code>.</li></ol>"
   },
   {
     "id": "t-amdahl",
     "c": "amdahl",
-    "tipo": "esame",
     "min": 10,
     "t": "Legge di Amdahl: tempo e speedup",
     "testo": "<p>Un programma impiega 200 s su un core; 40 s sono di codice che non si può parallelizzare.</p><ol><li>Calcola il tempo e lo speedup con 4 core e con 8 core.</li><li>Qual è lo speedup massimo, con infiniti core?</li><li>Enuncia la legge di Amdahl.</li></ol>",
     "sol": "<p>Parte sequenziale: 40 s, cioè <b>s = 0,2</b>. Parte parallelizzabile: 160 s.</p><div class=\"tbl\"><table><tr><th>Core</th><th>Tempo</th><th>Speedup</th></tr><tr><td>1</td><td>200 s</td><td>1</td></tr><tr><td>4</td><td>40 + 160/4 = 80 s</td><td>200/80 = 2,5</td></tr><tr><td>8</td><td>40 + 160/8 = 60 s</td><td>200/60 ≈ 3,33</td></tr><tr><td>∞</td><td>40 s</td><td>1/0,2 = 5</td></tr></table></div><p><b>Legge di Amdahl</b>: con una frazione sequenziale s e N processori, lo speedup è <code>S(N) = 1 / (s + (1 − s)/N)</code>. Il limite per N → ∞ è <code>1/s</code>: la parte sequenziale limita il guadagno, per quanti core si aggiungano.</p>",
-    "criteri": "frazione sequenziale ricavata dai dati; tempo = parte sequenziale + parte parallela / N; speedup = T1/TN; limite 1/s; formula della legge"
+    "criteri": "frazione sequenziale ricavata dai dati; tempo = parte sequenziale + parte parallela / N; speedup = T1/TN; limite 1/s; formula della legge",
+    "passi": "<ol><li>Trova la frazione sequenziale: <code>s</code> = tempo sequenziale / tempo totale.</li><li>Per N core: tempo = parte sequenziale + parte parallela / N.</li><li>Speedup = tempo con 1 core / tempo con N core.</li><li>Con infiniti core la parte parallela va a zero: lo speedup massimo è <code>1/s</code>.</li><li>Scrivi la formula generale <code>S(N) = 1 / (s + (1 − s)/N)</code>.</li></ol>",
+    "teoria": true
   },
   {
     "id": "s-somma",
     "c": "socket",
-    "tipo": "esame",
     "min": 35,
     "t": "Server TCP che calcola una somma, un thread per client",
     "testo": "<p>Scrivi un server TCP sulla porta 9500 che, per ogni client, legge un intero <code>n</code> e risponde con la somma 1 + 2 + … + n. Ogni client va servito da un thread diverso. Scrivi anche il client, che manda il numero ricevuto da riga di comando e stampa la risposta.</p>",
     "sol": "<h4>Il server</h4><pre>public class SommaServer {\n\n  public static void main(String[] args) throws IOException {\n    try (ServerSocket server = new ServerSocket(9500)) {\n      while (true) {\n        Socket s = server.accept();            // aspetta un client\n        new Thread(() -&gt; servi(s)).start();    // un thread per client\n      }\n    }\n  }\n\n  private static void servi(Socket s) {\n    try (Socket sock = s;\n         DataInputStream in = new DataInputStream(sock.getInputStream());\n         DataOutputStream out = new DataOutputStream(sock.getOutputStream())) {\n      int n = in.readInt();\n      long somma = (long) n * (n + 1) / 2;\n      out.writeLong(somma);\n    } catch (IOException e) {\n      System.err.println(&quot;Errore con un client: &quot; + e.getMessage());\n    }\n  }\n}</pre><h4>Il client</h4><pre>public class SommaClient {\n\n  public static void main(String[] args) throws IOException {\n    int n = Integer.parseInt(args[0]);\n    try (Socket s = new Socket(&quot;localhost&quot;, 9500);\n         DataOutputStream out = new DataOutputStream(s.getOutputStream());\n         DataInputStream in = new DataInputStream(s.getInputStream())) {\n      out.writeInt(n);\n      System.out.println(&quot;Somma fino a &quot; + n + &quot;: &quot; + in.readLong());\n    }\n  }\n}</pre>",
-    "criteri": "ServerSocket sulla porta e accept in un ciclo; un nuovo Thread per ogni Socket accettato; stream di input e output dal socket (Data o Object stream) usati nello stesso ordine da client e server; chiusura del socket; client che si collega a host e porta"
+    "criteri": "ServerSocket sulla porta e accept in un ciclo; un nuovo Thread per ogni Socket accettato; stream di input e output dal socket (Data o Object stream) usati nello stesso ordine da client e server; chiusura del socket; client che si collega a host e porta",
+    "passi": "<ol><li>Server: crea un <code>ServerSocket</code> sulla porta 9500 e chiama <code>accept()</code> in un ciclo infinito.</li><li>Per ogni <code>Socket</code> accettato avvia un nuovo thread che lo serve: così più client vengono serviti insieme.</li><li>Nel thread apri <code>DataInputStream</code> e <code>DataOutputStream</code> sul socket: leggi l’intero con <code>readInt</code> e rispondi con <code>writeLong</code>.</li><li>Client: apri un <code>Socket</code> verso <code>localhost:9500</code>, scrivi il numero e leggi la risposta, nello stesso ordine del server.</li><li>Chiudi tutto con try-with-resources e gestisci <code>IOException</code>.</li></ol>"
   },
   {
     "id": "s-rubrica",
     "c": "socket-esempi",
-    "tipo": "esame",
     "min": 40,
     "t": "Rubrica in rete con oggetti serializzati",
     "testo": "<p>Come il Registro del quaderno: una classe <code>Voce</code> (nome, telefono) che viaggia sul socket. Il server, sulla porta 7500, tiene le voci in una mappa: se riceve una voce con il telefono la inserisce, se il telefono è <code>null</code> cerca il nome e risponde con la voce trovata (o <code>null</code>). Scrivi <code>Voce</code>, il server e un client che inserisce una voce e poi la cerca.</p>",
     "sol": "<h4>La voce</h4><pre>public class Voce implements Serializable {\n\n  private static final long serialVersionUID = 1L;\n  private final String nome;\n  private final String telefono;\n\n  public Voce(String nome, String telefono) {\n    this.nome = nome;\n    this.telefono = telefono;\n  }\n\n  public String getNome() { return nome; }\n  public String getTelefono() { return telefono; }\n}</pre><h4>Il server</h4><pre>public class RubricaServer {\n\n  private static final Map&lt;String, Voce&gt; voci = new ConcurrentHashMap&lt;&gt;();\n\n  public static void main(String[] args) throws IOException {\n    try (ServerSocket server = new ServerSocket(7500)) {\n      while (true) {\n        Socket s = server.accept();\n        new Thread(() -&gt; servi(s)).start();\n      }\n    }\n  }\n\n  private static void servi(Socket s) {\n    try (Socket sock = s;\n         ObjectInputStream in = new ObjectInputStream(sock.getInputStream());\n         ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream())) {\n      Voce v = (Voce) in.readObject();\n      if (v.getTelefono() != null) {\n        voci.put(v.getNome(), v);              // inserimento\n      } else {\n        out.writeObject(voci.get(v.getNome())); // ricerca: la voce o null\n      }\n    } catch (IOException | ClassNotFoundException e) {\n      System.err.println(&quot;Errore: &quot; + e.getMessage());\n    }\n  }\n}</pre><h4>Il client</h4><pre>static Voce invia(Voce v) throws Exception {\n  try (Socket s = new Socket(&quot;localhost&quot;, 7500);\n       ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());\n       ObjectInputStream in = new ObjectInputStream(s.getInputStream())) {\n    out.writeObject(v);\n    out.flush();\n    return v.getTelefono() == null ? (Voce) in.readObject() : null;\n  }\n}\n\npublic static void main(String[] args) throws Exception {\n  invia(new Voce(&quot;Anna&quot;, &quot;333 1234567&quot;));\n  Voce trovata = invia(new Voce(&quot;Anna&quot;, null));\n  System.out.println(trovata == null ? &quot;Voce assente&quot; : trovata.getTelefono());\n}</pre><p>Attenzione all’ordine: creare l’<code>ObjectOutputStream</code> prima dell’<code>ObjectInputStream</code> da almeno una delle due parti, altrimenti client e server aspettano a vicenda l’intestazione dello stream. La mappa è <code>ConcurrentHashMap</code> perché la usano più thread insieme.</p>",
-    "criteri": "Voce Serializable (con serialVersionUID); server con un thread per client e mappa thread-safe; writeObject/readObject con cast e ClassNotFoundException; inserimento o ricerca a seconda del telefono; client che apre una connessione per ogni richiesta"
+    "criteri": "Voce Serializable (con serialVersionUID); server con un thread per client e mappa thread-safe; writeObject/readObject con cast e ClassNotFoundException; inserimento o ricerca a seconda del telefono; client che apre una connessione per ogni richiesta",
+    "passi": "<ol><li>Scrivi <code>Voce</code>: <code>implements Serializable</code>, con <code>serialVersionUID</code>, nome e telefono.</li><li>Nel server tieni una <code>ConcurrentHashMap</code> nome → voce: la usano più thread insieme.</li><li>Per ogni client leggi la voce con un <code>ObjectInputStream</code>: se c’è il telefono la inserisci, altrimenti la cerchi e rispondi con <code>writeObject</code>.</li><li>Crea l’<code>ObjectOutputStream</code> prima dell’<code>ObjectInputStream</code>, almeno da una parte: altrimenti client e server si bloccano a vicenda.</li><li>Nel client scrivi un metodo che apre la connessione, manda la voce e, se è una ricerca, legge la risposta.</li></ol>"
   },
   {
     "id": "c-tempo",
     "c": "cdi2",
-    "tipo": "esame",
     "min": 15,
     "t": "Interceptor che misura il tempo di un metodo",
     "testo": "<p>In un EJB <code>MedicoEJB</code> c’è il metodo <code>findBySpecializzazione(String s)</code>. Scrivi un interceptor che, a ogni invocazione di quel metodo (e solo di quello), stampi sul server il nome del metodo e quanti millisecondi ha impiegato. All’esame una parte così vale di solito 2–5 punti.</p>",
     "sol": "<h4>L’interceptor</h4><pre>public class MisuraTempo {\n\n  @AroundInvoke\n  public Object misura(InvocationContext ic) throws Exception {\n    long inizio = System.currentTimeMillis();\n    try {\n      return ic.proceed();                 // esegue il metodo intercettato\n    } finally {\n      long ms = System.currentTimeMillis() - inizio;\n      System.out.println(ic.getMethod().getName() + &quot;: &quot; + ms + &quot; ms&quot;);\n    }\n  }\n}</pre><h4>Dove si applica</h4><pre>@Interceptors(MisuraTempo.class)\npublic List&lt;Medico&gt; findBySpecializzazione(String s) { … }</pre><p>Messo sul <b>metodo</b>, intercetta solo quello; sulla classe intercetterebbe tutti i metodi del bean (e per escluderne uno si userebbe <code>@ExcludeClassInterceptors</code>). Il <code>finally</code> fa stampare il tempo anche se il metodo lancia un’eccezione.</p>",
-    "criteri": "metodo con @AroundInvoke, parametro InvocationContext e throws Exception; chiamata a proceed() con il risultato restituito; nome del metodo da getMethod(); @Interceptors sul solo metodo"
+    "criteri": "metodo con @AroundInvoke, parametro InvocationContext e throws Exception; chiamata a proceed() con il risultato restituito; nome del metodo da getMethod(); @Interceptors sul solo metodo",
+    "passi": "<ol><li>Crea una classe normale, l’interceptor, con un metodo annotato <code>@AroundInvoke</code>.</li><li>Il metodo riceve un <code>InvocationContext</code> e dichiara <code>throws Exception</code>.</li><li>Prendi il tempo, chiama <code>ic.proceed()</code> e restituisci il suo risultato.</li><li>Nel <code>finally</code> calcola i millisecondi e stampali con <code>ic.getMethod().getName()</code>.</li><li>Metti <code>@Interceptors(MisuraTempo.class)</code> solo sul metodo <code>findBySpecializzazione</code>, non sulla classe.</li></ol>"
   },
   {
     "id": "c-evento",
     "c": "cdi2",
-    "tipo": "esame",
     "min": 20,
     "t": "Evento CDI quando le scorte sono basse",
     "testo": "<p>In un EJB di magazzino, il metodo <code>vendi(Long id, int pezzi)</code> diminuisce la quantità di un prodotto. Quando la quantità scende sotto 3, il bean deve lanciare un <b>evento CDI</b> con il nome del prodotto; un observer lo riceve e stampa sul server “Scorte basse: &lt;nome&gt;”.</p>",
     "sol": "<h4>Nel bean</h4><pre>@Stateless\npublic class MagazzinoEJB {\n\n  @Inject\n  private EntityManager em;\n\n  @Inject\n  private Event&lt;String&gt; scorteBasse;\n\n  public Prodotto vendi(Long id, int pezzi) {\n    Prodotto p = em.find(Prodotto.class, id);   // managed\n    p.setQuantita(p.getQuantita() - pezzi);     // salvato al commit\n    if (p.getQuantita() &lt; 3) {\n      scorteBasse.fire(p.getNome());\n    }\n    return p;\n  }\n}</pre><h4>L’observer</h4><pre>@ApplicationScoped\npublic class Avvisi {\n\n  public void avvisa(@Observes String nome) {\n    System.out.println(&quot;Scorte basse: &quot; + nome);\n  }\n}</pre><p>Chi lancia l’evento non conosce chi lo riceve: basta che il tipo (<code>String</code>) coincida. Per distinguere eventi dello stesso tipo si aggiunge un <b>qualificatore</b> sia su <code>Event</code> sia su <code>@Observes</code>.</p>",
-    "criteri": "Event<T> iniettato e fire() solo sotto la soglia; observer con @Observes sul parametro dello stesso tipo; bean dell’observer in uno scope CDI (o comunque gestito da CDI); entità modificata mentre è managed"
+    "criteri": "Event<T> iniettato e fire() solo sotto la soglia; observer con @Observes sul parametro dello stesso tipo; bean dell’observer in uno scope CDI (o comunque gestito da CDI); entità modificata mentre è managed",
+    "passi": "<ol><li>Nel bean inietta un <code>Event&lt;String&gt;</code> con <code>@Inject</code>.</li><li>In <code>vendi</code> trova il prodotto con <code>em.find</code> (così è managed) e diminuisci la quantità.</li><li>Se la quantità scende sotto 3, chiama <code>fire</code> con il nome del prodotto.</li><li>Crea una classe <code>@ApplicationScoped</code> con un metodo che ha un parametro <code>@Observes String</code>: lì stampi l’avviso.</li><li>Chi lancia l’evento e chi lo riceve si accordano solo sul tipo (<code>String</code>): non si conoscono.</li></ol>"
   },
   {
     "id": "j-entita",
     "c": "jpql",
-    "tipo": "esame",
     "min": 25,
     "t": "Entità con le named query",
     "testo": "<p>Tramite JPA va gestito un archivio di medici: id (chiave primaria, assegnata da noi), nome, specializzazione, città, tariffa. Scrivi l’entità <code>Medico</code> con le named query per: tutti i medici, per id, per specializzazione, e i medici con la tariffa minore o uguale a un massimo. È il primo pezzo della parte a) delle tracce.</p>",
     "sol": "<pre>@Entity\n@NamedQueries({\n  @NamedQuery(name = Medico.FIND_ALL,\n              query = &quot;SELECT m FROM Medico m&quot;),\n  @NamedQuery(name = Medico.FIND_BY_ID,\n              query = &quot;SELECT m FROM Medico m WHERE m.id = :id&quot;),\n  @NamedQuery(name = Medico.FIND_BY_SPECIALIZZAZIONE,\n              query = &quot;SELECT m FROM Medico m WHERE m.specializzazione = :spec&quot;),\n  @NamedQuery(name = Medico.FIND_BY_TARIFFA_MAX,\n              query = &quot;SELECT m FROM Medico m WHERE m.tariffa &lt;= :max&quot;)\n})\npublic class Medico implements Serializable {\n\n  public static final String FIND_ALL = &quot;Medico.findAll&quot;;\n  public static final String FIND_BY_ID = &quot;Medico.findById&quot;;\n  public static final String FIND_BY_SPECIALIZZAZIONE = &quot;Medico.findBySpecializzazione&quot;;\n  public static final String FIND_BY_TARIFFA_MAX = &quot;Medico.findByTariffaMax&quot;;\n\n  @Id\n  private Long id;\n  private String nome;\n  private String specializzazione;\n  private String citta;\n  private Float tariffa;\n\n  public Medico() { }                     // obbligatorio per JPA\n\n  public Medico(Long id, String nome, String specializzazione,\n                String citta, Float tariffa) {\n    this.id = id;\n    this.nome = nome;\n    this.specializzazione = specializzazione;\n    this.citta = citta;\n    this.tariffa = tariffa;\n  }\n\n  // getter e setter di tutti i campi\n  @Override\n  public String toString() {\n    return id + &quot; - &quot; + nome + &quot; (&quot; + specializzazione + &quot;, &quot; + citta\n        + &quot;), &quot; + tariffa + &quot; euro&quot;;\n  }\n}</pre><p>Le query sono in <b>JPQL</b>: si interroga l’entità (<code>Medico m</code>) e i suoi campi, non la tabella. I parametri con nome (<code>:spec</code>) si impostano con <code>setParameter</code>. L’entità è <code>Serializable</code> perché viaggia verso il client remoto.</p>",
-    "criteri": "@Entity con @Id; costruttore senza argomenti; Serializable; le quattro @NamedQuery in JPQL con parametri con nome; nomi delle query in costanti; toString utile alla stampa nel client"
+    "criteri": "@Entity con @Id; costruttore senza argomenti; Serializable; le quattro @NamedQuery in JPQL con parametri con nome; nomi delle query in costanti; toString utile alla stampa nel client",
+    "passi": "<ol><li>Annota la classe con <code>@Entity</code> e falla <code>implements Serializable</code>: viaggerà verso il client.</li><li>Metti <code>@Id</code> sul campo <code>id</code> (lo assegni tu, niente <code>@GeneratedValue</code>) e scrivi un costruttore senza argomenti.</li><li>Scrivi i nomi delle quattro query come costanti <code>static final String</code>.</li><li>In <code>@NamedQueries</code> scrivi le query in JPQL (<code>SELECT m FROM Medico m …</code>) con i parametri con nome: <code>:id</code>, <code>:spec</code>, <code>:max</code>.</li><li>Aggiungi <code>toString</code>, così il client può stampare i medici.</li></ol>"
   },
   {
     "id": "j-popolatore",
     "c": "jpa-em",
-    "tipo": "esame",
     "min": 25,
     "t": "Singleton che popola il database e persistence.xml",
     "testo": "<p>Per l’archivio dei medici scrivi: il <b>producer</b> dell’EntityManager, un <b>singleton</b> che all’avvio definisce la data source e inserisce tre medici, e il <code>persistence.xml</code>. Usa i nomi delle note delle tracce: DataSource <code>jdbc/EsameDS</code>, persistence unit <code>EsamePU</code>, database <code>EsameDB</code>; il singleton deve prevedere la database definition.</p>",
     "sol": "<h4>Producer</h4><pre>public class DatabaseProducer {\n\n  @Produces\n  @PersistenceContext(unitName = &quot;EsamePU&quot;)\n  private EntityManager em;\n}</pre><h4>Singleton all’avvio</h4><pre>@Singleton\n@Startup\n@DataSourceDefinition(\n    className = &quot;org.apache.derby.jdbc.EmbeddedDataSource&quot;,\n    name = &quot;java:global/jdbc/EsameDS&quot;,\n    user = &quot;app&quot;,\n    password = &quot;app&quot;,\n    databaseName = &quot;EsameDB&quot;,\n    properties = {&quot;connectionAttributes=;create=true&quot;})\npublic class DatabasePopulator {\n\n  @Inject\n  private EntityManager em;\n\n  @PostConstruct\n  private void populateDB() {\n    em.persist(new Medico(1L, &quot;Rossi&quot;, &quot;Cardiologia&quot;, &quot;Salerno&quot;, 120F));\n    em.persist(new Medico(2L, &quot;Bianchi&quot;, &quot;Dermatologia&quot;, &quot;Napoli&quot;, 90F));\n    em.persist(new Medico(3L, &quot;Verdi&quot;, &quot;Cardiologia&quot;, &quot;Avellino&quot;, 100F));\n  }\n}</pre><h4>persistence.xml</h4><pre>&lt;persistence-unit name=&quot;EsamePU&quot; transaction-type=&quot;JTA&quot;&gt;\n  &lt;jta-data-source&gt;java:global/jdbc/EsameDS&lt;/jta-data-source&gt;\n  &lt;class&gt;ejb.Medico&lt;/class&gt;\n  &lt;properties&gt;\n    &lt;property name=&quot;javax.persistence.schema-generation.database.action&quot;\n              value=&quot;drop-and-create&quot;/&gt;\n  &lt;/properties&gt;\n&lt;/persistence-unit&gt;</pre>",
-    "criteri": "producer con @Produces e @PersistenceContext(unitName = EsamePU); @Singleton @Startup; @DataSourceDefinition con lo stesso nome JNDI del persistence.xml e il database EsameDB; inserimento in @PostConstruct; persistence unit JTA con jta-data-source e creazione delle tabelle"
+    "criteri": "producer con @Produces e @PersistenceContext(unitName = EsamePU); @Singleton @Startup; @DataSourceDefinition con lo stesso nome JNDI del persistence.xml e il database EsameDB; inserimento in @PostConstruct; persistence unit JTA con jta-data-source e creazione delle tabelle",
+    "passi": "<ol><li>Producer: una classe con un campo <code>EntityManager</code> annotato <code>@Produces</code> e <code>@PersistenceContext(unitName = \"EsamePU\")</code>.</li><li>Singleton: <code>@Singleton</code> e <code>@Startup</code>, così parte al deploy.</li><li>Aggiungi <code>@DataSourceDefinition</code>: classe del driver Derby, nome <code>java:global/jdbc/EsameDS</code>, utente, password, <code>EsameDB</code> e <code>create=true</code>.</li><li>In un metodo <code>@PostConstruct</code> fai <code>persist</code> dei tre medici.</li><li><code>persistence.xml</code>: persistence unit <code>EsamePU</code> di tipo JTA, con <code>jta-data-source</code> uguale al nome della data source e la creazione delle tabelle.</li></ol>"
   },
   {
     "id": "j-ciclo",
     "c": "jpa-callback",
-    "tipo": "esame",
     "min": 15,
     "t": "Teoria: il ciclo di vita di un’entità JPA",
     "testo": "<p>Descrivi il ciclo di vita di un’entità JPA: gli stati, le operazioni dell’EntityManager che la fanno passare da uno stato all’altro e le callback. Spiega anche cos’è il persistence context. All’esame una domanda così vale di solito 4–6 punti.</p>",
     "sol": "<p>Il <b>persistence context</b> è l’insieme delle entità <b>managed</b> gestite da un EntityManager: per ogni riga del database c’è al più un oggetto, e le sue modifiche vengono scritte sul database al flush o al commit.</p><div class=\"tbl\"><table><tr><th>Stato</th><th>Cosa vuol dire</th><th>Come ci si arriva</th></tr><tr><td>new</td><td>appena creato con <code>new</code>, non legato al database</td><td>costruttore</td></tr><tr><td>managed</td><td>nel persistence context: le modifiche vanno sul DB</td><td><code>persist</code>, <code>find</code>, una query, <code>merge</code> (restituisce la copia managed)</td></tr><tr><td>detached</td><td>non più gestito: le modifiche non vanno sul DB</td><td>fine della transazione o del contesto, <code>detach</code>, <code>clear</code>, <code>close</code>, serializzazione verso il client</td></tr><tr><td>removed</td><td>da cancellare al commit</td><td><code>remove</code> (solo su un’entità managed)</td></tr></table></div><p><b>Callback</b>: metodi dell’entità annotati con <code>@PrePersist</code>, <code>@PostPersist</code>, <code>@PreUpdate</code>, <code>@PostUpdate</code>, <code>@PreRemove</code>, <code>@PostRemove</code>, <code>@PostLoad</code>, chiamati dal provider prima o dopo l’operazione. Se la stessa logica serve a più entità si mette in una classe <b>listener</b>, collegata con <code>@EntityListeners</code>.</p>",
-    "criteri": "i quattro stati (new, managed, detached, removed) con le operazioni che li cambiano; merge che riporta in managed; remove solo su managed; definizione di persistence context; elenco delle callback e i listener"
+    "criteri": "i quattro stati (new, managed, detached, removed) con le operazioni che li cambiano; merge che riporta in managed; remove solo su managed; definizione di persistence context; elenco delle callback e i listener",
+    "passi": "<ol><li>Parti dal persistence context: cos’è e chi lo gestisce.</li><li>Elenca i quattro stati: new, managed, detached, removed.</li><li>Per ogni stato scrivi con quale operazione ci si arriva: <code>persist</code>, <code>find</code>, <code>merge</code>, <code>detach</code>, <code>remove</code>…</li><li>Elenca le callback (da <code>@PrePersist</code> a <code>@PostLoad</code>) e quando vengono chiamate.</li><li>Chiudi con i listener (<code>@EntityListeners</code>).</li></ol>",
+    "teoria": true
   },
   {
     "id": "e-client",
     "c": "ejb-uso",
-    "tipo": "esame",
     "min": 30,
     "t": "EJB stateless remoto e client che legge da tastiera",
     "testo": "<p>Per l’archivio dei medici (entità <code>Medico</code> con le sue named query) scrivi l’interfaccia remota, il bean stateless <code>MedicoEJB</code> con <code>findAll</code>, <code>findById</code> e <code>findBySpecializzazione</code>, e un client basato su invocazione remota che legge una specializzazione da tastiera e stampa i medici trovati. Il modulo si chiama <code>Studio</code>.</p>",
     "sol": "<h4>Interfaccia remota</h4><pre>@Remote\npublic interface MedicoEJBRemote {\n  List&lt;Medico&gt; findAll();\n  Medico findById(Long id);\n  List&lt;Medico&gt; findBySpecializzazione(String spec);\n}</pre><h4>Bean stateless</h4><pre>@Stateless\n@LocalBean\npublic class MedicoEJB implements MedicoEJBRemote {\n\n  @Inject\n  private EntityManager em;\n\n  public List&lt;Medico&gt; findAll() {\n    return em.createNamedQuery(Medico.FIND_ALL, Medico.class).getResultList();\n  }\n\n  public Medico findById(Long id) {\n    return em.createNamedQuery(Medico.FIND_BY_ID, Medico.class)\n             .setParameter(&quot;id&quot;, id)\n             .getSingleResult();\n  }\n\n  public List&lt;Medico&gt; findBySpecializzazione(String spec) {\n    return em.createNamedQuery(Medico.FIND_BY_SPECIALIZZAZIONE, Medico.class)\n             .setParameter(&quot;spec&quot;, spec)\n             .getResultList();\n  }\n}</pre><h4>Client</h4><pre>public class MedicoClient {\n\n  public static void main(String[] args) throws NamingException {\n    Context ctx = new InitialContext();\n    MedicoEJBRemote ejb = (MedicoEJBRemote) ctx.lookup(\n        &quot;java:global/Studio/MedicoEJB!ejb.MedicoEJBRemote&quot;);\n\n    Scanner in = new Scanner(System.in);\n    System.out.print(&quot;Specializzazione: &quot;);\n    String spec = in.nextLine();\n\n    List&lt;Medico&gt; medici = ejb.findBySpecializzazione(spec);\n    if (medici.isEmpty()) System.out.println(&quot;Nessun medico&quot;);\n    for (Medico m : medici) System.out.println(m);\n  }\n}</pre>",
-    "criteri": "interfaccia @Remote; bean @Stateless che la implementa, con EntityManager iniettato e le named query con setParameter; getSingleResult per l’id e getResultList per le liste; client con InitialContext, lookup java:global/<modulo>/<bean>!<interfaccia>, lettura da tastiera e stampa"
+    "criteri": "interfaccia @Remote; bean @Stateless che la implementa, con EntityManager iniettato e le named query con setParameter; getSingleResult per l’id e getResultList per le liste; client con InitialContext, lookup java:global/<modulo>/<bean>!<interfaccia>, lettura da tastiera e stampa",
+    "passi": "<ol><li>Interfaccia: annotala <code>@Remote</code>, con i tre metodi.</li><li>Bean: <code>@Stateless</code> (e <code>@LocalBean</code>), implementa l’interfaccia e si fa iniettare l’<code>EntityManager</code>.</li><li>In ogni metodo usa <code>createNamedQuery</code> con <code>setParameter</code>: <code>getSingleResult</code> per l’id, <code>getResultList</code> per le liste.</li><li>Client: <code>InitialContext</code>, lookup di <code>java:global/Studio/MedicoEJB!ejb.MedicoEJBRemote</code> e cast all’interfaccia.</li><li>Leggi la specializzazione con <code>Scanner</code> e stampa i medici, oppure “Nessun medico”.</li></ol>"
   },
   {
     "id": "e-bmt",
     "c": "ejb-tx",
-    "tipo": "esame",
     "min": 30,
     "t": "EJB con transazioni bean-managed",
     "testo": "<p>Ogni medico ha un campo <code>posti</code> (visite ancora prenotabili). Scrivi un EJB con transazioni <b>bean-managed</b> con il metodo <code>prenota(Long idMedico)</code>: in una transazione legge il medico, controlla che ci siano posti, li diminuisce di uno e conferma; se non ci sono posti, o qualcosa va storto, annulla la transazione e lancia un’eccezione.</p>",
     "sol": "<pre>@Stateless\n@TransactionManagement(TransactionManagementType.BEAN)\npublic class PrenotazioneEJB {\n\n  @PersistenceContext(unitName = &quot;EsamePU&quot;)\n  private EntityManager em;\n\n  @Resource\n  private UserTransaction ut;\n\n  public void prenota(Long idMedico) throws Exception {\n    ut.begin();\n    try {\n      em.joinTransaction();                     // l&#x27;EntityManager entra nella transazione\n      Medico m = em.find(Medico.class, idMedico);\n      if (m == null || m.getPosti() &lt;= 0) {\n        throw new IllegalStateException(&quot;Nessun posto disponibile&quot;);\n      }\n      m.setPosti(m.getPosti() - 1);\n      ut.commit();                              // le modifiche vanno sul database\n    } catch (Exception e) {\n      ut.rollback();                            // niente cambia\n      throw e;\n    }\n  }\n}</pre><p>Con <code>@TransactionManagement(BEAN)</code> le transazioni le decide il bean: <code>UserTransaction</code> si ottiene con <code>@Resource</code> e si usano <code>begin</code>, <code>commit</code> e <code>rollback</code>. Con le transazioni <b>container-managed</b> (il default) basterebbe il metodo, con <code>@TransactionAttribute(REQUIRED)</code> implicito, e per annullare <code>setRollbackOnly()</code> o un’eccezione di sistema.</p>",
-    "criteri": "@TransactionManagement(TransactionManagementType.BEAN); UserTransaction con @Resource; begin prima delle operazioni, commit alla fine; rollback in caso di errore o di posti esauriti; modifica dell’entità managed"
+    "criteri": "@TransactionManagement(TransactionManagementType.BEAN); UserTransaction con @Resource; begin prima delle operazioni, commit alla fine; rollback in caso di errore o di posti esauriti; modifica dell’entità managed",
+    "passi": "<ol><li>Annota il bean con <code>@TransactionManagement(TransactionManagementType.BEAN)</code>.</li><li>Fatti dare la <code>UserTransaction</code> con <code>@Resource</code> e l’<code>EntityManager</code> con <code>@PersistenceContext</code>.</li><li>In <code>prenota</code>: <code>ut.begin()</code>, poi <code>em.joinTransaction()</code>, poi <code>find</code> del medico.</li><li>Se non ci sono posti lancia un’eccezione; altrimenti diminuisci i posti e chiama <code>ut.commit()</code>.</li><li>Nel <code>catch</code> chiama <code>ut.rollback()</code> e rilancia l’eccezione.</li></ol>"
   },
   {
     "id": "e-acid",
     "c": "ejb-tx",
-    "tipo": "esame",
     "min": 15,
     "t": "Teoria: ACID e two-phase commit",
     "testo": "<p>Spiega le proprietà ACID di una transazione, con un esempio, e il funzionamento del two-phase commit nelle transazioni distribuite. All’esame una domanda così vale di solito 4–6 punti.</p>",
     "sol": "<p><b>ACID</b>, con l’esempio di un bonifico (togli da un conto, aggiungi all’altro):</p><ul><li><b>Atomicità</b>: o tutte le operazioni o nessuna; il bonifico non può fermarsi a metà.</li><li><b>Consistenza</b>: si passa da uno stato valido a un altro; la somma dei due conti non cambia.</li><li><b>Isolamento</b>: le transazioni concorrenti non vedono i risultati parziali l’una dell’altra.</li><li><b>Durabilità</b>: dopo il commit il risultato resta, anche se il sistema cade.</li></ul><p><b>Two-phase commit</b>: quando una transazione tocca più risorse (per esempio due database), un <b>coordinatore</b> (il transaction manager) la chiude in due fasi.</p><ol><li><b>Preparazione</b>: chiede a ogni partecipante se può fare il commit; ognuno prepara le modifiche in modo da poterle confermare anche dopo un guasto e risponde sì o no.</li><li><b>Commit</b>: se tutti hanno risposto sì, ordina a tutti il commit; se anche uno ha risposto no (o non risponde), ordina a tutti il rollback.</li></ol>",
-    "criteri": "le quattro proprietà spiegate con un esempio; ruolo del coordinatore e dei partecipanti; le due fasi (prepare e commit/rollback); basta un no per annullare tutto"
+    "criteri": "le quattro proprietà spiegate con un esempio; ruolo del coordinatore e dei partecipanti; le due fasi (prepare e commit/rollback); basta un no per annullare tutto",
+    "passi": "<ol><li>Scegli un esempio semplice, per esempio un bonifico tra due conti.</li><li>Spiega le quattro proprietà una per una, sempre sull’esempio.</li><li>Two-phase commit: di’ quando serve (più risorse insieme) e chi fa da coordinatore.</li><li>Descrivi la fase di preparazione e la fase di commit o rollback.</li><li>Ricorda cosa succede se anche un solo partecipante risponde no.</li></ol>",
+    "teoria": true
   },
   {
     "id": "m-topic",
     "c": "jms-api",
-    "tipo": "esame",
     "min": 30,
     "t": "Client JMS su topic e MDB che aggiorna l’archivio",
     "testo": "<p>Scrivi un client basato su messaggi che invii sul topic un messaggio per cambiare la tariffa di un medico (id e nuova tariffa). Lato server, un MDB riceve il messaggio e aggiorna il medico tramite l’EJB. Usa la ConnectionFactory <code>jms/javaee8/ConnectionFactory</code> e il topic <code>jms/javaee8/Topic</code>.</p>",
     "sol": "<h4>Il client (producer)</h4><pre>public class CambiaTariffa {\n\n  public static void main(String[] args) throws NamingException {\n    Context ctx = new InitialContext();\n    ConnectionFactory cf = (ConnectionFactory)\n        ctx.lookup(&quot;jms/javaee8/ConnectionFactory&quot;);\n    Destination topic = (Destination) ctx.lookup(&quot;jms/javaee8/Topic&quot;);\n\n    try (JMSContext context = cf.createContext()) {\n      context.createProducer().send(topic, &quot;2;95&quot;);   // &quot;id;tariffa&quot;\n    }\n  }\n}</pre><h4>L’MDB (consumer)</h4><pre>@MessageDriven(activationConfig = {\n  @ActivationConfigProperty(propertyName = &quot;destinationLookup&quot;,\n      propertyValue = &quot;jms/javaee8/Topic&quot;),\n  @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,\n      propertyValue = &quot;javax.jms.Topic&quot;)\n})\npublic class TariffaMDB implements MessageListener {\n\n  @EJB\n  private MedicoEJB ejb;\n\n  public void onMessage(Message message) {\n    try {\n      String[] campi = message.getBody(String.class).split(&quot;;&quot;);\n      ejb.cambiaTariffa(Long.parseLong(campi[0]), Float.parseFloat(campi[1]));\n    } catch (JMSException e) {\n      e.printStackTrace();\n    }\n  }\n}</pre><h4>Nel bean</h4><pre>public Medico cambiaTariffa(Long id, Float tariffa) {\n  Medico m = findById(id);      // managed: la modifica va sul DB al commit\n  m.setTariffa(tariffa);\n  return m;\n}</pre>",
-    "criteri": "lookup di ConnectionFactory e Destination; JMSContext (o Connection/Session/MessageProducer) e invio del messaggio; MDB con @MessageDriven, destinationLookup e destinationType del topic; onMessage che legge il corpo e chiama l’EJB; aggiornamento dell’entità managed"
+    "criteri": "lookup di ConnectionFactory e Destination; JMSContext (o Connection/Session/MessageProducer) e invio del messaggio; MDB con @MessageDriven, destinationLookup e destinationType del topic; onMessage che legge il corpo e chiama l’EJB; aggiornamento dell’entità managed",
+    "passi": "<ol><li>Client: lookup della <code>ConnectionFactory</code> e del topic, con i nomi della traccia.</li><li>Crea un <code>JMSContext</code> (con try-with-resources) e manda la stringa <code>\"id;tariffa\"</code> con <code>createProducer().send</code>.</li><li>MDB: <code>@MessageDriven</code> con <code>destinationLookup</code> e <code>destinationType</code> del topic, <code>implements MessageListener</code>.</li><li>In <code>onMessage</code> leggi il corpo con <code>getBody(String.class)</code>, dividilo con <code>split(\";\")</code> e converti i numeri.</li><li>Chiama un metodo del bean (iniettato con <code>@EJB</code>) che trova il medico e cambia la tariffa: è managed, quindi la modifica va sul database.</li></ol>"
   },
   {
     "id": "m-teoria",
     "c": "messaging",
-    "tipo": "esame",
     "min": 15,
     "t": "Teoria: JMS, point-to-point e publish/subscribe",
     "testo": "<p>Dopo aver descritto cos’è Java Message Service (JMS), spiega le differenze tra il modello point-to-point e il modello publish/subscribe, e cos’è un Message-Driven Bean. All’esame una domanda così vale di solito 4 punti.</p>",
     "sol": "<p><b>JMS</b> è l’API standard di Java per la comunicazione <b>asincrona</b> tramite messaggi: chi invia (producer) e chi riceve (consumer) non si conoscono e non devono essere attivi nello stesso momento; in mezzo c’è il provider (il MOM), che conserva i messaggi nelle destinazioni.</p><div class=\"tbl\"><table><tr><th></th><th>Point-to-point</th><th>Publish/subscribe</th></tr><tr><td>Destinazione</td><td>coda (queue)</td><td>topic</td></tr><tr><td>Chi riceve</td><td>un solo consumer per messaggio</td><td>tutti gli iscritti al topic</td></tr><tr><td>Tempo</td><td>il messaggio resta in coda finché qualcuno lo consuma</td><td>di norma lo ricevono solo gli iscritti attivi (tranne le sottoscrizioni durable)</td></tr><tr><td>Conferma</td><td>il consumer conferma la ricezione (acknowledge)</td><td>idem, per ogni iscritto</td></tr></table></div><p>Un <b>Message-Driven Bean</b> è un EJB senza interfaccia per i client, che consuma i messaggi in modo asincrono: si annota con <code>@MessageDriven</code> (con la destinazione in <code>activationConfig</code>), implementa <code>MessageListener</code> e il container chiama <code>onMessage</code> a ogni messaggio.</p>",
-    "criteri": "JMS come comunicazione asincrona e disaccoppiata con provider in mezzo; coda contro topic, uno contro tutti, persistenza del messaggio; definizione di MDB con @MessageDriven, MessageListener e onMessage"
+    "criteri": "JMS come comunicazione asincrona e disaccoppiata con provider in mezzo; coda contro topic, uno contro tutti, persistenza del messaggio; definizione di MDB con @MessageDriven, MessageListener e onMessage",
+    "passi": "<ol><li>Definisci JMS: comunicazione asincrona tramite un provider, chi invia e chi riceve non si conoscono.</li><li>Point-to-point: la coda, un solo consumer per messaggio, il messaggio resta finché qualcuno lo consuma.</li><li>Publish/subscribe: il topic, lo ricevono tutti gli iscritti; le sottoscrizioni durable.</li><li>MDB: <code>@MessageDriven</code>, <code>MessageListener</code>, <code>onMessage</code> chiamato dal container.</li></ol>",
+    "teoria": true
   }
-];
+]
 
 
 const STORE = "quiz-pd";
@@ -1409,7 +1420,8 @@ function home() {
   const done = saved.scritto || {};
   const traces = TRACCE.map(t => {
     const d = done[t.id];
-    return `<button class="tr" type="button" data-t="${t.id}"><b>${esc(t.titolo)}</b><span>${d ? `migliore ${fmtPt(d.best)}/30` : "non ancora fatta"}</span></button>`;
+    const dp = (saved.scrittoP || {})[t.id];
+    return `<button class="tr" type="button" data-t="${t.id}"><b>${esc(t.titolo)}</b><span>${d ? `migliore ${fmtPt(d.best)}/30` : "non ancora fatta"}${dp ? ` · pratica ${fmtPt(dp.best)}/${dp.tot}` : ""}</span></button>`;
   }).join("");
   app.innerHTML = `
     <section class="sim">
@@ -1418,7 +1430,7 @@ function home() {
       <div class="traces">${traces}</div>
     </section>
     <p class="label">Esercizi</p>
-    <p class="note" style="margin:0 0 12px">Guidati: passo passo, sul modello di Hello World e Biblioteca, per capire un argomento. D’esame: come le parti delle tracce. Scrivi il codice (anche su carta), apri la soluzione e segna com’è andata.</p>
+    <p class="note" style="margin:0 0 12px">Un argomento alla volta, guidati passo passo: due sul modello di Hello World e Biblioteca, gli altri come le parti delle tracce. Se vuoi metterti alla prova scegli “Senza guida”. Per l’esame vero usa la simulazione dello scritto qui sopra.</p>
     <div class="exs">${exList(saved)}</div>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
@@ -1587,9 +1599,11 @@ function traceBox(t) {
 function markScroll() {
   app.querySelectorAll(".dia").forEach(d => d.classList.toggle("wide", d.scrollWidth > d.clientWidth + 2));
 }
-function scrittoStart(id) {
-  const t = traccia(id);
-  run = { mode: "scritto", title: t.titolo, t, i: -1, answers: t.es.map(() => ({ text: "", voto: null, pts: null, open: false, photo: null })) };
+/* pratica: solo le parti di codice (senza quelle con teoria: true), punteggio sul loro totale (di solito 24) */
+function scrittoStart(id, pratica) {
+  const t = traccia(id), idx = t.es.map((e, k) => k).filter(k => !pratica || !t.es[k].teoria);
+  run = { mode: "scritto", title: t.titolo, t, pratica: !!pratica, idx, tot: idx.reduce((n, k) => n + t.es[k].punti, 0), i: -1,
+    answers: idx.map(() => ({ text: "", voto: null, pts: null, open: false, photo: null })) };
   try { if (history.state && history.state.quiz) history.replaceState({ quiz: 1 }, ""); else history.pushState({ quiz: 1 }, ""); } catch (e) {}
   scrittoCover();
 }
@@ -1601,11 +1615,13 @@ function scrittoCover() {
     <div class="qhead"><span>Simulazione dello scritto</span><span>Traccia</span></div>
     <div class="bar"><i style="width:0"></i></div>
     <h2 class="q">${esc(t.titolo)}</h2>
+    <div class="gseg" role="group" aria-label="Cosa fare"><button type="button" data-p="0" aria-pressed="${!run.pratica}">Prova completa</button><button type="button" data-p="1" aria-pressed="${run.pratica}">Solo parte pratica</button></div>
     ${traceBox(t)}
-    <p class="note">Come all’esame: ${t.es.length} parti, 30 punti (${t.es.map(e => e.punti).join(" + ")}). Scrivi il codice e le risposte (o prova prima su carta); poi confronta con la soluzione e segna se ogni parte è giusta, parzialmente giusta o sbagliata. La soluzione è una delle tante possibili: conta che ci sia tutto quello che chiede la traccia.</p>
+    <p class="note">${run.pratica ? "Solo la parte pratica, senza le domande di teoria" : "Come all’esame"}: ${run.idx.length} parti, ${run.tot} punti (${run.idx.map(k => t.es[k].punti).join(" + ")}). Scrivi il codice e le risposte (o prova prima su carta); poi confronta con la soluzione e segna se ogni parte è giusta, parzialmente giusta o sbagliata. La soluzione è una delle tante possibili: conta che ci sia tutto quello che chiede la traccia.</p>
     <div class="next"><button class="btn solid" type="button" id="go">Inizia l’esercizio 1 →</button></div>`;
   app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   app.querySelector("#go").onclick = () => { run.i = 0; scrittoAsk(); };
+  app.querySelectorAll(".gseg button").forEach(b => b.onclick = () => scrittoStart(t.id, b.dataset.p === "1"));
   markScroll();
   window.scrollTo({ top: 0 });
 }
@@ -1634,12 +1650,12 @@ function photoBox(a) {
   if (img) img.onclick = () => img.closest("figure").classList.toggle("big");
 }
 function scrittoAsk() {
-  const t = run.t, ex = t.es[run.i], a = run.answers[run.i], n = t.es.length, last = run.i === n - 1;
+  const t = run.t, ex = t.es[run.idx[run.i]], a = run.answers[run.i], n = run.idx.length, last = run.i === n - 1;
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <div class="qhead"><span>${esc(t.titolo)}</span><span>Esercizio ${run.i + 1} di ${n}</span></div>
     <div class="bar"><i style="width:${100 * run.i / n}%"></i></div>
-    <span class="tag">Esercizio ${run.i + 1} · punti ${ex.punti} su 30</span>
+    <span class="tag">Esercizio ${run.i + 1} · punti ${ex.punti} su ${run.tot}</span>
     <details class="retrace"><summary>Rileggi la traccia</summary>${traceBox(t)}</details>
     <div class="extext">${ex.testo}</div>
     <div class="answerbox"><label class="label" for="response">La tua risposta</label>
@@ -1687,26 +1703,29 @@ function scrittoAsk() {
   window.scrollTo({ top: 0 });
 }
 function scrittoResult() {
-  const t = run.t, tot = run.answers.reduce((s, a) => s + (a.pts || 0), 0);
-  const saved = load(); saved.scritto = saved.scritto || {};
-  const prev = saved.scritto[t.id];
-  saved.scritto[t.id] = { best: Math.max(tot, prev ? prev.best : 0), last: tot };
+  const t = run.t, tot = run.answers.reduce((s, a) => s + (a.pts || 0), 0), max = run.tot;
+  // prova completa in scritto[id], solo parte pratica in scrittoP[id] (con il totale dei suoi punti)
+  const saved = load(), key = run.pratica ? "scrittoP" : "scritto";
+  saved[key] = saved[key] || {};
+  const prev = saved[key][t.id];
+  saved[key][t.id] = { best: Math.max(tot, prev ? prev.best : 0), last: tot, tot: max };
   store(saved);
-  const rows = t.es.map((ex, i) => { const v = voto(run.answers[i].voto); return `<li><span>Esercizio ${i + 1} <small>(${ex.punti} punti)</small></span><span class="vlab ${v.k}">${v.t}</span></li>`; }).join("");
+  const rows = run.idx.map((k, i) => { const v = voto(run.answers[i].voto); return `<li><span>Esercizio ${i + 1} <small>(${t.es[k].punti} punti)</small></span><span class="vlab ${v.k}">${v.t}</span></li>`; }).join("");
   const count = k => run.answers.filter(a => a.voto === k).length;
-  const verdict = tot >= 27 ? "Ottimo: sei pronto per lo scritto." : tot >= 18 ? "Sufficiente. Rivedi le parti dove hai perso punti e prova un’altra traccia." : tot >= 14 ? "Ci sei quasi: ripassa i capitoli degli esercizi più deboli e rifalla tra qualche giorno." : "Da ripassare: riprendi il quaderno, poi riprova la traccia.";
+  const r = 30 * tot / max; // il giudizio come se fosse su 30
+  const verdict = r >= 27 ? "Ottimo: sei pronto per lo scritto." : r >= 18 ? "Sufficiente. Rivedi le parti dove hai perso punti e prova un’altra traccia." : r >= 14 ? "Ci sei quasi: ripassa i capitoli degli esercizi più deboli e rifalla tra qualche giorno." : "Da ripassare: riprendi il quaderno, poi riprova la traccia.";
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
-    <p class="label">Simulazione dello scritto · ${esc(t.titolo)}</p>
-    <div class="score"><b>${count("ok")}/${t.es.length}</b><span>${count("ok") === 1 ? "giusto" : "giusti"}${count("mid") ? ` · ${count("mid")} ${count("mid") === 1 ? "parzialmente giusto" : "parzialmente giusti"}` : ""}${count("ko") ? ` · ${count("ko")} ${count("ko") === 1 ? "sbagliato" : "sbagliati"}` : ""}</span></div>
+    <p class="label">Simulazione dello scritto${run.pratica ? " · solo parte pratica" : ""} · ${esc(t.titolo)}</p>
+    <div class="score"><b>${count("ok")}/${run.idx.length}</b><span>${count("ok") === 1 ? "giusto" : "giusti"}${count("mid") ? ` · ${count("mid")} ${count("mid") === 1 ? "parzialmente giusto" : "parzialmente giusti"}` : ""}${count("ko") ? ` · ${count("ko")} ${count("ko") === 1 ? "sbagliato" : "sbagliati"}` : ""}</span></div>
     <p class="verdict">${verdict}</p>
     <p class="label">Per esercizio</p><ul class="byc votes">${rows}</ul>
-    <p class="note">Punteggio indicativo: <b>${fmtPt(tot)}/30</b> (giusto = tutti i punti dell’esercizio, parzialmente giusto = metà, sbagliato = 0).</p>
+    <p class="note">Punteggio indicativo: <b>${fmtPt(tot)}/${max}</b> (giusto = tutti i punti dell’esercizio, parzialmente giusto = metà, sbagliato = 0).</p>
     <div class="actions">
       <button class="btn solid" type="button" id="again">Rifai questa traccia</button>
       <button class="btn" type="button" id="back">Torna a tutti i quiz</button>
     </div>`;
-  app.querySelector("#again").onclick = () => scrittoStart(t.id);
+  app.querySelector("#again").onclick = () => scrittoStart(t.id, run.pratica);
   app.querySelector("#back").onclick = backToList;
   app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   window.scrollTo({ top: 0 });
@@ -1714,14 +1733,14 @@ function scrittoResult() {
 
 /* Esercizi: uno alla volta, con la risposta, la foto facoltativa, la soluzione e il voto (come nello scritto) */
 const esercizio = id => ESERCIZI.find(x => x.id === id);
-// in ordine di capitolo, i guidati prima
-const ES_ORD = CHAPTERS.flatMap(c => ESERCIZI.filter(x => x.c === c.id).sort((a, b) => (a.tipo === "guidato" ? 0 : 1) - (b.tipo === "guidato" ? 0 : 1)));
+// in ordine di capitolo, come sono scritti
+const ES_ORD = CHAPTERS.flatMap(c => ESERCIZI.filter(x => x.c === c.id));
 function exList(saved) {
   const done = saved.esercizi || {};
   return CHAPTERS.filter(c => ESERCIZI.some(x => x.c === c.id)).map(c => `<div class="exs-cap"><h3>${c.n} · ${esc(c.t)}</h3><div class="exs-list">${
     ES_ORD.filter(x => x.c === c.id).map(x => {
       const v = done[x.id] && voto(done[x.id].v);
-      return `<button class="ex" type="button" data-e="${x.id}"><span class="k${x.tipo === "guidato" ? " g" : ""}">${x.tipo === "guidato" ? "Guidato" : "D’esame"}</span><b>${esc(x.t)}</b><span class="s">${x.min}′ · ${v ? `ultimo: <span class="vlab ${v.k}">${v.t}</span>` : "non ancora fatto"}</span></button>`;
+      return `<button class="ex" type="button" data-e="${x.id}">${x.teoria ? `<span class="k">Teoria</span>` : ""}<b>${esc(x.t)}</b><span class="s">${x.min}′ · ${v ? `ultimo: <span class="vlab ${v.k}">${v.t}</span>` : "non ancora fatto"}</span></button>`;
     }).join("")}</div></div>`).join("");
 }
 function esStart(id) {
@@ -1737,10 +1756,11 @@ function esAsk() {
   app.innerHTML = `
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <div class="qhead"><span>Esercizi · ${c.n} ${esc(c.t)}</span><span>${i + 1} di ${ES_ORD.length}</span></div>
-    <span class="tag">${x.tipo === "guidato" ? "Guidato" : "D’esame"} · circa ${x.min} minuti</span>
+    <span class="tag">Esercizio guidato${x.teoria ? " · teoria" : ""} · circa ${x.min} minuti</span>
     <h2 class="q">${esc(x.t)}</h2>
     <div class="extext">${x.testo}</div>
-    ${x.passi ? `<p class="label">I passi</p><div class="passi">${x.passi}</div>` : ""}
+    <div class="gseg" role="group" aria-label="Guida"><button type="button" data-g="1">Con la guida</button><button type="button" data-g="0">Senza guida</button></div>
+    <div id="passi"></div>
     <div class="answerbox"><label class="label" for="response">La tua risposta</label>
       <textarea id="response" placeholder="Scrivi qui il codice o la risposta (puoi anche scriverlo su carta)…"></textarea></div>
     <div class="photo" id="photo"></div>
@@ -1750,6 +1770,21 @@ function esAsk() {
   box.value = a.text;
   box.oninput = () => { a.text = box.value; };
   photoBox(a);
+  // con la guida i passi sono aperti; senza guida restano chiusi e si aprono solo se servono (scelta ricordata)
+  const passi = () => {
+    const on = load().guida !== false;
+    app.querySelectorAll(".gseg button").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.g === "1") === on)));
+    app.querySelector("#passi").innerHTML = on
+      ? `<p class="label">I passi</p><div class="passi">${x.passi}</div>`
+      : `<details class="retrace"><summary>Mostra i passi</summary><div class="passi">${x.passi}</div></details>`;
+  };
+  app.querySelectorAll(".gseg button").forEach(b => b.onclick = () => {
+    const saved = load();
+    saved.guida = b.dataset.g === "1";
+    store(saved);
+    passi();
+  });
+  passi();
   const after = app.querySelector("#after");
   const showSol = () => {
     a.open = true;
@@ -1858,18 +1893,19 @@ function restoreRun() {
     return true;
   } catch (e) { return false; }
 }
-// arrivando con #es-<id> (es. dalla Sessione) si apre subito quell'esercizio; "indietro" porta all'elenco
-const esLink = location.hash.match(/^#es-([\w-]+)$/);
-window.addEventListener("hashchange", () => {
-  const m = location.hash.match(/^#es-([\w-]+)$/);
-  if (!m || !esercizio(m[1])) return;
+// arrivando con un link diretto (es. dalla Sessione) si apre subito l'esercizio o la traccia; "indietro" porta all'elenco
+// anche #tr-<id> (una traccia) e #trp-<id> (una traccia, solo parte pratica)
+function openLink() {
+  const m = location.hash.match(/^#(es|tr|trp)-([\w-]+)$/);
+  if (!m || !(m[1] === "es" ? esercizio(m[2]) : traccia(m[2]))) return false;
   try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
-  esStart(m[1]);
-});
-if (esLink && esercizio(esLink[1])) {
-  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  if (m[1] === "es") esStart(m[2]); else scrittoStart(m[2], m[1] === "trp");
+  return true;
+}
+window.addEventListener("hashchange", openLink);
+if (/^#(es|tr|trp)-/.test(location.hash)) {
   home();
-  esStart(esLink[1]);
+  if (!openLink()) home();
 } else if (!(history.state && history.state.res && restoreResult()) && !(history.state && history.state.quiz && !history.state.res && restoreRun())) {
   if (history.state && history.state.quiz) { try { history.replaceState(null, ""); } catch (e) {} }
   home();
