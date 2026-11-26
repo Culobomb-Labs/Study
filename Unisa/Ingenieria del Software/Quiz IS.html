@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Quiz di Ingegneria del Software</title>
-<meta name="description" content="Domande a risposta multipla sui capitoli 01–20 del quaderno di Ingegneria del Software, con simulazione della prova intercorso.">
+<meta name="description" content="Domande a risposta multipla sui capitoli 02–20 del quaderno di Ingegneria del Software, con simulazione della prova intercorso.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -133,9 +133,9 @@ body.running .lede{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Ingegneria del Software · capitoli 01–20</div>
+  <div class="eyebrow">Ingegneria del Software · capitoli 02–20</div>
   <h1>Quiz di Ingegneria del Software</h1>
-  <p class="lede">Domande a risposta multipla su tutti i capitoli del quaderno, con la stessa numerazione (01–20). I capitoli della <a href="Piano%20di%20studio%20IS.html">prova intercorso</a> sono segnati. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
+  <p class="lede">Domande a risposta multipla sui capitoli del quaderno, con la stessa numerazione (02–20): i capitoli introduttivi (00 e 01) non hanno domande. I capitoli della <a href="Piano%20di%20studio%20IS.html">prova intercorso</a> sono segnati. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
@@ -143,7 +143,6 @@ body.running .lede{display:none}
 /* Domande: c = capitolo (id della sezione nel quaderno), q = domanda, o = opzioni (la PRIMA è quella giusta,
    vengono mescolate a ogni giro), e = spiegazione. Tutto preso dal Quaderno di Ingegneria del Software. */
 const CHAPTERS = [
-  { id: "minuta", n: "01", t: "Riunioni e minuta" },
   { id: "req", n: "02", t: "Requisiti ed elicitation", p: 1 },
   { id: "uc", n: "03", t: "Scenari e casi d'uso", p: 1 },
   { id: "reqq", n: "04", t: "Scrivere buoni requisiti", p: 1 },
@@ -198,14 +197,6 @@ const Q = [
   { c: "scrum", q: "Quante persone ha un team Scrum?", o: ["Da 5 a 9 (7 ± 2)", "Da 2 a 4", "Da 10 a 15", "Non c'è un limite"], e: "Team di 5–9 persone, auto-organizzato e interfunzionale. Per progetti grandi si usa lo Scrum of scrums." },
   { c: "scrum", q: "Come si scrive una user story?", o: ["Come <tipo di utente> voglio <obiettivo> così che <motivo>", "Il sistema deve <azione> entro <vincolo>", "Quando <evento> [guardia] / <azione>", "I[n] → P[n.i] → R[n]"], e: "Esempio: \"Come studente voglio comprare un abbonamento al parcheggio così che posso andare a scuola in auto\"." },
 
-  // 01 · Minuta
-  { c: "minuta", q: "Nella minuta, cosa indica P[2.3]?", o: ["La terza proposta per l'issue numero 2", "La seconda proposta per l'issue numero 3", "Il secondo action item del punto 3", "La risoluzione dell'issue 2"], e: "P[n.i] = proposta i-esima per l'issue n." },
-  { c: "minuta", q: "Chi controlla i tempi della riunione?", o: ["Il timekeeper", "Il facilitatore", "Il minute taker", "Il Product Owner"], e: "Facilitatore = guida la riunione e dà la parola. Timekeeper = controlla i tempi. Minute taker = scrive la minuta." },
-  { c: "minuta", q: "Cos'è un action item AI[m]?", o: ["Un compito con responsabile e scadenza", "Un argomento contro una proposta", "Un problema da discutere", "Una proposta di soluzione"], e: "Esempio: AI[3] Mario installa MySQL entro venerdì." },
-  { c: "minuta", q: "Cosa succede a una issue che non ha una R[n]?", o: ["Resta aperta e torna alla riunione successiva", "Viene cancellata", "Diventa automaticamente un action item", "Si considera risolta"], e: "R[n] è la risoluzione: senza, l'issue rimane aperta." },
-  { c: "minuta", q: "Nella discussione, \"−A\" indica…", o: ["Un argomento contro una proposta", "Un action item annullato", "Un assente alla riunione", "Un'issue respinta"], e: "+A = argomento a favore, −A = argomento contro una proposta." },
-  { c: "minuta", q: "Cosa contiene la sezione Wrap up?", o: ["Nuovi action item e una breve critica della riunione", "L'elenco dei presenti e degli assenti", "Le comunicazioni per tutti", "L'obiettivo della riunione"], e: "Le sezioni: obiettivo, comunicazioni, status, discussione, wrap up, prossima riunione." },
-  { c: "minuta", q: "Cosa contiene la sezione Status?", o: ["Le attività pianificate e la tabella degli action item aperti", "Le issue discusse con proposte e risoluzioni", "Data, ora e luogo della prossima riunione", "I ruoli della riunione"], e: "3.1 attività pianificate (Task, Responsabile, Data prevista, Status, Note) e 3.2 action item aperti." },
 
   // 06 · UML
   { c: "uml", q: "UML è…", o: ["Una notazione grafica standard, non un metodo", "Un metodo di sviluppo che dice in che ordine lavorare", "Un linguaggio di programmazione a oggetti", "Un processo agile"], e: "UML dice come disegnare, non in che ordine lavorare." },
@@ -340,32 +331,6 @@ const Q = [
   { c: "scrum", q: "Pianifico 30 story point e ne consegno 24. Qual è la velocity?", o: ["24", "30", "27", "6"], e: "La velocity conta gli story point effettivamente consegnati, non quelli pianificati." },
   { c: "scrum", q: "Differenza tra capacità e velocity?", o: ["Capacità = ore disponibili nello sprint; velocity = story point consegnati", "Sono la stessa misura", "Capacità = story point; velocity = ore", "Capacità misura la bravura, velocity il tempo"], e: "Capacità serve a pianificare lo sprint in ore; velocity misura i punti consegnati." },
   { c: "scrum", q: "Un focus factor di 0,9 è…", o: ["Rischioso: oltre 0,8 si sovrastima il tempo davvero disponibile", "Consigliato per team nuovi", "Il valore standard di Scrum", "Obbligatorio per sprint lunghi"], e: "Si usa 0,6–0,8: le persone hanno riunioni, mail, imprevisti." },
-  // 01 · Riunioni e minuta (altre)
-  { c: "minuta", q: "Chi guida la riunione, segue l'agenda e dà la parola?", o: ["Il facilitatore", "Il timekeeper", "Il minute taker", "Il Product Owner"], e: "Facilitatore = guida. Timekeeper = tempi. Minute taker = scrive la minuta." },
-  { c: "minuta", q: "Chi scrive la minuta?", o: ["Il minute taker", "Il facilitatore", "Il timekeeper", "Tutti i presenti a turno"], e: "Il minute taker è il ruolo che verbalizza la riunione." },
-  { c: "minuta", q: "Quali sono i ruoli indicati nell'intestazione della minuta?", o: ["Facilitatore, timekeeper, minute taker (più presenti e assenti)", "Product Owner, ScrumMaster, team", "Cliente, analista, programmatore", "Presidente, segretario, revisore"], e: "Non confondere con i ruoli di Scrum." },
-  { c: "minuta", q: "Cosa contiene l'intestazione della minuta?", o: ["Progetto, numero della riunione, data, ora di inizio e fine, luogo e ruoli", "Solo l'elenco degli action item", "Le risoluzioni prese", "La critica della riunione"], e: "Poi vengono le sezioni: obiettivo, comunicazioni, status, discussione, wrap up, prossima riunione." },
-  { c: "minuta", q: "Qual è l'ordine delle sezioni della minuta?", o: ["Obiettivo → Comunicazioni → Status → Discussione → Wrap up → Prossima riunione", "Discussione → Obiettivo → Wrap up → Status → Comunicazioni", "Status → Discussione → Obiettivo → Comunicazioni → Wrap up", "Comunicazioni → Wrap up → Status → Discussione → Obiettivo"], e: "Il template è fisso: impararlo fa risparmiare tempo." },
-  { c: "minuta", q: "Cosa va nella sezione Comunicazioni?", o: ["Informazioni da dare a tutti", "I problemi da discutere", "I nuovi action item", "Data e luogo della prossima riunione"], e: "Le comunicazioni sono informazioni, non problemi da discutere: quelli vanno in Discussione." },
-  { c: "minuta", q: "Quali colonne ha la tabella delle attività pianificate (Status 3.1)?", o: ["Task, Responsabile, Data prevista, Status, Note", "Issue, Proposta, Argomento, Risoluzione", "Nome, Ruolo, Presente, Assente", "Story, Story point, Priorità, Sprint"], e: "Status: 3.1 attività pianificate e 3.2 tabella degli action item aperti." },
-  { c: "minuta", q: "In quale sezione si usa la notazione I[n], P[n.i], R[n]?", o: ["Discussione", "Comunicazioni", "Status", "Intestazione"], e: "La Discussione riporta i problemi discussi con una notazione precisa." },
-  { c: "minuta", q: "Cosa indica I[n]?", o: ["Una issue: il problema da discutere", "Un'informazione per tutti", "Un incarico già completato", "L'intervento n-esimo di un presente"], e: "I[1] Che database usiamo?" },
-  { c: "minuta", q: "Cosa indica R[n]?", o: ["La risoluzione dell'issue n", "Il responsabile del task n", "Il rischio numero n", "La riunione numero n"], e: "R[1] Si usa MySQL, vedi AI[3]." },
-  { c: "minuta", q: "Cosa indica \"+A\" nella discussione?", o: ["Un argomento a favore di una proposta", "Un action item aggiunto", "Un'approvazione della minuta", "Un assente giustificato"], e: "+A = a favore, −A = contro." },
-  { c: "minuta", q: "In P[n.i], cosa indica la n?", o: ["Il numero dell'issue a cui la proposta si riferisce", "Il numero della proposta", "Il numero della riunione", "Il numero di voti ricevuti"], e: "P[n.i] = proposta i-esima per l'issue n." },
-  { c: "minuta", q: "Cosa indica P[3.1]?", o: ["La prima proposta per l'issue numero 3", "La terza proposta per l'issue numero 1", "L'issue 3 della riunione 1", "Il punto 3.1 dello status"], e: "Prima il numero dell'issue, poi il numero della proposta." },
-  { c: "minuta", q: "\"Che database usiamo?\" come si annota nella discussione?", o: ["I[1]", "P[1.1]", "R[1]", "AI[1]"], e: "È il problema da discutere: un'issue." },
-  { c: "minuta", q: "\"MongoDB\" proposto come seconda opzione per l'issue 1 si scrive…", o: ["P[1.2]", "P[2.1]", "I[2]", "R[1.2]"], e: "P[1.1] MySQL · P[1.2] MongoDB." },
-  { c: "minuta", q: "\"Lo conosciamo tutti\", detto a sostegno di MySQL, si annota come…", o: ["+A", "−A", "R[1]", "P[1.1]"], e: "È un argomento a favore di una proposta." },
-  { c: "minuta", q: "\"Ha uno schema rigido\", detto contro una proposta, si annota come…", o: ["−A", "+A", "I[n]", "AI[m]"], e: "−A = argomento contro." },
-  { c: "minuta", q: "\"Mario installa MySQL entro venerdì\" si annota come…", o: ["AI[m]: action item con responsabile e scadenza", "R[n]: risoluzione", "P[n.i]: proposta", "I[n]: issue"], e: "Un action item ha sempre un responsabile e una scadenza." },
-  { c: "minuta", q: "Cosa significa \"R[1] Si usa MySQL, vedi AI[3]\"?", o: ["L'issue 1 è risolta con MySQL e c'è un compito collegato, l'action item 3", "La proposta 1 è stata rifiutata", "MySQL è la terza proposta", "L'issue 3 è stata riaperta"], e: "La risoluzione chiude l'issue e rimanda all'action item che la mette in pratica." },
-  { c: "minuta", q: "Un action item, oltre al compito, deve avere…", o: ["Un responsabile e una scadenza", "Un argomento a favore e uno contro", "Una proposta alternativa", "La firma del facilitatore"], e: "AI[3] Mario installa MySQL entro venerdì: chi, cosa, entro quando." },
-  { c: "minuta", q: "Dove si trovano gli action item ancora aperti delle riunioni precedenti?", o: ["Nello Status, nella tabella 3.2", "Nelle Comunicazioni", "Nell'intestazione", "Nella Prossima riunione"], e: "Lo Status riporta le attività pianificate (3.1) e gli action item aperti (3.2)." },
-  { c: "minuta", q: "Cosa va nella sezione Prossima riunione?", o: ["Data, ora e luogo", "Gli action item aperti", "La critica della riunione", "Le issue risolte"], e: "Sezione finale: quando e dove ci si rivede." },
-  { c: "minuta", q: "Dove si scrive una breve critica della riunione stessa?", o: ["Nel Wrap up", "Nella Discussione", "Nelle Comunicazioni", "Nello Status"], e: "Wrap up: nuovi action item e una breve critica della riunione." },
-  { c: "minuta", q: "A cosa serve la minuta nel progetto del corso?", o: ["A verbalizzare le riunioni del team con una struttura fissa", "A descrivere i casi d'uso", "A pianificare gli sprint", "A raccogliere i requisiti dal cliente"], e: "Le riunioni del team vanno verbalizzate con una minuta, seguendo il template." },
-  { c: "minuta", q: "Nell'issue 2 sono state fatte tre proposte, ma non si è deciso. Cosa manca nella minuta?", o: ["R[2]: senza risoluzione l'issue resta aperta", "P[2.4]", "Un −A", "AI[2]"], e: "Un'issue senza R[n] torna alla riunione successiva." },
   // 06 · UML (altre)
   { c: "uml", q: "Cos'è un modello?", o: ["Un'astrazione: tiene i dettagli importanti e butta via il resto", "Il codice sorgente del sistema", "Una copia fedele di ogni dettaglio", "Un documento di requisiti"], e: "Si modella per capire sistemi troppo complessi da tenere in testa." },
   { c: "uml", q: "Il dominio della soluzione (classi, database, rete) è modellato da…", o: ["Il design", "L'analisi", "Il cliente", "Il test di accettazione"], e: "Dominio applicativo = il mondo del problema, modellato dall'analisi. Dominio della soluzione = la tecnologia, modellata dal design." },
@@ -1448,7 +1413,7 @@ function chapterRun(cid) {
    ogni simulazione ne contiene almeno metà; "dep" usa solo quelle. */
 const SIMS = {
   sim: { title: "Simulazione prima prova", tot: 15, min: 1, x: 5, dep: 0.5, chaps: () => CHAPTERS.filter(c => c.p) },
-  sim2: { title: "Simulazione seconda prova", tot: 15, min: 1, dep: 0.5, chaps: () => CHAPTERS.filter(c => !c.p && c.id !== "minuta") },
+  sim2: { title: "Simulazione seconda prova", tot: 15, min: 1, dep: 0.5, chaps: () => CHAPTERS.filter(c => !c.p) },
   simtutto: { title: "Simulazione prova completa", tot: 25, min: 1, dep: 0.5, chaps: () => CHAPTERS },
   dep: { title: "Domande del deposito", tot: 30, min: 0, dep: 1, chaps: () => CHAPTERS }
 };

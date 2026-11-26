@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Quiz di Mobile Programming</title>
-<meta name="description" content="Domande a risposta multipla sui capitoli 01–21 del quaderno di Android (Mobile Programming), con simulazione d'esame.">
+<meta name="description" content="Domande a risposta multipla sui capitoli 02–21 del quaderno di Android (Mobile Programming), con simulazione d'esame.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -123,9 +123,9 @@ body.running .lede{display:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">Mobile Programming · capitoli 01–21</div>
+  <div class="eyebrow">Mobile Programming · capitoli 02–21</div>
   <h1>Quiz di Mobile Programming</h1>
-  <p class="lede">Domande a risposta multipla su tutti i capitoli del quaderno di Android, con la stessa numerazione (01–21). Per organizzare lo studio c'è anche il <a href="Piano%20di%20studio%20MP.html">piano di studio</a>. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
+  <p class="lede">Domande a risposta multipla sui capitoli del quaderno di Android, con la stessa numerazione (02–21): i capitoli introduttivi (00 e 01) non hanno domande. Per organizzare lo studio c'è anche il <a href="Piano%20di%20studio%20MP.html">programma d'esame</a>. Ogni risposta ha la spiegazione e il link al punto del quaderno da ripassare.</p>
   <main id="app" aria-live="polite"></main>
 </div>
 
@@ -133,7 +133,6 @@ body.running .lede{display:none}
 /* Domande: c = capitolo (id della sezione nel quaderno), q = domanda, o = opzioni (la PRIMA è quella giusta,
    vengono mescolate a ogni giro), e = spiegazione. Tutto preso dal Quaderno di Android (Mobile Programming). */
 const CHAPTERS = [
-  { id: "piattaforma", n: "01", t: "La piattaforma Android" },
   { id: "versioni", n: "02", t: "Versioni" },
   { id: "strumenti", n: "03", t: "Android Developer Tools" },
   { id: "layout", n: "04", t: "Layouts" },
@@ -156,27 +155,6 @@ const CHAPTERS = [
   { id: "service", n: "21", t: "Services" }
 ];
 const Q = [
-  // 01 · La piattaforma Android
-  { c: "piattaforma", q: "Cos'è Android?", o: ["Un sistema software completo: sistema operativo, librerie, framework per le app e app di base", "Solo un linguaggio di programmazione per telefoni", "Solo il kernel Linux modificato per i telefoni", "Un ambiente di sviluppo come Android Studio"], e: "Android comprende tutto lo stack, dal kernel alle app di base." },
-  { c: "piattaforma", q: "Cosa contiene l'SDK di Android?", o: ["Librerie, strumenti e documentazione per sviluppare", "Solo l'emulatore", "Solo le app di sistema", "Solo il kernel Linux"], e: "SDK = Software Development Kit." },
-  { c: "piattaforma", q: "Qual è lo strato più basso dell'architettura Android?", o: ["Il kernel Linux", "L'HAL", "Le librerie native", "L'application framework"], e: "Dal basso: kernel Linux, HAL, librerie native + runtime, application framework, applicazioni." },
-  { c: "piattaforma", q: "Qual è lo strato più alto dell'architettura Android?", o: ["Le applicazioni (Home, Contatti, le nostre app)", "L'application framework", "L'HAL", "Il runtime ART"], e: "Ogni strato usa quello sotto; in cima ci sono le app." },
-  { c: "piattaforma", q: "A cosa serve l'HAL (Hardware Abstraction Layer)?", o: ["Offre interfacce standard verso l'hardware, nascondendo le differenze tra i modelli", "Compila il codice Java in bytecode", "Gestisce il ciclo di vita delle activity", "Installa le app sul dispositivo"], e: "Il livello sopra chiede “la fotocamera” senza sapere quale modello è." },
-  { c: "piattaforma", q: "Quale componente dell'application framework gestisce il ciclo di vita delle app?", o: ["Activity Manager", "Package Manager", "View System", "Content Providers"], e: "Package Manager installa le app; Content Providers danno accesso ai dati di altre app." },
-  { c: "piattaforma", q: "Quale componente dell'application framework installa le app?", o: ["Package Manager", "Activity Manager", "View System", "HAL"], e: "Activity Manager invece gestisce il ciclo di vita." },
-  { c: "piattaforma", q: "A cosa servono i Content Providers dell'application framework?", o: ["A dare accesso ai dati di altre app, per esempio la rubrica", "A disegnare le view", "A installare gli aggiornamenti", "A gestire la batteria"], e: "Ne riparliamo nel capitolo 20." },
-  { c: "piattaforma", q: "Oltre ai servizi base, cosa aggiunge il kernel Linux di Android?", o: ["Gestione batteria, low memory killer, comunicazione tra processi", "Il compilatore Java", "L'interfaccia grafica delle app", "Il Play Store"], e: "Sono le parti specifiche di Android nel kernel." },
-  { c: "piattaforma", q: "Cosa fa lo strumento DX?", o: ["Trasforma il bytecode Java in un unico file classes.dex", "Esegue l'app sull'emulatore", "Firma l'APK", "Disegna i layout"], e: "DEX = Dalvik EXecutable." },
-  { c: "piattaforma", q: "Cosa contiene classes.dex?", o: ["Tutto il bytecode dell'app nel formato Dalvik, più i dati necessari", "Solo le immagini dell'app", "Il manifesto dell'app", "Le stringhe tradotte"], e: "È ciò che la macchina virtuale esegue." },
-  { c: "piattaforma", q: "Come compila Dalvik?", o: ["Durante l'esecuzione (Just-In-Time)", "All'installazione (Ahead-Of-Time)", "Sul PC dello sviluppatore", "Non compila, interpreta solo XML"], e: "ART invece compila prima, di solito all'installazione." },
-  { c: "piattaforma", q: "Come compila ART?", o: ["Prima, di solito all'installazione (Ahead-Of-Time)", "Durante l'esecuzione (Just-In-Time)", "Solo quando l'app va in crash", "Sul server di Google"], e: "Coppia da ricordare: Dalvik JIT, ART AOT." },
-  { c: "piattaforma", q: "Da quale livello API ART sostituisce Dalvik?", o: ["API 21 (Android 5.0)", "API 23 (Android 6.0)", "API 26 (Android 8.0)", "API 19 (Android 4.4)"], e: "Dalvik vale per API < 21." },
-  { c: "piattaforma", q: "Quale vantaggio ha ART rispetto a Dalvik?", o: ["Meno memoria e meno batteria, garbage collection più efficiente", "Compila durante l'esecuzione", "Funziona solo sugli emulatori", "Non ha garbage collection"], e: "Dalvik a volte bloccava l'app durante la garbage collection." },
-  { c: "piattaforma", q: "Perché serve una macchina virtuale apposita per Android?", o: ["Un telefono ha CPU più lenta, meno RAM e batteria limitata rispetto a un PC", "Perché Java non funziona su Linux", "Per impedire le app di terze parti", "Per poter usare solo Kotlin"], e: "La VM è progettata per le risorse limitate dei dispositivi mobili." },
-  { c: "piattaforma", q: "Un'app che va bene su ART va bene anche su Dalvik?", o: ["Sì, ma non è vero il contrario", "No, mai", "Solo se scritta in Kotlin", "Solo sugli emulatori"], e: "Lo dice la frase chiave del capitolo." },
-  { c: "piattaforma", q: "In che linguaggi si possono scrivere le app Android del corso?", o: ["Java (nelle slide) ma anche Kotlin", "Solo C++", "Solo Swift", "Solo JavaScript"], e: "Il codice viene comunque compilato in bytecode e poi in .dex." },
-  { c: "piattaforma", q: "WebKit, libc e OpenGL ES appartengono a quale strato?", o: ["Librerie native", "Kernel Linux", "Application framework", "Applicazioni"], e: "Le librerie native stanno insieme al runtime ART." },
-  { c: "piattaforma", q: "Driver, memoria, processi e file system sono gestiti da…", o: ["Il kernel Linux", "L'application framework", "ART", "Il Package Manager"], e: "Sono i servizi base di un sistema operativo." },
 
   // 02 · Versioni
   { c: "versioni", q: "Da quale API i permessi pericolosi si chiedono a runtime?", o: ["API 23 (Android 6.0 Marshmallow)", "API 21 (Android 5.0)", "API 26 (Android 8.0)", "API 30 (Android 11)"], e: "Prima di API 23 si accettavano tutti all'installazione." },
