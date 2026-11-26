@@ -80,7 +80,6 @@
     search:
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
     home: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg>',
-    book: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.5 5 8 4.5 3.5 4.5v14c4.5 0 7 .5 8.5 2 1.5-1.5 4-2 8.5-2v-14c-4.5 0-7 .5-8.5 2z"/><path d="M12 6.5v14"/><path d="M6 8.5h3.5M6 11.5h3.5M14.5 8.5H18M14.5 11.5H18"/></svg>',
     up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
     light:
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
@@ -281,11 +280,9 @@
      posizionato su quel corso, con la pagina da cui arrivi segnata "sei qui". Allo stesso modo Bacheca resta
      accesa in News e in Segnalazioni, con un segno piccolo che dice quale delle due (campanello o insetto);
      nelle altre pagine al posto del segno c'è il pallino delle news da leggere.
-     "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento.
-     Nei quaderni, su telefono, l'Indice è un altro bottone rotondo nello stesso punto:
-     quando compare "Torna su", si mette sopra l'Indice. */
+     "Torna su" è un bottone rotondo a parte, sopra la barra, che compare dopo un po' di scorrimento: nei quaderni
+     riporta anche all'indice, che sta in cima, quindi non serve un bottone apposta per l'Indice. */
   function buildDock() {
-    const idx = document.querySelector("nav.idx");
     // here: la scheda è quella della pagina (o della sezione) in cui sei; page: è proprio questa pagina
     const tab = ({ tag = "a", cls, attrs, icon, label, here = false, page = here }) =>
       `<${tag} class="ua-tab ${cls}${here ? " is-on" : ""}" ${attrs}${here ? " data-here" : ""}${page ? ' aria-current="page"' : ""}><span class="ua-tab-ic">${icon}</span><span class="ua-label">${label}</span></${tag}>`;
@@ -310,8 +307,7 @@
       ${tab({ cls: "ua-dock-news", attrs: `href="${ROOT}news.html"`, icon: BOARD_TAB.icon + boardMark, label: BOARD_TAB.label, here: IS_NEWS_PAGE || IS_SEGN_PAGE, page: IS_NEWS_PAGE })}
       ${tab({ tag: "button", cls: "ua-open-sync", attrs: 'type="button" aria-haspopup="dialog"', icon: ICON.user, label: "Profilo" })}
     </div>
-    <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>
-    ${idx ? `<button type="button" class="ua-idx-fab" aria-label="Indice degli appunti">${ICON.book}</button>` : ""}`;
+    <button type="button" class="ua-up" aria-label="Torna in cima" tabindex="-1">${ICON.up}</button>`;
     document.body.append(dock);
     const smooth = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
     const toTop = () => window.scrollTo({ top: 0, behavior: smooth() });
@@ -321,12 +317,6 @@
         toTop();
       })
     ); // la scheda della pagina in cui sei riporta in cima
-    if (idx)
-      dock.querySelector(".ua-idx-fab").addEventListener("click", () => {
-        const d = idx.querySelector("details");
-        if (d) d.open = true;
-        idx.scrollIntoView({ behavior: smooth(), block: "start" });
-      });
     lensTabs(dock.querySelector(".ua-tabs"));
     const up = dock.querySelector(".ua-up");
     up.addEventListener("click", toTop);

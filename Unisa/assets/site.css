@@ -1008,8 +1008,7 @@ a.ua-ni:hover {
   box-sizing: border-box;
 }
 .ua-tabs,
-.ua-dock .ua-up,
-.ua-dock .ua-idx-fab {
+.ua-dock .ua-up {
   position: relative;
   isolation: isolate;
   background: var(--ua-glass);
@@ -1018,8 +1017,7 @@ a.ua-ni:hover {
   box-shadow: var(--ua-glass-shadow);
 }
 .ua-tabs::before,
-.ua-dock .ua-up::before,
-.ua-dock .ua-idx-fab::before {
+.ua-dock .ua-up::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1249,37 +1247,6 @@ a.ua-ni:hover {
   opacity: 1;
   transform: none;
   pointer-events: auto;
-}
-/* Indice dei quaderni: bottone rotondo di vetro, come "Torna su" e nello stesso punto.
-   Serve solo su telefono (su PC l'indice resta fisso a lato); quando compare "Torna su", si mette sopra l'Indice. */
-.ua-dock .ua-idx-fab {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 10px);
-  display: none;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 50%;
-  color: inherit;
-  cursor: pointer;
-}
-.ua-dock .ua-idx-fab svg {
-  width: 20px;
-  height: 20px;
-}
-.ua-dock .ua-idx-fab:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-@media (max-width: 900px) {
-  .ua-dock .ua-idx-fab {
-    display: grid;
-  }
-  .ua-dock:has(.ua-idx-fab) .ua-up {
-    bottom: calc(100% + 68px);
-  }
 }
 @media (max-width: 640px) {
   /* su telefono la barra occupa tutta la larghezza, come le schede di iOS */
