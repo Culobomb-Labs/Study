@@ -2446,15 +2446,24 @@ static final ArchRule entityIndipendenti =
     <tr><td><b>Patching</b></td><td>Rallenta le prestazioni.</td></tr>
     <tr><td><b>Testing</b></td><td>Non è mai abbastanza.</td></tr>
   </table></div>
-  <p>Le tecniche per aumentare l'affidabilità si raggruppano in tre famiglie:</p>
+  <p>Le tecniche per aumentare l'affidabilità si raggruppano in tre famiglie, a seconda di <b>quando</b> agiscono sul fault: prima che ci sia, mentre si sviluppa, oppure quando il sistema è già in uso.</p>
   <div class="levels">
-    <div><b>Fault avoidance</b><span>Evitarli prima: buona metodologia, gestione della configurazione, verifica, <b>review</b>.</span></div>
-    <div><b>Fault detection</b><span>Trovarli: testing, debugging, review.</span></div>
-    <div><b>Fault tolerance</b><span>Sopravvivere: il sistema continua a funzionare anche con un guasto (ridondanza, transazioni atomiche).</span></div>
+    <div><b>Fault avoidance<small>prima</small></b><span><b>Prevenire</b> l'inserimento di fault nel sistema, prima ancora di realizzarlo. Tre tecniche: una buona <b>metodologia di sviluppo</b> (riduce la complessità), la <b>gestione della configurazione</b> (il controllo di versione evita un sistema incoerente) e la <b>verifica</b> (evita i bug algoritmici).</span></div>
+    <div><b>Fault detection<small>durante lo sviluppo</small></b><span><b>Trovare</b> gli stati di errore e risalire al fault che li causa. Tre tecniche: il <b>testing</b> (esperimento controllato: crea failure in modo pianificato), il <b>debugging</b> (esperimento non controllato: parte da un failure non pianificato) e le <b>review</b> (ispezione manuale, senza eseguire il sistema).</span></div>
+    <div><b>Fault tolerance<small>a run-time</small></b><span>Accetta che il sistema venga rilasciato <b>con</b> dei bug e gestisce i failure facendo <b>recovery</b> mentre gira. Esempi: le <b>transazioni atomiche</b> dei database e la <b>ridondanza modulare</b>.</span></div>
   </div>
+  <div class="tbl"><table>
+    <tr><th>Famiglia</th><th>Tecniche</th><th>Si divide in</th></tr>
+    <tr><td><b>Fault avoidance</b></td><td>Metodologia di design · Gestione della configurazione · Verifica</td><td>—</td></tr>
+    <tr><td rowspan="3"><b>Fault detection</b></td><td>Review</td><td>Walkthrough · Inspection</td></tr>
+    <tr><td>Testing</td><td>Component · Integration · System testing</td></tr>
+    <tr><td>Debugging</td><td>Di correttezza · Di prestazioni</td></tr>
+    <tr><td><b>Fault tolerance</b></td><td>Transazioni atomiche · Ridondanza modulare</td><td>—</td></tr>
+  </table></div>
+  <div class="note">Trabocchetto: le <b>review</b> servono a <b>trovare</b> i fault già inseriti, quindi sono fault <b>detection</b>, non avoidance. Il tutto fa parte della <b>Quality Assurance</b>, che comprende anche l'<b>usability testing</b> (scenario, prototype e product test). · Testing, slide 61–62</div>
   <div class="vs">
     <div><h4>Debugging</h4><p><b>Reattivo</b>: parte da un failure <b>non pianificato</b>, individua lo stato di errore e risale gli stati corretti fino al fault. Si fa sia per la correttezza sia per le prestazioni.</p></div>
-    <div><h4>Testing</h4><p><b>Proattivo</b>: crea failure in modo <b>pianificato</b>. Un buon test usa un'ampia gamma di input, anche non validi, e condizioni limite.</p></div>
+    <div><h4>Testing</h4><p><b>Proattivo</b>: crea failure in modo <b>pianificato</b>. Quindi un test ha <b>successo</b> quando fa emergere un failure e permette di trovare il fault. Un buon test usa un'ampia gamma di input, anche non validi, e condizioni limite.</p></div>
   </div>
   <h3>Review: walkthrough e inspection</h3>
   <p>La review è un'ispezione manuale del sistema, <b>senza eseguirlo</b>. È molto efficace: circa l'<b>85% dei fault</b> si trova così.</p>
@@ -2529,6 +2538,8 @@ static final ArchRule entityIndipendenti =
     <details><summary>E le fasi del processo di Fagan nella lezione sulla code review?</summary><p>Sono 6: Planning, Overview, Preparation, Meeting, Rework, Follow-up (capitolo 20).</p></details>
     <details><summary>Prova di correttezza o testing: quale dà un riscontro solo parziale?</summary><p>Il testing: il programma è provato solo per gli input scelti.</p></details>
     <details><summary>Binari giusti secondo il RAD, disallineati da un terremoto: che fault è?</summary><p>Meccanico: il sistema rispetta la specifica, l'ambiente no. Un disallineamento per cattiva comunicazione tra team sarebbe algoritmico.</p></details>
+    <details><summary>Le review sono fault avoidance o fault detection?</summary><p>Fault detection: servono a trovare fault già inseriti (come testing e debugging). L'avoidance è metodologia, gestione della configurazione e verifica.</p></details>
+    <details><summary>Transazioni atomiche e ridondanza modulare: quale famiglia?</summary><p>Fault tolerance: il sistema ha dei bug e li gestisce con il recovery a run-time.</p></details>
     <details><summary>Debugging o testing: quale parte da un failure non pianificato?</summary><p>Il debugging. Il testing crea i failure in modo pianificato.</p></details>
     <details><summary>Fai tre esempi di oracolo automatico.</summary><p>Ricavato da specifiche formali, lo stesso software sviluppato da altri, la versione precedente del programma.</p></details>
     <details><summary>Quali sono i 4 criteri per decidere quando smettere di testare?</summary><p>Temporale, di costo, di copertura, statistico (MTBF).</p></details>
