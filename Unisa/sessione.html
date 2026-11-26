@@ -780,7 +780,7 @@
       <h1>Sessione</h1>
       <p class="lede">
         Scegli gli esami e le date degli appelli: il piano giorno per giorno lo preparo io, con i capitoli dei
-        piani di studio. Se resti indietro, si sistema da solo.
+        programmi d'esame. Se resti indietro, si sistema da solo.
       </p>
       <div id="ss-app"><p class="ss-wait">Carico la sessione…</p></div>
     </main>
@@ -1003,7 +1003,7 @@
         }
         function courseFields(c, e, k) {
           if (c.piano)
-            return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">${/^Programma/.test(c.pianoT) ? "programma d'esame" : "piano di studio"}</a> di ${esc(c.name)}.</p>${lvsBox(e)}`;
+            return `<p class="ss-note">Uso i capitoli del <a href="${ROOT}${c.piano.split("/").map(encodeURIComponent).join("/")}">programma d'esame</a> di ${esc(c.name)}.</p>${lvsBox(e)}`;
           return `<div class="ss-row">
               <label class="ss-field"><span>Ore di studio che ti servono (circa)</span><input type="number" name="hours" min="5" max="200" step="5" value="${esc(e.hours || 30)}" style="width:120px"></label>
             </div>

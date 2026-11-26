@@ -20,7 +20,7 @@ window.CORSI =
     "color": "is",
     "docs": [
       { "name": "Quaderno di Ingegneria del Software", "kind": "Quaderno", "path": "Ingenieria del Software/Quaderno di Ingegneria del Software.html", "progressKey": "quaderno-ingsw-done" },
-      { "name": "Piano di studio: prima prova, seconda prova o prova completa", "kind": "Piano di studio", "path": "Ingenieria del Software/Piano di studio IS.html", "progressKey": "piano-intercorso-ingsw" },
+      { "name": "Programma d'esame di Ingegneria del Software", "kind": "Programma d'esame", "path": "Ingenieria del Software/Piano di studio IS.html", "progressKey": "piano-intercorso-ingsw" },
       { "name": "Quiz, capitoli 01–19", "kind": "Quiz", "path": "Ingenieria del Software/Quiz IS.html" }
     ]
   },
@@ -32,7 +32,7 @@ window.CORSI =
     "color": "mp",
     "docs": [
       { "name": "Quaderno di Android", "kind": "Quaderno", "path": "Mobile Programming/Quaderno di Android.html", "progressKey": "quaderno-android-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" },
+      { "name": "Programma d'esame di Mobile Programming", "kind": "Programma d'esame", "path": "Mobile Programming/Piano di studio MP.html", "progressKey": "piano-esame-mp" },
       { "name": "Quiz, capitoli 01–21", "kind": "Quiz", "path": "Mobile Programming/Quiz MP.html" }
     ]
   },
@@ -45,7 +45,7 @@ window.CORSI =
     "color": "pd",
     "docs": [
       { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione-Distribuita/Piano di studio PD.html", "progressKey": "piano-esame-pd" },
+      { "name": "Programma d'esame di Programmazione Distribuita", "kind": "Programma d'esame", "path": "Programmazione-Distribuita/Piano di studio PD.html", "progressKey": "piano-esame-pd" },
       { "name": "Quiz, capitoli 02–32", "kind": "Quiz", "path": "Programmazione-Distribuita/Quiz PD.html" }
     ]
   },
@@ -58,7 +58,7 @@ window.CORSI =
     "color": "so",
     "docs": [
         { "name": "Quaderno di Sistemi Operativi", "kind": "Quaderno", "path": "Sistemi Operativi/Quaderno di Sistemi Operativi.html", "progressKey": "quaderno-so-cap3-15-v1" },
-        { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Sistemi Operativi/Piano di studio SO.html", "progressKey": "piano-esame-so" },
+        { "name": "Programma d'esame di Sistemi Operativi", "kind": "Programma d'esame", "path": "Sistemi Operativi/Piano di studio SO.html", "progressKey": "piano-esame-so" },
         { "name": "Quiz, capitoli 03–15", "kind": "Quiz", "path": "Sistemi Operativi/Quiz SO.html" }
     ]
   },
@@ -71,7 +71,7 @@ window.CORSI =
     "color": "bd",
     "docs": [
       { "name": "Quaderno di Basi di Dati", "kind": "Quaderno", "path": "Basi di Dati/Quaderno di Basi di Dati.html", "progressKey": "quaderno-basi-done" },
-      { "name": "Programma d'esame", "kind": "Piano di studio", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" },
+      { "name": "Programma d'esame di Basi di Dati", "kind": "Programma d'esame", "path": "Basi di Dati/Piano di studio BD.html", "progressKey": "piano-esame-bd" },
       { "name": "Quiz, capitoli 02–10", "kind": "Quiz", "path": "Basi di Dati/Quiz BD.html" }
     ]
   },
@@ -84,7 +84,7 @@ window.CORSI =
     "color": "poo",
     "docs": [
       { "name": "Quaderno di Programmazione ad Oggetti", "kind": "Quaderno", "path": "Programmazione Orientata agli Oggetti/Quaderno di Programmazione Orientata agli Oggetti.html", "progressKey": "quaderno-poo-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione Orientata agli Oggetti/Piano di studio POO.html", "progressKey": "piano-esame-poo" }
+      { "name": "Programma d'esame di Programmazione ad Oggetti", "kind": "Programma d'esame", "path": "Programmazione Orientata agli Oggetti/Piano di studio POO.html", "progressKey": "piano-esame-poo" }
     ]
   },
   {

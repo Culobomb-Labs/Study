@@ -497,7 +497,7 @@
           for (const d of c.docs) {
             const p = d.progressKey ? progressOf(d.progressKey, prog[d.path]) : null;
             // quaderni: solo se hai spuntato qualcosa; piani di studio: appena hai generato il piano
-            if (!p || !p.total || (!p.done && d.kind !== "Piano di studio")) continue;
+            if (!p || !p.total || (!p.done && d.kind !== "Programma d'esame")) continue;
             card.append(progRow(d.kind, `${p.done}/${p.total}`, p.done, p.total));
           }
           if (c.code === "AL") addFirme(card);
@@ -654,7 +654,7 @@
           if (!sm || !sm.next) {
             card.innerHTML = `${head(null)}
               <div class="tool-t">Organizza la tua sessione</div>
-              <p class="tool-p">Scegli gli esami e le date degli appelli: il piano giorno per giorno lo preparo io, con i capitoli dei piani di studio. Se resti indietro, si sistema da solo.</p>
+              <p class="tool-p">Scegli gli esami e le date degli appelli: il piano giorno per giorno lo preparo io, con i capitoli dei programmi d'esame. Se resti indietro, si sistema da solo.</p>
               <div class="tool-foot"><span></span><a class="tool-btn" href="sessione.html">Inizia <span aria-hidden="true">→</span></a></div>`;
             card.hidden = false;
             return;

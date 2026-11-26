@@ -577,7 +577,7 @@ Il contorno è doppio perché metà resta sotto il riempimento; in em, così res
   color: var(--c);
   background: color-mix(in srgb, var(--c) 16%, transparent);
 }
-.docs a[data-kind="Piano di studio"]::before {
+.docs a[data-kind="Programma d'esame"]::before {
   content: "P";
 }
 .docs a[data-kind="Quiz"]::before {
@@ -1000,7 +1000,7 @@ Il contorno è doppio perché metà resta sotto il riempimento; in em, così res
 .resume-dot::before {
   content: "Q";
 }
-.resume-dot[data-kind="Piano di studio"]::before {
+.resume-dot[data-kind="Programma d'esame"]::before {
   content: "P";
 }
 .resume-dot[data-kind="Quiz"]::before {

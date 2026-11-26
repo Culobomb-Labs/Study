@@ -77,7 +77,7 @@
     return CATALOGO.map(e => {
       const c = e.site ? site.find(x => x.code === e.site) : null;
       const doc = kind => c && c.docs.find(d => d.kind === kind);
-      const piano = doc("Piano di studio"),
+      const piano = doc("Programma d'esame"),
         quad = doc("Quaderno"),
         quiz = doc("Quiz");
       return {
@@ -87,7 +87,6 @@
         opt: !!e.opt,
         color: c ? `var(--ua-c-${c.color})` : ALTRI_COLORI[k++ % ALTRI_COLORI.length],
         piano: piano ? piano.path : null,
-        pianoT: piano ? piano.name : "",
         quaderno: quad ? quad.path : null,
         quiz: quiz ? quiz.path : null
       };
@@ -738,7 +737,7 @@
       e.name = course.name; // serve ai promemoria (.github/scripts/promemoria_sessione.mjs)
       const data = await topicsOf(course, root).catch(() => null);
       if (course.piano && !data)
-        throw new Error("Non riesco a leggere il piano di studio di " + course.name + ".");
+        throw new Error("Non riesco a leggere il programma d'esame di " + course.name + ".");
       // ripasso a memoria dell'ultimo giorno: quello della prova scelta, se il piano di studio lo ha
       if (data) recap[e.code] = data.recap[e.scope || "completa"] || "";
       // simulazione dell'ultimo giorno: quella della prova scelta, se il piano di studio la ha

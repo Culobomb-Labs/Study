@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Programma d'esame di Basi di Dati</title>
-<meta name="description" content="Programma d'esame di Basi di Dati: gli argomenti del Quaderno di Basi di Dati, quanto pesano, gli esercizi tipo e com'è lo scritto.">
+<meta name="description" content="Programma d'esame di Basi di Dati: com'è la prova, gli argomenti del quaderno, quanto pesano e gli esercizi tipo. Il piano giorno per giorno si fa nella Sessione.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: una colonna di lettura. In alto il rimando alla Sessione (il piano giorno per giorno si fa lì),
-   poi com'è l'esame e gli argomenti divisi per parte del corso; in fondo, se c'è, il piano fatto qui prima. */
+/* Programma d'esame: una colonna di lettura. In alto il rimando alla Sessione (il piano giorno per giorno si fa lì),
+   poi com'è l'esame e gli argomenti divisi per parte del corso; in fondo, se c'è, il piano fatto qui prima.
+   Qui l'impaginazione di base e i colori del corso; i blocchi del programma sono in assets/programma.css. */
 :root{
   --bg:#f2f4f7; --surface:#ffffff; --ink:#111418; --muted:#5b6370; --line:#dde1e6; --soft:#eef1f4;
   --c:var(--ua-c-bd,#2f62e8); --c-soft:#e3eafb; --ok:#22744a; --ok-bg:#e3f2e9; --warn:#a4570e; --warn-bg:#fbf0e3;
@@ -62,36 +63,6 @@ h3{font-size:17px;margin:0 0 4px}
 table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--surface)}
 th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 th{background:var(--soft);font-weight:600}
-/* Sessione: il piano giorno per giorno si fa lì */
-.cta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;padding:16px 20px}
-.cta b{display:block;font-size:16px}
-.cta p{margin:2px 0 0;color:var(--muted);font-size:14.5px}
-.cta .btn{text-decoration:none;white-space:nowrap}
-/* com'è l'esame */
-.prova{display:grid;gap:10px}
-.prova .note{margin:0}
-.es{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line)}
-.es:last-child{border-bottom:0}
-.es .n{font-family:var(--f-mono);font-size:12.5px;color:var(--c)}
-.es .pt{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
-.es small{grid-column:2/-1;color:var(--muted);font-size:14px}
-.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 20px}
-/* gli argomenti */
-.top{padding:14px 0;border-top:1px solid var(--line)}
-.top:first-of-type{border-top:0;padding-top:4px}
-.top-h{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:baseline}
-.top-h .n{font-family:var(--f-mono);font-size:13px;background:var(--c-soft);color:var(--c);border-radius:6px;text-align:center;padding:2px 0}
-.top-h h3{margin:0;font-size:16px}
-.top-h h3 a{color:var(--ink);text-decoration:none}
-.top-h h3 a:hover{color:var(--c);text-decoration:underline}
-.pri{font-family:var(--f-mono);font-size:11.5px;border-radius:99px;padding:2px 8px;white-space:nowrap;border:1px solid var(--line);color:var(--muted)}
-.pri.p5{background:var(--c);border-color:var(--c);color:#fff}
-.pri.p4{background:var(--c-soft);border-color:transparent;color:var(--c)}
-.top .s{margin:6px 0 0 54px;color:var(--muted);font-size:14.5px}
-.top dl{margin:8px 0 0 54px;display:grid;gap:6px;font-size:14.5px}
-.top dt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.top dd{margin:0}
-@media (max-width:560px){.cta{grid-template-columns:1fr}.top .s,.top dl{margin-left:0}.top-h{grid-template-columns:44px minmax(0,1fr)}.top-h .pri{grid-column:2;justify-self:start}.status{grid-template-columns:1fr}}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
 .btn:hover{border-color:var(--muted)}
 .btn.solid{background:var(--c);color:#fff;border-color:var(--c)}
@@ -138,12 +109,13 @@ th{background:var(--soft);font-weight:600}
   .dcard{break-inside:avoid;border-color:#999}
 }
 </style>
+<link rel="stylesheet" href="../assets/programma.css">
 </head>
 <body>
 <div class="wrap">
   <div class="eyebrow">Basi di Dati · programma d'esame</div>
   <h1>Programma d'esame</h1>
-  <p class="lede">Cosa serve per l'esame di Basi di Dati: com'è lo scritto, gli argomenti in ordine di studio, quanto pesano e che esercizio aspettarti. Il piano giorno per giorno lo fai nella Sessione.</p>
+  <p class="lede">Cosa serve per l'esame di Basi di Dati: com'è la prova, gli argomenti in ordine di studio, quanto pesano e che esercizio aspettarti. Il piano giorno per giorno lo fai nella Sessione.</p>
 
   <nav class="tabs no-print" aria-label="In questa pagina">
     <a href="#esame" data-t="esame" class="on">L'esame</a>
@@ -151,13 +123,14 @@ th{background:var(--soft);font-weight:600}
     <a class="ext" href="Quaderno%20di%20Basi%20di%20Dati.html">Quaderno →</a>
   </nav>
 
+  <div class="exam" id="next" hidden></div>
   <div class="cta no-print" id="cta"></div>
 
   <h2 id="esame">Com'è l'esame</h2>
   <div class="prova" id="prova"></div>
 
   <h2 id="argomenti">Gli argomenti</h2>
-  <p class="muted">Nell'ordine in cui conviene studiarli, con i capitoli del quaderno. Quelli più importanti escono a ogni scritto.</p>
+  <p class="muted">Nell'ordine in cui conviene studiarli, con i capitoli del quaderno e quanto pesano all'esame.</p>
   <div id="intro"></div>
   <div class="pkgs" id="topics"></div>
 
@@ -168,30 +141,10 @@ th{background:var(--soft);font-weight:600}
   </section>
 </div>
 
+<script src="../assets/programma.js"></script>
 <script>
-/* Programma d'esame di Basi di Dati. I dati qui sotto (TOPICS, e per ogni prova recap e sim in SCOPES)
-   li legge anche la Sessione per fare il piano: non cambiarne il formato. */
-const CODE = "BD"; // sigla del corso nella Sessione
-const Q = "Quaderno%20di%20Basi%20di%20Dati.html";
-const QUIZ = "Quiz%20BD.html";
-const SESSIONE = "../sessione.html";
-const KEY = "piano-esame-bd"; // piano fatto qui prima della Sessione (anche in corsi.js come progressKey)
-const WD = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
-const MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
-
-/* Lo scritto di Polese e Caruccio: sempre la stessa struttura (vedi le tracce degli anni passati) */
-const PROVA = {
-  intro: "Uno schema ER dato, con la descrizione, la tavola dei volumi e due operazioni frequenti. Cinque esercizi, 30 punti in tutto.",
-  es: [
-    { t: "Carico applicativo, ridondanza e ristrutturazione", pt: 9, ch: "04" },
-    { t: "Mapping dallo schema ristrutturato al relazionale", pt: 4, ch: "06" },
-    { t: "Algebra relazionale (con un “almeno 2”) e una query SQL con gli aggregati", pt: 7, ch: "07–08" },
-    { t: "Un programma JDBC (“almeno X”)", pt: 5, ch: "09" },
-    { t: "B+-tree con p = 3 (inserimenti e cancellazioni) oppure la dimensione minima del blocco", pt: 5, ch: "10" }
-  ],
-  nota: "La normalizzazione non esce mai."
-};
-
+/* Programma d'esame di Basi di Dati. TOPICS e SCOPES li legge anche la Sessione per fare il piano:
+   non cambiarne il formato. Il disegno della pagina è in assets/programma.js. */
 /* Gli argomenti, nell'ordine in cui conviene studiarli. min = minuti di studio partendo da zero.
    pri = priorità quando il tempo non basta (più alto = più importante). */
 const TOPICS = [
@@ -213,109 +166,30 @@ const SCOPES = {
     focus: "modello ER, progettazione logica, mapping, algebra relazionale e SQL",
     recap: "Costrutti e cardinalità dell'ER, analisi delle ridondanze, eliminazione delle gerarchie, regole del mapping, chiavi e integrità referenziale, operatori dell'algebra e cardinalità del join, GROUP BY e HAVING, NOT EXISTS, indici e B+-tree" }
 };
-const PRI = { 5: ["p5", "Molto importante"], 4: ["p4", "Importante"] };
 
-const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
-const fmtMin = m => { m = Math.round(m / 5) * 5; const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h} h ${r}′` : `${h} h`) : `${r}′`; };
-const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
-const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} };
+/* Com'è l'esame (ricostruito dalle prove degli anni passati) */
+const PROVA = {
+  intro: "Uno schema ER dato, con la descrizione, la tavola dei volumi e due operazioni frequenti. Cinque esercizi, 30 punti in tutto.",
+  rows: [
+    { n: "Es. 1", t: "Carico applicativo, ridondanza e ristrutturazione", r: "9 punti", s: "cap. 04" },
+    { n: "Es. 2", t: "Mapping dallo schema ristrutturato al relazionale", r: "4 punti", s: "cap. 06" },
+    { n: "Es. 3", t: "Algebra relazionale (con un “almeno 2”) e una query SQL con gli aggregati", r: "7 punti", s: "cap. 07–08" },
+    { n: "Es. 4", t: "Un programma JDBC (“almeno X”)", r: "5 punti", s: "cap. 09" },
+    { n: "Es. 5", t: "B+-tree con p = 3 (inserimenti e cancellazioni) oppure la dimensione minima del blocco", r: "5 punti", s: "cap. 10" }
+  ],
+  nota: "La normalizzazione non esce mai."
+};
 
-/* Sessione: se il corso c'è già si apre, altrimenti si aggiunge (sessione.html?esame=BD) */
-function cta() {
-  let sess = null;
-  try { sess = JSON.parse(localStorage.getItem("ua-sessione")); } catch (e) {}
-  const inSess = sess && sess.cfg && (sess.cfg.exams || []).some(e => e.code === CODE);
-  $("#cta").innerHTML = inSess
-    ? `<div><b>Basi di Dati è già nella tua Sessione</b><p>Il piano giorno per giorno, con le spunte, è lì.</p></div>
-       <a class="btn solid" href="${SESSIONE}#oggi">Apri la Sessione →</a>`
-    : `<div><b>Prepara l'esame con la Sessione</b><p>Scegli la data e quanto lo sai già: la Sessione fa il piano giorno per giorno, anche per un esame solo.</p></div>
-       <a class="btn solid" href="${SESSIONE}?esame=${CODE}">Prepara questo esame →</a>`;
-}
-
-/* Com'è l'esame: la prova, su cosa puntare e la simulazione */
-function prova() {
-  const S = SCOPES.completa;
-  $("#prova").innerHTML = `
-    <p class="muted" style="margin:0">${esc(PROVA.intro)}</p>
-    <div class="box">${PROVA.es.map((e, i) => `<div class="es"><span class="n">Es. ${i + 1}</span><span>${esc(e.t)}</span><span class="pt">${e.pt} punti</span><small>cap. ${esc(e.ch)}</small></div>`).join("")}</div>
-    <p class="note"><b>Su cosa puntare:</b> ${esc(S.focus)}. ${esc(PROVA.nota)}</p>
-    <p class="note"><b>Per allenarti:</b> ${esc(S.sim.t)} · ${esc(S.sim.s)} <a href="${QUIZ}">Apri il quiz →</a></p>`;
-}
-
-/* Gli argomenti, divisi per parte del corso */
-function topics() {
-  const intro = TOPICS.filter(t => t.intro);
-  $("#intro").innerHTML = intro.length ? `<div class="note intro-tip"><b>Facoltativo, se ti serve.</b> Introduttivi, non serve soffermarsi: ${intro.map(t => `<a href="${Q}#${t.cid}">cap. ${t.ch} ${esc(t.t)}</a>`).join(" · ")}</div>` : "";
-  const pkgs = [...new Set(STUDY.map(t => t.pkg))];
-  $("#topics").innerHTML = pkgs.map(pk => `<section class="pkg"><div class="hd"><span class="k">${esc(pk)}</span></div>
-    ${STUDY.filter(t => t.pkg === pk).map(t => {
-      const [cls, lbl] = PRI[t.pri] || ["", "Da sapere"];
-      return `<article class="top">
-        <div class="top-h"><span class="n">${t.ch}</span><h3><a href="${Q}#${t.cid}">${esc(t.t)}</a></h3><span class="pri ${cls}">${lbl}</span></div>
-        <p class="s">${esc(String(t.read || "").replace(/^Cap\. \d+: /, ""))}</p>
-        <dl>${t.draw ? `<div><dt>Esercizio tipo</dt><dd>${esc(t.draw)}</dd></div>` : ""}${t.open ? `<div><dt>Domanda aperta</dt><dd>${esc(t.open)}</dd></div>` : ""}</dl>
-      </article>`;
-    }).join("")}</section>`).join("");
-}
-
-/* Il piano fatto qui prima della Sessione: si vede finché c'è, con le sue spunte */
-function render() {
-  const st = load(), box = $("#planBox");
-  $("#vecchio").hidden = !st.plan;
-  if (!st.plan) { box.innerHTML = ""; return; }
-  const p = st.plan, done = st.done || {};
-  const all = p.days.flatMap(d => d.tasks), nd = all.filter(t => done[t.id]).length;
-  const today = iso(new Date());
-  const ex = parse(p.exam);
-  box.innerHTML = `
-    <div class="status">
-      <div><span class="tag">Piano per l'esame</span><br><b class="big">${nd}/${all.length}</b> <span class="muted">attività fatte</span></div>
-      <div class="actions no-print"><button class="btn" type="button" id="print">Stampa</button><button class="btn" type="button" id="del">Elimina questo piano</button></div>
-      <div class="bar"><i style="width:${all.length ? 100 * nd / all.length : 0}%"></i></div>
-    </div>
-    ${(p.warnings || []).length ? `<p class="plan-note">Il piano si adatta ai giorni che ci sono: alcune attività possono essere più brevi o concentrate negli ultimi giorni.</p>` : ""}
-    <div class="plan">${p.days.map(d => {
-      const dt = parse(d.date), tot = d.tasks.reduce((a, t) => a + t.m, 0);
-      const dn = d.tasks.length && d.tasks.every(t => done[t.id]);
-      const tags = [...new Set(d.tasks.filter(t => t.topic).map(t => t.topic.t))];
-      const title = tags.length ? tags.join(" · ") : (d.tasks.some(t => t.k === "sim") ? "Simulazione e ripasso finale" : "Ripasso");
-      return `<section class="dcard${d.date === today ? " today" : ""}${dn ? " done" : ""}">
-        <div class="dh"><div class="dt">${WD[dt.getDay()]}<b>${dt.getDate()}</b>${MESI[dt.getMonth()]}</div>
-          <div>${d.date === today ? `<span class="tag">Oggi</span>` : ""}<h3>${esc(title)}</h3></div><span class="min">${fmtMin(tot)}</span></div>
-        <ul>${d.tasks.map(t => `<li><label><input type="checkbox" data-id="${t.id}" ${done[t.id] ? "checked" : ""}>
-          <span class="tx">${esc(t.t)}${t.part ? ` (parte ${t.part})` : ""}${t.topic && !/^Ripasso/.test(t.t) ? ` · <span class="muted">${esc(t.topic.t)}</span>` : ""}
-          <small>${esc(t.s)}${t.href ? ` · <a href="${t.href}">apri</a>` : ""}</small></span>
-          ${t.m ? `<span class="tm">${fmtMin(t.m)}</span>` : ""}</label></li>`).join("")}</ul>
-      </section>`;
-    }).join("")}
-      <section class="dcard exam-day"><div class="dh"><div class="dt">${WD[ex.getDay()]}<b>${ex.getDate()}</b>${MESI[ex.getMonth()]}</div><div><h3>Esame</h3><span style="opacity:.75;font-size:14.5px">Colazione, niente roba nuova. Leggi tutta la traccia prima di cominciare.</span></div><span></span></div></section>
-    </div>`;
-  box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener("change", () => {
-    const s = load(); s.done = s.done || {}; if (cb.checked) s.done[cb.dataset.id] = true; else delete s.done[cb.dataset.id]; save(s); render();
-  }));
-  box.querySelectorAll('a').forEach(a => a.addEventListener("click", e => e.stopPropagation()));
-  $("#print").onclick = () => window.print();
-  $("#del").onclick = () => { if (confirm("Elimino il piano e le sue spunte?")) { save({}); render(); } };
-}
-
-cta();
-prova();
-topics();
-render();
-/* se un altro dispositivo aggiorna le spunte o la Sessione (sincronizzazione), ridisegna */
-window.addEventListener("storage", e => { if (e.key === KEY) render(); if (e.key === "ua-sessione") cta(); });
-/* scheda evidenziata in base alla parte di pagina visibile */
-(function () {
-  const tabs = [...document.querySelectorAll(".tabs a[data-t]")];
-  const mark = () => {
-    const y = window.scrollY + 90, arg = document.getElementById("argomenti").getBoundingClientRect().top + window.scrollY;
-    tabs.forEach(a => a.classList.toggle("on", (a.dataset.t === "argomenti") === (y >= arg)));
-  };
-  window.addEventListener("scroll", mark, { passive: true }); mark();
-})();
+PROGRAMMA({
+  code: "BD",
+  name: "Basi di Dati",
+  q: "Quaderno%20di%20Basi%20di%20Dati.html",
+  quiz: "Quiz%20BD.html",
+  key: "piano-esame-bd", // piano fatto qui prima della Sessione (anche in corsi.js come progressKey)
+  topics: TOPICS,
+  scopes: SCOPES,
+  prova: PROVA
+});
 </script>
 </body>
 </html>
