@@ -65,6 +65,10 @@ button{font:inherit;color:inherit}
 .chap .m{grid-column:2;height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
 .chap .m i{display:block;height:100%;background:var(--ok);border-radius:2px}
 .note{margin-top:22px;color:var(--muted);font-size:14px}
+/* ripasso misto (26 domande): una riga sotto la simulazione come all'esame */
+.mix{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;margin:-14px 0 30px}
+.mix p{margin:0;font-size:14.5px}
+.mix p b{font-weight:600}
 
 /* domanda */
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
@@ -449,6 +453,15 @@ function simRun() {
   CHAPTERS.forEach(c => { out = out.concat(pick(Q.filter(q => q.c === c.id), 2, last)); });
   return shuffle(out);
 }
+/* Simulazione come all’esame: le due domande di teoria, su capitoli diversi (all’esame sono su paragrafi precisi del
+   libro). Ognuna può essere una domanda aperta o un esercizio di calcolo (le domande che iniziano con "Esercizio").
+   La terza parte della prova, l’esercizio di laboratorio, nel quiz non c’è ancora. */
+function esameRun() {
+  const st = loadStats(), last = (st._ultimo || {}).esame || [];
+  const open = Q.filter(q => q.o.length === 1);
+  const a = pick(open, 1, last)[0];
+  return [a, pick(open.filter(q => q.c !== a.c), 1, last)[0]];
+}
 function rememberRun(key, items) {
   const st = loadStats(); st._ultimo = st._ultimo || {}; st._ultimo[key] = items.map(it => it.q.id); saveStats(st);
 }
@@ -474,15 +487,17 @@ function home() {
   }).join("");
   app.innerHTML = `
     <section class="sim">
-      <h2>Simulazione della prova</h2>
-      <p>26 domande miste, 2 per ogni capitolo, diverse a ogni giro: per lo più aperte, come all’esame. Alla fine vedi il punteggio per capitolo.</p>
+      <h2>Simulazione come all’esame</h2>
+      <p>Le 2 domande di teoria della prova, su capitoli diversi: ognuna può essere una domanda aperta o un esercizio di calcolo. Scrivi le risposte per intero (anche su carta), poi confronta con la soluzione. Alla fine vedi quanto tempo ci hai messo. L’esercizio di laboratorio qui non c’è ancora.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
-      <button class="btn" type="button" id="go-sim">Inizia →</button>
+      <button class="btn" type="button" id="go-esame">Inizia →</button>
     </section>
+    <div class="mix"><p><b>Ripasso misto</b> · 26 domande, 2 per ogni capitolo, diverse a ogni giro, con il punteggio per capitolo.</p><button class="btn" type="button" id="go-sim">Inizia →</button></div>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
     <p class="note">Consiglio: fai il quiz di un capitolo subito dopo averlo studiato, poi la simulazione la sera prima della prova. Punta ad almeno l'80% per capitolo.<br>Ogni giro pesca ${PER_GIRO} domande diverse dal capitolo. Quelle che sbagli tornano nei giri successivi finché non le azzecchi ${SAPUTA} volte di fila: a quel punto contano come sapute.</p>`;
-  app.querySelector("#go-sim").onclick = () => start("Simulazione della prova", simRun(), null, "sim");
+  app.querySelector("#go-esame").onclick = () => start("Simulazione come all’esame", esameRun(), null, "esame");
+  app.querySelector("#go-sim").onclick = () => start("Ripasso misto", simRun(), null, "sim");
   app.querySelectorAll(".chap").forEach(b => b.onclick = () => {
     const c = chap(b.dataset.c);
     start(`${c.n} · ${c.t}`, chapterRun(c.id), c.id, c.id);
@@ -491,7 +506,7 @@ function home() {
 }
 
 function start(title, questions, chapterId, key, from) {
-  run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => ({ q })) };
+  run = { title, chapterId, key, from, i: 0, answers: [], items: questions.map(q => ({ q })), t0: Date.now() };
   if (key) rememberRun(key, run.items);
   try { if (history.state && history.state.quiz) history.replaceState({ quiz: 1 }, ""); else history.pushState({ quiz: 1 }, ""); } catch (e) {}
   ask();
@@ -604,6 +619,7 @@ function result(restored) {
     <a href="#" class="backq" id="quit">← Tutti i quiz</a>
     <p class="label">${esc(run.title)}</p>
     <div class="score"><b>${good}/${n}</b><span>${pct}% di risposte giuste</span></div>
+    ${run.key === "esame" && run.t0 && !restored ? `<p class="label">Tempo: ${(m => (m === 1 ? "1 minuto" : `${m} minuti`))(Math.max(1, Math.round((Date.now() - run.t0) / 60000)))}</p>` : ""}
     <p class="verdict">${verdict}</p>
     ${from && from.cid ? (() => { const st = loadStats(), all = Q.filter(q => q.c === from.cid), k = all.filter(q => known(st, q.id)).length; return `<p class="label">Capitolo ${chap(from.cid).n}: ne sai ${k} su ${all.length}</p><div class="bar"><i style="width:${100 * k / all.length}%"></i></div>`; })() : ""}
     ${Object.keys(by).length > 1 ? `<p class="label">Per capitolo</p><ul class="byc">${rows}</ul>` : ""}
@@ -616,7 +632,7 @@ function result(restored) {
   const redo = app.querySelector("#redo");
   if (redo) redo.onclick = () => { start((from ? from.title : run.title) + " · errori", shuffle(wrong.map(w => w.it.q)), null, null, from); };
   const again = app.querySelector("#again");
-  if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : simRun(), from.cid, from.key);
+  if (again && from) again.onclick = () => start(from.title, from.cid ? chapterRun(from.cid) : from.key === "esame" ? esameRun() : simRun(), from.cid, from.key);
   app.querySelector("#back").onclick = backToList;
   app.querySelector("#quit").onclick = e => { e.preventDefault(); backToList(); };
   if (!restored) window.scrollTo({ top: 0 });

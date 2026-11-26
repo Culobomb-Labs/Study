@@ -166,18 +166,18 @@ const TOPICS = [
 const STUDY = TOPICS.filter(t => !t.intro);
 const SCOPES = {
   completa: { topics: () => STUDY, exam: "", examLbl: "L'esame è il",
-    sim: {"t": "Simulazione d'esame su carta", "s": "A tempo, come all’esame: due domande aperte del quiz su capitoli diversi, scritte per intero, e un esercizio di calcolo (scheduling, pagine o disco). Poi confronta con le soluzioni del quiz."},
+    sim: {"t": "Simulazione come all’esame", "s": "Nel quiz: “Simulazione come all’esame” (le 2 domande di teoria, aperte o di calcolo, su capitoli diversi). Scrivi le risposte per intero, su carta e a tempo, poi confronta con le soluzioni."},
     focus: "scheduling, sincronizzazione, stallo e memoria virtuale",
     recap: "Stati di un processo, algoritmi di scheduling, requisiti della sezione critica, condizioni dello stallo, paginazione e TLB, algoritmi di sostituzione, scheduling del disco, metodi di allocazione" }
 };
 
 /* Com'è l'esame (come lo ha descritto chi ha fatto la prova) */
 const PROVA = {
-  intro: "Due domande aperte, ognuna su un paragrafo preciso del libro, e un esercizio pratico.",
+  intro: "Due domande di teoria, ognuna su un paragrafo preciso del libro, e un esercizio di laboratorio.",
   rows: [
-    { n: "1", t: "Domanda aperta su un paragrafo del libro", r: "", s: "spiega il paragrafo con parole tue: definizioni, come funziona, un esempio" },
-    { n: "2", t: "Seconda domanda aperta su un altro paragrafo", r: "", s: "come la prima: si risponde spiegando quel paragrafo" },
-    { n: "3", t: "Esercizio pratico", r: "", s: "per esempio scheduling della CPU (turnaround e attesa), indirizzi e pagine, sostituzione delle pagine (FIFO, LRU), scheduling del disco" }
+    { n: "1", t: "Domanda di teoria su un paragrafo del libro", r: "", s: "può essere una domanda aperta o un esercizio di calcolo (per esempio scheduling, pagine, disco)" },
+    { n: "2", t: "Seconda domanda di teoria, su un altro paragrafo", r: "", s: "come la prima: domanda aperta o esercizio di calcolo" },
+    { n: "3", t: "Esercizio di laboratorio", r: "", s: "un esercizio pratico" }
   ],
   nota: "Le domande sono su paragrafi precisi: studia il libro paragrafo per paragrafo, non solo i concetti generali. I capitoli del quaderno hanno la stessa numerazione del libro."
 };
