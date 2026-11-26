@@ -45,7 +45,8 @@ window.CORSI =
     "color": "pd",
     "docs": [
       { "name": "Quaderno di Programmazione Distribuita", "kind": "Quaderno", "path": "Programmazione-Distribuita/Quaderno di Programmazione Distribuita/index.html", "progressKey": "quaderno-distribuita-done" },
-      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione-Distribuita/Piano di studio PD.html", "progressKey": "piano-esame-pd" }
+      { "name": "Piano di studio per l'esame", "kind": "Piano di studio", "path": "Programmazione-Distribuita/Piano di studio PD.html", "progressKey": "piano-esame-pd" },
+      { "name": "Quiz, capitoli 02–32", "kind": "Quiz", "path": "Programmazione-Distribuita/Quiz PD.html" }
     ]
   },
   {
