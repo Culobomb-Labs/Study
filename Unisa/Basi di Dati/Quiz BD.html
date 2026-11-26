@@ -1282,7 +1282,20 @@ function restoreRun() {
     return true;
   } catch (e) { return false; }
 }
-if (!(history.state && history.state.res && restoreResult()) && !(history.state && history.state.quiz && !history.state.res && restoreRun())) {
+// arrivando con #tr-<id> (o #trp-<id>: qui le tracce sono tutte pratiche) si apre subito quella traccia,
+// per esempio dalla Sessione; "indietro" porta all'elenco
+function openLink() {
+  const m = location.hash.match(/^#trp?-([\w-]+)$/);
+  if (!m || !traccia(m[1])) return false;
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  scrittoStart(m[1]);
+  return true;
+}
+window.addEventListener("hashchange", openLink);
+if (/^#trp?-/.test(location.hash)) {
+  home();
+  if (!openLink()) home();
+} else if (!(history.state && history.state.res && restoreResult()) && !(history.state && history.state.quiz && !history.state.res && restoreRun())) {
   if (history.state && history.state.quiz) { try { history.replaceState(null, ""); } catch (e) {} }
   home();
 }

@@ -69,6 +69,8 @@ button{font:inherit;color:inherit}
 .mix{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;margin:-14px 0 30px}
 .mix p{margin:0;font-size:14.5px}
 .mix p b{font-weight:600}
+.mix.soon{border-style:dashed;margin-bottom:12px}
+.mix.soon .tag{margin:0}
 
 /* domanda */
 .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
@@ -453,9 +455,9 @@ function simRun() {
   CHAPTERS.forEach(c => { out = out.concat(pick(Q.filter(q => q.c === c.id), 2, last)); });
   return shuffle(out);
 }
-/* Simulazione come all’esame: le due domande di teoria, su capitoli diversi (all’esame sono su paragrafi precisi del
-   libro). Ognuna può essere una domanda aperta o un esercizio di calcolo (le domande che iniziano con "Esercizio").
-   La terza parte della prova, l’esercizio di laboratorio, nel quiz non c’è ancora. */
+/* Simulazione come all’esame: la parte di teoria, cioè due domande su capitoli diversi (all’esame sono su paragrafi
+   precisi del libro). Ognuna può essere una domanda aperta o un esercizio di calcolo (le domande che iniziano con
+   "Esercizio"). La parte di laboratorio nel quiz non c’è ancora. */
 function esameRun() {
   const st = loadStats(), last = (st._ultimo || {}).esame || [];
   const open = Q.filter(q => q.o.length === 1);
@@ -488,10 +490,11 @@ function home() {
   app.innerHTML = `
     <section class="sim">
       <h2>Simulazione come all’esame</h2>
-      <p>Le 2 domande di teoria della prova, su capitoli diversi: ognuna può essere una domanda aperta o un esercizio di calcolo. Scrivi le risposte per intero (anche su carta), poi confronta con la soluzione. Alla fine vedi quanto tempo ci hai messo. L’esercizio di laboratorio qui non c’è ancora.</p>
+      <p>La parte di teoria della prova: 2 domande su capitoli diversi. Ognuna può essere una domanda aperta o un esercizio di calcolo. Scrivi le risposte per intero (anche su carta), poi confronta con la soluzione. Alla fine vedi quanto tempo ci hai messo.</p>
       <p class="tot">Domande che sai già: <b>${totKnown}</b> su ${Q.length}</p>
       <button class="btn" type="button" id="go-esame">Inizia →</button>
     </section>
+    <div class="mix soon"><p><b>Laboratorio</b> · gli esercizi per questa parte della prova arriveranno a breve.</p><span class="tag">In arrivo</span></div>
     <div class="mix"><p><b>Ripasso misto</b> · 26 domande, 2 per ogni capitolo, diverse a ogni giro, con il punteggio per capitolo.</p><button class="btn" type="button" id="go-sim">Inizia →</button></div>
     <p class="label">Un capitolo alla volta</p>
     <div class="chaps">${chips}</div>
